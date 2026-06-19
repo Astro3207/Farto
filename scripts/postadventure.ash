@@ -550,6 +550,6 @@ void main(){
             spendAdv();
     } finally {
         set_property("betweenBattleScript",boof);
-        set_property("afterAdventureScript","scripts\\Automation\\postadventure.ash");
+        set_property("afterAdventureScript","postadventure.ash");
     }
 }
