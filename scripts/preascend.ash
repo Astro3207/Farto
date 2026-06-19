@@ -65,7 +65,7 @@ while (my_adventures() > 0){
 }
 int peevp = pvp_attacks_left();
 if (peevp > 0) {
-     cli_execute("pvpcombat; unequip pants");
+     cli_execute("PVP_MAB; unequip pants");
 }
 while (my_basestat( $stat[submuscle]) > BCZcost("BloodThinnerCasts"))
         use_skill($skill[BCZ: Create Blood Thinner]);
