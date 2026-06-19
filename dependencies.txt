@@ -1,3 +1,6 @@
 github Astro3207/UnderTheSea
 github loathers/garbage-collector.git release
 github soolar/CONSUME.ash
+github m-e-meyer/av-snapshot main
+github Loathing-Associates-Scripting-Society/philter.git main
+github Pantocyclus/PVP_MAB.git release
