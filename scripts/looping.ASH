@@ -11,7 +11,7 @@ if (get_property("ascensionsToday") == "0") {
 	if (my_adventures() > 0 && my_inebriety() <= inebriety_limit())
 		cli_execute("farto");
 	set_property("looping","true");
-	if ((my_adventures() == 0 && my_inebriety() == inebriety_limit()) || (my_adventures() > 0 && my_inebriety() > inebriety_limit()))
+	if ((my_adventures() == 0) || (my_adventures() > 0 && my_inebriety() > inebriety_limit()))
 		cli_execute("preascend");
 }
 if (get_property("ascensionsToday") == "1") {
