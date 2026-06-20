@@ -76,7 +76,7 @@ void main(){
         set_property("choiceAdventureScript","generalChoice.ash");
         if (!have_equipped($item[devilbone greaves])){
             set_property("script","unblemisedPearl");
-            set_property("afterAdventureScript","scripts\\Automation\\postadventure.ash");
+            set_property("afterAdventureScript","postadventure.ash");
         } else {
             if (have_effect($effect[null afternoon]) == 0)
                 use(2, $item[null-day exploit]);
