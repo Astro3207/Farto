@@ -5,3 +5,6 @@ github soolar/CONSUME.ash
 github m-e-meyer/av-snapshot main
 github Loathing-Associates-Scripting-Society/philter main
 github Pantocyclus/PVP_MAB release
+github C2Talon/c2t_megg
+githib Prusias-kol/pTrack
+github loathers/combo
