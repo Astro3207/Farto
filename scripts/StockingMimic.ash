@@ -985,6 +985,7 @@ void bulkFK(){
         set_property("maxOverride","familiar weight");
     }
     if (get_property("_pocketProfessorLectures").to_int() == 0 && get_property("_locketMonstersFought").split_string(",").count() < 3){
+        set_property("maxOverride","familiar weight");
         set_property("pantsOverride",", equip tearaway Pants");
         set_property("offOverride", ", equip kol con");
         set_property("acc1Override", ", equip Mr. Cheeng's spectacles");
