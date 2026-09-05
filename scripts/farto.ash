@@ -1,149 +1,98 @@
 import iotm;
+import preadventure;
+import zlib; // for sell_val() -- item valuation for itemDropValueAt()
 
-void stashgrab(item it){
-    visit_url("showclan.php?whichclan=2047009940&action=joinclan&confirm=on");
-    if (stash_amount(it) > 0)
-        take_stash(it, 1 );
-    visit_url("showclan.php?whichclan=72876&action=joinclan&confirm=on");
-    if (get_property("_clanFortuneConsultUses") == 0){
-        cli_execute("/whitelist Bonus Adventures from Hell");
-        cli_execute("/whitelist Hyrule");
-    }
+// ─── farto.ash ───────────────────────────────────────────────────────────────
+// The meat-farming remainder of the old farto script. The free-kill flow
+// (FKPrep / bulkFK and its helper tree) now lives in StockingMimic.ash and the
+// shared utilities in iotm.ash; this file keeps only:
+//   main()               -- the garbo() barf-mountain loop entry point
+//   garbo() / cowo()     -- one farming turn (Barf Mountain / Coral Corral)
+//   shadowRealmNCForce() -- NC-forcer burn-down, called by postadventure.ash via
+//                           `cli_execute("ash import farto;shadowRealmNCForce()")`
+
+// ─── drop-value weighting (garbo's modeValueOfMeat/modeValueOfItem) ─────────
+// Real garbo doesn't maximize a fixed "2.5 Meat Drop, 0.72 Item Drop" -- it
+// recomputes the weight every turn. The meat side is still a per-location
+// constant in garbo too (each tourist/sea cow drops a fixed base Meat before
+// modifiers -- 250 at Barf Mountain, 300 at the Coral Corral -- so 1% Meat
+// Drop is worth base/100 actual meat), which is where the old "2.5" came
+// from -- it was just never adjusted for the Coral Corral's higher base.
+// The item side genuinely drifts as mall prices move, so that one actually
+// needs recomputing live.
+float baseMeatAt(location loc){
+    if (loc == $location[the coral corral])
+        return 300.0;
+    return 250.0; // barf mountain
 }
 
-void stashreturn(item it){
-    visit_url("showclan.php?whichclan=2047009940&action=joinclan&confirm=on");
-    cli_execute("unequip "+ it);
-    if (available_amount(it) > 0)
-        put_stash(it, 1 );
-    visit_url("showclan.php?whichclan=72876&action=joinclan&confirm=on");
-}
-
-int total_power(){
-    int n;
-    foreach sl in $slots[hat,shirt,pants]{
-        n += get_power(equipped_item(sl));
-    }
-    return n;
-}
-
-void beretBusking(){
-    if (get_property("_beretBuskingUses") == 0){
-        cli_execute("equip prismatic beret, conquistador's breastplate, lynyrdskin breeches");
-        if (total_power() == 440){
-            use_skill($skill[ Beret Busking]);
-        } else {
-            abort("Beret abort");
+// Marginal cash value of 1% Item Drop at loc: for every monster there,
+// weighted by encounter rate, sum up (drop rate) * (what the drop is worth
+// right now) -- skipping boss/pickpocket-only drops, since Item Drop% doesn't
+// touch those. Mirrors garbo's FarmingStrategy.itemDropValue(). Doesn't
+// account for olfaction skewing a target monster's effective encounter
+// weight the way garbo's adventureTargetToWeightedMap() does -- close enough
+// for a maximize() weight, not exact.
+float itemDropValueAt(location loc){
+    float total;
+    foreach mon, rate in appearance_rates(loc){
+        if (rate <= 0 || mon == $monster[none])
+            continue;
+        foreach idx, rec in item_drops_array(mon){
+            if (rec.type != "n" && rec.type != "")
+                continue;
+            float worth = sell_val(rec.drop);
+            if (worth <= 0)
+                continue;
+            total += (rate / 100.0) * (rec.rate / 100.0) * worth;
         }
     }
-    if (get_property("_beretBuskingUses") == 1){
-        cli_execute("equip Private Pepper's Lonely Hearts Club Jacket,Warms-Your-Tush");
-        if (total_power() == 750){
-            use_skill($skill[ Beret Busking]);
-        } else {
-            abort("Beret abort");
+    return total / 100.0; // per-adventure expected value -> value of 1% Item Drop
+}
+
+void setDropWeighting(location loc){
+    set_property("maxOverride", to_string(baseMeatAt(loc) / 100.0) + " Meat Drop," + to_string(itemDropValueAt(loc)) + " Item Drop");
+}
+
+void shadowRealmNCForce(){
+    if (get_property("script") != "stick" && get_property("script") != "coat"){
+        if (get_property("_shadowAffinityToday") == "false" || have_effect($effect[shadow affinity]) > 0){
+            if (get_property("questRufus")== "unstarted"){
+                use($item[closed-circuit pay phone]);
+            }
+            while (have_effect($effect[shadow affinity]) > 0){
+                shadowRealm();
+            }
         }
-    }
-    if (get_property("_beretBuskingUses") == 2){
-        cli_execute("equip duct tape shirt,alpha-mail pants");
-        if (total_power() == 495){
-            use_skill($skill[ Beret Busking]);
-        } else {
-            abort("Beret abort");
+        if (have_effect($effect[null afternoon]) == 0)
+            use($item[null-day exploit]);
+        while (get_property("noncombatForcerActive") == "true"){
+            set_property("acc2Override",", equip petrified wood wizard's pouch");
+            use($item[closed-circuit pay phone]);
+            if (get_property("_mcHugeLargeAvalancheUses").to_int() < 3)
+                set_property("acc3Override",", equip McHugeLarge left ski");
+            if (get_property("_spikolodonSpikeUses").to_int() < 5){
+                set_property("shirtOverride",", equip parka spikolodon");
+            }
+            if (get_property("rufusQuestTarget") == "shadow scythe")
+                use_skill($skill[Cannelloni Cocoon]);
+            if (get_property("rufusQuestTarget") == "shadow orrery"){    
+                set_property("betweenBattleScript","");
+                cli_execute("maximize elemental damage");
+            }
+            adv1($location[Shadow Rift (The Nearby Plains)],0,"");
+            use($item[closed-circuit pay phone]);
+            if (item_amount($item[Rufus's shadow lodestone]) > 0)
+                adv1($location[Shadow Rift (The Nearby Plains)],0,"");
         }
-    }
-    if (get_property("_beretBuskingUses") == 3){
-        cli_execute("equip SMOOCH breastplate,dubious loincloth");
-        if (total_power() == 575){
-            use_skill($skill[ Beret Busking]);
-        } else {
-            abort("Beret abort");
-        }
-    }
-    if (get_property("_beretBuskingUses") == 4){
-        cli_execute("equip duct tape shirt,dubious loincloth");
-        if (total_power() == 665){
-            use_skill($skill[ Beret Busking]);
-        } else {
-            abort("Beret abort");
-        }
+        set_property("shirtOverride","");
+        set_property("acc2Override","");
+        set_property("acc3Override","");
+        set_property("maxOverride","");
     }
 }
-
-void zoneOpening(){
-    //crackpock mystic
-
-}
-
-void chibibuddy(){
-
-}
-
-void zatara(){
-    visit_url("showclan.php?whichclan=90485&action=joinclan&confirm=on");
-    cli_execute("fortune onlyfax pizza batman thick");
-    cli_execute("fortune onlyfax pizza batman thick");
-    cli_execute("fortune onlyfax pizza batman thick");
-    visit_url("showclan.php?whichclan=72876&action=joinclan&confirm=on");
-}
-
-void IVoted(){
-    //Price check? Probably worth it anyway if I get S word into the mix
-}
-
-void secondBreakfast(){
-    foreach sk in $skills[Lunch Break,Spaghetti Breakfast,Grab a Cold One,Summon Kokomo Resort Pass,Perfect Freeze,Acquire Rhinestones,Prevent Scurvy and Sobriety,Aug. 24th: Waffle Day]
-        use_skill(sk);
-    if (get_property("_glitchItemImplemented") == false)
-        use($item[glitch season reward name]);
-    if (get_property("_clanFortuneConsultUses") == "0")
-        zatara();
-    if (get_property("_aprilShower") == false)
-        cli_execute("shower hot");
-    while (to_int(get_property("_leafLassosCrafted")) < 3)
-        create($item[lit leaf lasso]);
-    if (get_property("_leafDayShortenerCrafted") == "false")
-        create($item[day shortener]);
-    if (get_property("_mapToACandyRichBlockUsed") == false || contains_text(get_property("_trickOrTreatBlock"),"L")) {
-        cli_execute("outfit Ceramic Suit");
-        candy("treat");
-    }
-
-    //shrunken head the plastered frat orc
-    //s Word target
-}
-
-void FKPrep(){
-    //chibibuddy can be handled by garbo tbh
-    beretBusking();
-    foreach it in $items[defective Game Grid token,BittyCar MeatCar]{
-        stashgrab(it);
-        if (have_item(it))
-            use(it);
-        stashreturn(it);   
-    }
-    if (get_property("_glennGoldenDiceUsed") == "false")   
-        use($item[Glenn's golden dice]);
-    while (to_int(get_property("_poolGames")) < 3)
-        cli_execute("pooL 1");
-    if (get_property("friarsBlessingReceived") == "false")
-        cli_execute("friars blessing 2");
-    if (get_property("_portableSteamUnitUsed") == false)
-        cli_execute("use portable steam unit");
-    if (get_property("_madTeaParty") == "false")
-        cli_execute("hatter filthy knitted dread sack");
-
-
-}
-
-void bulkFK(){
-
-}
-
-//order of second breakfast
-
 void garbo(){
-    set_property("maxOverride", "2.5 Meat Drop,0.72 Item Drop");
+    setDropWeighting($location[barf mountain]);
     if (have_effect($effect[Citizen of a Zone]) == 0){
         set_property("famOverride","patriotic eagle");
     } else if (get_property("_cookbookbatQuestIngredient") != "Yeast of Boris"){
@@ -165,13 +114,53 @@ void garbo(){
     } else {
         set_property("acc1Override","");
     }
-    if (to_int(get_property("_pantsgivingCount")) >= 500){
+    if ((to_int(get_property("_pantsgivingCount")) >= 500) || (to_int(get_property("_pantsgivingCount")) >= 50 && get_property("ascensionsToday") == "1")){
         if (available_amount($item[pantsgiving]) > 0)
             stashreturn($item[pantsgiving]);
-        if (my_fullness() < fullness_limit())
-            cli_execute("CONSUME ALL");
+        if (my_fullness() < fullness_limit() || my_inebriety() < inebriety_limit())
+            print("CONSUME ALL");
     }
     adv1($location[barf mountain],0,"");
+}
+
+void cowo(){
+    setDropWeighting($location[the coral corral]);
+    if (have_effect($effect[Citizen of a Zone]) == 0){
+        set_property("famOverride","patriotic eagle");
+    } else if (get_property("_cookbookbatQuestIngredient") != "Yeast of Boris"){
+        set_property("famOverride","cookbookbat");
+    } else {
+        set_property("famOverride","");
+    }
+
+    if (!contains_text(get_property("trackedMonsters"),"garbage tourist:McHugeLarge Slash") && to_int(get_property("_knuckleboneDrops")) == 100){
+        set_property("offOverride",", equip McHugeLarge left pole");
+        set_property("acc1Override",", equip peridot of peril");
+    } else if (!contains_text(get_property("trackedMonsters"),"angry tourist:McHugeLarge Slash") && to_int(get_property("_knuckleboneDrops")) < 100){
+        set_property("offOverride",", equip McHugeLarge left pole");
+    } else {
+        set_property("offOverride","");
+        set_property("acc1Override","");
+    }
+
+    if (!everfullReady()) {
+        set_property("acc1Override",", equip everfull dart holster");
+    } else {
+        set_property("acc1Override","");
+    }
+    if (have_effect($effect[driving waterproofly]) > 0 && (to_int(get_property("_pantsgivingCount")) >= 500 && get_property("ascensionsToday") == 0) || (to_int(get_property("_pantsgivingCount")) >= 50 && get_property("ascensionsToday") == 1)){
+        if (available_amount($item[pantsgiving]) > 0)
+            stashreturn($item[pantsgiving]);
+        if (my_fullness() < fullness_limit() || my_inebriety() < inebriety_limit())
+            cli_execute("CONSUME ALL");
+    } else {
+        set_property("pantsOverride",", equip really nice swimming trunk");
+    }
+    if (!contains_text(get_property("banishedMonsters"),"Mer-kin rustler")
+        || !contains_text(get_property("banishedMonsters"),"sea cowboy"))
+            equip(banishGear($location[The Coral Corral]));
+    set_property("famEquipOverride",", equip little bitty bathysphere");
+    adv1($location[the coral corral],0,"");
 }
 
 //unusued, bunchu free kills, spooky VHS tape (shadow rift is a great target), god lobster,  red zeppelin? debatable tbh
@@ -183,10 +172,15 @@ void main(){
         if (to_int(get_property("_pantsgivingCount")) < 500)
             stashgrab($item[pantsgiving]);
         set_property("script","farto");
-        if (get_property("_stenchAirportToday") == "false")
-            use($item[one-day ticket to Dinseylandfill]);
-        while (my_adventures() > 0)
-            garbo();
+        while (my_adventures() > 0){
+            if (my_class() == $class[none])
+                garbo();
+            else{
+                if (get_property("_stenchAirportToday") == "false")
+                    use($item[one-day ticket to Dinseylandfill]);
+                garbo();
+            }
+        }
     } finally {
         finisher();
         stashreturn($item[pantsgiving]);
