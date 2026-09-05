@@ -155,7 +155,7 @@ void finalChores(){
     retrieve_item(5, $item[unblemished pearl]);
     codpiece("unblemished pearl,unblemished pearl,unblemished pearl,unblemished pearl,unblemished pearl");
     cli_execute("philter");
-    set_property("afterAdventureScript","");
+    finisher();
 }
 
 // Grab a PYEC (automatically if `looping` was left set, otherwise ask) and

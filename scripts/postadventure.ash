@@ -692,7 +692,7 @@ void postAdv(){
         run_choice(1);
     }
     if (pantsgivingAvailable() >= get_property("_pantsgivingFullness").to_int()){
-        if (my_fullness() < fullness_limit()){
+        if (my_fullness() == fullness_limit()-1){
             cli_execute("CONSUME ORGANS 1 0 0");
         }
     }
