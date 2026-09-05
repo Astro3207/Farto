@@ -470,6 +470,8 @@ void screechRefresh(){
 void constructBanish(){
     if (get_property("_cyberFreeFights").to_int() >= 10)
         return;
+    if (patrioticDelays() < 11)
+        return;
     if (get_property("screechCombats").to_int() > 0 && !contains_text(get_property("banishedPhyla"),"construct")){
         screechRefresh();
     }
@@ -493,6 +495,8 @@ void constructBanish(){
 void banishBeast(){
     if (contains_text(get_property("banishedPhyla"),"beast"))
         return;
+    if (patrioticDelays() < 11)
+        abort("Script out alternate banishing for gingerbread");
     screechRefresh();
     set_property("subscript","screech");
     set_auto_attack(0);

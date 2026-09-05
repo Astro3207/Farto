@@ -225,6 +225,16 @@ void main(int round, monster mob, string page_text) {
             }
         }
     }
+    if ($locations[cyberzone 1,cyberzone 2,cyberzone 3] contains my_location()){
+        if (last_monster().phylum == $phylum[construct]){
+            if (my_location() == $location[cyberzone 3])
+                abort();
+            while (current_round() > 0 && current_round() > 0)
+                use_skill($skill[throw cyber rock]);
+            if (current_round() > 0)
+                abort();
+        }
+    }
     if ($location[The Hidden Bowling Alley] == my_location()){
         if (last_monster() == $monster[pygmy bowler]){
             use_skill($skill[Show them your ring]);
@@ -311,7 +321,7 @@ void main(int round, monster mob, string page_text) {
             use_skill($skill[%fn, kill a lot of these guys]);
     }
 
-    if (my_familiar() == $familiar[comma chameleon] && last_monster() == $monster[black crayon flower]){
+    if ((my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[stocking mimic]) && last_monster() == $monster[black crayon flower]){
         use_skill($skill[lecture on relativity]);
         use_skill($skill[Tear Away your Pants!]);
         if (get_property("ascensionsToday") == "0")

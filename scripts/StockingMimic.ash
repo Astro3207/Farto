@@ -368,9 +368,24 @@ void FKPrep(){
 
 // ─── bulkFK and helpers (verbatim from farto.ash, not yet refactored) ────────
 
+// Standard free-kill farming stance used all over weakMonsters()/bulkFK()'s
+// one-off monster kills: comma chameleon out, maximize for familiar weight
+// with the eternity codpiece equipped (so its own familiar-weight bonus
+// doesn't get maximized away). extraMax, if given, is appended to
+// maxOverride as-is (e.g. ",-weapon" in seals()).
+void mimicPrep(string extraMax){
+    if (have_familiar($familiar[stocking mimic]))
+        set_property("famOverride","stocking mimic");
+    else
+        set_property("famOverride","comma chameleon");
+    set_property("maxOverride","familiar weight, equip eternity codpiece" + extraMax);
+}
+void mimicPrep(){
+    mimicPrep("");
+}
+
 void shorts(){
-    set_property("famOverride","comma chameleon");
-    set_property("maxOverride","familiar weight, equip eternity codpiece");
+    mimicPrep();
     if (get_property("_cargoPocketEmptied") == "true")
         return;
     boolean[int] emptied;
@@ -402,18 +417,23 @@ void august(){
 
 void cyberzone() {
     while (to_int(get_property("_cyberFreeFights")) < 10) {
-
-        if (!contains_text(get_property("banishedPhyla"), "construct")) {
-            adv1($location[cyberzone 1], 0, "");
-            continue;
-        }
-
-        // Adventure in whichever zone has the target hacker
         location [monster] hackerZone = {
             to_monster(get_property("_cyberZone1Hacker")): $location[cyberzone 1],
             to_monster(get_property("_cyberZone2Hacker")): $location[cyberzone 2],
             to_monster(get_property("_cyberZone3Hacker")): $location[cyberzone 3]
         };
+        if (!contains_text(get_property("banishedPhyla"), "construct")) {
+            set_property("hpAutoRecoveryTarget","0.25");
+            cli_execute("recover hp");
+            foreach mon in $monsters[greyhat hacker,greenhat hacker,redhat hacker,purplehat hacker] {
+                if (hackerZone contains mon && hackerZone[mon] != $location[cyberzone 1]) {
+                    adv1(hackerZone[mon], 0, "");
+                    break;
+                }
+            }
+            continue;
+        }
+        // Adventure in whichever zone has the target hacker
         foreach mon in $monsters[greyhat hacker,greenhat hacker,redhat hacker,purplehat hacker] {
             if (hackerZone contains mon) {
                 if (contains_text(get_property("banishedMonsters"), mon + ":Sea *dent") && get_property("_cyberFreeFights").to_int() < 10){
@@ -497,8 +517,7 @@ void shadowRealmFK(){
         use($item[closed-circuit pay phone]);
     set_property("backOverride","");}
 void sandworm(){
-    set_property("maxOverride","familiar weight, equip eternity codpiece");
-    set_property("famOverride","comma chameleon");
+    mimicPrep();
     if (get_property("_aprilBandTomUses").to_int() < 3){
         while (to_int(get_property("_aprilBandTomUses")) < 3 && available_amount($item[Apriling band quad tom]) > 0){
             main@preadventure( );
@@ -678,8 +697,7 @@ void gingerbread(){
     }
     retrieve_item(29,$item[gingerbread cigarette]);
     while (get_property("_gingerbreadCityTurns").to_int() < 30){
-        set_property("maxOverride","familiar weight, equip eternity codpiece");
-        set_property("famOverride","comma chameleon");
+        mimicPrep();
         adv1($location[Gingerbread Upscale Retail District]);
         if (get_property("_gingerbreadCityTurns").to_int() == 9)
             adv1($location[Gingerbread civic center]);
@@ -691,13 +709,11 @@ void habitatRecall(){
     while (to_int(get_property("_monsterHabitatsRecalled")) < 3 || to_int(get_property("_monsterHabitatsFightsLeft")) > 0 || get_property("beGregariousFightsLeft").to_int() > 0){
         banishFish();
         if (to_int(get_property("_monsterHabitatsFightsLeft")) == 0 && to_int(get_property("_monsterHabitatsRecalled")) < 3){
-            set_property("famOverride","comma chameleon");
-            set_property("maxOverride","familiar weight, equip eternity codpiece");
+            mimicPrep();
             cli_execute("reminisce black crayon mer-kin");
         }
         while (to_int(get_property("_monsterHabitatsFightsLeft")) > 0 || get_property("beGregariousFightsLeft").to_int() > 0){
-            set_property("famOverride","comma chameleon");
-            set_property("maxOverride","familiar weight, equip eternity codpiece");
+            mimicPrep();
             MobiusMaybe();
             if (get_property("beGregariousFightsLeft").to_int() == 1 && get_property("beGregariousCharges").to_int() == 0 && to_int(get_property("_monsterHabitatsRecalled")) == 3 && get_property("ascensionsToday") == "0"){
                 if (mall_price($item[flask of embalming fluid]) > 1000)
@@ -731,8 +747,7 @@ void backup(){
 }
 void mimicEgg(){
     while (item_amount($item[mimic egg]) > 0 && get_property("ascensionsToday") == 0){
-        set_property("famOverride","comma chameleon");
-        set_property("maxOverride","familiar weight, equip eternity codpiece");
+        mimicPrep();
         main@preadventure( );
         cli_execute("c2t_megg fight Black Crayon Mer-kin");
         run_combat();
@@ -745,8 +760,7 @@ void faxing(){
         visit_url("clan_viplounge.php?action=faxmachine&whichfloor=2");
         visit_url("clan_viplounge.php?preaction=receivefax&whichfloor=2");
         if (item_amount($item[photocopied monster]) > 0){
-            set_property("famOverride","comma chameleon");
-            set_property("maxOverride","familiar weight, equip eternity codpiece");
+            mimicPrep();
             main@preadventure( );
             use($item[photocopied monster]);
         }
@@ -757,8 +771,7 @@ void reminisce() {
         foreach mon in $monsters[black crayon golem, black crayon spiraling shape]{
             if (get_property("_locketMonstersFought").contains_text(mon.to_int()))
                 continue;
-            set_property("famOverride","comma chameleon");
-            set_property("maxOverride","familiar weight, equip eternity codpiece");
+            mimicPrep();
             main@preadventure( );
             cli_execute("reminisce " + mon);
             if (locketAvailable() == 0)
@@ -770,8 +783,7 @@ void seals(){
     while (get_property("_sealsSummoned").to_int() < 10 && my_class() == $class[seal clubber]){
         int n = get_property("_sealsSummoned").to_int();
         retrieve_item((10-n),$item[seal-blubber candle]);
-        set_property("famOverride","comma chameleon");
-        set_property("maxOverride","familiar weight, equip eternity codpiece,-weapon");
+        mimicPrep(",-weapon");
         set_property("mainOverride"," ");
         cli_execute("equip adobe adze");
         main@preadventure( );
@@ -806,14 +818,12 @@ void weakMonsters(){
     set_property("subscript","weakling");
     step("phase: weakMonsters speakeasy");
     while (to_int(get_property("_speakeasyFreeFights")) < 3){
-        set_property("famOverride","comma chameleon");
-        set_property("maxOverride","familiar weight, equip eternity codpiece");
+        mimicPrep();
         adv1($location[An Unusually Quiet Barroom Brawl]);
     }
     step("phase: weakMonsters leaf monsters");
     while (to_int(get_property("_leafMonstersFought")) < 5){
-        set_property("famOverride","comma chameleon");
-        set_property("maxOverride","familiar weight, equip eternity codpiece");
+        mimicPrep();
         main@preadventure( );
         visit_url("campground.php?preaction=leaves");
         visit_url("choice.php?"+my_hash()+"&whichchoice=1510&option=1&leaves=11");
@@ -840,23 +850,20 @@ void weakMonsters(){
     shorts();
     step("phase: weakMonsters BRICKO");
     while (get_property("_brickoFights").to_int() < 10){
-        set_property("famOverride","comma chameleon");
-        set_property("maxOverride","familiar weight, equip eternity codpiece");
+        mimicPrep();
         main@preadventure( );
         use($item[bricko ooze]);
         main@postadventure( );
     }
     step("phase: weakMonsters lynyrd snare");
     while (to_int(get_property("_lynyrdSnareUses")) < 3){
-        set_property("famOverride","comma chameleon");
-        set_property("maxOverride","familiar weight, equip eternity codpiece");
+        mimicPrep();
         main@preadventure( );
         use($item[lynyrd snare]);
     }
     step("phase: weakMonsters trick-or-treat");
     while (contains_text(get_property("_trickOrTreatBlock"), "D")){
-        set_property("famOverride","comma chameleon");
-        set_property("maxOverride","familiar weight, equip eternity codpiece");
+        mimicPrep();
         set_property("hatOverride",", equip beholed bedsheet");
         main@preadventure( );
         candy("fight");
@@ -868,8 +875,7 @@ void weakMonsters(){
             set_property("mainOverride",", equip legendary seal-clubbing club");
         else
             set_property("mainOverride","");
-        set_property("famOverride","comma chameleon");
-        set_property("maxOverride","familiar weight, equip eternity codpiece");
+        mimicPrep();
         MobiusMaybe();
         retrieve_item(5,$item[glark cable]);
         adv1($location[the red zeppelin]);
@@ -879,8 +885,7 @@ void weakMonsters(){
     if (can_adventure( $location[The Red Zeppelin])){
         while (to_int(get_property("_archSpadeDigs")) < 11){
             set_property("archSkeleton","true");
-            set_property("famOverride","comma chameleon");
-            set_property("maxOverride","familiar weight, equip eternity codpiece");
+            mimicPrep();
             archaeologist();
         }
         set_property("archSkeleton","false");
@@ -891,8 +896,7 @@ void weakMonsters(){
     step("phase: weakMonsters paranormal ghost");
     if (get_property("questPAGhost") == "unstarted" && total_turns_played() >= get_property("nextParanormalActivity").to_int()){
         use($item[almost-dead walkie-talkie]);
-        set_property("famOverride","comma chameleon");
-        set_property("maxOverride","familiar weight, equip eternity codpiece");
+        mimicPrep();
         MobiusMaybe();
         adv1 (to_location(get_property("ghostLocation")));
     }
@@ -911,6 +915,7 @@ void bulkFK(){
     set_property("script","FreeKill");
     // Arm the player's combat macro as the native auto-attack so a standalone
     // bulkFK() run (FKPrep skipped because the express card is already used) still fights.
+    starter();
     aa("facsimile");
     if (get_property("_aprilBandTomUses").to_int() < 3){
         weakMonsters();
@@ -937,8 +942,7 @@ void bulkFK(){
     step("phase: bulkFK cyberzone");
     while (get_property("_cyberFreeFights").to_int() < 10){
         constructBanish();
-        set_property("famOverride","comma chameleon");
-        set_property("maxOverride","familiar weight, equip eternity codpiece");
+        mimicPrep();
         cyberzone();
     }
     step("phase: bulkFK shadow rift");
@@ -1005,8 +1009,7 @@ void bulkFK(){
     reminisce();
     step("phase: bulkFK glitch monster");
     if (get_property("_glitchMonsterFights") == 0){
-        set_property("famOverride","comma chameleon");
-        set_property("maxOverride","familiar weight, equip eternity codpiece");
+        mimicPrep();
         main@preadventure( );
         eat($item[[glitch season reward name]]);
     }
@@ -1022,14 +1025,12 @@ void bulkFK(){
     step("phase: bulkFK faxing");
     faxing();
     if (item_amount($item[shaking 4-D camera]) > 0){
-        set_property("famOverride","comma chameleon");
-        set_property("maxOverride","familiar weight, equip eternity codpiece");
+        mimicPrep();
         main@preadventure( );
         use($item[shaking 4-D camera]);
     }
     if (item_amount($item[envyfish egg]) > 0){
-        set_property("famOverride","comma chameleon");
-        set_property("maxOverride","familiar weight, equip eternity codpiece");
+        mimicPrep();
         main@preadventure( );
         use($item[envyfish egg]);
     }

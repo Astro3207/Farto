@@ -187,6 +187,17 @@
         return $skill[none];
     }
 
+    int patrioticDelays(){
+        int delay;
+        if (can_adventure($location[the hidden bowling alley])){
+            int n = 11 - get_property("_drunkPygmyBanishes").to_int();
+            delay += n;
+        }
+        if (get_property("zigguratLianas") == 0)
+            delay += 10;
+        return delay;
+    }
+
 // ─── 4. CLAN & INSTANCE ACCESS ───────────────────────────────────────────────
 
     int [string] clan_to_ID {
