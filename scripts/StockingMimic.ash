@@ -409,11 +409,15 @@ void FKPrep(){
 // with the eternity codpiece equipped (so its own familiar-weight bonus
 // doesn't get maximized away). extraMax, if given, is appended to
 // maxOverride as-is (e.g. ",-weapon" in seals()).
-void mimicPrep(string extraMax){
+void equipStockingMimic(){
     if (have_familiar($familiar[stocking mimic]))
         set_property("famOverride","stocking mimic");
     else
         set_property("famOverride","comma chameleon");
+}
+
+void mimicPrep(string extraMax){
+    equipStockingMimic();
     set_property("maxOverride","familiar weight, equip eternity codpiece" + extraMax);
 }
 void mimicPrep(){
@@ -500,7 +504,7 @@ void shadowBoss(){
     }
 }
 void shadowRealmFK(){
-    mimicPrep("");
+    equipStockingMimic();
     if (!contains_text(get_property("maxOverride"),"familiar"))
         set_property("maxOverride","familiar weight, equip eternity codpiece");
     if (get_property("questRufus") == "step1") {
@@ -677,7 +681,7 @@ void pearloP1(){
     banishFish();
     aa("facsimile");
     while (looseFK()){
-        mimicPrep("");
+        
         if (have_effect($effect[driving waterproofly]) == 0)
             set_property("pantsOverride",", equip really nice swim");
         set_property("acc3Override",", equip time lord badge of honor");
@@ -703,7 +707,7 @@ void pearloP2(){
     foreach str in $strings[deepests,reef]{
         if (have_effect($effect[driving waterproofly]) == 0)
             set_property("pantsOverride", ", equip really nice swim");
-        mimicPrep("");
+        equipStockingMimic();
         if (get_property(pearls[str].donePref) == "false" || str == "reef"){
             if (numeric_modifier(pearls[str].ele_res) < 18)
                 abort();
@@ -770,7 +774,7 @@ void backup(){
         if (to_int(get_property("_mimicEggsObtained")) < 11 && $familiar[chest mimic].experience > 100){
             set_property("famOverride","chest mimic");
         } else
-            mimicPrep("");
+            equipStockingMimic();
         if (have_effect($effect[everything looks purple]) == 0 && (get_property("famOverride") == "comma chameleon" || get_property("famOverride") == "stocking mimic")){
             set_property("offOverride",", equip roman candel");
         } else
