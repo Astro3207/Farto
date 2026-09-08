@@ -661,6 +661,7 @@ void pearloP1(){
         use($item[willyweed]);
     }
     banishFish();
+    aa("facsimile");
     while (looseFK()){
         set_property("famOverride","comma chameleon");
         set_property("pantsOverride",", equip really nice swim");
@@ -1066,7 +1067,8 @@ void bulkFK(){
     }
     step("phase: bulkFK seals");
     seals();
-    cli_execute("ptrack add postFK");
+    if (!contains_text(get_property("thoth19_event_list"),"postFK"))
+        cli_execute("ptrack add postFK");
     while (get_property("_aprilBandSaxophoneUses").to_int() < 3 && dayType() == 1){
         if (get_property("commaFamiliar") != "Robortender"){
             retrieve_item($item[toggle switch (Bartend)]);
@@ -1095,7 +1097,8 @@ void main(){
             if (get_property("prusias_profitTracking_date") != today_to_string( ))
                 cli_execute("ptrack add preprep");
             FKPrep();
-            cli_execute("ptrack add postprep");
+            if (!contains_text(get_property("thoth19_event_list"),"postprep"))
+                cli_execute("ptrack add postprep");
         }
         bulkFK();
     } finally {

@@ -215,7 +215,11 @@
         visit_url("showclan.php?whichclan="+clan_to_ID[clan]+"&action=joinclan&confirm=on");
     }
 
+    // stashgrab / stashreturn hop to a specific shared-stash clan (2047009940) and
+    // back. Only Fart Scauce is whitelisted there and wants this side effect, so
+    // they are no-ops on any other account.
     void stashgrab(item it){
+        if (my_name().to_lower_case() != "fart scauce") return;
         visit_url("showclan.php?whichclan=2047009940&action=joinclan&confirm=on");
         if (stash_amount(it) > 0)
             take_stash(it, 1 );
@@ -226,6 +230,7 @@
         }}
 
     void stashreturn(item it){
+        if (my_name().to_lower_case() != "fart scauce") return;
         visit_url("showclan.php?whichclan=2047009940&action=joinclan&confirm=on");
         cli_execute("unequip "+ it);
         if (available_amount(it) > 0)

@@ -21,13 +21,23 @@ void firstTimeSetup(){
 
 void main(){
     firstTimeSetup();
-    cli_execute("breakfast.ash");
-    if (numeric_modifier($modifier[familiar weight]) > 300 || (get_property("expressCardUsed") == "false" && my_adventures() < 5)){
+    if (dayType() == 0){
+        cli_execute("breakfast.ash");
+        if (get_property("_infiniteJellyUsed") == false)
+            cli_execute("preconsume");
+        if (have_effect($effect[Shadow Affinity]) == 0)
+            cli_execute("farto");
         cli_execute("stockingmimic");
-    }
-    if (user_confirm("Continue onto garboing?"))
+        if (contains_text(get_property("thoth19_event_list"),"postFK"))
+            cli_execute("dinner");
+    } else if (dayType() == 1){
+        cli_execute("breakfast.ash");
+        if (numeric_modifier("familiar weight") > 350)
+            cli_execute("stockingmimic");
+        if (contains_text(get_property("thoth19_event_list"),"postFK"))
+            cli_execute("preconsume");
         cli_execute("farto");
-    if (get_property("expressCardUsed") == "false" && my_adventures() < 5){
-        cli_execute("stockingmimic");
+        if (my_adventures() == 0)
+            cli_execute("dinner");
     }
 }
