@@ -668,7 +668,8 @@ void pearloP1(){
     aa("facsimile");
     while (looseFK()){
         set_property("famOverride","comma chameleon");
-        set_property("pantsOverride",", equip really nice swim");
+        if (have_effect($effect[driving waterproofly]) == 0)
+            set_property("pantsOverride",", equip really nice swim");
         set_property("acc3Override",", equip time lord badge of honor");
         set_property("subscript","looseFK");
         foreach str in $strings[anemone,trench,bar]{
@@ -690,7 +691,8 @@ void pearloP2(){
     }
     banishFish();
     foreach str in $strings[deepests,reef]{
-        set_property("pantsOverride", ", equip really nice swim");
+        if (have_effect($effect[driving waterproofly]) == 0)
+            set_property("pantsOverride", ", equip really nice swim");
         set_property("famOverride", "comma chameleon");
         if (get_property(pearls[str].donePref) == "false" || str == "reef"){
             if (numeric_modifier(pearls[str].ele_res) < 18)
@@ -765,7 +767,8 @@ void backup(){
         } else
             set_property("offOverride","");
         set_property("maxOverride","familiar weight, equip eternity codpiece");
-        set_property("pantsOverride",", equip really nice swim");
+        if (have_effect($effect[driving waterproofly]) == 0)
+            set_property("pantsOverride",", equip really nice swim");
         set_property("acc3Override",", equip backup camera");
         pearloP3();
     }
@@ -1014,10 +1017,10 @@ void bulkFK(){
     if (get_property("_pocketProfessorLectures").to_int() == 0 && get_property("_locketMonstersFought").split_string(",").count() < 3){
         set_property("maxOverride","familiar weight");
         set_property("pantsOverride",", equip tearaway Pants");
-        set_property("offOverride", ", equip kol con");
+        set_property("offOverride", ", equip kol con snowglobe");
         set_property("acc1Override", ", equip Mr. Cheeng's spectacles");
         set_property("acc2Override", ", equip Lucky gold ring");
-        set_property("offOverride", ", equip Portable Laughing Stock");
+        set_property("acc3Override", ", equip Portable Laughing Stock");
         if (get_property("commaFamiliar") != "Pocket Professor"){
             retrieve_item($item[Pocket Professor memory chip]);
             visit_url("inv_equip.php?which=2&action=equip&whichitem=10324");
