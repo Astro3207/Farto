@@ -46,6 +46,7 @@ void equipBonesAndConsume(){
 // Spend down to the count of unused Grimace Prime maps (so each remaining one
 // still covers an adventure), then hand off to mapgrim() for the rest.
 void spendGrimacePrimeMaps(){
+    equip($item[drunkula's wineglass]);
     int n = item_amount($item[Map to Safety Shelter Grimace Prime]);
     while (my_adventures() > n){
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
@@ -149,7 +150,7 @@ void finalChores(){
     cli_execute("garden pick");
     if (have_skill($skill[That's not a knife]))
         use_skill($skill[That's not a knife]);
-    cli_execute("acquire 1 one-day ticket to Dinseylandfill; acquire 1 Calzone of Legend; acquire 1 Deep Dish of Legend; acquire 1 Pizza of Legend; acquire 1 borrowed time; acquire 1 abstraction: category; acquire 1 non-Euclidean angle");
+    cli_execute("acquire 1 one-day ticket to Dinseylandfill; acquire 1 Calzone of Legend; acquire 1 Deep Dish of Legend; acquire 1 Pizza of Legend; acquire 1 borrowed time; acquire 1 abstraction: category");
     cli_execute("av-snapshot.ash");
     set_ccs("hobopolis");
     retrieve_item(5, $item[unblemished pearl]);

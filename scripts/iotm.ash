@@ -345,115 +345,6 @@
         cli_execute("refresh inv");
     }
 
-    // ── Prismatic Beret ──────────────────────────────────────────────────────────
-
-    int beretGearCap = get_property("autoBuyPriceLimit").to_int();   // max mall price for one piece of busking gear
-
-    // Total equipment power of hat + shirt + pants, as Beret Busking reads it (Tao doubles hat and pants).
-    int total_power(){
-        int n;
-        foreach sl in $slots[hat, shirt, pants]{
-            if (have_skill($skill[Tao of the Terrapin]) && (sl == $slot[hat] || sl == $slot[pants]))
-                n += get_power(equipped_item(sl)) * 2;
-            else
-                n += get_power(equipped_item(sl));
-        }
-        return n;
-    }
-
-    // Distinct effective power -> an item giving it in `sl`; `mult` is the Tao multiplier (2 pants, 1 shirt). Key 0 = wear nothing.
-    item [int] beretSlotOptions(slot sl, int mult, boolean allowMall){
-        item [int] opts;
-        opts[0] = $item[none];
-        foreach it in $items[]{
-            if (to_slot(it) != sl || !can_equip(it))
-                continue;
-            boolean owned = available_amount(it) > 0;
-            boolean buyable = allowMall && it.tradeable && mall_price(it) < beretGearCap;
-            if (!owned && !buyable)
-                continue;
-            int p = get_power(it) * mult;
-            if ((opts contains p) && available_amount(opts[p]) > 0)
-                continue;
-            opts[p] = it;
-        }
-        return opts;
-    }
-
-    void beretEquip(slot sl, item it){
-        if (it == $item[none]){
-            if (equipped_item(sl) != $item[none])
-                cli_execute("unequip " + sl);
-            return;
-        }
-        if (available_amount(it) == 0)
-            buy(1, it, beretGearCap);
-        equip(sl, it);
-    }
-
-    // Prismatic beret on the head, then a pants+shirt pair whose total_power() hits `target` exactly. Owned gear first, then mall.
-    void equipPower(int target){
-        int mult = have_skill($skill[Tao of the Terrapin]) ? 2 : 1;
-
-        retrieve_item($item[prismatic beret]);
-        equip($slot[hat], $item[prismatic beret]);
-
-        int remaining = target - get_power($item[prismatic beret]) * mult;
-        if (remaining < 0)
-            abort("equipPower: prismatic beret is " + (get_power($item[prismatic beret]) * mult) + " power, already over target " + target);
-
-        boolean tryPools(boolean allowMall){
-            item [int] pants  = beretSlotOptions($slot[pants], mult, allowMall);
-            item [int] shirts = beretSlotOptions($slot[shirt], 1, allowMall);
-            foreach pPow in pants{
-                if (pPow > remaining)
-                    continue;
-                int need = remaining - pPow;
-                if (!(shirts contains need))
-                    continue;
-                beretEquip($slot[pants], pants[pPow]);
-                beretEquip($slot[shirt], shirts[need]);
-                return true;
-            }
-            return false;
-        }
-
-        if (!tryPools(false) && !tryPools(true))
-            abort("equipPower: no pants+shirt combination reaches " + remaining + " power for target " + target);
-    }
-
-    // Drain the day's remaining Beret Busking casts (5/day), hitting the target power for each cast index.
-    // buffType is "meat" or anything containing "familiar weight".
-    void beretBusking(string buffType){
-        int [int] target;
-        if (buffType == "meat"){
-            target[0] = 440;
-            target[1] = 750;
-            target[2] = get_property("ascensionsToday").to_int() > 0 ? 780 : 495;
-            target[3] = 575;
-            target[4] = 665;
-        } else if (contains_text(buffType, "familiar weight")){
-            target[0] = 735;
-            target[1] = 320;
-            target[2] = 510;
-            target[3] = 605;
-            target[4] = 600;
-        } else {
-            abort("beretBusking: unknown buffType '" + buffType + "'");
-        }
-
-        foreach cast, want in target{
-            if (cast < get_property("_beretBuskingUses").to_int())
-                continue;
-            if (get_property("_beretBuskingUses").to_int() >= 5)
-                return;
-            equipPower(want);
-            if (total_power() != want)
-                abort("beretBusking: wanted " + want + " power for cast " + cast + ", assembled " + total_power());
-            use_skill($skill[Beret Busking]);
-        }
-    }
-
     // ── Combat Baseball ──────────────────────────────────────────────────────────
 
     int baseballPlayers(){
@@ -686,6 +577,16 @@
 
 // ─── 6. ADVENTURING-STATE CHECKS ─────────────────────────────────────────────
 
+    // 1 on a farming / aftercore day, 0 mid-ascension. This replaced the old
+    // get_property("ascensionsToday") checks and is the INVERSE polarity: where
+    // those read "0" this reads 1, where they read "1" this reads 0.
+    int dayType(){
+        if ((numeric_modifier($modifier[familiar weight]) > 350 && my_inebriety() == 0) || (my_inebriety() > 10 && have_effect($effect[shadow affinity]) == 0)){
+            return 1;
+        } else
+            return 0;
+    }
+
     void NCforce() {
         if (get_property("noncombatForcerActive") != "true") {
             if (have_item($item[apriling band helmet]) && to_int(get_property("_aprilBandTubaUses")) < 3 && have_item($item[Apriling band tuba])) {
@@ -830,7 +731,286 @@
         }
         return false;
     }
-// ─── 10. SCRIPT LIFECYCLE ────────────────────────────────────────────────────
+
+// ─── 10. INTEGRATED BUSKING ──────────────────────────────────────────────────
+
+    // Beret Busking (5 casts/day, tracked by _beretBuskingUses) grants buffs
+    // decided by total equipment power and the cast index.
+    // beret_busking_effects(power, cast) predicts the effects for any pairing.
+    //
+    // Power = sum over hat/shirt/pants of get_power(item) * slot multiplier:
+    // shirt x1, hat x(Tao ? 2 : 1), pants x(Tao ? 2 : 1) + (Hammertime ? 3 : 0).
+    // With a Mad Hatrack the beret rides the familiar and any hat fills the hat
+    // slot; without one the beret is the hat.
+    //
+    // beretBusking(modifiers) sweeps every reachable power for each remaining
+    // cast, scores the predicted effects against the weighted modifier spec,
+    // assembles the cheapest outfit hitting the best power, and casts. Owned gear
+    // only unless that can't solve, then it widens to mall buys up to
+    // autoBuyPriceLimit per piece.
+
+    int beretGearCap = get_property("autoBuyPriceLimit").to_int();   // max mall price per piece
+
+    record beretOutfit {
+        item hat;
+        item shirt;
+        item pants;
+        boolean ok;
+    };
+
+    float[string]   beretWeights;    // modifier name -> weight, per beretBusking() call
+    boolean[effect] beretWishlist;   // effects that should win a busk outright
+    boolean         beretAllowMall;  // widen candidate gear to mall buys
+    boolean       beretClothesCached;
+    item[int]     beretHats;
+    item[int]     beretPants;
+    item[int]     beretShirts;
+
+    // Power multiplier for a slot, as Beret Busking reads it.
+    int beretMult(slot sl){
+        int tao = have_skill($skill[Tao of the Terrapin]) ? 2 : 1;
+        if (sl == $slot[shirt]) return 1;
+        if (sl == $slot[hat])   return tao;
+        if (sl == $slot[pants]) return tao + (have_effect($effect[Hammertime]) > 0 ? 3 : 0);
+        return 0;
+    }
+
+    // Power of the currently equipped hat/shirt/pants, for the post-assembly check.
+    int beretEquippedPower(){
+        int n;
+        foreach sl in $slots[hat, shirt, pants]
+            n += beretMult(sl) * get_power(equipped_item(sl));
+        return n;
+    }
+
+    // "Familiar Weight" | "5 Meat Drop, 10 Familiar Weight" -> {name: weight}.
+    // Names go straight to numeric_modifier(), so they must be real modifier names.
+    float[string] beretParseModifiers(string spec){
+        float[string] out;
+        foreach _, raw in split_string(spec, ","){
+            matcher m = create_matcher("^\\s*(?:([0-9]+(?:\\.[0-9]+)?)\\s+)?(.+?)\\s*$", raw);
+            if (!find(m) || m.group(2) == "") continue;
+            out[m.group(2)] = m.group(1) == "" ? 1.0 : m.group(1).to_float();
+        }
+        return out;
+    }
+
+    // Comma-separated effect names -> set; unrecognised names are dropped.
+    boolean[effect] beretParseEffects(string spec){
+        boolean[effect] out;
+        foreach _, raw in split_string(spec, ","){
+            matcher m = create_matcher("^\\s*(.+?)\\s*$", raw);
+            if (!find(m)) continue;
+            effect e = to_effect(m.group(1));
+            if (e != $effect[none]) out[e] = true;
+        }
+        return out;
+    }
+
+    // Value of one busk's predicted effects (meat payout skipped). A wishlist
+    // effect is worth a huge constant so any busk granting one beats a busk that
+    // only stacks modifiers; everything else scores as the weighted modifier sum.
+    float beretScore(int[effect] effects){
+        float total;
+        foreach e, dur in effects{
+            if (e == $effect[none]) continue;
+            if (beretWishlist contains e){
+                total += 1000000.0 + dur;
+                continue;
+            }
+            foreach mod in beretWeights
+                total += beretWeights[mod] * numeric_modifier(e, mod);
+        }
+        return total;
+    }
+
+    void beretResetClothes(){
+        beretClothesCached = false;
+        clear(beretHats);
+        clear(beretPants);
+        clear(beretShirts);
+    }
+
+    // Candidate gear per slot, built once per (owned-only / mall) pass.
+    void beretBuildClothes(){
+        if (beretClothesCached) return;
+        boolean hatrack = have_familiar($familiar[Mad Hatrack]);
+        foreach it in $items[]{
+            slot sl = to_slot(it);
+            if (sl != $slot[hat] && sl != $slot[pants] && sl != $slot[shirt]) continue;
+            if (!can_equip(it)) continue;
+            if (!have_item(it) && (!beretAllowMall || !it.tradeable || mall_price(it) > beretGearCap)) continue;
+
+            if (sl == $slot[hat]){
+                if (hatrack) beretHats[count(beretHats)] = it;   // beret goes on the rack, not here
+            } else if (sl == $slot[pants]){
+                beretPants[count(beretPants)] = it;
+            } else {
+                beretShirts[count(beretShirts)] = it;
+            }
+        }
+        if (hatrack) beretHats[count(beretHats)] = $item[none];
+        else         beretHats[0] = $item[prismatic beret];
+        beretPants[count(beretPants)]   = $item[none];
+        beretShirts[count(beretShirts)] = $item[none];
+        beretClothesCached = true;
+    }
+
+    // Every distinct power total the candidate wardrobe can reach.
+    int[int] beretPowerSums(){
+        beretBuildClothes();
+        boolean[int] hp;
+        boolean[int] pp;
+        boolean[int] sp;
+        foreach _, h in beretHats   hp[beretMult($slot[hat])   * get_power(h)] = true;
+        foreach _, p in beretPants  pp[beretMult($slot[pants]) * get_power(p)] = true;
+        foreach _, s in beretShirts sp[get_power(s)] = true;
+
+        boolean[int] sums;
+        foreach a in hp
+            foreach b in pp
+                foreach c in sp
+                    sums[a + b + c] = true;
+
+        int[int] out;
+        foreach v in sums
+            out[count(out)] = v;
+        return out;
+    }
+
+    // The reachable power whose predicted busk scores highest for this cast.
+    int beretBestPower(int cast){
+        int[int] sums = beretPowerSums();
+        int best;
+        float bestScore;
+        boolean seen;
+        foreach _, power in sums{
+            float sc = beretScore(beret_busking_effects(power, cast));
+            if (!seen || sc > bestScore){
+                seen = true;
+                bestScore = sc;
+                best = power;
+            }
+        }
+        return best;
+    }
+
+    int beretPrice(item it){
+        return (it == $item[none] || have_item(it)) ? 0 : mall_price(it);
+    }
+
+    // power -> cheapest single item reaching it in this slot; owned beats bought.
+    item[int] beretItemsByPower(item[int] pool, int cap, int mult){
+        item[int] m;
+        foreach _, it in pool{
+            int p = get_power(it) * mult;
+            if (p > cap) continue;
+            if (!(m contains p)){
+                m[p] = it;
+                continue;
+            }
+            if (!have_item(m[p]) && (have_item(it) || mall_price(it) < mall_price(m[p])))
+                m[p] = it;
+        }
+        return m;
+    }
+
+    // Cheapest hat/shirt/pants whose multiplied powers sum to exactly `power`.
+    beretOutfit beretFindOutfit(int power){
+        beretBuildClothes();
+        item[int] hats   = beretItemsByPower(beretHats,   power, beretMult($slot[hat]));
+        item[int] pants  = beretItemsByPower(beretPants,  power, beretMult($slot[pants]));
+        item[int] shirts = beretItemsByPower(beretShirts, power, 1);
+
+        beretOutfit best;
+        int bestPrice;
+        boolean seen;
+        foreach a, h in hats
+            foreach b, p in pants
+                foreach c, s in shirts{
+                    if (a + b + c != power) continue;
+                    int price = beretPrice(h) + beretPrice(p) + beretPrice(s);
+                    if (seen && price >= bestPrice) continue;
+                    seen = true;
+                    bestPrice = price;
+                    best.hat = h;
+                    best.pants = p;
+                    best.shirt = s;
+                    best.ok = true;
+                }
+        return best;
+    }
+
+    // Equip one slot: unequip for none, buy up to the cap if we don't own it.
+    void beretEquip(slot sl, item it){
+        if (it == $item[none]){
+            if (equipped_item(sl) != $item[none])
+                cli_execute("unequip " + sl);
+            return;
+        }
+        if (available_amount(it) == 0)
+            buy(1, it, beretGearCap);
+        equip(sl, it);
+    }
+
+    // Solve and cast every remaining Beret Busking use.
+    //   modifiers  weighted numeric modifiers, e.g. "Familiar Weight" or
+    //              "5 Meat Drop, 10 Familiar Weight"  (pass "" to skip)
+    //   effects    comma-separated effect names to prioritise; a busk granting
+    //              one of these outscores any modifier-only busk  (pass "" to skip)
+    void beretBusking(string modifiers, string effects){
+        if (!have_item($item[prismatic beret]) && !have_skill($skill[Beret Busking]))
+            return;
+        beretWeights  = beretParseModifiers(modifiers);
+        beretWishlist = beretParseEffects(effects);
+        if (count(beretWeights) == 0 && count(beretWishlist) == 0)
+            abort("beretBusking: nothing to value — modifiers '" + modifiers + "', effects '" + effects + "'");
+
+        boolean hatrack = have_familiar($familiar[Mad Hatrack]);
+        beretAllowMall = true;
+        beretResetClothes();
+
+        int cast = get_property("_beretBuskingUses").to_int();
+        if (cast <= 4){
+            int power = beretBestPower(cast);
+            beretOutfit fit = beretFindOutfit(power);
+
+            // Owned gear couldn't build it — widen to mall buys once, then stay widened.
+            if (!fit.ok && !beretAllowMall){
+                beretAllowMall = true;
+                beretResetClothes();
+                power = beretBestPower(cast);
+                fit = beretFindOutfit(power);
+            }
+            if (!fit.ok)
+                abort("beretBusking: no outfit reaches " + power + " power for cast " + cast);
+
+            if (hatrack){
+                use_familiar($familiar[Mad Hatrack]);
+                equip($slot[familiar], $item[prismatic beret]);
+            } else {
+                retrieve_item($item[prismatic beret]);
+            }
+            beretEquip($slot[hat],   fit.hat);
+            beretEquip($slot[shirt], fit.shirt);
+            beretEquip($slot[pants], fit.pants);
+
+            if (beretEquippedPower() != power)
+                abort("beretBusking: wanted " + power + " power for cast " + cast
+                    + ", assembled " + beretEquippedPower());
+
+            print("Beret Busk " + (cast + 1) + ": power " + power + " — "
+                + fit.hat + " / " + fit.shirt + " / " + fit.pants, "blue");
+            use_skill($skill[Beret Busking]);
+            cast += 1;
+        }
+    }
+
+    void beretBusking(string modifiers){
+        beretBusking(modifiers, "");
+    }
+
+// ─── 99. SCRIPT LIFECYCLE ────────────────────────────────────────────────────
 
     // starter(): point mafia's between-battle / after-adventure / choice hooks and the CCS at this environment.
     void starter(){

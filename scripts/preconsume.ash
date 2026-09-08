@@ -1,3 +1,5 @@
+import iotm.ash;
+
 void astral(){
     //get salty mouth the night before
     if (item_amount($item[astral six-pack])>0){
@@ -155,7 +157,7 @@ void main(){
     cupOf13s();
     timeArrow();
     clanAdv();
-    if (get_property("ascensionsToday") == 0){
+    if (dayType() == 1){
         astral();
         yeti();
         if (get_property("_borrowedTimeUsed") == false){

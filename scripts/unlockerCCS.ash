@@ -246,7 +246,7 @@ void main(int round, monster mob, string page_text) {
     }
     if (get_property("subscript") =="screech"){
         use_skill($skill[%fn, Release the Patriotic Screech!]);
-        if (get_property("ascensionsToday") == 0){
+        if (dayType() == 1){
             if (get_property("_snokebombUsed").to_int() < 3)
                 use_skill($skill[snokebomb]);
             else
@@ -324,7 +324,7 @@ void main(int round, monster mob, string page_text) {
     if ((my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[stocking mimic]) && last_monster() == $monster[black crayon flower]){
         use_skill($skill[lecture on relativity]);
         use_skill($skill[Tear Away your Pants!]);
-        if (get_property("ascensionsToday") == "0")
+        if (dayType() == 1)
             use_skill($skill[deliver your thesis!]);
         if (my_hp() < 500)
             throw_items($item[new age healing crystal],$item[new age healing crystal]);
@@ -376,7 +376,6 @@ void main(int round, monster mob, string page_text) {
     if (sauceLocs[my_location()] || sauceMobs[last_monster()]) {
         if (!free_monster() && !free_location()){
             free_run(page_text);
-            free_kill(page_text);
         }
         sauce(7);
         attack();
@@ -542,7 +541,7 @@ void main(int round, monster mob, string page_text) {
         } else if (my_location() == $location[The Ancient Hobo Burial Ground]) {
             free_run(page_text);
             free_kill(page_text);
-            attack(5);
+            attack(15);
         } else if ($locations[The Purple Light District, The Heap,Burnbarrel Blvd.] contains my_location()) {
             if ((my_location() == $location[The Purple Light District] && to_int(get_property("PLD_left")) >= 50 && get_property("cleeshPLD") == "true") ||
             (my_location() == $location[The Heap]) && get_property("cleeshHeap") == "true"){
@@ -689,17 +688,23 @@ void main(int round, monster mob, string page_text) {
     }
 
     if (my_location() == $location[The Slime Tube]) {
+        // After a uvula is tickled we carry the rusty grave robbing shovel to
+        // squeeze a gall bladder; doing so spends the shovel and empties the
+        // weapon slot. Once it's gone, advance <clanId>Tickled to "done" so
+        // slime.ash / preadventure.ash stop re-equipping it.
         if (get_property(get_clan_id() + "Tickled") == "tickled"){
             while (have_equipped($item[rusty grave robbing shovel]))
                 throw_item($item[facsimile dictionary]);
             if (equipped_item($slot[weapon]) == $item[none])
                 set_property(get_clan_id() + "Tickled","done");
         }
+        // Mother Slime: stack Backup Dancers before the damage skills below.
         if (last_monster() == $monster[mother slime]){
             use_skill($skill[Raise Backup Dancer]);
             use_skill($skill[Raise Backup Dancer]);
         }
         free_kill(page_text); free_run(page_text); insta_kill(page_text);
+        // Shadow bricks are the cheap kill while ML-farming on the purse rat.
         if (my_familiar() == $familiar[purse rat] && have_effect($effect[coated in slime]) > 10 && to_int(get_property("_shadowBricksUsed")) < 13){
             throw_item($item[shadow brick]);
         }
@@ -867,7 +872,6 @@ void main(int round, monster mob, string page_text) {
     }
 
     // ── Fallback ──────────────────────────────────────────────────────────────
-    free_kill(page_text);
     insta_kill(page_text);
     sauce(30);
     attack();

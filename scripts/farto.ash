@@ -114,7 +114,7 @@ void garbo(){
     } else {
         set_property("acc1Override","");
     }
-    if ((to_int(get_property("_pantsgivingCount")) >= 500) || (to_int(get_property("_pantsgivingCount")) >= 50 && get_property("ascensionsToday") == "1")){
+    if ((to_int(get_property("_pantsgivingCount")) >= 500) || (to_int(get_property("_pantsgivingCount")) >= 50 && dayType() == 0)){
         if (available_amount($item[pantsgiving]) > 0)
             stashreturn($item[pantsgiving]);
         if (my_fullness() < fullness_limit() || my_inebriety() < inebriety_limit())
@@ -148,7 +148,7 @@ void cowo(){
     } else {
         set_property("acc1Override","");
     }
-    if (have_effect($effect[driving waterproofly]) > 0 && (to_int(get_property("_pantsgivingCount")) >= 500 && get_property("ascensionsToday") == 0) || (to_int(get_property("_pantsgivingCount")) >= 50 && get_property("ascensionsToday") == 1)){
+    if (have_effect($effect[driving waterproofly]) > 0 && (to_int(get_property("_pantsgivingCount")) >= 500 && dayType() == 1) || (to_int(get_property("_pantsgivingCount")) >= 50 && dayType() == 0)){
         if (available_amount($item[pantsgiving]) > 0)
             stashreturn($item[pantsgiving]);
         if (my_fullness() < fullness_limit() || my_inebriety() < inebriety_limit())

@@ -173,9 +173,9 @@ void outskirts() {
 // In-run free kill: day 2 pushes the Black Forest / Guild challenge, day 1 spends
 // a yellow/red free kill in the Shadow Rift with the matching parka / dart holster.
 void inRunFK(){
-    if (get_property("script") != "6-kiss" && get_property("script") != "TTT" && get_property("script") != "slime" && get_property("ascensionsToday") == "0")
+    if (get_property("script") != "6-kiss" && get_property("script") != "TTT" && get_property("script") != "slime" && dayType() == 1)
         return;
-    if (get_property("ascensionsToday") == "1"){
+    if (dayType() == 0){
         if (to_int(get_property("blackForestProgress")) < 5){
             blackForest();
         } else {
@@ -234,9 +234,9 @@ void friars(){
 // Burn the day's Law of Averages while under 100 adventures: unconditional on day
 // 1, day 2 only once Steely-Eyed Squint is up so the copy is worthwhile.
 void lawOfAverages(){
-    if (my_adventures() < 100 && get_property("_lawOfAveragesUsed") == "0" && get_property("ascensionsToday") == "0")
+    if (my_adventures() < 100 && get_property("_lawOfAveragesUsed") == "0" && dayType() == 1)
         use($item[law of averages]);
-    if (my_adventures() < 100 && get_property("_lawOfAveragesUsed") == "0" && get_property("ascensionsToday") == "1" && have_effect($effect[Steely-Eyed Squint]) > 0)
+    if (my_adventures() < 100 && get_property("_lawOfAveragesUsed") == "0" && dayType() == 0 && have_effect($effect[Steely-Eyed Squint]) > 0)
         use($item[law of averages]);
 }
 
@@ -247,7 +247,7 @@ void sweatpants(){
         return;
     if (get_property("_sweatOutSomeBoozeUsed").to_int() < 3 && my_inebriety() > 3)
         use_skill($skill[sweat out some booze]);
-    else if (to_int(get_property("_pantsgivingCount")) >= 500 && ((get_property("ascensionsToday") == "1" && my_adventures() > 100) || get_property("ascensionsToday") == "0"))
+    else if (to_int(get_property("_pantsgivingCount")) >= 500 && ((dayType() == 0 && my_adventures() > 100) || dayType() == 1))
         use_skill($skill[Make Sweat-Ade]);
 }
 
@@ -361,7 +361,7 @@ void unlock_zeppelin(){
         return;
     set_property("maxOverride","sleaze damage, sleaze spell damage");
     set_property("mainOverride",", equip candy cane sword cane");
-    foreach ef in $effects[Bendin' Hell,Belch the Rainbow&trade;,Amorous,Blood-Gorged,Sleazy Hands,Benetton's Medley of Diversity,Greasy Peasy,Takin' It Greasy,Cuts Like a Lightly-Buttered Knife,Colorful Gratitude,Sleazy Weapon,Stained,Crud&eacute;,Why So Serious?,Improprie Tea,Boschface]{
+    foreach ef in $effects[Bendin' Hell,Belch the Rainbow&trade;,Amorous,Blood-Gorged,Sleazy Hands,Benetton's Medley of Diversity,Greasy Peasy,Takin' It Greasy,Cuts Like a Lightly-Buttered Knife,Colorful Gratitude,Sleazy Weapon,Stained,Crud&eacute;,Why So Serious?,Improprie Tea,Boschface,All Glory To the Toad,Herder\, Bitter\, Fester\, Stranger]{
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
@@ -495,7 +495,7 @@ void constructBanish(){
 void banishBeast(){
     if (contains_text(get_property("banishedPhyla"),"beast"))
         return;
-    if (patrioticDelays() < 11)
+    if (patrioticDelays() < 11 && dayType() == 1)
         abort("Script out alternate banishing for gingerbread");
     screechRefresh();
     set_property("subscript","screech");
@@ -571,7 +571,7 @@ void freeKillTurnGuard(){
 void endOfDayHandling(){
     if (my_adventures() != 0)
         return;
-    if (get_property("ascensionsToday") == 1 && my_inebriety() < inebriety_limit())
+    if (dayType() == 0 && my_inebriety() < inebriety_limit())
         abort("CONSUME manually");
     if (have_equipped($item[drunkula's wineglass]))
         abort("Done for the day");
@@ -604,7 +604,7 @@ void endOfDayHandling(){
             equip($slot[acc1],$item[angelbone dice]);
             cli_execute("refresh all; CONSUME ALL");
             return;
-        } else if (my_inebriety() == inebriety_limit() && get_property("ascensionsToday") == 0) {
+        } else if (my_inebriety() == inebriety_limit() && dayType() == 1) {
             cli_execute("CONSUME NIGHTCAP");
             cli_execute("equip drunkula's wineglass; unequip devilbone rosary; unequip angelbone dice; familiar cookbookbat");
             return;
@@ -613,7 +613,7 @@ void endOfDayHandling(){
 }
 
 int pantsgivingAvailable(){
-    if (get_property("ascensionsToday") == "1")
+    if (dayType() == 0)
         return -1;
     if (get_property("_pantsgivingCount").to_int() >= 5){
         if (get_property("_pantsgivingCount").to_int() >= 50){
@@ -675,11 +675,13 @@ void postAdv(){
             visit_url("runskillz.php?action=Skillz&whichskill=144&targetplayer=0&quantity=1");
             visit_url("choice.php?whichchoice=1103&option=1&num="+uniInt);
         }
+    if (get_property("_aug16Cast") == "false" && my_fullness() > 0)
+        use_skill($skill[Aug. 16th: Roller Coaster Day!]);
     sweatpants();
     if (get_property("leprecondoInstalled") != "19,9,13,18" && to_int(get_property("_leprecondoRearrangements")) < 3){
-        leprecondo("19,9,13,18");
+        leprecondo("19,9,13,18,25");
     }
-    if (have_equipped($item[drunkula's wineglass]) && get_property("ascensionsToday") == 1)
+    if (have_equipped($item[drunkula's wineglass]) && dayType() == 0)
         abort("Done for the day");
     if ($familiar[cooler yeti].experience >= 400 && get_property("_coolerYetiAdventures") == "false" && my_inebriety() <= (inebriety_limit() - 4) && my_fullness() >= 2 && get_property("script") != "FreeKill"){
         cli_execute ("familiar cooler yeti");
@@ -687,7 +689,7 @@ void postAdv(){
         run_choice(2);
         cli_execute("drink doc clock's t");
     }
-    if (my_inebriety() < inebriety_limit() && ((to_int(get_property("familiarSweat")) >= 672 && get_property("ascensionsToday") == 1) || (to_int(get_property("familiarSweat")) >= 1024 && get_property("ascensionsToday") == 0))){
+    if (my_inebriety() < inebriety_limit() && ((to_int(get_property("familiarSweat")) >= 672 && dayType() == 0) || (to_int(get_property("familiarSweat")) >= 1024 && dayType() == 1))){
         visit_url("inventory.php?"+my_hash()+"&action=distill");
         run_choice(1);
     }
@@ -719,7 +721,7 @@ void forceNoncombats(){
             use_skill($skill[Cincho: Fiesta Exit]);
         }
     }
-    if ((get_property("questL06Friar") == "started" || get_property("questL06Friar") == "step1") && get_property("ascensionsToday") == "1" && get_property("seaAftercore") == "true"){
+    if ((get_property("questL06Friar") == "started" || get_property("questL06Friar") == "step1") && dayType() == 0 && get_property("seaAftercore") == "true"){
         if (get_property("questL06Friar") == "started")
             visit_url("friars.php?action=friars");
         while (get_property("noncombatForcerActive") == "true" && (get_property("questL06Friar") == "started" || get_property("questL06Friar") == "step1")){
@@ -738,7 +740,7 @@ void forceNoncombats(){
 // grind observational glasses at the Laugh Floor, farm backstage items, then run
 // the Pandamonium / Sven band-member gift sequence. Gated on 5 spikolodon spikes.
 void azazelUnicornQuest(){
-    if (get_property("_spikolodonSpikeUses").to_int() == 5 && get_property("questM10Azazel") != "finished" && (delay() || my_adventures() < 70) && get_property("seaAftercore") == "true" && get_property("ascensionsToday") == "1"){
+    if (get_property("_spikolodonSpikeUses").to_int() == 5 && get_property("questM10Azazel") != "finished" && (delay() || my_adventures() < 70) && get_property("seaAftercore") == "true" && dayType() == 0){
         if (have_effect($effect[Coated in Slime]) <= 6 && have_effect($effect[Coated in Slime]) > 0)
             camo();
         location [item] friarItemLocations = {
@@ -881,7 +883,7 @@ void spendAdv(){
         blackForest();
     while (my_adventures() < 65 && get_property("questG09Muscle") != "finished" || get_property("questL05Goblin") == "started")
         outskirts();
-    while (get_property("_spikolodonSpikeUses").to_int() == 5 && get_property("questM16Temple") != "finished" && my_adventures() < 70 && get_property("seaAftercore") == "true" && get_property("ascensionsToday") == "1"){
+    while (get_property("_spikolodonSpikeUses").to_int() == 5 && get_property("questM16Temple") != "finished" && my_adventures() < 70 && get_property("seaAftercore") == "true" && dayType() == 0){
         if (have_effect($effect[Patent Aggression]) > 0)
             break;
         swordPrep();
@@ -914,7 +916,7 @@ void spendAdv(){
         }
         set_property("acc1Override","");
     }
-    if (get_property("ascensionsToday") == 1 &&  my_adventures() < 50)
+    if (dayType() == 0 &&  my_adventures() < 50)
         banishBeast();
     level11Sprint();
 }
@@ -929,14 +931,13 @@ void main(){
     }
     try {
         postAdv();
-        if (my_adventures() != 0 && get_property("inSpendAdv") != "true"){
-            if ($strings[6-kiss,coat,stick] contains get_property("script")){
-            } else {
-                try {
-                    spendAdv();
-                } finally {
-                    set_property("inSpendAdv","false");
-                }
+        // These scripts drive their own turn spending; everything else hands off to spendAdv().
+        if (my_adventures() != 0 && get_property("inSpendAdv") != "true"
+            && !($strings[6-kiss,coat,stick,slime] contains get_property("script"))){
+            try {
+                spendAdv();
+            } finally {
+                set_property("inSpendAdv","false");
             }
         }
     } finally {

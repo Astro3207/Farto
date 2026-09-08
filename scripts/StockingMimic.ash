@@ -29,7 +29,7 @@ void monkeyPaw(string buffType){
                 cli_execute("monkeypaw effect " + ef);
         }
     } else if (buffType == "familiar weight"){
-        foreach ef in $effects[covetous robbery, joy, Chow Downed, heavy petting, squirming like a toad,Braaaaaains, Low on the Hog, Leisurely Amblin', frosty,sinuses for miles]{
+        foreach ef in $effects[covetous robbery, joy, Chow Downed, squirming like a toad, hip to the jive, all is forgiven, heavy petting, Braaaaaains, Low on the Hog, Leisurely Amblin', frosty,sinuses for miles]{
             if (to_int(get_property("_monkeyPawWishesUsed")) == 5)
                 return;
             if (have_effect(ef) == 0)
@@ -147,7 +147,9 @@ void prepBuffs(){
     }
 
     //fam weight
-    foreach ef in $effects[Robot Friends,Healthy Green Glow,Chorale of Companionship,Human-Fish Hybrid,Whole Latte Love,Shortly Stacked,Thoughtful Empathy,Leash of Linguini,Empathy,Black Tongue,Man's Worst Enemy,Billiards Belligerence,You Can Really Taste the Dormouse,Kindly Resolve,Human-Machine Hybrid,Shrimpin' Ain't Easy,Over-Familiar With Dactyls,Loyal Tea,Warm Shoulders,One Foot Heavier,Work For Hours a Week,A Girl Named Sue,Panna Consideration,Loyal as a Rock,Candied Devil,Wildsun Boon,Only Dogs Love a Drunken Sailor,Best Pals,Heart of Green,Bestial Sympathy,Herder\, Bitter\, Fester\, Stranger,Party Soundtrack,Shortly Wired,Greased-Up Familiar,Crocodile Tear]{
+    foreach ef in $effects[Robot Friends,Healthy Green Glow,Chorale of Companionship,Human-Fish Hybrid,Whole Latte Love,Shortly Stacked,Thoughtful Empathy,Leash of Linguini,Empathy,Black Tongue,Man's Worst Enemy,Billiards Belligerence,You Can Really Taste the Dormouse,Kindly Resolve,Human-Machine Hybrid,Shrimpin' Ain't Easy,Over-Familiar With Dactyls,Loyal Tea,Warm Shoulders,One Foot Heavier,Work For Hours a Week,A Girl Named Sue,Panna Consideration,Loyal as a Rock,Candied Devil,Wildsun Boon,Only Dogs Love a Drunken Sailor,Best Pals,Heart of Green,Bestial Sympathy,Herder\, Bitter\, Fester\, Stranger,Party Soundtrack,Shortly Wired,Greased-Up Familiar,Crocodile Tear,Spiced Out]{
+        if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]) && ef.attributes != "nohookah")
+            continue;
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
@@ -160,21 +162,29 @@ void prepBuffs(){
 
     //Monster level. Needs reconsidering to work with weakMonsters()
     foreach ef in $effects[Ur-Kel's Aria of Annoyance,Pride of the Puffin,Bloodbathed,Misplaced Rage,Manbait,Sweetbreads Flamb&eacute;,Red Lettered,Spangled Star,Tortious,Litterbug,Not Sharing,Para-lyzed Jaw,Contemptible Emanations,Lapdog,Ashen Burps,The Cupcake of Wrath,Gelded,Mysteriously Handsome]{
+        if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
+            continue;
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
     //meat drop
     foreach ef in $effects[Loded,Incredibly Well Lit,Tubes of Universal Meat,Holiday Bliss,So You Can Work More...,Legendary Pasta Eyeball,Polka of Plenty]{
+        if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
+            continue;
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
     //item drop
     foreach ef in $effects[Steely-Eyed Squint,Spookyravin',Unbarking Dogs,Cold Hearted,One Very Clear Eye,Materiel Intel,Spitting Rhymes,Joyful Resolve,Lubricating Sauce]{
+        if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
+            continue;
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
     //initiative
     foreach ef in $effects[Bow-Legged Swagger,Natural 1,Patent Alacrity,Silent Hunting,Clear Ears\, Can't Lose,Poppy Performance,Hiding in Plain Sight,Digitalis\, Dig It,Ass Over Teakettle,Song of Slowness,Synthetic Buzz,Seal Clubbing Frenzy,Springy Fusilli]{
+        if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
+            continue;
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
@@ -202,7 +212,7 @@ void doSpleen(){
 
 // Effect extenders on day 1 of ascensions, some nohookah food on day 2
 void dieting(){
-	if (get_property("ascensionsToday") == "1"){
+	if (dayType() == 0){
 		// Strip every effect that might get in the way of effect extenders
 		foreach ef in my_effects(){
 			if ($effects[Shadow Affinity, On the Trail, Lucky!, Apriling Band Battle Cadence,
@@ -213,7 +223,7 @@ void dieting(){
 		}
 		if (have_effect($effect[Shadow Affinity]) == 0)
 			abort("dieting: Shadow Affinity fell off before the rollover-day binge");
-		if (get_property("ascensionsToday") == "1")
+		if (dayType() == 0)
 			use($item[law of averages]);
 		eat(fullness_limit() - my_fullness(), $item[thyme jelly donut]);
 		drink(inebriety_limit() - my_inebriety(), $item[Temps Tempranillo]);
@@ -231,8 +241,6 @@ void dieting(){
         if (get_property("spiceMelangeUsed") == "false" || get_property("_aug16Cast") == "false"){
             if (get_property("spiceMelangeUsed") == "false")
                 use ($item[spice melange]);
-            if (get_property("_aug16Cast") == "false")
-                use_skill($skill[Aug. 16th: Roller Coaster Day!]);
         }
 		eat(fullness_limit() - my_fullness(), $item[thyme jelly donut]);
 		drink(inebriety_limit() - my_inebriety(), $item[Temps Tempranillo]);
@@ -278,7 +286,7 @@ void FKPrep(){
 	// pref) as the native KoL auto-attack -- round 0 only works when the macro is
 	// set natively, not embedded in a mafia CCS. starter() just cleared the
 	// auto-attack, so re-arm it here.
-    if (get_property("ascensionsToday") == 1){
+    if (dayType() == 0){
         int peevp = pvp_attacks_left();
         if (peevp > 0 && count(current_pvp_stances( )) > 0) {
             cli_execute("PVP_MAB; unequip pants");
@@ -298,7 +306,21 @@ void FKPrep(){
 
 	step("phase: FKPrep buffs");
 	useMayamRings();
-	beretBusking("familiar weight");
+    if (have_effect($effect[Hammertime]) == 0)
+        use($item[too legit potion]);
+    effect[int] beretBuffs;
+    if (dayType() == 0){
+        beretBuffs[0] = $effect[Optimist Primal];
+        beretBuffs[1] = $effect[Whole Latte Love];
+        beretBuffs[2] = $effect[Bureaucratized];
+        beretBuffs[3] = $effect[Christmessy];
+        beretBuffs[4] = $effect[Sweet Incentive];
+    } else if (dayType() == 1){
+        abort();
+    }
+    while (get_property("_beretBuskingUses").to_int() < 4){
+        beretBusking("familiar weight",beretBuffs[get_property("_beretBuskingUses").to_int()].to_string());
+    }
 	prepBuffs();
 	monkeypaw("familiar weight");
 
@@ -351,7 +373,7 @@ void FKPrep(){
 	}
 
 	step("phase: FKPrep hidden temple");
-	if (get_property("ascensionsToday").to_int() == 0
+	if (dayType() == 1
 		&& my_ascensions() != get_property("lastTempleAdventures").to_int()
 		&& get_property("questM16Temple") == "finished"){
 		use($item[stone wool]);
@@ -483,7 +505,7 @@ void shadowRealmFK(){
     } else {
         set_property("acc3Override",",equip petrified wood wizard's pouch");
     }
-    if (to_int(get_property("_batWingsSwoopUsed")) < 11 && get_property("ascensionsToday") == "1")
+    if (to_int(get_property("_batWingsSwoopUsed")) < 11 && dayType() == 0)
         set_property("backOverride",", equip bat wings");
     if (get_property("questRufus") == "unstarted")
         use($item[closed-circuit pay phone]);
@@ -715,7 +737,7 @@ void habitatRecall(){
         while (to_int(get_property("_monsterHabitatsFightsLeft")) > 0 || get_property("beGregariousFightsLeft").to_int() > 0){
             mimicPrep();
             MobiusMaybe();
-            if (get_property("beGregariousFightsLeft").to_int() == 1 && get_property("beGregariousCharges").to_int() == 0 && to_int(get_property("_monsterHabitatsRecalled")) == 3 && get_property("ascensionsToday") == "0"){
+            if (get_property("beGregariousFightsLeft").to_int() == 1 && get_property("beGregariousCharges").to_int() == 0 && to_int(get_property("_monsterHabitatsRecalled")) == 3 && dayType() == 1){
                 if (mall_price($item[flask of embalming fluid]) > 1000)
                     abort("reanimated reanimator is too expensive rn");
                 retrieve_item($item[flask of embalming fluid]);
@@ -746,7 +768,7 @@ void backup(){
     set_property("acc3Override","");
 }
 void mimicEgg(){
-    while (item_amount($item[mimic egg]) > 0 && get_property("ascensionsToday") == 0){
+    while (item_amount($item[mimic egg]) > 0 && dayType() == 1){
         mimicPrep();
         main@preadventure( );
         cli_execute("c2t_megg fight Black Crayon Mer-kin");
@@ -812,7 +834,7 @@ void weakMonsters(){
         gingerbread();
     }
     step("phase: weakMonsters pearl P1");
-    if (looseFK() && get_property("ascensionsToday") == "1"){
+    if (looseFK() && dayType() == 0){
         pearloP1();
     }
     set_property("subscript","weakling");
@@ -927,7 +949,7 @@ void bulkFK(){
         retrieve_item($item[4-D camera]);
     if (item_amount($item[pulled green taffy]) == 0)
         retrieve_item($item[pulled green taffy]);
-    if (my_spleen_use() < spleen_limit() && get_property("ascensionsToday") == "0"){
+    if (my_spleen_use() < spleen_limit() && dayType() == 1){
         int toChew = floor((spleen_limit()-my_spleen_use())/2);
         chew (toChew,$item[Extrovermectin&trade;]);
         int mojo = 3-get_property("currentMojoFilters").to_int();
@@ -948,7 +970,7 @@ void bulkFK(){
     step("phase: bulkFK shadow rift");
     if (get_property("_shadowAffinityToday") == "false")
         shadowRealmFK();
-    while (have_effect($effect[shadow affinity]) > 0 && get_property("ascensionsToday") == "0"){
+    while (have_effect($effect[shadow affinity]) > 0 && dayType() == 1){
         cli_execute("uneffect coldform");
         shadowRealmFK();
     }
@@ -1035,7 +1057,7 @@ void bulkFK(){
         main@preadventure( );
         use($item[envyfish egg]);
     }
-    if (get_property("ascensionsToday") == "1" && fullness_limit() - my_fullness() >= 1){
+    if (dayType() == 0 && fullness_limit() - my_fullness() >= 1){
         equip($item[devilbone corset]);
         equip($slot[acc3],$item[angelbone chopsticks]);
         if (fullness_limit() - my_fullness() >= 3)
@@ -1045,7 +1067,7 @@ void bulkFK(){
     step("phase: bulkFK seals");
     seals();
     cli_execute("ptrack add postFK");
-    while (get_property("_aprilBandSaxophoneUses").to_int() < 3 && get_property("ascensionsToday") == "0"){
+    while (get_property("_aprilBandSaxophoneUses").to_int() < 3 && dayType() == 1){
         if (get_property("commaFamiliar") != "Robortender"){
             retrieve_item($item[toggle switch (Bartend)]);
             visit_url("inv_equip.php?which=2&action=equip&whichitem=9402");
@@ -1070,7 +1092,8 @@ void main(){
     try {
         starter();
         if (get_property("expressCardUsed") == "false"){
-            cli_execute("ptrack add preprep");
+            if (get_property("prusias_profitTracking_date") != today_to_string( ))
+                cli_execute("ptrack add preprep");
             FKPrep();
             cli_execute("ptrack add postprep");
         }

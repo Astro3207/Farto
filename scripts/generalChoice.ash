@@ -1,3 +1,5 @@
+import iotm.ash;
+
 int ESPmission(string page){
     int num;
     if (contains_text(page, "ever-changing constellation")){
@@ -119,6 +121,10 @@ void main(int whichchoice, string page) {
             if (get_property("script") == "junko")
                 user_confirm("Heap manually");
             break;
+        // Slime Tube uvula/gall-bladder choice. <clanId>Tickled state (set by
+        // slime.ash / advanced by unlockerCCS): "done"/"ML" -> skip (option 2);
+        // fresh ("" / "started") + a caustic slime nodule -> tickle (option 1),
+        // stamp "tickled". Tickling is once per instance.
         case 337:
             if (get_property(get_clan_id() + "Tickled") == "done"){
                 run_choice(2);
@@ -329,7 +335,7 @@ void main(int whichchoice, string page) {
                         run_choice(num);
                         exit;
                     }
-                    if (get_property("ascensionsToday") == "1"){
+                    if (dayType() == 0){
                         foreach str in $strings[Stop your arch-nemesis as a baby,Take the long odds on the trifecta,Hey, free gun!,Borrow meat from your future,Draw a goatee on yourself,Plant some seeds in the distant past,Peek in on your future,Plant some trees and harvest them in the future,Steal a cupcake from young Susie,Borrow a cup of sugar from yourself,Steal a club from the past,Go back and write a best-seller,Go back and take a 20-year-long nap]{
                             foreach num, choice_text in choices {
                                 if (contains_text(choice_text,str)){

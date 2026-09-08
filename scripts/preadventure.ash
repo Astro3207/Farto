@@ -109,8 +109,6 @@ void preAdv(){
                 use_familiar($familiar[peace turkey]);
             else if (maxOvr == "+combat")
                 use_familiar($familiar[Jumpsuited Hound Dog]);
-            else if (get_property("script") == "slime")
-                use_familiar($familiar[purse rat]);
             else
                 use_familiar($familiar[cookbookbat]);
         }
@@ -148,23 +146,28 @@ void preAdv(){
         append(maximize, maxOvr != "" ? maxOvr : "item drop");
     }
     if (get_property("script") == "slime"){
+        // freeSomething == "this fight already has a guaranteed free outcome, so
+        // don't burn a free-kill charge on it". It starts true at exactly 5 turns
+        // of coating (the chamoisole gall-bladder squeeze) and is set true once we
+        // commit a free-kill weapon below.
         boolean freeSomething = have_effect($effect[Coated in Slime]) == 5;
-        if (my_familiar() == $familiar[purse rat])
-            freeSomething = true;
         if (clubEmReady){
             append(maximize, ", equip legendary seal-clubbing club");
         } else if (get_property(get_clan_id() + "Tickled") == "tickled"){
+            // Carry the shovel to squeeze a gall bladder (see slime.ash state machine).
             retrieve_item($item[rusty grave robbing shovel]);
             append(maximize, ", equip rusty grave robbing shovel");
         } else if (jokesterReady && !freeSomething){ append(maximize, ", equip The Jokester's gun"); freeSomething = true; }
         else if (get_property("_clubEmTimeUsed").to_int() < 5 && !freeSomething){ append(maximize, ", equip legendary seal-clubbing club"); freeSomething = true; }
+        // Shirt: honour slime.ash's shirtOverride, skip entirely on the purse rat
+        // (ML build), else a free-kill shirt, else the chamoisole.
         if (get_property("shirtOverride") != "")
             append(maximize, get_property("shirtOverride"));
         else if (my_familiar() == $familiar[purse rat])
             print("skipping shirt");
-        else if (yellowReady && !freeSomething)       append(maximize, ", equip jurassic parka");
+        else if (yellowReady && !freeSomething)  append(maximize, ", equip jurassic parka");
         else if (!freeSomething)                 append(maximize, ", equip chamoisole");
-        
+
         if ((my_basestat($stat[submoxie]) - 62500) > BCZcost("SweatBulletsCasts") && !freeSomething)
             append(maximize, ", equip blood cubic zirconia");
         else if (dartReady && !freeSomething)    append(maximize, ", equip everfull dart holster");
@@ -290,7 +293,7 @@ void preAdv(){
             append(maximize, ", equip angelbone dice");
         else if (get_property("acc1Override") != "")
             append(maximize, get_property("acc1Override"));
-        else if (dartReady && my_adventures() > 30)
+        else if (dartReady && my_adventures() > 40)
             append(maximize, ", equip everfull dart holster");
         else if (greenReady && my_adventures() > 30)
             append(maximize, ", equip spring shoes");
