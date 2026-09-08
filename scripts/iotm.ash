@@ -84,13 +84,24 @@
             || storage_amount(it) > 0;
     }
 
-    // Returns session log text from the current turn onward
+    // Returns session log text from the current turn onward.
+    // Mafia flushes the session log a beat after the fight resolves, so a fast
+    // caller can read it before the "[<turn>]" marker for this adventure has been
+    // written -- nowmark is then -1 and substring() aborts. Re-read a few times
+    // with a short wait, and fall back to "" (callers only contains_text() it).
     string LastAdvTxt() {
-        string lastlog = session_logs(1)[0];
-        int nowmark = max(
-            last_index_of(lastlog, "[" + my_turncount() + "]"),
-            last_index_of(lastlog, "[" + (my_turncount() + 1) + "]")
-        );
+        string lastlog;
+        int nowmark = -1;
+        for tries from 1 to 5 {
+            lastlog = session_logs(1)[0];
+            nowmark = max(
+                last_index_of(lastlog, "[" + my_turncount() + "]"),
+                last_index_of(lastlog, "[" + (my_turncount() + 1) + "]")
+            );
+            if (nowmark != -1) break;
+            waitq(1);
+        }
+        if (nowmark == -1) return "";
         return substring(lastlog, nowmark);
     }
 

@@ -144,7 +144,6 @@ void blackForest(){
     if ($location[the black forest].last_noncombat_turns_spent == 4){
         set_property("mainOverride",", equip candy cane sword cane");
         swordPrep();
-        user_confirm("About to hit the Black forest NC, make sure sword is equipped and that the sword NC triggered correctly");
     } else {
         set_property("mainOverride","");
     }
