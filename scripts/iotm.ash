@@ -1060,5 +1060,6 @@
         foreach slotName in $strings[unconditional, max, fam, hat, main, weapon, off, back, shirt, pants, acc1, acc2, acc3, famEquip] {
             set_property(slotName + "Override", "");
         }
+        stashreturn($item[pantsgiving]);
         set_property("inSpendAdv","false");
     }

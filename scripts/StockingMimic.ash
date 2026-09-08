@@ -316,9 +316,13 @@ void FKPrep(){
         beretBuffs[3] = $effect[Christmessy];
         beretBuffs[4] = $effect[Sweet Incentive];
     } else if (dayType() == 1){
-        abort();
+        beretBuffs[0] = $effect[Always be Collecting];
+        beretBuffs[1] = $effect[Amorous Avarice];
+        beretBuffs[2] = $effect[A View to Some Meat];
+        beretBuffs[3] = $effect[Cravin' for a Ravin'];
+        beretBuffs[4] = $effect[Leisurely Amblin'];
     }
-    while (get_property("_beretBuskingUses").to_int() < 4){
+    while (get_property("_beretBuskingUses").to_int() < 5){
         beretBusking("familiar weight",beretBuffs[get_property("_beretBuskingUses").to_int()].to_string());
     }
 	prepBuffs();
