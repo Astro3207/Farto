@@ -757,8 +757,7 @@ void habitatRecall(){
             if (get_property("beGregariousFightsLeft").to_int() == 1 && get_property("beGregariousCharges").to_int() == 0 && to_int(get_property("_monsterHabitatsRecalled")) == 3 && dayType() == 1){
                 if (mall_price($item[flask of embalming fluid]) > 1000)
                     abort("reanimated reanimator is too expensive rn");
-                retrieve_item($item[flask of embalming fluid]);
-                visit_url("inv_equip.php?which=2&action=equip&whichitem=6785");
+                altFam($familiar[reanimated reanimator]);
             }
             pearloP2();
         }
@@ -950,17 +949,23 @@ void weakMonsters(){
     set_property("subscript","");
 }
 
+void altFam(familiar fam){
+    if (get_property("commaFamiliar") != fam.to_string() && my_familiar() != fam){
+        if (have_familiar(fam)){
+            use_familiar(fam);
+            set_property("famOverride",fam.to_string());
+        } else {
+            retrieve_item(familiar_equipment(fam));
+            visit_url("inv_equip.php?which=2&action=equip&whichitem=" + familiar_equipment(fam).to_int());
+            set_property("commaFamiliar",fam.to_string());
+            set_property("famOverride","comma chameleon");
+        }
+    }
+}
+
 void embezzler(){
     while (get_property("_aprilBandSaxophoneUses").to_int() < 3 && dayType() == 1){
-        if (get_property("commaFamiliar") != "Robortender" && my_familiar() != $familiar[robortender]){
-            if (have_familiar($familiar[robortender])){
-                use_familiar($familiar[Robortender]);
-            } else {
-                retrieve_item($item[toggle switch (Bartend)]);
-                visit_url("inv_equip.php?which=2&action=equip&whichitem=9402");
-                set_property("commaFamiliar","Robortender");
-            }
-        }
+        altFam($familiar[robortender]);
         set_property("script","embezzler");
         set_property("unconditionalOverride","meat drop");
         if (get_property("_batWingsFreeFights").to_int() < 5){
@@ -1034,11 +1039,7 @@ void bulkFK(){
     }
     step("phase: machine elf");
     if (get_property("_machineTunnelsAdv").to_int() < 5){
-        if (get_property("commaFamiliar") != "Machine Elf"){
-            retrieve_item($item[self-dribbling basketball]);
-            visit_url("inv_equip.php?which=2&action=equip&whichitem=8707");
-            set_property("commaFamiliar","Machine Elf");
-        }
+        altFam($familiar[machine elf])
         if (have_effect($effect[Inside The Snowglobe]) == 0)
             use($item[Deep Machine Tunnels snowglobe]);
         while (get_property("_machineTunnelsAdv").to_int() < 5){
@@ -1058,11 +1059,7 @@ void bulkFK(){
         set_property("acc1Override", ", equip Mr. Cheeng's spectacles");
         set_property("acc2Override", ", equip Lucky gold ring");
         set_property("acc3Override", ", equip Portable Laughing Stock");
-        if (get_property("commaFamiliar") != "Pocket Professor"){
-            retrieve_item($item[Pocket Professor memory chip]);
-            visit_url("inv_equip.php?which=2&action=equip&whichitem=10324");
-            set_property("commaFamiliar","Pocket Professor");
-        }
+        altFam($familiar[Pocket Professor]);
         main@preadventure();
         cli_execute("reminisce Black Crayon Flower");
         while (get_property("_chainedRelativityMonster") == "Black Crayon Flower")
