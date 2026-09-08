@@ -500,7 +500,7 @@ void shadowBoss(){
     }
 }
 void shadowRealmFK(){
-    set_property("famOverride","comma chameleon");
+    mimicPrep("");
     if (!contains_text(get_property("maxOverride"),"familiar"))
         set_property("maxOverride","familiar weight, equip eternity codpiece");
     if (get_property("questRufus") == "step1") {
@@ -614,7 +614,7 @@ void uneffectBuff(){
 }
 boolean looseFK(){
     set_property("maxOverride","familiar weight, equip eternity codpiece");
-    if ((my_basestat($stat[submoxie]) - 118881) > BCZcost("SweatBulletsCasts")){
+    if ((my_basestat($stat[submoxie]) - 118881) > BCZcost("SweatBulletsCasts") && get_property("_bczSweatBulletsCasts").to_int() < 13){
         set_property("maxOverride","familiar weight, equip eternity codpiece");
         print ("FK is sweat");
         return true;
@@ -677,7 +677,7 @@ void pearloP1(){
     banishFish();
     aa("facsimile");
     while (looseFK()){
-        set_property("famOverride","comma chameleon");
+        mimicPrep("");
         if (have_effect($effect[driving waterproofly]) == 0)
             set_property("pantsOverride",", equip really nice swim");
         set_property("acc3Override",", equip time lord badge of honor");
@@ -685,7 +685,7 @@ void pearloP1(){
         foreach str in $strings[anemone,trench,bar]{
             if (get_property(pearls[str].donePref) == "false" || str == "bar"){
                 if (numeric_modifier(pearls[str].ele_res) < 18)
-                    abort();
+                    abort(pearls[str].ele_res + " is below 18");
                 adv1(pearls[str].loc);
                 break;
             }
@@ -703,7 +703,7 @@ void pearloP2(){
     foreach str in $strings[deepests,reef]{
         if (have_effect($effect[driving waterproofly]) == 0)
             set_property("pantsOverride", ", equip really nice swim");
-        set_property("famOverride", "comma chameleon");
+        mimicPrep("");
         if (get_property(pearls[str].donePref) == "false" || str == "reef"){
             if (numeric_modifier(pearls[str].ele_res) < 18)
                 abort();
@@ -771,8 +771,8 @@ void backup(){
         if (to_int(get_property("_mimicEggsObtained")) < 11 && $familiar[chest mimic].experience > 100){
             set_property("famOverride","chest mimic");
         } else
-            set_property("famOverride","comma chameleon");
-        if (have_effect($effect[everything looks purple]) == 0 && get_property("famOverride") == "comma chameleon"){
+            mimicPrep("");
+        if (have_effect($effect[everything looks purple]) == 0 && (get_property("famOverride") == "comma chameleon" || get_property("famOverride") == "stocking mimic")){
             set_property("offOverride",", equip roman candel");
         } else
             set_property("offOverride","");
@@ -1044,7 +1044,7 @@ void bulkFK(){
         while (get_property("_machineTunnelsAdv").to_int() < 5){
             set_property("subscript","NonSMFK");
             set_property("maxOverride","item drop");
-            set_property("famOverride","commaChameleon");
+            set_property("famOverride","comma Chameleon");
             adv1($location[The Deep Machine Tunnels]);
         }
         set_property("subscript","");
@@ -1052,6 +1052,7 @@ void bulkFK(){
     }
     if (get_property("_pocketProfessorLectures").to_int() == 0 && get_property("_locketMonstersFought").split_string(",").count() < 3){
         set_property("maxOverride","familiar weight");
+        set_property("famOverride","comma Chameleon");
         set_property("pantsOverride",", equip tearaway Pants");
         set_property("offOverride", ", equip kol con snowglobe");
         set_property("acc1Override", ", equip Mr. Cheeng's spectacles");
