@@ -44,7 +44,7 @@ void free_kill(string ptext) {
         Gingerbread Mob Hit, Club 'Em Back in Time] {
         if (my_location() == $location[hobopolis town square] && sk == $skill[Club 'Em Back in Time])
             continue;
-        if ((my_basestat($stat[submoxie]) - 40000) <= BCZcost("SweatBulletsCasts") && sk == $skill[BCZ: Sweat Bullets])
+        if (sk == $skill[BCZ: Sweat Bullets] && ((my_basestat($stat[submoxie]) - 118881) <= BCZcost("SweatBulletsCasts") || get_property("_bczSweatBulletsCasts").to_int() < 13)){
             continue;
         if (contains_text(ptext, to_string(sk))) {
             use_skill(sk);
