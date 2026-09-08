@@ -523,7 +523,8 @@ void banishFish(){
     if (get_property("screechCombats").to_int() == 0){
         set_property("maxOverride","ml, -10 familiar weight, -equip drunkula's wineglass,-equip backup camera");
         set_property("famOverride","patriotic eagle");
-        set_property("pantsOverride",", equip really nice swimming trunk");
+        if (have_effect($effect[driving waterproofly]) == 0)
+            set_property("pantsOverride",", equip really nice swimming trunk");
         retrieve_item($item[peppermint parasol]);
         adv1($location[The briniest deepests]);
     } else
