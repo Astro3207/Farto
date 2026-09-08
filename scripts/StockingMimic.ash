@@ -614,7 +614,7 @@ void uneffectBuff(){
 }
 boolean looseFK(){
     set_property("maxOverride","familiar weight, equip eternity codpiece");
-    if ((my_basestat($stat[submoxie]) - 118881) > BCZcost("SweatBulletsCasts")){
+    if ((my_basestat($stat[submoxie]) - 118881) > BCZcost("SweatBulletsCasts") && get_property("_bczSweatBulletsCasts").to_int() < 13){
         set_property("maxOverride","familiar weight, equip eternity codpiece");
         print ("FK is sweat");
         return true;
