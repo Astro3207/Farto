@@ -844,7 +844,7 @@
             slot sl = to_slot(it);
             if (sl != $slot[hat] && sl != $slot[pants] && sl != $slot[shirt]) continue;
             if (!can_equip(it)) continue;
-            if (!have_item(it) && (!beretAllowMall || !it.tradeable || mall_price(it) > beretGearCap)) continue;
+            if (!have_item(it) && (!beretAllowMall || !it.tradeable || mall_price(it) > beretGearCap || mall_price(it) < 100)) continue;
 
             if (sl == $slot[hat]){
                 if (hatrack) beretHats[count(beretHats)] = it;   // beret goes on the rack, not here

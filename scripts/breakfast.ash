@@ -254,6 +254,17 @@ void glitchItem(){
         use($item[[glitch season reward name]]);
 }
 
+void votingBooth(){
+    if (get_property("_voteToday").to_boolean)
+        return;
+    if (have_item($item[voter registration form])){
+        use($item[voter registration form]);
+    } else {
+        retrieve_item($item[absentee voter ballot]);
+        use($item[absentee voter ballot]);
+    }
+}
+
 // Clan fortune-teller onlyfax for the day's 3 free consults (needs a clan
 // with a fortune teller; 90485 is a public one -- see the config note above).
 void clanFortune(){
@@ -261,9 +272,18 @@ void clanFortune(){
         return;
     visit_url("showclan.php?whichclan=90485&action=joinclan&confirm=on");
     for i from 1 to 3 {
+        int now = get_property("_clanFortuneConsultUses").to_int();
         cli_execute("fortune onlyfax pizza batman thick");
-        if (i < 3)
-            wait(10);
+        int n;
+        if (i < 3){
+            while (n < 10 && get_property("_clanFortuneConsultUses").to_int() == now){
+                waitq(1);
+                n += 1;
+            }
+            if (n == 10)
+                break;
+        }
+        
     }
     visit_url("showclan.php?whichclan=" + get_property("homeClanID").to_int() + "&action=joinclan&confirm=on");
 }
@@ -328,7 +348,7 @@ void secondBreakfast(){
     step("phase: daily skills");
     dailySkills();
     glitchItem();
-
+    votingBooth();
     step("phase: clan fortune");
     clanFortune();
 

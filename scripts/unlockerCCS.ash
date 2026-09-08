@@ -215,7 +215,7 @@ void main(int round, monster mob, string page_text) {
         if (get_property("_circadianRhythmsRecalled") == "false")
             use_skill($skill[RECALL FACTS: %PHYLUM CIRCADIAN RHYTHMS]);
         if (have_equipped($item[roman candelabra]))
-            use_skill($skill[blow the purple candle]);
+            use_skill($skill[blow the purple candle!]);
     }
     if (get_property("script") == "FreeKill" && have_equipped($item[backup camera]) && get_property("lastCopyableMonster") == "Black Crayon Mer-kin"){
         use_skill($skill[BACK-UP TO YOUR LAST ENEMY]);
@@ -291,6 +291,10 @@ void main(int round, monster mob, string page_text) {
         if (my_location() == $location[Gingerbread Upscale Retail District] || my_location() == $location[Gingerbread civic center]){
             if (last_monster().phylum == $phylum[dude])
                 throw_item($item[gingerbread cigarette]);
+            else if (last_monster() == $monster[eldritch tentacle]){
+                while (current_round() > 0 && current_round() < 30)
+                    use_skill($skill[shieldbutt]);
+            }
             else
                 abort("non dude");
         }
@@ -338,7 +342,7 @@ void main(int round, monster mob, string page_text) {
         while (current_round() > 0 && current_round() < 10){
             throw_item($item[facsimile dictionary]);
             if (have_effect($effect[everything looks purple]) == 0 && have_equipped($item[roman candelabra]))
-                use_skill($skill[blow the purple candle]);
+                use_skill($skill[blow the purple candle!]);
             if (last_monster() == $monster[black crayon mer-kin]){
                 if (item_amount($item[pulled green taffy]) > 0 && item_amount($item[envyfish egg]) == 0 && get_property("_envyfishEggUsed") == "false")
                     throw_item($item[pulled green taffy]);

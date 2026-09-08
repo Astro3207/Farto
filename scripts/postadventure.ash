@@ -653,13 +653,19 @@ void postAdv(){
         delete(elementaryQueue,0,5);
         set_property("elementaryQueue",to_string(elementaryQueue));
     }
-    if (get_property("script") == "unblemisedPearl"){
+    if (get_property("script") == "unblemishedPearl"){
         if (my_buffedstat($stat[moxie]) < 405)
             cli_execute("gain 405 moxie");
         if (have_effect($effect[fishy]) == 0)
             abort("Out of fishy");
     }
     freeKillTurnGuard();
+    if (get_property("script") == "FreeKill"){
+        if (dayType() == 1){
+            if (get_property("_eldritchTentaclesFoughtToday").to_int() == 11 && have_effect($effect[eldritch attunement]) > 0)
+                cli_execute("uneffect eldritch attunement");
+        }
+    }
     lawOfAverages();
     if (get_property("autumnatonQuestLocation") == "" && item_amount($item[autumn-aton]) > 0){
         upgradeAutumnaton();

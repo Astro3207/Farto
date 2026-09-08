@@ -59,6 +59,9 @@ void augSkills(){
         if (get_property("_augSkillsCast") < 5)
             cli_execute("cast Aug. 7th");
     }
+    if (get_property("_heartstoneLuckUsed") == "false"){
+        use_skill($skill[heartstone: %LUCK])
+    }
 }
 
 void clockworkMaid(){

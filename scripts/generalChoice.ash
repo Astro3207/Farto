@@ -20,6 +20,120 @@ int ESPmission(string page){
     return num;
 }
 
+// ─── Darts perk priority (choice 1525) ──────────────────────────────────────
+// Ported from garbo-choice DART_PERKS: lower index = more preferred. An option
+// not in the list is never taken unless it's the only kind offered.
+string[int] dartPerks = {
+    "Bullseyes do not impress you much",
+    "You are less impressed by bullseyes",
+    "25% better chance to hit bullseyes",
+    "25% More Accurate bullseye targeting",
+    "25% Better bullseye targeting",
+    "Extra stats from stats targets",
+    "Expand your dart capacity by 1",
+    "Throw a second dart quickly",
+    "Butt awareness",
+    "Increase Dart Deleveling from deleveling targets",
+    "Add Hot Damage",
+    "Add Cold Damage",
+    "Add Sleaze Damage",
+    "Add Spooky Damage",
+    "Add Stench Damage",
+    "Deal 25-50% more damage",
+    "Deal 25-50% extra damage",
+    "Deal 25-50% greater damage"
+};
+
+int bestDartsOption(){
+    string[int] opts = available_choice_options();
+    int bestNum;
+    int bestRank = 999;
+    boolean seen;
+    foreach num, text in opts{
+        int rank = 999;
+        foreach i, perk in dartPerks
+            if (text == perk || contains_text(text, perk)){
+                rank = i;
+                break;
+            }
+        if (!seen || rank < bestRank){
+            seen = true;
+            bestRank = rank;
+            bestNum = num;
+        }
+    }
+    return bestNum;
+}
+
+// ─── Voting booth (choice 1331) ─────────────────────────────────────────────
+// Ported from garbo-choice voterSetup: pick the better of _voteMonster1/2 for
+// the g= field, and the highest-priority _voteLocal1..4 for both local[] picks.
+// garbo's exact meat projection isn't reproducible here, so the initiative
+// weights are hand values; Adventures uses valueOfAdventure.
+float[string] voteInitPriority = {
+    "Meat Drop: +30":               100.0,
+    "Item Drop: +15":               30.0,
+    "Adventures: +1":               get_property("valueOfAdventure").to_float(),
+    "Familiar Experience: +2":      8.0,
+    "Monster Level: +10":           5.0,
+    "Muscle Percent: +25":          3.0,
+    "Mysticality Percent: +25":     3.0,
+    "Moxie Percent: +25":           3.0,
+    "Experience (Muscle): +4":      2.0,
+    "Experience (Mysticality): +4": 2.0,
+    "Experience (Moxie): +4":       2.0,
+    "Meat Drop: -30":               -2.0,
+    "Item Drop: -15":               -2.0,
+    "Familiar Experience: -2":      -2.0
+};
+
+float voteItemValue(item it){
+    int h = historical_price(it);
+    return to_float(h > 0 ? h : autosell_price(it));
+}
+
+float voteMonsterValue(monster m){
+    switch (m){
+    case $monster[terrible mutant]:      return voteItemValue($item[glob of undifferentiated tissue]) + 10;
+    case $monster[angry ghost]:          return voteItemValue($item[ghostly ectoplasm]) * 1.11;
+    case $monster[government bureaucrat]: return voteItemValue($item[absentee voter ballot]) * 0.05 + 68.75;
+    case $monster[annoyed snake]:        return to_float(gameday_to_int());
+    case $monster[slime blob]:           return 95.0 - gameday_to_int();
+    }
+    return 0;
+}
+
+int voteMonsterPick(){
+    return voteMonsterValue(to_monster(get_property("_voteMonster1")))
+        >= voteMonsterValue(to_monster(get_property("_voteMonster2"))) ? 1 : 2;
+}
+
+// The booth keeps TWO of the four offered initiatives. Return the 0-indexed
+// positions of the best two _voteLocal1..4, highest first.
+int[int] voteLocalPicks(){
+    float[int] val;
+    for i from 1 to 4{
+        string loc = get_property("_voteLocal" + i);
+        val[i - 1] = voteInitPriority contains loc
+            ? voteInitPriority[loc]
+            : (contains_text(loc, "-") ? -1.0 : 1.0);
+    }
+    int first, second;
+    boolean haveFirst, haveSecond;
+    foreach idx, v in val{
+        if (!haveFirst || v > val[first]){
+            second = first; haveSecond = haveFirst;
+            first = idx;    haveFirst = true;
+        } else if (!haveSecond || v > val[second]){
+            second = idx;   haveSecond = true;
+        }
+    }
+    int[int] out;
+    out[0] = first;
+    out[1] = second;
+    return out;
+}
+
 void main(int whichchoice, string page) {
     if (whichchoice == 536){
         item pill;
@@ -292,22 +406,17 @@ void main(int whichchoice, string page) {
                 run_choice(1);
             }
             break;
+        case 1331: {
+            // I Voted! booth: best monster for g=, best two distinct initiatives for local[].
+            int[int] lp = voteLocalPicks();
+            string url = "choice.php?whichchoice=1331&option=1&g=" + voteMonsterPick()
+                + "&local[]=" + lp[0] + "&local[]=" + lp[1];
+            print(url);
+            visit_url(url);
+            break;
+        }
         case 1525:
-            if (whichchoice == 1525){
-                string [int] choices = available_choice_options();
-                foreach num, choice_text in choices {
-                    print(`{num}: {choice_text}`);
-                }
-                foreach perk in $strings[impress,better,targeting,butt]{
-                    foreach num, choice_text in choices {
-                        if (contains_text(choice_text,perk)){
-                            run_choice(num);
-                            exit;
-                        }
-                    }
-                }
-                run_choice(1);
-            }
+            run_choice(bestDartsOption());
             break;
         case 1557:
             if (my_location() == $location[the black forest]){
