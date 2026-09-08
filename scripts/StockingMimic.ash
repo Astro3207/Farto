@@ -29,7 +29,7 @@ void monkeyPaw(string buffType){
                 cli_execute("monkeypaw effect " + ef);
         }
     } else if (buffType == "familiar weight"){
-        foreach ef in $effects[covetous robbery, joy, Chow Downed, squirming like a toad, hip to the jive, all is forgiven, heavy petting, Braaaaaains, Low on the Hog, Leisurely Amblin', frosty,sinuses for miles]{
+        foreach ef in $effects[covetous robbery, joy, Chow Downed, squirming like a toad, \[1701\]Hip to the Jive, all is forgiven, heavy petting, Braaaaaains, Low on the Hog, Leisurely Amblin', frosty,sinuses for miles]{
             if (to_int(get_property("_monkeyPawWishesUsed")) == 5)
                 return;
             if (have_effect(ef) == 0)
@@ -748,6 +748,21 @@ void gingerbread(){
             adv1($location[Gingerbread civic center]);
     }
 }
+
+void altFam(familiar fam){
+    if (get_property("commaFamiliar") != fam.to_string() && my_familiar() != fam){
+        if (have_familiar(fam)){
+            use_familiar(fam);
+            set_property("famOverride",fam.to_string());
+        } else {
+            retrieve_item(familiar_equipment(fam));
+            visit_url("inv_equip.php?which=2&action=equip&whichitem=" + familiar_equipment(fam).to_int());
+            set_property("commaFamiliar",fam.to_string());
+            set_property("famOverride","comma chameleon");
+        }
+    }
+}
+
 void habitatRecall(){
     while (to_int(get_property("_monsterHabitatsRecalled")) < 3 || to_int(get_property("_monsterHabitatsFightsLeft")) > 0 || get_property("beGregariousFightsLeft").to_int() > 0){
         banishFish();
@@ -953,20 +968,6 @@ void weakMonsters(){
     set_property("subscript","");
 }
 
-void altFam(familiar fam){
-    if (get_property("commaFamiliar") != fam.to_string() && my_familiar() != fam){
-        if (have_familiar(fam)){
-            use_familiar(fam);
-            set_property("famOverride",fam.to_string());
-        } else {
-            retrieve_item(familiar_equipment(fam));
-            visit_url("inv_equip.php?which=2&action=equip&whichitem=" + familiar_equipment(fam).to_int());
-            set_property("commaFamiliar",fam.to_string());
-            set_property("famOverride","comma chameleon");
-        }
-    }
-}
-
 void embezzler(){
     while (get_property("_aprilBandSaxophoneUses").to_int() < 3 && dayType() == 1){
         altFam($familiar[robortender]);
@@ -1043,7 +1044,7 @@ void bulkFK(){
     }
     step("phase: machine elf");
     if (get_property("_machineTunnelsAdv").to_int() < 5){
-        altFam($familiar[machine elf])
+        altFam($familiar[machine elf]);
         if (have_effect($effect[Inside The Snowglobe]) == 0)
             use($item[Deep Machine Tunnels snowglobe]);
         while (get_property("_machineTunnelsAdv").to_int() < 5){
