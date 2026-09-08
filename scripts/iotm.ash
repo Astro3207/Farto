@@ -716,12 +716,13 @@
     boolean mapgrim() {
         item it = $item[Map to Safety Shelter Grimace Prime];
         string out;
-        while (my_adventures() > 1 && available_amount(it) > 0) {
+        while (my_adventures() >= 1 && available_amount(it) > 0) {
             //get effect to adventure in zone if needed
             if (have_effect($effect[Transpondent]) == 0){
                 if (item_amount(it) < 5)
                     break;
                 retrieve_item(1,$item[transporter transponder]);
+                use($item[transporter transponder]);
             }
             if (have_effect($effect[Transpondent]) == 0){
                 print (`Unable to get the Transpondent effect. Still have {available_amount(it)} {available_amount(it) != 1?it.plural:it}.`);

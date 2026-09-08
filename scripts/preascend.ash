@@ -197,8 +197,8 @@ void ascend(){
         visit_url("afterlife.php?action=pearlygates");
         visit_url("afterlife.php?place=deli");
         visit_url("afterlife.php?action=buydeli&whichitem=5046");
-        visit_url("afterlife.php?action=ascend&asctype=2&whichclass=1&gender=1&whichpath=55&whichsign=8");
-        visit_url("afterlife.php?action=ascend&confirmascend=1&whichsign=8&gender=1&whichclass=1&whichpath=55&asctype=2&lamesignok=1&nopetok=1");
+        visit_url("afterlife.php?action=ascend&asctype=2&whichclass=1&gender=1&whichpath=55&whichsign=4");
+        visit_url("afterlife.php?action=ascend&confirmascend=1&whichsign=4&gender=1&whichclass=1&whichpath=55&asctype=2&lamesignok=1&nopetok=1");
         visit_url("main.php");
         run_choice(-1);
     }

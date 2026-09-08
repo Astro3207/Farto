@@ -255,7 +255,7 @@ void glitchItem(){
 }
 
 void votingBooth(){
-    if (get_property("_voteToday").to_boolean)
+    if (get_property("_voteToday").to_boolean())
         return;
     if (have_item($item[voter registration form])){
         use($item[voter registration form]);
@@ -310,10 +310,10 @@ void burningLeaves(){
 // remaining "L" house on the block.
 void candyRichBlock(){
     boolean mapUsed = get_property("_mapToACandyRichBlockUsed").to_boolean();
+    if (!mapUsed)
+        use($item[Map to a candy-rich block]);
     if (mapUsed && !contains_text(get_property("_trickOrTreatBlock"), "L"))
         return;
-    if (!mapUsed && available_amount($item[Map to a candy-rich block]) > 0)
-        use($item[Map to a candy-rich block]);
     cli_execute("outfit Ceramic Suit");
     candy("treat");
 }
@@ -324,7 +324,10 @@ void aprilBand(){
         return;
     if (get_property("_aprilBandInstruments").to_int() == 0)
         cli_execute("aprilband item tuba");
-    cli_execute("aprilband item quad tom");
+    if (dayType() == 0)
+        cli_execute("aprilband item quad tom");
+    else
+        cli_execute("aprilband item saxophone");
 }
 
 // Deviled candy eggs (3/day); bail if the command stops making progress

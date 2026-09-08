@@ -949,6 +949,32 @@ void weakMonsters(){
     set_property("offOverride","");
     set_property("subscript","");
 }
+
+void embezzler(){
+    while (get_property("_aprilBandSaxophoneUses").to_int() < 3 && dayType() == 1){
+        if (get_property("commaFamiliar") != "Robortender" && my_familiar() != $familiar[robortender]){
+            if (have_familiar($familiar[robortender])){
+                use_familiar($familiar[Robortender]);
+            } else {
+                retrieve_item($item[toggle switch (Bartend)]);
+                visit_url("inv_equip.php?which=2&action=equip&whichitem=9402");
+                set_property("commaFamiliar","Robortender");
+            }
+        }
+        set_property("script","embezzler");
+        set_property("unconditionalOverride","meat drop");
+        if (get_property("_batWingsFreeFights").to_int() < 5){
+            set_property("unconditionalOverride","meat drop, equip bat wings");
+        } else {
+            set_property("unconditionalOverride","meat drop");
+        }
+        if (have_effect($effect[Lucky!]) == 0){
+            getLucky();
+            adv1($location[Cobb's knob treasury]);
+        }
+    }
+}
+
 void bulkFK(){
     step("phase: bulkFK start");
     set_property("inSpendAdv","true");
@@ -1086,19 +1112,7 @@ void bulkFK(){
     seals();
     if (!contains_text(get_property("thoth19_event_list"),"postFK"))
         cli_execute("ptrack add postFK");
-    while (get_property("_aprilBandSaxophoneUses").to_int() < 3 && dayType() == 1){
-        if (get_property("commaFamiliar") != "Robortender"){
-            retrieve_item($item[toggle switch (Bartend)]);
-            visit_url("inv_equip.php?which=2&action=equip&whichitem=9402");
-            set_property("commaFamiliar","Robortender");
-        }
-        set_property("subscript","embezzler");
-        set_property("maxOverride","meat drop");
-        if (have_effect($effect[Lucky!]) == 0){
-            getLucky();
-            adv1($location[Cobb's knob treasury]);
-        }
-    }
+    embezzler();
 }
 
 // ─── ENTRY ───────────────────────────────────────────────────────────────────
