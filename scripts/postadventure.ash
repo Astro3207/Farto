@@ -746,11 +746,17 @@ void forceNoncombats(){
 
 // Day-1 sea-aftercore push for Azazel's unicorn: collect the three friar items,
 // grind observational glasses at the Laugh Floor, farm backstage items, then run
-// the Pandamonium / Sven band-member gift sequence. Gated on 5 spikolodon spikes.
+// the Pandamonium / Sven band-member gift sequence. Normally gated on 5 spikolodon
+// spikes on a day-1 sea-aftercore turn, but forced unconditionally once under 30
+// adventures so a missed spike / dayType window still gets cleaned up before the day ends.
 void azazelUnicornQuest(){
-    if (get_property("_spikolodonSpikeUses").to_int() == 5 && get_property("questM10Azazel") != "finished" && (delay() || my_adventures() < 70) && get_property("seaAftercore") == "true" && dayType() == 0){
+    if (get_property("questM10Azazel") != "finished"
+        && (my_adventures() < 30
+            || (get_property("_spikolodonSpikeUses").to_int() == 5 && (delay() || my_adventures() < 70) && get_property("seaAftercore") == "true" && dayType() == 0))){
         if (have_effect($effect[Coated in Slime]) <= 6 && have_effect($effect[Coated in Slime]) > 0)
             camo();
+        if (get_property("questL06Friar") == "started")
+            visit_url("friars.php?action=friars");
         location [item] friarItemLocations = {
             $item[dodecagram]: $location[the dark neck of the woods],
             $item[box of birthday candles]: $location[the dark heart of the woods],
@@ -835,9 +841,15 @@ void azazelUnicornQuest(){
 }
 
 // Level 11 sprint, run when the three "everything looks" copies are healthy or
-// under 50 adventures: forged docs / Nostril, then the Zeppelin and Spare quests.
+// under 60 adventures: unlock the Hidden Temple, then forged docs / Nostril, then
+// the Zeppelin and Spare quests.
 void level11Sprint(){
     if ((have_effect($effect[everything looks red]) > 3 && have_effect($effect[everything looks yellow]) > 3 && have_effect($effect[everything looks green]) > 3) || my_adventures() < 60){
+        // The Hidden Temple gates every worship / Hidden City task below, so unlock it
+        // first: drive the spooky forest tree-holed coin -> temple map -> sapling ->
+        // plant chain until questM16Temple reads finished.
+        while (get_property("questM16Temple") != "finished" && my_adventures() > 0)
+            findHiddenTemple();
         if (get_property("questL11Black") == "step2"){
             retrieve_item($item[forged identification documents]);
             if (item_amount($item[bitchin' meatcar]) == 0)
@@ -891,7 +903,11 @@ void spendAdv(){
         blackForest();
     while (my_adventures() < 65 && get_property("questG09Muscle") != "finished" || get_property("questL05Goblin") == "started")
         outskirts();
-    while (get_property("_spikolodonSpikeUses").to_int() == 5 && get_property("questM16Temple") != "finished" && my_adventures() < 70 && get_property("seaAftercore") == "true" && dayType() == 0){
+    // Force the Hidden Temple unlock unconditionally once under 30 adventures, else
+    // hold to the 5-spike / day-1 sea-aftercore window.
+    while (get_property("questM16Temple") != "finished"
+        && (my_adventures() < 30
+            || (get_property("_spikolodonSpikeUses").to_int() == 5 && my_adventures() < 70 && get_property("seaAftercore") == "true" && dayType() == 0))){
         if (have_effect($effect[Patent Aggression]) > 0)
             break;
         swordPrep();
