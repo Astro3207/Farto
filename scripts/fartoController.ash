@@ -35,7 +35,7 @@ void main(){
     //    if (numeric_modifier("familiar weight") < 300)
             cli_execute("farto");
         cli_execute("stockingmimic");
-        if (my_adventures() == 0)
+        if (user_confirm("Ready to run dinner?"))
             cli_execute("dinner");
     }
 }

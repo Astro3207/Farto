@@ -749,7 +749,7 @@ void forceNoncombats(){
 // adventures so a missed spike / dayType window still gets cleaned up before the day ends.
 void azazelUnicornQuest(){
     if (get_property("questM10Azazel") != "finished"
-        && (my_adventures() < 30
+        && (my_adventures() < 45
             || (get_property("_spikolodonSpikeUses").to_int() == 5 && (delay() || my_adventures() < 70) && get_property("seaAftercore") == "true" && dayType() == 0))){
         if (have_effect($effect[Coated in Slime]) <= 6 && have_effect($effect[Coated in Slime]) > 0)
             camo();

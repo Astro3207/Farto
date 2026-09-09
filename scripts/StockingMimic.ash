@@ -401,6 +401,7 @@ void FKPrep(){
 
 	step("phase: FKPrep codpiece");
 	codpiece("none");
+    retrieve_item(2, $item[tuesday's ruby]);
 	codpiece("peridot of peril,blood cubic zirconia,baseball diamond,tuesday's ruby,tuesday's ruby");
 }
 
