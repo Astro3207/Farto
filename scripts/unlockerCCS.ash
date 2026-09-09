@@ -44,7 +44,7 @@ void free_kill(string ptext) {
         Gingerbread Mob Hit, Club 'Em Back in Time] {
         if (my_location() == $location[hobopolis town square] && sk == $skill[Club 'Em Back in Time])
             continue;
-        if (sk == $skill[BCZ: Sweat Bullets] && ((my_basestat($stat[submoxie]) - 118881) <= BCZcost("SweatBulletsCasts") || get_property("_bczSweatBulletsCasts").to_int() < 13))
+        if (sk == $skill[BCZ: Sweat Bullets] && ((my_basestat($stat[submoxie]) - 118881) <= BCZcost("SweatBulletsCasts") || get_property("_bczSweatBulletsCasts").to_int() >= 13))
             continue;
         if (contains_text(ptext, to_string(sk))) {
             use_skill(sk);
@@ -227,8 +227,11 @@ void main(int round, monster mob, string page_text) {
     }
     if ($locations[cyberzone 1,cyberzone 2,cyberzone 3] contains my_location()){
         if (last_monster().phylum == $phylum[construct]){
-            if (my_location() == $location[cyberzone 3])
-                abort();
+            if (my_location() == $location[cyberzone 3]){
+                while (current_round() > 0 && current_round() < 10)
+                    use_skill($skill[throw cyber rock]);
+                throw_item($item[logic grenade]);
+            }
             while (current_round() > 0 && current_round() > 0)
                 use_skill($skill[throw cyber rock]);
             if (current_round() > 0)
@@ -360,7 +363,7 @@ void main(int round, monster mob, string page_text) {
             use_skill($skill[BCZ: Refracted Gaze]);
         if (get_property("subscript") == "looseFK" && (get_property("_curveballMonster").to_monster() != last_monster() || get_property("_curveballFightsLeft").to_int() == 0) && last_monster().boss != true)
             free_kill(page_text);
-        if (get_property("subscript") == "looseFK" && current_round() > 0 && my_location() != $location[Shadow Rift (The Misspelled Cemetary)])
+        if (get_property("subscript") == "looseFK" && current_round() > 0 && (my_location() != $location[Shadow Rift (The Misspelled Cemetary)] || have_effect($effect[shadow affinity]) == 0))
             abort();
         if (current_round() > 0 && current_round() < 10)
             abort();
