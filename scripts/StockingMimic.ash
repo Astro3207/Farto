@@ -983,8 +983,9 @@ location walkieGhost(){
     if (get_property("questPAGhost") == "unstarted" && !have_item($item[protonic accelerator pack])){
         retrieve_item($item[almost-dead walkie-talkie]);
         use($item[almost-dead walkie-talkie]);
-        return to_location(get_property("ghostLocation"));
     }
+    if (get_property("ghostLocation") != "")
+        return to_location(get_property("ghostLocation"));
     return $location[none];
 }
 
@@ -1037,10 +1038,9 @@ string pickWeakling(boolean checkHP){
         && mall_price($item[tied-up leaviathan ]) < 15000
         && (!checkHP || safeToFK(to_monster("leaviathan"))))
         return "leaviathan";
-    if ((get_property("questPAGhost") == "started"
-            || (get_property("questPAGhost") == "unstarted"
-                && total_turns_played() >= to_int(get_property("nextParanormalActivity"))
-                && item_amount($item[almost-dead walkie-talkie]) > 0))
+    if ((get_property("questPAGhost") == "started" || (get_property("questPAGhost") == "unstarted"
+        && total_turns_played() >= to_int(get_property("nextParanormalActivity"))
+        && item_amount($item[almost-dead walkie-talkie]) > 0))
         && (!checkHP || safeToFK(ghostFor(walkieGhost()))))
         return "ghost";
     return "done";
@@ -1328,6 +1328,7 @@ void bulkFK(){
         set_property("acc2Override", "");
         set_property("offOverride", "");
     }
+//    abort("finish off free fights in hidden city for fam exp");
     step("phase: bulkFK reminisce");
     reminisce();
     step("phase: bulkFK glitch monster");
