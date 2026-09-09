@@ -314,7 +314,12 @@ void candyRichBlock(){
         use($item[Map to a candy-rich block]);
     if (mapUsed && !contains_text(get_property("_trickOrTreatBlock"), "L"))
         return;
-    cli_execute("outfit Ceramic Suit");
+    if (have_outfit("Ceramic Suit"))
+        cli_execute("outfit Ceramic Suit");
+    else if (have_outfit("Eldritch Equipage"))
+        cli_execute("outfit Eldritch Equipage");
+    else
+        abort("Don't have the right outfit for trick or treating. Let FS know to find a different one");
     candy("treat");
 }
 
