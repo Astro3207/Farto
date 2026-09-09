@@ -780,7 +780,9 @@ void habitatRecall(){
         banishFish();
         if (to_int(get_property("_monsterHabitatsFightsLeft")) == 0 && to_int(get_property("_monsterHabitatsRecalled")) < 3){
             mimicPrep();
+            main@preadventure();
             cli_execute("reminisce black crayon mer-kin");
+            main@postadventure();
         }
         while (to_int(get_property("_monsterHabitatsFightsLeft")) > 0 || get_property("beGregariousFightsLeft").to_int() > 0){
             mimicPrep();
@@ -844,6 +846,7 @@ void reminisce() {
             mimicPrep();
             main@preadventure( );
             cli_execute("reminisce " + mon);
+            main@postadventure();
             if (locketAvailable() == 0)
                 break;
         }
@@ -1210,8 +1213,13 @@ boolean weakMonstersLeft(){
 }
 
 void embezzler(){
-    while (get_property("_aprilBandSaxophoneUses").to_int() < 3 && dayType() == 1){
+    while ((get_property("_aprilBandSaxophoneUses").to_int() < 3 || numeric_modifier("Meat drop") > 4400) && dayType() == 1){
         altFam($familiar[robortender]);
+        if (get_property("_roboDrinks") != "drive-by shooting"){
+            retrieve_item($item[drive-by shooting]);
+            visit_url("inventory.php?action=robooze&which=1&whichitem=9396");
+            abort("Check if this link worked");
+        }
         set_property("script","embezzler");
         set_property("unconditionalOverride","meat drop");
         if (get_property("_batWingsFreeFights").to_int() < 5){
@@ -1221,8 +1229,8 @@ void embezzler(){
         }
         if (have_effect($effect[Lucky!]) == 0){
             getLucky();
-            adv1($location[Cobb's knob treasury]);
         }
+        adv1($location[Cobb's knob treasury]);
     }
 }
 

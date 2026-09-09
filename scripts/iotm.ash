@@ -718,8 +718,12 @@
             if (have_effect($effect[Lucky!]) > 0)
                 return;
         }
-        if (item_amount($item[apriling band saxophone]) > 0 && get_property("_aprilBandSaxophoneUses").to_int() < 2)
+        if (item_amount($item[apriling band saxophone]) > 0 && get_property("_aprilBandSaxophoneUses").to_int() < 3)
             cli_execute("aprilband play saxophone");
+        if (numeric_modifier("Meat drop") > 4400){
+            use($item[11-leaf clover]);
+            return;
+        }
         if (have_effect($effect[lucky!]) == 0)
             abort("Did not acquire lucky");
     }
