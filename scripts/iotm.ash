@@ -597,10 +597,16 @@
     // get_property("ascensionsToday") checks and is the INVERSE polarity: where
     // those read "0" this reads 1, where they read "1" this reads 0.
     int dayType(){
-        if ((numeric_modifier($modifier[familiar weight]) > 350 && my_inebriety() == 0) || (my_inebriety() > 10 && have_effect($effect[shadow affinity]) == 0)){
-            return 1;
-        } else
+        if (my_daycount() == 1){
             return 0;
+        } else if (my_daycount() == 2){
+            return 1;
+        }
+        if (get_property("dayTypeCheck") != today_to_string( )){
+            set_property("dayType",user_prompt("Type 0 for freekills at the end of the day, type 1 for free kills at the beginning of the day"));
+            set_property("dayTypeCheck",today_to_string( ));
+        }
+        return get_property("dayType").to_int();
     }
 
     void NCforce() {
