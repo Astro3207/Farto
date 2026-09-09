@@ -31,7 +31,8 @@ void main(){
     if (dayType() == 0){
         cli_execute("postloop");
         cli_execute("preconsume");
-        cli_execute("farto");
+        if (numeric_modifier("familiar weight") < 300)
+            cli_execute("farto");
         cli_execute("stockingmimic");
         if (my_adventures() == 0)
             cli_execute("dinner");
