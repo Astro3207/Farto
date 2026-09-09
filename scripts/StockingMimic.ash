@@ -684,7 +684,6 @@ void pearloP1(){
     banishFish();
     aa("facsimile");
     while (looseFK()){
-        
         if (have_effect($effect[driving waterproofly]) == 0)
             set_property("pantsOverride",", equip really nice swim");
         set_property("acc3Override",", equip time lord badge of honor");
@@ -692,7 +691,10 @@ void pearloP1(){
         foreach str in $strings[anemone,trench,bar]{
             if (get_property(pearls[str].donePref) == "false" || str == "bar"){
                 if (numeric_modifier(pearls[str].ele_res) < 18)
+                    cli_execute("gain 18 " + numeric_modifier(pearls[str].ele_res));
+                if (numeric_modifier(pearls[str].ele_res) < 18)
                     abort(pearls[str].ele_res + " is below 18");
+                equipStockingMimic();
                 adv1(pearls[str].loc);
                 break;
             }
