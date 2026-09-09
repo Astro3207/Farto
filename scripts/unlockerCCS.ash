@@ -340,6 +340,12 @@ void main(int round, monster mob, string page_text) {
     if (my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[stocking mimic]){
         if (my_location().zone == "Shadow Rift")
             use_skill($skill[swoop like a bat]);
+        while (current_round() > 0 && current_round() < 30 && monster_hp() > 9 && have_equipped($item[april shower thoughts shield])){
+            if (have_equipped($item[april shower thoughts shield]))
+                use_skill($skill[shieldbutt]);
+            if (my_hp() < 100)
+                throw_items($item[new age healing crystal],$item[new age healing crystal]);
+        }
         while (current_round() > 0 && current_round() < 10){
             throw_item($item[facsimile dictionary]);
             if (have_effect($effect[everything looks purple]) == 0 && have_equipped($item[roman candelabra]))

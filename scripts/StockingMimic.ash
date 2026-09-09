@@ -183,12 +183,8 @@ void prepBuffs(){
             cli_execute(ef.default);
     }
     foreach ef in $effects[Bow-Legged Swagger]{
-        if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
-            continue;
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
             continue;
-        if (jump_chance($monster[flaming monstera]) >= 100)
-            break;
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
@@ -698,7 +694,7 @@ void pearloP1(){
             set_property("pantsOverride",", equip really nice swim");
         set_property("acc3Override",", equip time lord badge of honor");
         set_property("subscript","looseFK");
-        foreach str in $strings[anemone,trench,bar]{
+        foreach str in $strings[trench,bar]{
             if (get_property(pearls[str].donePref) == "false" || str == "bar"){
                 if (numeric_modifier(pearls[str].ele_res) < 18)
                     cli_execute("gain 18 " + numeric_modifier(pearls[str].ele_res));
@@ -1019,9 +1015,6 @@ string pickWeakling(boolean checkHP){
     if (to_int(get_property("_lynyrdSnareUses")) < 3
         && (!checkHP || safeToFK(to_monster("Lynyrd"))))
         return "lynyrd";
-    if (contains_text(get_property("_trickOrTreatBlock"), "D")
-        && (!checkHP || safeToFK(to_monster("kid who is too old to be trick-or-treating"))))
-        return "trickortreat";
     if ((to_int(get_property("_glarkCableUses")) < 5 || to_int(get_property("_archSpadeDigs")) < 11)
         && can_adventure($location[A Mob of Zeppelin Protesters])
         && (!checkHP || safeToFK(to_monster("red skeleton"))))
@@ -1065,6 +1058,18 @@ string fightPicker(){
     return pickWeakling(false);
 }
 
+// Put the standard mimic free-kill combat gear on NOW -- run the same maximize
+// preadventure.ash does before a fight -- so my_buffedstat() / ML read what the
+// fight will actually use. Without this, fightPicker() decides on pre-maximize
+// stats and safeToFK()'s HP math is wrong the moment preadventure swaps gear.
+// (This settles the surface stance only; underwater picks still shift once you
+// dive, and the per-pick overrides -- shield, weapon, hat -- are applied later.)
+void settleStance(){
+    set_property("offOverride","");
+    mimicPrep();
+    main@preadventure( );
+}
+
 void weakMonsters(){
     step("phase: weakMonsters start");
     set_property("acc3Override",", equip time lord badge of honor");
@@ -1075,6 +1080,9 @@ void weakMonsters(){
     equip($slot[acc3],$item[time lord badge of honor]);
     // fightPicker() returns one key per call, in strict priority order; run that
     // fight, then re-ask. It also sets offOverride and buffs ML as needed.
+    // settleStance() before every fightPicker() so the pick is made with the real
+    // combat gear on, not whatever the last dispatch left equipped.
+    settleStance();
     string pick = fightPicker();
     while (pick != "done"){
         // pearloP1() leaves subscript on "looseFK" -- re-assert it each pass.
@@ -1121,13 +1129,6 @@ void weakMonsters(){
             main@preadventure( );
             use($item[lynyrd snare]);
             main@postadventure( );
-        } else if (pick == "trickortreat"){
-            step("phase: weakMonsters trick-or-treat kid");
-            mimicPrep();
-            set_property("hatOverride",", equip beholed bedsheet");
-            main@preadventure( );
-            candy("fight");
-            set_property("hatOverride","");
         } else if (pick == "zeppelin"){
             step("phase: weakMonsters red zeppelin / archaeologist");
             if (to_int(get_property("_glarkCableUses")) < 5
@@ -1175,6 +1176,7 @@ void weakMonsters(){
                 adv1(ghostLoc);
         }
 
+        settleStance();
         pick = fightPicker();
     }
 
@@ -1269,6 +1271,15 @@ void bulkFK(){
     step("phase: bulkFK backup camera");
     backup();
     step("phase: bulkFK cyberzone");
+    if (contains_text(get_property("_trickOrTreatBlock"), "D")){
+        step("phase: weakMonsters trick-or-treat kid");
+        mimicPrep();
+        set_property("hatOverride",", equip beholed bedsheet");
+        main@preadventure( );
+        candy("fight");
+        main@postadventure( );
+        set_property("hatOverride","");
+    }
     while (get_property("_cyberFreeFights").to_int() < 10){
         constructBanish();
         mimicPrep();
@@ -1328,7 +1339,7 @@ void bulkFK(){
         set_property("acc2Override", "");
         set_property("offOverride", "");
     }
-//    abort("finish off free fights in hidden city for fam exp");
+    abort("finish off free fights in hidden city for fam exp");
     step("phase: bulkFK reminisce");
     reminisce();
     step("phase: bulkFK glitch monster");

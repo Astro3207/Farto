@@ -373,7 +373,7 @@ void preAdv(){
         set_property("mpAutoRecoveryTarget", mpAutoRecoveryTarget);
         
         //initiative
-        if (jump_chance($monster[flaming monstera]) < 100){
+        if (jump_chance($monster[killer clownfish]) - numeric_modifier("Initiative Penalty") < 100){
             foreach ef in $effects[Bow-Legged Swagger,Natural 1,Patent Alacrity,Silent Hunting,Clear Ears\, Can't Lose,Poppy Performance,Hiding in Plain Sight,Digitalis\, Dig It,Ass Over Teakettle,Song of Slowness,Synthetic Buzz,Seal Clubbing Frenzy,Springy Fusilli]{
                 if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
                     continue;
@@ -384,6 +384,11 @@ void preAdv(){
                 if (have_effect(ef) == 0)
                     cli_execute(ef.default);
             }
+        }
+
+        foreach ef in $effects[Tranquilized Mind,Cunctatitis, Mathematically Precise]{
+            if (have_effect(ef) > 0)
+                cli_execute("uneffect " + ef);
         }
     }
     if (item_amount($item[dry noodles]) < 2)
