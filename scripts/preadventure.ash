@@ -198,6 +198,8 @@ void preAdv(){
         // Back
         if (get_property("backOverride") != "")
             append(maximize, get_property("backOverride"));
+        else if (have_item($item[protonic accelerator pack]) && get_property("questPAGhost") == "unstarted")
+            append(maximize, ", equip protonic accelerator pack");
         // Shirt
         if (have_equipped($item[devilbone corset]))
             append(maximize, ", equip devilbone corset");

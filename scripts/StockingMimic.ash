@@ -979,10 +979,12 @@ monster ghostFor(location loc){
 // $location[none] if we can't get a report. Guarded on questPAGhost so the item
 // is only ever burned once per report.
 location walkieGhost(){
-    if (get_property("questPAGhost") == "unstarted"
-        && item_amount($item[almost-dead walkie-talkie]) > 0)
+    if (get_property("questPAGhost") == "unstarted" && !have_item($item[protonic accelerator pack])){
+        retrieve_item($item[almost-dead walkie-talkie]);
         use($item[almost-dead walkie-talkie]);
-    return to_location(get_property("ghostLocation"));
+        return to_location(get_property("ghostLocation"));
+    }
+    return $location[none];
 }
 
 // The ordered weaklings, flaming leaflets -> tied-up leaviathan (leaviathan
