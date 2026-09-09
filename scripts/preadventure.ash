@@ -52,6 +52,8 @@ void mood(string function){
             } else if (ef == $effect[Legendary Pasta Eyeball] && my_class() == $class[pastamancer]){
                 continue;
             }
+            if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
+                continue;
             if (have_effect(ef) == 0)
                 cli_execute(ef.default);
             if (have_effect(ef) == 0)

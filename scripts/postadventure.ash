@@ -361,6 +361,8 @@ void unlock_zeppelin(){
     set_property("maxOverride","sleaze damage, sleaze spell damage");
     set_property("mainOverride",", equip candy cane sword cane");
     foreach ef in $effects[Bendin' Hell,Belch the Rainbow&trade;,Amorous,Blood-Gorged,Sleazy Hands,Benetton's Medley of Diversity,Greasy Peasy,Takin' It Greasy,Cuts Like a Lightly-Buttered Knife,Colorful Gratitude,Sleazy Weapon,Stained,Crud&eacute;,Why So Serious?,Improprie Tea,Boschface,All Glory To the Toad,Herder\, Bitter\, Fester\, Stranger]{
+        if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
+            continue;
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }

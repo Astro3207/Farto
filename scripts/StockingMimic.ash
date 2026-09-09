@@ -363,6 +363,8 @@ void FKPrep(){
 		The Ballad of Richie Thingfinder, Earning Interest, Bet Your Autumn Dollar,
 		Sweat Equity, Legendary Pasta Eyeball, Heart of Pink, Tingling Feeling,
 		Disco Leer]{
+		if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
+			continue;
 		if (have_effect(ef) == 0)
 			cli_execute(ef.default);
 	}
