@@ -186,7 +186,7 @@ void stillsuit(){
 
 // Pull a few cheap meat/init accessories into inventory for the day.
 void grabAccessories(){
-    foreach it in $items[mother's necklace, pearl diver's necklace, giant yellow hat, perfume-soaked bandana]
+    foreach it in $items[mother's necklace, pearl diver's necklace, giant yellow hat, perfume-soaked bandana,filthy knitted dread sack]
         retrieve_item(it);
 }
 
@@ -265,29 +265,6 @@ void votingBooth(){
     }
 }
 
-// Clan fortune-teller onlyfax for the day's 3 free consults (needs a clan
-// with a fortune teller; 90485 is a public one -- see the config note above).
-void clanFortune(){
-    if (get_property("_clanFortuneConsultUses").to_int() != 0)
-        return;
-    visit_url("showclan.php?whichclan=90485&action=joinclan&confirm=on");
-    for i from 1 to 3 {
-        int now = get_property("_clanFortuneConsultUses").to_int();
-        cli_execute("fortune onlyfax pizza batman thick");
-        int n;
-        if (i < 3){
-            while (n < 10 && get_property("_clanFortuneConsultUses").to_int() == now){
-                waitq(1);
-                n += 1;
-            }
-            if (n == 10)
-                break;
-        }
-        
-    }
-    visit_url("showclan.php?whichclan=" + get_property("homeClanID").to_int() + "&action=joinclan&confirm=on");
-}
-
 // April Shower for the day's buff.
 void aprilShower(){
     if (!get_property("_aprilShower").to_boolean())
@@ -321,18 +298,6 @@ void candyRichBlock(){
     else
         abort("Don't have the right outfit for trick or treating. Let FS know to find a different one");
     candy("treat");
-}
-
-// Build the day's 2 free Apriling Band instruments (tuba, then quad tom).
-void aprilBand(){
-    if (get_property("_aprilBandInstruments").to_int() >= 2)
-        return;
-    if (get_property("_aprilBandInstruments").to_int() == 0)
-        cli_execute("aprilband item tuba");
-    if (dayType() == 0)
-        cli_execute("aprilband item quad tom");
-    else
-        cli_execute("aprilband item saxophone");
 }
 
 // Deviled candy eggs (3/day); bail if the command stops making progress

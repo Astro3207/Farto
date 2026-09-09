@@ -965,8 +965,10 @@ void weakMonsters(){
     }
     set_property("acc2Override","");
     step("phase: weakMonsters sandworm (quad tom)");
-    while (get_property("_aprilBandTomUses").to_int() < 3){
+    if (get_property("_aprilBandTomUses").to_int() < 3){
         sandworm();
+        if (available_amount($item[Apriling band quad tom]) == 0)
+            set_property("_aprilBandTomUses" == 3);
     }
     set_property("acc3Override","");
     set_property("offOverride","");

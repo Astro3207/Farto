@@ -289,6 +289,16 @@
         }
     }
 
+    // Clan fortune-teller onlyfax for the day's 3 free consults (needs a clan
+    // with a fortune teller; 90485 is a public one -- see the config note above).
+    void clanFortune(){
+        if (get_property("_clanFortuneConsultUses").to_int() < 3)
+            return;
+        visit_url("showclan.php?whichclan=90485&action=joinclan&confirm=on");
+        cli_execute("fortune onlyfax pizza batman thick");
+        visit_url("showclan.php?whichclan=" + get_property("homeClanID").to_int() + "&action=joinclan&confirm=on");
+    }
+
 // ─── 5. IOTM & ITEM HELPERS ──────────────────────────────────────────────────
 
     // ── Everfull Dart Holster ────────────────────────────────────────────────────
@@ -576,6 +586,18 @@
         if (total_turns_played( ) > get_property("_lastMobiusStripTurn").to_int() + mobiusEncounters[get_property("_mobiusStripEncounters").to_int()])
             return true;
         return false;
+    }
+
+    // Aprilband
+    void aprilBand(){
+        if (get_property("_aprilBandInstruments").to_int() >= 2)
+            return;
+        if (get_property("_aprilBandInstruments").to_int() == 0)
+            cli_execute("aprilband item quad tom");
+        if (dayType() == 0)
+            cli_execute("aprilband item tuba");
+        else
+            cli_execute("aprilband item saxophone");
     }
 
     // ── Comma Chameleon ──────────────────────────────────────────────────────────

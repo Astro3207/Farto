@@ -667,6 +667,7 @@ void postAdv(){
         }
     }
     lawOfAverages();
+    clanFortune();
     if (get_property("autumnatonQuestLocation") == "" && item_amount($item[autumn-aton]) > 0){
         upgradeAutumnaton();
     }
