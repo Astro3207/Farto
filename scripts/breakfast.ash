@@ -306,8 +306,8 @@ void speakeasyPool(){
 }
 
 void printScreenButton(){
-    if (get_property("_internetPrintScreenButtonBought") == "false");
-    create($item[print screen button]);
+    if (get_property("_internetPrintScreenButtonBought") == "false")
+        create($item[print screen button]);
 }
 
 // Deviled candy eggs (3/day); bail if the command stops making progress
