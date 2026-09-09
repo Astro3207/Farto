@@ -360,7 +360,7 @@ void unlock_zeppelin(){
         return;
     set_property("maxOverride","sleaze damage, sleaze spell damage");
     set_property("mainOverride",", equip candy cane sword cane");
-    foreach ef in $effects[Bendin' Hell,Belch the Rainbow&trade;,Amorous,Blood-Gorged,Sleazy Hands,Benetton's Medley of Diversity,Greasy Peasy,Takin' It Greasy,Cuts Like a Lightly-Buttered Knife,Colorful Gratitude,Sleazy Weapon,Stained,Crud&eacute;,Why So Serious?,Improprie Tea,Boschface,All Glory To the Toad,Herder\, Bitter\, Fester\, Stranger]{
+    foreach ef in $effects[Bendin' Hell,Belch the Rainbow&trade;,Amorous,Blood-Gorged,Sleazy Hands,Benetton's Medley of Diversity,Greasy Peasy,Takin' It Greasy,Cuts Like a Lightly-Buttered Knife,Colorful Gratitude,Sleazy Weapon,Stained,Crud&eacute;,Why So Serious?,Improprie Tea,Boschface,All Glory To the Toad,Herder\, Bitter\, Fester\, Stranger,Yoloswagyoloswag]{
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
             continue;
         if (have_effect(ef) == 0)
@@ -524,6 +524,11 @@ void banishFish(){
     if (get_property("screechCombats").to_int() == 0){
         set_property("maxOverride","ml, -10 familiar weight, -equip drunkula's wineglass,-equip backup camera");
         set_property("famOverride","patriotic eagle");
+        if (have_effect($effect[Wet Willied]) == 0){
+            set_property("famEquipOverride",", equip little bitty bathysphere");
+        }
+        if (have_effect($effect[fishy]) == 0)
+            use($item[fishy pipe]);
         if (have_effect($effect[driving waterproofly]) == 0)
             set_property("pantsOverride",", equip really nice swimming trunk");
         retrieve_item($item[peppermint parasol]);
@@ -939,7 +944,7 @@ void spendAdv(){
         }
         set_property("acc1Override","");
     }
-    if (dayType() == 0 &&  my_adventures() < 50)
+    if (dayType() == 0 &&  my_adventures() < 10)
         banishFish();
     level11Sprint();
 }
