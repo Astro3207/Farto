@@ -536,6 +536,8 @@ void banishFish(){
     } else
         abort("Need to recharge patroitic eagle");
     set_property("subscript","");
+    set_property("famEquipOverride","");
+    set_property("pantsOverride","");
     // The screech fight above wanted the CCS (auto-attack off); re-arm the
     // player's combat macro (combatMacroID pref) for the rest of the run.
     set_auto_attack(get_property("combatMacroID").to_int());
