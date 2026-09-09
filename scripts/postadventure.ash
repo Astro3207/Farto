@@ -573,8 +573,6 @@ void freeKillTurnGuard(){
 void endOfDayHandling(){
     if (my_adventures() != 0)
         return;
-    if (dayType() == 0 && my_inebriety() < inebriety_limit())
-        abort("CONSUME manually");
     if (have_equipped($item[drunkula's wineglass]))
         abort("Done for the day");
     if ($strings[solobop, 6-kiss, coat, stick,TTT] contains get_property("script")){
