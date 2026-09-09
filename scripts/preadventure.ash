@@ -195,8 +195,6 @@ void preAdv(){
             append(maximize, ", equip Drunkula's wineglass");
         else if (get_property("offOverride") != "")
             append(maximize, get_property("offOverride"));
-        else if ((highStat/2)+15 < numeric_modifier("monster level") && get_property("subscript") == "weakling")
-            append(maximize, ", equip april shower thoughts shield");
         // Back
         if (get_property("backOverride") != "")
             append(maximize, get_property("backOverride"));
@@ -371,6 +369,20 @@ void preAdv(){
         set_property("hpAutoRecoveryTarget", hpAutoRecoveryTarget);
         set_property("mpAutoRecovery",       mpAutoRecovery);
         set_property("mpAutoRecoveryTarget", mpAutoRecoveryTarget);
+        
+        //initiative
+        if (jump_chance($monster[flaming monstera]) < 100){
+            foreach ef in $effects[Bow-Legged Swagger,Natural 1,Patent Alacrity,Silent Hunting,Clear Ears\, Can't Lose,Poppy Performance,Hiding in Plain Sight,Digitalis\, Dig It,Ass Over Teakettle,Song of Slowness,Synthetic Buzz,Seal Clubbing Frenzy,Springy Fusilli]{
+                if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
+                    continue;
+                if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
+                    continue;
+                if (jump_chance($monster[flaming monstera]) >= 100)
+                    break;
+                if (have_effect(ef) == 0)
+                    cli_execute(ef.default);
+            }
+        }
     }
     if (item_amount($item[dry noodles]) < 2)
         retrieve_item(2,$item[dry noodles]);

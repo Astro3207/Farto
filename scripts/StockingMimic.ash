@@ -147,7 +147,7 @@ void prepBuffs(){
     }
 
     //fam weight
-    foreach ef in $effects[Robot Friends,Healthy Green Glow,Chorale of Companionship,Human-Fish Hybrid,Whole Latte Love,Shortly Stacked,Thoughtful Empathy,Leash of Linguini,Empathy,Black Tongue,Man's Worst Enemy,Billiards Belligerence,You Can Really Taste the Dormouse,Kindly Resolve,Human-Machine Hybrid,Shrimpin' Ain't Easy,Over-Familiar With Dactyls,Loyal Tea,Warm Shoulders,One Foot Heavier,Work For Hours a Week,A Girl Named Sue,Panna Consideration,Loyal as a Rock,Candied Devil,Wildsun Boon,Only Dogs Love a Drunken Sailor,Best Pals,Heart of Green,Bestial Sympathy,Herder\, Bitter\, Fester\, Stranger,Party Soundtrack,Shortly Wired,Greased-Up Familiar,Crocodile Tear,Spiced Out]{
+    foreach ef in $effects[Robot Friends,Healthy Green Glow,Chorale of Companionship,Human-Fish Hybrid,Whole Latte Love,Shortly Stacked,Thoughtful Empathy,Leash of Linguini,Empathy,Black Tongue,Man's Worst Enemy,Billiards Belligerence,You Can Really Taste the Dormouse,Kindly Resolve,Human-Machine Hybrid,Shrimpin' Ain't Easy,Over-Familiar With Dactyls,Loyal Tea,Warm Shoulders,One Foot Heavier,Work For Hours a Week,A Girl Named Sue,Panna Consideration,Loyal as a Rock,Candied Devil,Wildsun Boon,Only Dogs Love a Drunken Sailor,Best Pals,Heart of Green,Bestial Sympathy,Herder\, Bitter\, Fester\, Stranger,Party Soundtrack,Shortly Wired,Greased-Up Familiar,Crocodile Tear,Spiced Out,offhand remarkable]{
         if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]) && ef.attributes != "nohookah")
             continue;
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
@@ -162,17 +162,8 @@ void prepBuffs(){
         use($item[Prunets]);
     }
 
-    //Monster level. Needs reconsidering to work with weakMonsters()
-    foreach ef in $effects[Ur-Kel's Aria of Annoyance,Pride of the Puffin,Bloodbathed,Misplaced Rage,Manbait,Sweetbreads Flamb&eacute;,Red Lettered,Spangled Star,Tortious,Litterbug,Not Sharing,Para-lyzed Jaw,Contemptible Emanations,Lapdog,Ashen Burps,The Cupcake of Wrath,Gelded,Mysteriously Handsome]{
-        if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
-            continue;
-        if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
-            continue;
-        if (have_effect(ef) == 0)
-            cli_execute(ef.default);
-    }
     //meat drop
-    foreach ef in $effects[Loded,Incredibly Well Lit,Tubes of Universal Meat,Holiday Bliss,So You Can Work More...,Legendary Pasta Eyeball,Polka of Plenty]{
+    foreach ef in $effects[Loded,Tubes of Universal Meat,Holiday Bliss,So You Can Work More...,Legendary Pasta Eyeball,Polka of Plenty]{
         if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
             continue;
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
@@ -189,12 +180,13 @@ void prepBuffs(){
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
-    //initiative
-    foreach ef in $effects[Bow-Legged Swagger,Natural 1,Patent Alacrity,Silent Hunting,Clear Ears\, Can't Lose,Poppy Performance,Hiding in Plain Sight,Digitalis\, Dig It,Ass Over Teakettle,Song of Slowness,Synthetic Buzz,Seal Clubbing Frenzy,Springy Fusilli]{
+    foreach ef in $effects[Bow-Legged Swagger]{
         if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
             continue;
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
             continue;
+        if (jump_chance($monster[flaming monstera]) >= 100)
+            break;
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
@@ -398,7 +390,10 @@ void FKPrep(){
 		adv1($location[The Hidden Temple]);
 		useMayamRings();
 	}
-
+    if (get_property("questPAGhost") == "unstarted"
+        && total_turns_played() >= get_property("nextParanormalActivity").to_int()){
+        use($item[almost-dead walkie-talkie]);
+    }
 	step("phase: FKPrep codpiece");
 	codpiece("none");
     retrieve_item(2, $item[tuesday's ruby]);
@@ -445,11 +440,24 @@ void shorts(){
     }
     main@postadventure( );
 }
-void august(){
+void augustCat(){
     if (to_int(get_property("_augSkillsCast")) >= 4)
         return;
 
-    foreach id in $ints[22,8] {
+    foreach id in $ints[8] {
+        if (get_property("_aug" + id + "Cast") == false && to_int(get_property("_augSkillsCast")) < 4) {
+            main@preadventure( );
+            cli_execute("cast Aug. " + id);
+            main@postadventure( );
+        }
+    }
+}
+
+void augustGolem(){
+    if (to_int(get_property("_augSkillsCast")) >= 5)
+        return;
+
+    foreach id in $ints[22] {
         if (get_property("_aug" + id + "Cast") == false && to_int(get_property("_augSkillsCast")) < 4) {
             main@preadventure( );
             cli_execute("cast Aug. " + id);
@@ -683,7 +691,7 @@ void pearloP1(){
     }
     banishFish();
     aa("facsimile");
-    while (looseFK()){
+    if (looseFK()){
         if (have_effect($effect[driving waterproofly]) == 0)
             set_property("pantsOverride",", equip really nice swim");
         set_property("acc3Override",", equip time lord badge of honor");
@@ -700,7 +708,7 @@ void pearloP1(){
             }
         }
     }
-        set_property("pantsOverride","");
+    set_property("pantsOverride","");
 }
 void pearloP2(){
     if (get_property("_fishyPipeUsed") == "false")
@@ -744,13 +752,12 @@ void gingerbread(){
             use($item[counterfeit city]);
     }
     retrieve_item(29,$item[gingerbread cigarette]);
-    while (get_property("_gingerbreadCityTurns").to_int() < 30){
+    if (get_property("_gingerbreadCityTurns").to_int() < 30){
         mimicPrep();
-        adv1($location[Gingerbread Upscale Retail District]);
-        if (get_property("_gingerbreadCityTurns").to_int() == 9)
+        if (get_property("_gingerbreadCityTurns").to_int() == 9 || get_property("_gingerbreadCityTurns").to_int() == 19)
             adv1($location[Gingerbread civic center]);
-        if (get_property("_gingerbreadCityTurns").to_int() == 19)
-            adv1($location[Gingerbread civic center]);
+        else   
+            adv1($location[Gingerbread Upscale Retail District]);
     }
 }
 
@@ -854,6 +861,204 @@ void seals(){
     }
     set_property("mainOverride","");
 }
+
+// += 1 for every active effect that deals automatic per-round damage (mafia's
+// "Damage Aura" / "Sporadic Damage Aura" modifiers -- Cowrruption, Boxing Day
+// Glow, Spiky Hair, Simmering, Frostbeard, and so on). fightPicker() adds this
+// to the double-ice estimate so chip damage doesn't kill a weak monster before
+// the free kill lands.
+int passiveDamage(){
+	int n = 2;
+	foreach ef in my_effects(){
+		if (numeric_modifier(ef, "Damage Aura") != 0
+			|| numeric_modifier(ef, "Sporadic Damage Aura") != 0)
+			n += 1;
+	}
+	return n;
+}
+
+float MLDamageReduction()
+	return max(0.50,(1-(numeric_modifier($modifier[monster level])*0.004)));
+
+boolean buffML(int target,int HP){
+    int currentML = numeric_modifier("Monster level");
+    int targetML = currentML + (HP-target);
+    //Monster level. Needs reconsidering to work with weakMonsters()
+    foreach ef in $effects[Ur-Kel's Aria of Annoyance,Pride of the Puffin,Bloodbathed,Misplaced Rage,Manbait,Sweetbreads Flamb&eacute;,Red Lettered,Spangled Star,Tortious,Litterbug,Not Sharing,Para-lyzed Jaw,Contemptible Emanations,Lapdog,Ashen Burps,The Cupcake of Wrath,Gelded,Mysteriously Handsome]{
+        if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
+            continue;
+        if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
+            continue;
+        if (numeric_modifier("Monster level") >= targetML)
+            break;
+        if (have_effect(ef) == 0)
+            cli_execute(ef.default);
+    }
+    if (numeric_modifier("Monster level") < targetML)
+        change_mcd(11);
+    if (numeric_modifier("Monster level") >= targetML)
+        return true;
+    else
+        return false;
+}
+
+// -- HP-headroom math for fightPicker() ----------------------------------------
+// The double-ice build chips every monster each round (coldform proc plus the
+// passive-damage auras counted by passiveDamage()). If that chip damage kills a
+// weakling before the free kill lands, the free kill is wasted -- so fightPicker()
+// only hands back a monster whose HP clears the relevant target below, buffing
+// Monster Level to pad the monster's HP when it doesn't.
+
+int estimatedIceDamage(){
+    int highStat = max(my_buffedstat($stat[muscle]),
+                       my_buffedstat($stat[mysticality]),
+                       my_buffedstat($stat[moxie]));
+    return to_int(highStat * MLDamageReduction());
+}
+// lowHPTarget: chip damage across a fast (~9-round) free kill.
+// highHPTarget: chip damage across a slow (~29-round) one.
+int lowHPTarget()
+    return (9 * passiveDamage()) + estimatedIceDamage();
+int highHPTarget()
+    return (29 * passiveDamage()) + estimatedIceDamage();
+
+// Can monster m be free-killed right now without chip damage killing it first?
+// Toggles the april shower thoughts shield (extra double-ice) via offOverride when
+// the monster has HP to spare, and buffs ML to pad it when it's too fragile;
+// returns false only when even a maxed ML can't make it safe -- the caller then
+// skips the fight. A $monster[none] (name lookup missed) is treated as safe.
+boolean safeToFK(monster m){
+    equip($item[shield of the Skeleton Lord]);
+    print(m + " HP will be " + m.base_hp);
+    print("Icicle damage is " + estimatedIceDamage());
+    print ("Monster HP must be above " + lowHPTarget());
+    print ("Monster HP must be below " + highHPTarget());
+    if (m == $monster[none]){
+        set_property("offOverride","");
+        return true;
+    }
+    if (m.base_hp > highHPTarget()){
+        set_property("offOverride",", equip april shower thoughts shield");
+        return false;
+    }
+    set_property("offOverride","");
+    if (m.base_hp > lowHPTarget())
+        return true;
+    return buffML(m.base_hp, lowHPTarget());
+}
+
+// The single protonic ghost that haunts each almost-dead walkie-talkie zone, so
+// the ghost fight can be run through safeToFK() like the rest. Ordered as on the
+// Protonic accelerator pack wiki page; $monster[none] for an unrecognised zone.
+monster ghostFor(location loc){
+    monster [location] ghost = {
+        $location[The Spooky Forest]:         $monster[The Headless Horseman],
+        $location[The Haunted Kitchen]:       $monster[The Icewoman],
+        $location[Cobb's Knob Treasury]:      $monster[The ghost of Ebenoozer Screege],
+        $location[The Haunted Conservatory]:  $monster[The ghost of Lord Montague Spookyraven],
+        $location[The Old Landfill]:          to_monster("the ghost of Vanillica \"Trashblossom\" Gorton"),
+        $location[The Smut Orc Logging Camp]: $monster[The ghost of Richard Cockingham],
+        $location[The Haunted Gallery]:       $monster[The ghost of Waldo the Carpathian],
+        $location[The Haunted Wine Cellar]:   $monster[The ghost of Jim Unfortunato],
+        $location[The Overgrown Lot]:         $monster[the ghost of Oily McBindle],
+        $location[The Skeleton Store]:        $monster[boneless blobghost],
+        $location[Madness Bakery]:            $monster[the ghost of Monsieur Baguelle],
+        $location[Inside the Palindome]:      to_monster("Emily Koops, a spooky lime"),
+        $location[The Icy Peak]:              $monster[the ghost of Sam McGee]
+    };
+    if (ghost contains loc)
+        return ghost[loc];
+    return $monster[none];
+}
+
+// Make sure a walkie-talkie ghost report is live (forcing one with the item if
+// the pack's own timer is up but nothing's pending yet) and return its zone.
+// $location[none] if we can't get a report. Guarded on questPAGhost so the item
+// is only ever burned once per report.
+location walkieGhost(){
+    if (get_property("questPAGhost") == "unstarted"
+        && item_amount($item[almost-dead walkie-talkie]) > 0)
+        use($item[almost-dead walkie-talkie]);
+    return to_location(get_property("ghostLocation"));
+}
+
+// The ordered weaklings, flaming leaflets -> tied-up leaviathan (leaviathan
+// deliberately last). Returns the first still-outstanding fight, or "done".
+// checkHP applies safeToFK() -- available AND chip-safe (buffML'ing when it can),
+// skipping any that can't be made safe. checkHP == false is the "delay is used
+// up" pass: availability only, HP be damned, just finish the free kills. The
+// item-summon fights look their representative monster up by name -- fix the
+// strings if a lookup misses.
+string pickWeakling(boolean checkHP){
+    if (!checkHP)
+        set_property("offOverride","");
+    if ((to_int(get_property("_leafMonstersFought")) < 5
+            || get_property("_tiedUpFlamingLeafletFought") == "false")
+        && (!checkHP || safeToFK($monster[flaming leaflet])))
+        return "leaflet";
+    if (get_property("_aug8Cast") == "false"
+        && to_int(get_property("_augSkillsCast")) < 4
+        && (!checkHP || safeToFK($monster[Skeletal cat])))
+        return "augustCat";
+    if (to_int(get_property("_brickoFights")) < 10
+        && (!checkHP || safeToFK($monster[BRICKO ooze])))
+        return "BRICKO";
+    if (to_int(get_property("_speakeasyFreeFights")) < 3
+        && (!checkHP || safeToFK(to_monster("traveling hobo"))))
+        return "speakeasy";
+    if (get_property("_cargoPocketEmptied") != "true"
+        && (!checkHP || safeToFK(to_monster("haxx0r"))))
+        return "shorts";
+    if (to_int(get_property("_lynyrdSnareUses")) < 3
+        && (!checkHP || safeToFK(to_monster("Lynyrd"))))
+        return "lynyrd";
+    if (contains_text(get_property("_trickOrTreatBlock"), "D")
+        && (!checkHP || safeToFK(to_monster("kid who is too old to be trick-or-treating"))))
+        return "trickortreat";
+    if ((to_int(get_property("_glarkCableUses")) < 5 || to_int(get_property("_archSpadeDigs")) < 11)
+        && can_adventure($location[A Mob of Zeppelin Protesters])
+        && (!checkHP || safeToFK(to_monster("red skeleton"))))
+        return "zeppelin";
+    if (to_int(get_property("_aprilBandTomUses")) < 3
+        && available_amount($item[Apriling band quad tom]) > 0
+        && (!checkHP || safeToFK($monster[giant sandworm])))
+        return "sandworm";
+    if (get_property("_tiedUpFlamingMonsteraFought") == "false"
+        && mall_price($item[tied-up flaming monstera]) < 15000
+        && (!checkHP || safeToFK($monster[flaming monstera])))
+        return "monstera";
+    if (get_property("_tiedUpLeaviathanFought") == "false"
+        && mall_price($item[tied-up leaviathan ]) < 15000
+        && (!checkHP || safeToFK(to_monster("leaviathan"))))
+        return "leaviathan";
+    if ((get_property("questPAGhost") == "started"
+            || (get_property("questPAGhost") == "unstarted"
+                && total_turns_played() >= to_int(get_property("nextParanormalActivity"))
+                && item_amount($item[almost-dead walkie-talkie]) > 0))
+        && (!checkHP || safeToFK(ghostFor(walkieGhost()))))
+        return "ghost";
+    return "done";
+}
+
+// Three-tier pick:
+//  1. the ordered weaklings, full criteria (available + chip-safe, buffML if needed)
+//  2. nothing safe -> burn delay turns on gingerbread, then pearl P1, and hope the
+//     passive-damage / ML picture shifts before we come back around
+//  3. delay used up -> take the ordered weaklings again with the HP criteria off,
+//     just finishing whatever free kills are still outstanding
+string fightPicker(){
+    string pick = pickWeakling(true);
+    if (pick != "done")
+        return pick;
+
+    if (to_int(get_property("_gingerbreadCityTurns")) < 30)
+        return "gingerbread";
+    if (dayType() == 0 && looseFK())
+        return "pearloP1";
+
+    return pickWeakling(false);
+}
+
 void weakMonsters(){
     step("phase: weakMonsters start");
     set_property("acc3Override",", equip time lord badge of honor");
@@ -862,117 +1067,146 @@ void weakMonsters(){
     if (have_effect($effect[coldform]) == 0)
         use($item[phial of coldness]);
     equip($slot[acc3],$item[time lord badge of honor]);
-    int highStat = max(my_buffedstat($stat[muscle]),my_buffedstat($stat[mysticality]),my_buffedstat($stat[moxie]));
-    while ((highStat/2) + 10 > numeric_modifier("monster level")){
-        highStat = max(my_buffedstat($stat[muscle]),my_buffedstat($stat[mysticality]),my_buffedstat($stat[moxie]));
-        print(highStat);
-        print ((highStat/2));
-        uneffectBuff();
-    }
-    step("phase: weakMonsters gingerbread");
-    if (get_property("_gingerbreadCityTurns").to_int() < 30){
+    // fightPicker() returns one key per call, in strict priority order; run that
+    // fight, then re-ask. It also sets offOverride and buffs ML as needed.
+    string pick = fightPicker();
+    while (pick != "done"){
+        // pearloP1() leaves subscript on "looseFK" -- re-assert it each pass.
         set_property("subscript","weakling");
-        gingerbread();
-    }
-    step("phase: weakMonsters pearl P1");
-    if (looseFK() && dayType() == 0){
-        pearloP1();
-    }
-    set_property("subscript","weakling");
-    step("phase: weakMonsters speakeasy");
-    while (to_int(get_property("_speakeasyFreeFights")) < 3){
-        mimicPrep();
-        adv1($location[An Unusually Quiet Barroom Brawl]);
-    }
-    step("phase: weakMonsters leaf monsters");
-    while (to_int(get_property("_leafMonstersFought")) < 5){
-        mimicPrep();
-        main@preadventure( );
-        visit_url("campground.php?preaction=leaves");
-        visit_url("choice.php?"+my_hash()+"&whichchoice=1510&option=1&leaves=11");
-        run_combat();
-        main@postadventure( );
-    }
-    step("phase: weakMonsters tied-up leaflets");
-    if (get_property("_tiedUpFlamingLeafletFought") == false){
-        main@preadventure( );
-        use($item[tied-up flaming leaflet]);
-        main@postadventure( );
-    }
-    if (get_property("_tiedUpFlamingMonsteraFought") == false && mall_price($item[tied-up flaming monstera]) < 15000){
-        main@preadventure( );
-        use($item[tied-up flaming monstera]);
-        main@postadventure( );
-    }
-    if (get_property("_tiedUpLeaviathanFought") == false && mall_price($item[tied-up leaviathan ]) < 15000){
-        main@preadventure( );
-        use($item[tied-up leaviathan ]);
-        main@postadventure( );
-    }
-    step("phase: weakMonsters cargo shorts");
-    shorts();
-    step("phase: weakMonsters BRICKO");
-    while (get_property("_brickoFights").to_int() < 10){
-        mimicPrep();
-        main@preadventure( );
-        use($item[bricko ooze]);
-        main@postadventure( );
-    }
-    step("phase: weakMonsters lynyrd snare");
-    while (to_int(get_property("_lynyrdSnareUses")) < 3){
-        mimicPrep();
-        main@preadventure( );
-        use($item[lynyrd snare]);
-    }
-    step("phase: weakMonsters trick-or-treat");
-    while (contains_text(get_property("_trickOrTreatBlock"), "D")){
-        mimicPrep();
-        set_property("hatOverride",", equip beholed bedsheet");
-        main@preadventure( );
-        candy("fight");
-    }
-    set_property("hatOverride","");
-    step("phase: weakMonsters glark cable / zeppelin");
-    while (to_int(get_property("_glarkCableUses")) < 5 && can_adventure($location[A Mob of Zeppelin Protesters])) {
-        if (get_property("questL11Ron") == "step4")
-            set_property("mainOverride",", equip legendary seal-clubbing club");
-        else
-            set_property("mainOverride","");
-        mimicPrep();
-        MobiusMaybe();
-        retrieve_item(5,$item[glark cable]);
-        adv1($location[the red zeppelin]);
-    }
-    set_property("acc2Override","");
-    step("phase: weakMonsters archaeologist");
-    if (can_adventure( $location[The Red Zeppelin])){
-        while (to_int(get_property("_archSpadeDigs")) < 11){
-            set_property("archSkeleton","true");
+
+        if (pick == "gingerbread"){
+            step("phase: weakMonsters gingerbread");
+            gingerbread();
+        } else if (pick == "pearloP1"){
+            step("phase: weakMonsters pearl P1");
+            pearloP1();
+        } else if (pick == "leaflet"){
+            step("phase: weakMonsters flaming leaflets");
             mimicPrep();
-            archaeologist();
+            main@preadventure( );
+            if (get_property("_tiedUpFlamingLeafletFought") == "false"){
+                use($item[tied-up flaming leaflet]);
+            } else {
+                visit_url("campground.php?preaction=leaves");
+                visit_url("choice.php?"+my_hash()+"&whichchoice=1510&option=1&leaves=11");
+                run_combat();
+            }
+            main@postadventure( );
+        } else if (pick == "augustCat"){
+            step("phase: weakMonsters August Cat Day (skeletal cat)");
+            mimicPrep();
+            augustCat();
+        } else if (pick == "BRICKO"){
+            step("phase: weakMonsters BRICKO ooze");
+            mimicPrep();
+            main@preadventure( );
+            use($item[bricko ooze]);
+            main@postadventure( );
+        } else if (pick == "speakeasy"){
+            step("phase: weakMonsters traveling hobo");
+            mimicPrep();
+            adv1($location[An Unusually Quiet Barroom Brawl]);
+        } else if (pick == "shorts"){
+            step("phase: weakMonsters cargo shorts (haxx0r)");
+            shorts();
+        } else if (pick == "lynyrd"){
+            step("phase: weakMonsters lynyrd snare");
+            mimicPrep();
+            main@preadventure( );
+            use($item[lynyrd snare]);
+            main@postadventure( );
+        } else if (pick == "trickortreat"){
+            step("phase: weakMonsters trick-or-treat kid");
+            mimicPrep();
+            set_property("hatOverride",", equip beholed bedsheet");
+            main@preadventure( );
+            candy("fight");
+            set_property("hatOverride","");
+        } else if (pick == "zeppelin"){
+            step("phase: weakMonsters red zeppelin / archaeologist");
+            if (to_int(get_property("_glarkCableUses")) < 5
+                && can_adventure($location[A Mob of Zeppelin Protesters])){
+                if (get_property("questL11Ron") == "step4")
+                    set_property("mainOverride",", equip legendary seal-clubbing club");
+                else
+                    set_property("mainOverride","");
+                mimicPrep();
+                MobiusMaybe();
+                retrieve_item(5,$item[glark cable]);
+                adv1($location[the red zeppelin]);
+                set_property("acc2Override","");
+            } else {
+                set_property("archSkeleton","true");
+                mimicPrep();
+                archaeologist();
+                set_property("archSkeleton","false");
+            }
+            set_property("mainOverride","");
+        } else if (pick == "sandworm"){
+            step("phase: weakMonsters giant sandworm (quad tom)");
+            sandworm();
+            // Out of quad toms -- stop other _aprilBandTomUses < 3 guards retrying.
+            if (available_amount($item[Apriling band quad tom]) == 0)
+                set_property("_aprilBandTomUses","3");
+        } else if (pick == "monstera"){
+            step("phase: weakMonsters flaming monstera");
+            mimicPrep();
+            main@preadventure( );
+            use($item[tied-up flaming monstera]);
+            main@postadventure( );
+        } else if (pick == "leaviathan"){
+            step("phase: weakMonsters tied-up leaviathan");
+            mimicPrep();
+            main@preadventure( );
+            use($item[tied-up leaviathan ]);
+            main@postadventure( );
+        } else if (pick == "ghost"){
+            step("phase: weakMonsters paranormal ghost (walkie-talkie)");
+            mimicPrep();
+            MobiusMaybe();
+            location ghostLoc = walkieGhost();
+            if (ghostLoc != $location[none])
+                adv1(ghostLoc);
         }
-        set_property("archSkeleton","false");
+
+        pick = fightPicker();
     }
-    set_property("mainOverride","");
-    step("phase: weakMonsters august skills");
-    august();
-    step("phase: weakMonsters paranormal ghost");
-    if (get_property("questPAGhost") == "unstarted" && total_turns_played() >= get_property("nextParanormalActivity").to_int()){
-        use($item[almost-dead walkie-talkie]);
-        mimicPrep();
-        MobiusMaybe();
-        adv1 (to_location(get_property("ghostLocation")));
-    }
+
     set_property("acc2Override","");
-    step("phase: weakMonsters sandworm (quad tom)");
-    if (get_property("_aprilBandTomUses").to_int() < 3){
-        sandworm();
-        if (available_amount($item[Apriling band quad tom]) == 0)
-            set_property("_aprilBandTomUses" == 3);
-    }
     set_property("acc3Override","");
+    set_property("mainOverride","");
     set_property("offOverride","");
+    set_property("hatOverride","");
     set_property("subscript","");
+}
+
+// True while weakMonsters() still has something to do -- gates the call in
+// bulkFK(). Mirrors fightPicker()'s availability checks (minus the HP math).
+boolean weakMonstersLeft(){
+    if (to_int(get_property("_gingerbreadCityTurns")) < 30) return true;
+    if (dayType() == 0 && looseFK()) return true;
+    if (to_int(get_property("_leafMonstersFought")) < 5) return true;
+    if (get_property("_tiedUpFlamingLeafletFought") == "false") return true;
+    if (to_int(get_property("_brickoFights")) < 10) return true;
+    if (to_int(get_property("_speakeasyFreeFights")) < 3) return true;
+    if (get_property("_cargoPocketEmptied") != "true") return true;
+    if (to_int(get_property("_lynyrdSnareUses")) < 3) return true;
+    if (contains_text(get_property("_trickOrTreatBlock"), "D")) return true;
+    if ((to_int(get_property("_glarkCableUses")) < 5 || to_int(get_property("_archSpadeDigs")) < 11)
+        && can_adventure($location[A Mob of Zeppelin Protesters])) return true;
+    if (to_int(get_property("_aprilBandTomUses")) < 3
+        && available_amount($item[Apriling band quad tom]) > 0) return true;
+    if (get_property("_tiedUpFlamingMonsteraFought") == "false"
+        && mall_price($item[tied-up flaming monstera]) < 15000) return true;
+    if (get_property("_tiedUpLeaviathanFought") == "false"
+        && mall_price($item[tied-up leaviathan ]) < 15000) return true;
+    if (get_property("_aug8Cast") == "false"
+        && to_int(get_property("_augSkillsCast")) < 4) return true;
+    if (get_property("questPAGhost") == "started"
+        || (get_property("questPAGhost") == "unstarted"
+            && total_turns_played() >= to_int(get_property("nextParanormalActivity"))
+            && item_amount($item[almost-dead walkie-talkie]) > 0)) return true;
+    return false;
 }
 
 void embezzler(){
@@ -1000,9 +1234,10 @@ void bulkFK(){
     // bulkFK() run (FKPrep skipped because the express card is already used) still fights.
     starter();
     aa("facsimile");
-    if (get_property("_aprilBandTomUses").to_int() < 3){
+    if (weakMonstersLeft())
         weakMonsters();
-    }
+    step("phase: August Golem");
+        augustGolem();
     //need to finish: science tent
     //eat eldritch pizza
     step("phase: bulkFK spleen (Extrovermectin)");

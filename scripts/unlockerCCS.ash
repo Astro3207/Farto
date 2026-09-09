@@ -201,7 +201,7 @@ boolean [monster] hurtMobs = {
 
 void main(int round, monster mob, string page_text) {
     print ("monster hp is " + last_monster().base_hp);
-    print ("monster base hp is " + last_monster().raw_hp);
+    print ("monster raw hp is " + last_monster().raw_hp);
     print ("monster level is "+ numeric_modifier("monster level"));
     print ("high stat is " + max(my_buffedstat($stat[muscle]),my_buffedstat($stat[mysticality]),my_buffedstat($stat[moxie])));
     if (last_monster() == $monster[black crayon mer-kin]){
@@ -295,8 +295,6 @@ void main(int round, monster mob, string page_text) {
                 while (current_round() > 0 && current_round() < 30)
                     use_skill($skill[shieldbutt]);
             }
-            else
-                abort("non dude");
         }
         while (current_round() > 0 && current_round() < 30 && monster_hp() > 9){
             if (have_equipped($item[april shower thoughts shield]))
