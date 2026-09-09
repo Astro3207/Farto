@@ -1,3 +1,4 @@
+import iotm;
 //List of all potentially account specific stuff
 //preference homeClanID
 //preference combatMacroID
@@ -31,7 +32,7 @@ void main(){
     if (dayType() == 0){
         cli_execute("postloop");
         cli_execute("preconsume");
-        if (numeric_modifier("familiar weight") < 300)
+    //    if (numeric_modifier("familiar weight") < 300)
             cli_execute("farto");
         cli_execute("stockingmimic");
         if (my_adventures() == 0)
