@@ -125,6 +125,21 @@
         return false;
     }
 
+    // Turns of buff one acquisition of an effect grants: a skill cast
+    // (turns_per_cast already folds in Inigo's / Empathy / path multipliers) or a
+    // single use/eat/drink of the item that grants it (mafia's modifiers.txt
+    // "Effect Duration"). Returns 0 when neither resolves -- the effect comes from
+    // a choice or combat and the caller has to know the number itself.
+    int effectDuration(effect ef){
+        skill sk = to_skill(ef);
+        if (sk != $skill[none])
+            return turns_per_cast(sk);
+        item src = effect_to_item(ef);
+        if (src != $item[none])
+            return numeric_modifier(src, "Effect Duration");
+        return 0;
+    }
+
 // ─── 3. BANISH UTILITIES ─────────────────────────────────────────────────────
 
     record ban {

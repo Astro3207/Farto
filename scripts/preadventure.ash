@@ -43,7 +43,7 @@ void mood(string function){
                 visit_url("showclan.php?whichclan=2046992052&action=joinclan&confirm=on");
             } else if (ef == $effect[material witness] && get_property("_jukebox") == "true"){
                 continue;
-            } else if (to_int(get_property("_heartstonePalsUsed")) == 5 && ef == $effect[best pals]){
+            } else if (to_int(get_property("_heartstonePalsUsed")) >= 4 && ef == $effect[best pals]){
                 continue;
             } else if (ef == $effect[The Ballad of Richie Thingfinder] && get_property("_thingfinderCasts") == 10){
                 continue;
@@ -53,6 +53,8 @@ void mood(string function){
                 continue;
             }
             if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
+                continue;
+            if (dayType() == 1 && effectDuration(ef) > my_adventures())
                 continue;
             if (have_effect(ef) == 0)
                 cli_execute(ef.default);
