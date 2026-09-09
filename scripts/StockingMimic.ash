@@ -307,7 +307,7 @@ void FKPrep(){
 
 	retrieve_item(25, $item[bag of many confections]);
 	set_property("script", "FreeKill");
-
+    retrieve_item($item[burning paper crane]);
 	step("phase: FKPrep buffs");
 	useMayamRings();
     if (have_effect($effect[Hammertime]) == 0)
@@ -933,7 +933,6 @@ int highHPTarget()
 // returns false only when even a maxed ML can't make it safe -- the caller then
 // skips the fight. A $monster[none] (name lookup missed) is treated as safe.
 boolean safeToFK(monster m){
-    equip($item[shield of the Skeleton Lord]);
     print(m + " HP will be " + m.base_hp);
     print("Icicle damage is " + estimatedIceDamage());
     print ("Monster HP must be above " + lowHPTarget());

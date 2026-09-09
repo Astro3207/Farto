@@ -54,7 +54,7 @@ void mood(string function){
             }
             if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
                 continue;
-            if (dayType() == 1 && effectDuration(ef) > my_adventures())
+            if (dayType() == 0 && effectDuration(ef) > (my_adventures() + pvp_attacks_left()))
                 continue;
             if (have_effect(ef) == 0)
                 cli_execute(ef.default);

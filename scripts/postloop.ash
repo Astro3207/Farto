@@ -1,4 +1,5 @@
 import iotm;
+set_property("choiceAdventureScript","generalChoice.ash");
 cli_execute ("hagnk all");
 if (my_basestat($stat[moxie]) < 200 || my_basestat($stat[mysticality]) < 200) {
     use_familiar($familiar[cooler yeti]);

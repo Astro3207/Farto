@@ -153,6 +153,7 @@ boolean littleMore(){
 }
 
 void main(){
+    put_closet(item_amount($item[mayodiol]),$item[mayodiol]);
  //   legendaryPasta();
     cupOf13s();
     timeArrow();
