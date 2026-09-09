@@ -1,3 +1,4 @@
+import iotm;
 cli_execute ("hagnk all");
 if (my_basestat($stat[moxie]) < 200 || my_basestat($stat[mysticality]) < 200) {
     use_familiar($familiar[cooler yeti]);
@@ -30,10 +31,5 @@ if (get_property("questG09Muscle") == "unstarted" && (my_class() == $class[seal 
     run_turn();
 }
 if (item_amount($item[Platinum Yendorian Express Card]) > 0){
-    visit_url("showclan.php?whichclan=2047009940&action=joinclan&confirm=on");
-    if (get_clan_id( ) == 2047009940 && get_clan_name( ) == "Best Friends Club")
-        put_stash( 1, $item[Platinum Yendorian Express Card] );
-    else
-        abort("Wrong PYEC clan");
-    visit_url("showclan.php?whichclan=72876&action=joinclan&confirm=on");
+    stashReturn($item[Platinum Yendorian Express Card]);
 }
