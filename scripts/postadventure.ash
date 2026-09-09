@@ -939,7 +939,7 @@ void spendAdv(){
         set_property("acc1Override","");
     }
     if (dayType() == 0 &&  my_adventures() < 50)
-        banishBeast();
+        banishFish();
     level11Sprint();
 }
 
