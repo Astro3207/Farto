@@ -308,7 +308,7 @@
     // Clan fortune-teller onlyfax for the day's 3 free consults (needs a clan
     // with a fortune teller; 90485 is a public one -- see the config note above).
     void clanFortune(){
-        if (get_property("_clanFortuneConsultUses").to_int() < 3)
+        if (get_property("_clanFortuneConsultUses").to_int() == 3)
             return;
         visit_url("showclan.php?whichclan=90485&action=joinclan&confirm=on");
         cli_execute("fortune onlyfax pizza batman thick");

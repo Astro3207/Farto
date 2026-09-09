@@ -163,8 +163,10 @@ void prepBuffs(){
     }
 
     //meat drop
-    foreach ef in $effects[Loded,Tubes of Universal Meat,Holiday Bliss,So You Can Work More...,Legendary Pasta Eyeball,Polka of Plenty]{
+    foreach ef in $effects[Loded,Meet the Meat,Tubes of Universal Meat,Holiday Bliss,So You Can Work More...,Legendary Pasta Eyeball,Polka of Plenty]{
         if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
+            continue;
+        if (ef == $effect[Meet the Meat] && dayType() != 1)
             continue;
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
             continue;

@@ -300,6 +300,16 @@ void candyRichBlock(){
     candy("treat");
 }
 
+void speakeasyPool(){
+    cli_execute("maximize pool skill");
+    visit_url("place.php?whichplace=speakeasy&action=olivers_pooltable");
+}
+
+void printScreenButton(){
+    if (get_property("_internetPrintScreenButtonBought") == "false");
+    create($item[print screen button]);
+}
+
 // Deviled candy eggs (3/day); bail if the command stops making progress
 // instead of spinning when the account has no candy egg to devil.
 void devilCandyEggs(){
@@ -327,6 +337,8 @@ void secondBreakfast(){
 
     step("phase: daily buttons");
     aprilShower();
+    speakeasyPool();
+    printScreenButton();
     burningLeaves();
     candyRichBlock();
     zoneOpening();
