@@ -388,7 +388,7 @@ void FKPrep(){
 		adv1($location[The Hidden Temple]);
 		useMayamRings();
 	}
-    if (get_property("questPAGhost") == "unstarted"
+    if (get_property("questPAGhost") == "unstarted" && !have_item($item[protonic accelerator pack])
         && total_turns_played() >= get_property("nextParanormalActivity").to_int()){
         use($item[almost-dead walkie-talkie]);
     }
