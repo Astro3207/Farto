@@ -165,6 +165,7 @@ void finalChores(){
 // visit_url() calls check whether an earlier one already succeeded -- both
 // carried over unchanged from the original script (see chat).
 void ascend(){
+    set_property("postAscensionScript","postascend.ash");
     if (get_property("looping") == "true"){
         set_property("looping","false");
         visit_url("showclan.php?whichclan=2047009940&action=joinclan&confirm=on");
@@ -178,7 +179,7 @@ void ascend(){
         visit_url("afterlife.php?action=ascend&confirmascend=1&whichsign=8&gender=1&whichclass=6&whichpath=55&asctype=2&lamesignok=1&nopetok=1");
         visit_url("main.php");
         run_choice(-1);
-    } else if (user_confirm("Grab PYEC?")){
+    } else if (my_name().to_lower_case() == "fart scauce" && user_confirm("Grab PYEC?")){
         visit_url("showclan.php?whichclan=2047009940&action=joinclan&confirm=on");
         take_stash(1,$item[Platinum Yendorian Express Card]);
         set_property("garbo_valueOfFreeFight","1000");
@@ -192,7 +193,7 @@ void ascend(){
         visit_url("main.php");
         run_choice(-1);
     } else {
-        set_property("garbo_valueOfFreeFight","6001");
+        set_property("garbo_valueOfFreeFight","15000");
         visit_url("ascend.php?action=ascend&confirm=on&confirm2=on");
         visit_url("afterlife.php?action=pearlygates");
         visit_url("afterlife.php?place=deli");

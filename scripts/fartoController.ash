@@ -21,22 +21,18 @@ void firstTimeSetup(){
 
 void main(){
     firstTimeSetup();
-    if (dayType() == 0){
+    if (dayType() == 1){
         cli_execute("breakfast.ash");
-        if (get_property("_infiniteJellyUsed") == false)
-            cli_execute("preconsume");
-        if (have_effect($effect[Shadow Affinity]) == 0)
-            cli_execute("farto");
         cli_execute("stockingmimic");
-        if (contains_text(get_property("thoth19_event_list"),"postFK"))
-            cli_execute("dinner");
-    } else if (dayType() == 1){
-        cli_execute("breakfast.ash");
-        if (numeric_modifier("familiar weight") > 350)
-            cli_execute("stockingmimic");
-        if (contains_text(get_property("thoth19_event_list"),"postFK"))
-            cli_execute("preconsume");
+        cli_execute("preconsume");
         cli_execute("farto");
+        cli_execute("preascend");
+    }
+    if (dayType() == 0){
+        cli_execute("postloop");
+        cli_execute("preconsume");
+        cli_execute("farto");
+        cli_execute("stockingmimic");
         if (my_adventures() == 0)
             cli_execute("dinner");
     }
