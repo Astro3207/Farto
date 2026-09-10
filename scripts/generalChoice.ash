@@ -176,7 +176,6 @@ void main(int whichchoice, string page) {
         // ── simple: a single fixed run_choice(#), grouped by that number, then by case # ──
         case 633:
         case 705:
-        case 787:
         case 1344:
         case 1471:
         case 1472:
@@ -224,6 +223,10 @@ void main(int whichchoice, string page) {
         case 1310:
             run_choice(1);
             run_choice(3);
+            break;
+        case 787:
+            run_choice(1);
+            run_choice(6);
             break;
         case 218:
             if (get_property("choiceAdventure218") == "0"){
