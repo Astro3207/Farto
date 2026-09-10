@@ -60,7 +60,7 @@ void augSkills(){
             cli_execute("cast Aug. 7th");
     }
     if (get_property("_heartstoneLuckUsed") == "false"){
-        use_skill($skill[heartstone: %LUCK]);
+    //    use_skill($skill[heartstone: %LUCK]);
     }
 }
 

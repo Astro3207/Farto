@@ -1046,6 +1046,9 @@ string pickWeakling(boolean checkHP){
     if (to_int(get_property("_lynyrdSnareUses")) < 3
         && (!checkHP || safeToFK(to_monster("Lynyrd"))))
         return "lynyrd";
+    if (contains_text(get_property("_trickOrTreatBlock"), "D")
+        && (!checkHP || safeToFK(to_monster("vandal kid"))))
+        return "trickortreat";
     if ((to_int(get_property("_glarkCableUses")) < 5 || to_int(get_property("_archSpadeDigs")) < 11)
         && can_adventure($location[A Mob of Zeppelin Protesters])
         && (!checkHP || safeToFK(to_monster("red skeleton"))))
@@ -1159,6 +1162,14 @@ void weakMonsters(){
             main@preadventure( );
             use($item[lynyrd snare]);
             main@postadventure( );
+        } else if (pick == "trickortreat"){
+            step("phase: weakMonsters trick-or-treat kid");
+            mimicPrep();
+            set_property("hatOverride",", equip beholed bedsheet");
+            main@preadventure( );
+            candy("fight");
+            main@postadventure( );
+            set_property("hatOverride","");
         } else if (pick == "zeppelin"){
             step("phase: weakMonsters red zeppelin / archaeologist");
             if (to_int(get_property("_glarkCableUses")) < 5
@@ -1253,7 +1264,6 @@ void embezzler(){
         if (get_property("_roboDrinks") != "drive-by shooting"){
             retrieve_item($item[drive-by shooting]);
             visit_url("inventory.php?action=robooze&which=1&whichitem=9396");
-            abort("Check if this link worked");
         }
         set_property("script","embezzler");
         set_property("unconditionalOverride","meat drop");
@@ -1271,11 +1281,12 @@ void embezzler(){
 
 void restOfHiddenCity(){
     set_property("maxOverride","familiar experience");
-    set_property("famOverride","chest mimic");
     while (to_int(get_property("_drunkPygmyBanishes")) < 11){
+        set_property("famOverride","chest mimic");
         drunkPygmy();
     }
     while (get_property("zigguratLianas") == 0 && dayType() == 1){
+        set_property("famOverride","chest mimic");
         lianas();
     }
     if (have_effect($effect[Everything looks Beige]) == 0 && have_item($item[crepe paper parachute cape])){
@@ -1318,15 +1329,6 @@ void bulkFK(){
     step("phase: bulkFK backup camera");
     backup();
     step("phase: bulkFK cyberzone");
-    if (contains_text(get_property("_trickOrTreatBlock"), "D")){
-        step("phase: weakMonsters trick-or-treat kid");
-        mimicPrep();
-        set_property("hatOverride",", equip beholed bedsheet");
-        main@preadventure( );
-        candy("fight");
-        main@postadventure( );
-        set_property("hatOverride","");
-    }
     while (get_property("_cyberFreeFights").to_int() < 10){
         constructBanish();
         mimicPrep();
