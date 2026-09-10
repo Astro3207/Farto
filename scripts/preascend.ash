@@ -70,17 +70,17 @@ void pvpCleanup(){
 void bczCasts(){
     while (my_basestat($stat[submuscle]) > BCZcost("BloodThinnerCasts")){
         int before = my_basestat($stat[submuscle]);
-        if (!use_skill($skill[BCZ: Create Blood Thinner]) || my_basestat($stat[submuscle]) >= before)
+        if (!use_skill($skill[BCZ: Create Blood Thinner],1) || my_basestat($stat[submuscle]) >= before)
             break;
     }
     while (my_basestat($stat[submoxie]) > BCZcost("PheromoneCocktailCasts")){
         int before = my_basestat($stat[submoxie]);
-        if (!use_skill($skill[BCZ: Craft a Pheromone Cocktail]) || my_basestat($stat[submoxie]) >= before)
+        if (!use_skill($skill[BCZ: Craft a Pheromone Cocktail],1) || my_basestat($stat[submoxie]) >= before)
             break;
     }
     while (my_basestat($stat[submysticality]) > BCZcost("SpinalTapasCasts")){
         int before = my_basestat($stat[submysticality]);
-        if (!use_skill($skill[BCZ: Prepare Spinal Tapas]) || my_basestat($stat[submysticality]) >= before)
+        if (!use_skill($skill[BCZ: Prepare Spinal Tapas],1) || my_basestat($stat[submysticality]) >= before)
             break;
     }
 }
