@@ -227,15 +227,9 @@ void main(int round, monster mob, string page_text) {
     }
     if ($locations[cyberzone 1,cyberzone 2,cyberzone 3] contains my_location()){
         if (last_monster().phylum == $phylum[construct]){
-            if (my_location() == $location[cyberzone 3]){
-                while (current_round() > 0 && current_round() < 10)
-                    use_skill($skill[throw cyber rock]);
-                throw_item($item[logic grenade]);
-            }
-            while (current_round() > 0 && current_round() > 0)
+            while (current_round() > 0 && current_round() < 10 && my_hp( ) > my_maxhp()/10)
                 use_skill($skill[throw cyber rock]);
-            if (current_round() > 0)
-                abort();
+            throw_item($item[logic grenade]);
         }
     }
     if ($location[The Hidden Bowling Alley] == my_location()){
