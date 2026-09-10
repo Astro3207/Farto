@@ -395,6 +395,8 @@ void preAdv(){
         retrieve_item(2,$item[dry noodles]);
     if (item_amount($item[logic grenade]) < 1)
         retrieve_item(1,$item[logic grenade]);
+    if (item_amount($item[glitched malware]) < 1)
+        retrieve_item(1,$item[glitched malware]);
     if (get_property("subscript") == "weakling" || get_property("subscript") == "looseFK"){
         if (closet_amount($item[shard of double-ice]) > 0)
             take_closet($item[shard of double-ice]);

@@ -231,7 +231,9 @@ void main(int round, monster mob, string page_text) {
         if (last_monster().phylum == $phylum[construct]){
             while (current_round() > 0 && current_round() < 10 && my_hp( ) > my_maxhp()/10)
                 use_skill($skill[throw cyber rock]);
-            throw_item($item[logic grenade]);
+            if ($monsters[ICE barrier,corruption quarantine,parental controls,null container] contains last_monster())
+                use_skill($skill[deploy glitched malware]);
+            use_skill($skill[Launch Logic Grenade]);
         }
     }
     if ($location[The Hidden Bowling Alley] == my_location()){
