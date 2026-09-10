@@ -537,7 +537,10 @@ void shadowBoss(){
         set_property("hpAutoRecovery",0.36);
         set_property("hpAutoRecoveryTarget",0.36);
         cli_execute("recover hp");
-        set_property("maxOverride","familiar weight, equip petrified wood wizard's pouch");
+        if (have_item($item[petrified wood wizard's pouch]))
+            set_property("maxOverride","familiar weight, equip petrified wood wizard's pouch");
+        else
+            set_property("maxOverride","familiar weight, equip congressional medal of insanity");
     }
 }
 void shadowRealmFK(){
@@ -556,9 +559,12 @@ void shadowRealmFK(){
         }
     }
     if ($monster[shadow slab].elemental_resistance > 85){
-        set_property("acc3Override",",equip petrified wood wizard's pouch");
+        if (have_item($item[petrified wood wizard's pouch]))
+            set_property("acc3Override",",equip petrified wood wizard's pouch");
+        else
+            set_property("acc3Override",",equip congressional medal of insanity");
     } else {
-        set_property("acc3Override",",equip petrified wood wizard's pouch");
+        set_property("acc3Override","");
     }
     if (to_int(get_property("_batWingsSwoopUsed")) < 11 && dayType() == 0)
         set_property("backOverride",", equip bat wings");
@@ -1326,6 +1332,8 @@ void bulkFK(){
     }
     step("phase: bulkFK habitat recall");
     habitatRecall();
+    step ("phase: use up hidden city");
+    restOfHiddenCity();
     step("phase: bulkFK backup camera");
     backup();
     step("phase: bulkFK cyberzone");
@@ -1388,8 +1396,6 @@ void bulkFK(){
         set_property("acc2Override", "");
         set_property("offOverride", "");
     }
-    step ("phase: use up hidden city");
-    restOfHiddenCity();
     step("phase: bulkFK reminisce");
     reminisce();
     step("phase: bulkFK glitch monster");

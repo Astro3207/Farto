@@ -61,12 +61,18 @@ void shadowRealm(){
             set_property("mainOverride",", equip monodent");
         if (get_property("encountersUntilSRChoice").to_int() == 0 && get_property("rufusQuestTarget") == "shadow scythe")
             abort();
-        if (get_property("encountersUntilSRChoice").to_int() == 0 && get_property("rufusQuestTarget") == "shadow spire"){
+        if (get_property("encountersUntilSRChoice").to_int() == 0 && get_property("rufusQuestTarget") == "shadow spire")
             set_property("maxOverride","spell damage percent");
-            set_property("acc3Override",", equip petrified wood wizard's pouch");
+        if (have_item($item[petrified wood wizard's pouch]))
+            set_property("acc3Override",",equip petrified wood wizard's pouch");
+        else
+            set_property("acc3Override",",equip congressional medal of insanity");
+        if ($monster[shadow slab].elemental_resistance > 85){
+            if (have_item($item[petrified wood wizard's pouch]))
+                set_property("acc3Override",",equip petrified wood wizard's pouch");
+            else
+                set_property("acc3Override",",equip congressional medal of insanity");
         }
-        if ($monster[shadow slab].elemental_resistance > 85)
-            set_property("acc3Override",", equip petrified wood wizard's pouch");
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
         set_property("acc3Override","");
     }
