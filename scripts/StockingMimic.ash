@@ -935,7 +935,7 @@ boolean safeToFK(monster m){
     print ("Monster HP must be below " + highHPTarget());
     if (m == $monster[none]){
         set_property("offOverride","");
-        return true;
+        return false;
     }
     if (m.base_hp > highHPTarget()){
         set_property("offOverride",", equip april shower thoughts shield");
@@ -1239,6 +1239,23 @@ void embezzler(){
     }
 }
 
+void restOfHiddenCity(){
+    set_property("maxOverride","familiar experience");
+    set_property("famOverride","chest mimic");
+    while (to_int(get_property("_drunkPygmyBanishes")) < 11){
+        drunkPygmy();
+    }
+    while (get_property("zigguratLianas") == 0 && dayType() == 1){
+        lianas();
+    }
+    if (have_effect($effect[Everything looks Beige]) == 0 && have_item($item[crepe paper parachute cape])){
+        adv1($location[An Overgrown Shrine (Southeast)]);
+        cli_execute("equip weapon antique machete");
+        visit_url("inventory.php?action=parachute");
+        visit_url("choice.php?option=1&whichchoice=1543&monid=1426");
+    }
+}
+
 void bulkFK(){
     step("phase: bulkFK start");
     set_property("inSpendAdv","true");
@@ -1339,7 +1356,8 @@ void bulkFK(){
         set_property("acc2Override", "");
         set_property("offOverride", "");
     }
-    abort("finish off free fights in hidden city for fam exp");
+    step ("phase: use up hidden city");
+    restOfHiddenCity();
     step("phase: bulkFK reminisce");
     reminisce();
     step("phase: bulkFK glitch monster");

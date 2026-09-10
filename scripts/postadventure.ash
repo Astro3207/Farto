@@ -386,10 +386,12 @@ void drunkPygmy(){
     cli_execute("acquire 11 bowl of scorpions");
     if (to_int(get_property("_drunkPygmyBanishes")) < 11){
         set_property("maxOverride","familiar exp");
-        if (get_property("screechCombats").to_int() > 0)
-            set_property("famOverride","patriotic eagle");
-        else
-            set_property("famOverride","comma chameleon");
+        if (get_property("famOverride") != "chest mimic"){
+            if (get_property("screechCombats").to_int() > 0)
+                set_property("famOverride","patriotic eagle");
+            else
+                set_property("famOverride","comma chameleon");
+        }
         if (!contains_text(get_property("banishedMonsters"),"pygmy bowler")){
             set_property("acc3Override",", equip mafia middle finger ring");
         } else {
@@ -417,11 +419,13 @@ void lianas(){
             while (loc.turns_spent < 3) {
                 set_property("maxOverride","familiar exp, -weapon");
                 set_property("mainOverride"," ");
-                if (get_property("screechCombats").to_int() > 0)
-                    set_property("famOverride","patriotic eagle");
-                else{
-                    set_property("famOverride","comma chameleon");
-                    return;
+                if (get_property("famOverride") != "chest mimic"){
+                    if (get_property("screechCombats").to_int() > 0)
+                        set_property("famOverride","patriotic eagle");
+                    else{
+                        set_property("famOverride","comma chameleon");
+                        return;
+                    }
                 }
                 adv1(loc);
             }
