@@ -187,7 +187,6 @@ void main(int whichchoice, string page) {
         case 693:
         case 857:
         case 866:
-        case 1076:
         case 1202:
             run_choice(2);
             break;
@@ -353,6 +352,12 @@ void main(int whichchoice, string page) {
             break;
         case 989:
             print (ESPmission(page));
+            break;
+        case 1076:
+            if (get_property("mayoMinderSetting") == "")
+                run_choice(2);
+            else
+                run_choice(6);
             break;
         case 1114:
             if (whichchoice == 1114){

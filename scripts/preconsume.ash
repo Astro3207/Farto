@@ -153,7 +153,8 @@ boolean littleMore(){
 }
 
 void main(){
-    put_closet(item_amount($item[Mayo Minder&trade;]),$item[Mayo Minder&trade;]);
+    if (item_amount($item[Mayo Minder&trade;]) > 0 && get_property("mayoMinderSetting") != "")
+        use($item[Mayo Minder&trade;]);
  //   legendaryPasta();
     cupOf13s();
     timeArrow();
