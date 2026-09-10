@@ -55,6 +55,8 @@ void free_kill(string ptext) {
 }
 
 void free_run(string ptext) {
+    if (last_monster() == $monster[Knob Goblin Embezzler])
+        abort("Trying to run from an embezzler");
     foreach sk in $skills[spring away, snokebomb] {
         if (contains_text(ptext, to_string(sk))) {
             if (my_location() == $location[hobopolis town square] && sk == $skill[snokebomb]) continue;
