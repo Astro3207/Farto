@@ -407,6 +407,8 @@ void preAdv(){
         retrieve_item($item[pulled red taffy]);
     if (item_amount($item[stuffed yam stinkbomb]) == 0)
         retrieve_item($item[stuffed yam stinkbomb]);
+    if (item_amount($item[new age healing crystal]) < 100)
+        retrieve_item(110,$item[new age healing crystal]);
 }
 
 void main(){

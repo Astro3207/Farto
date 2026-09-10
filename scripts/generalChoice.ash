@@ -187,6 +187,7 @@ void main(int whichchoice, string page) {
         case 693:
         case 857:
         case 866:
+        case 1076:
         case 1202:
             run_choice(2);
             break;
@@ -204,6 +205,10 @@ void main(int whichchoice, string page) {
 
         case 584:
             run_choice(4);
+            break;
+
+        case 1599:
+            run_choice(5);
             break;
 
         case 781:
@@ -435,7 +440,7 @@ void main(int whichchoice, string page) {
                 run_choice(1, "bandersnatch=1760");
             if (my_location() == $location[the marinara trench] && my_class() == $class[accordion thief])
                 run_choice(1, "bandersnatch=763");
-            else{
+            else {
                 run_choice(2);
             }
             break;

@@ -153,7 +153,7 @@ boolean littleMore(){
 }
 
 void main(){
-    put_closet(item_amount($item[mayodiol]),$item[mayodiol]);
+    put_closet(item_amount($item[Mayo Minder&trade;]),$item[Mayo Minder&trade;]);
  //   legendaryPasta();
     cupOf13s();
     timeArrow();

@@ -1,6 +1,6 @@
-import iotm;
-import preadventure;
-import zlib; // for sell_val() -- item valuation for itemDropValueAt()
+import iotm.ash;
+import preadventure.ash;
+import zlib.ash; // for sell_val() -- item valuation for itemDropValueAt()
 
 // ─── farto.ash ───────────────────────────────────────────────────────────────
 // The meat-farming remainder of the old farto script. The free-kill flow
@@ -117,8 +117,6 @@ void garbo(){
     if ((to_int(get_property("_pantsgivingCount")) >= 500) || (to_int(get_property("_pantsgivingCount")) >= 50 && dayType() == 0)){
         if (available_amount($item[pantsgiving]) > 0)
             stashreturn($item[pantsgiving]);
-        if (my_fullness() < fullness_limit() || my_inebriety() < inebriety_limit())
-            print("CONSUME ALL");
     }
     adv1($location[barf mountain],0,"");
 }
@@ -148,7 +146,9 @@ void cowo(){
     } else {
         set_property("acc1Override","");
     }
-    if (have_effect($effect[driving waterproofly]) > 0 && (to_int(get_property("_pantsgivingCount")) >= 500 && dayType() == 1) || (to_int(get_property("_pantsgivingCount")) >= 50 && dayType() == 0)){
+    if (have_effect($effect[driving waterproofly]) > 0
+        && ((to_int(get_property("_pantsgivingCount")) >= 500 && dayType() == 1)
+            || (to_int(get_property("_pantsgivingCount")) >= 50 && dayType() == 0))){
         if (available_amount($item[pantsgiving]) > 0)
             stashreturn($item[pantsgiving]);
         if (my_fullness() < fullness_limit() || my_inebriety() < inebriety_limit())

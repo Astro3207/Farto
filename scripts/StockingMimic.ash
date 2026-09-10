@@ -182,7 +182,7 @@ void prepBuffs(){
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
-    foreach ef in $effects[Bow-Legged Swagger]{
+    foreach ef in $effects[Bow-Legged Swagger,null afternoon]{
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
             continue;
         if (have_effect(ef) == 0)
@@ -210,6 +210,22 @@ void doSpleen(){
     }
 }
 
+item cheapestPasta(){
+    int [item] pasta_prices;
+    foreach it in $items[Frutti di Scatoletta,Pesto alla Marziano,Arrattabbattabiata,Orzo di Riso,Pasta Grimavera,Linguini Ubriacapa,Gnocci Domani,Formica e Pepe,Tubetto Gelatto]{
+        pasta_prices[it] = mall_price(it);
+    }
+    item cheap_pasta;
+    int lowest_value = 999999999;
+    foreach it, value in pasta_prices {
+        if (value < lowest_value) {
+            lowest_value = value;
+            cheap_pasta = it;
+        }
+    }
+    return cheap_pasta;
+}
+
 // Effect extenders on day 1 of ascensions, some nohookah food on day 2
 void dieting(){
 	if (dayType() == 0){
@@ -225,8 +241,22 @@ void dieting(){
 			abort("dieting: Shadow Affinity fell off before the rollover-day binge");
 		if (dayType() == 0)
 			use($item[law of averages]);
-		eat(fullness_limit() - my_fullness(), $item[thyme jelly donut]);
-		drink(inebriety_limit() - my_inebriety(), $item[Temps Tempranillo]);
+        if (have_item($item[Mayo Minder&trade;])){
+            if (get_property("mayoMinderSetting") != "Mayodiol")
+                use($item[Mayo Minder&trade;]);
+            while (my_fullness() < fullness_limit()){
+                if (get_property("legendaryNoodlesStomach") == 0){
+                    eat (cheapestPasta());
+                } else {
+                    eat ($item[thyme jelly donut]);
+                }
+                if (get_property("spiceMelangeUsed") == "false" && my_fullness() > 3 && my_inebriety() > 3)
+                    use ($item[spice melange]);
+            }
+        } else {
+            eat(fullness_limit() - my_fullness(), $item[thyme jelly donut]);
+            drink(inebriety_limit() - my_inebriety(), $item[Temps Tempranillo]);
+        }
         if (my_fullness() == fullness_limit() && get_property("_pantsgivingFullness").to_int() < 1){
             stashgrab($item[pantsgiving]);
             equip($item[pantsgiving]);
@@ -238,10 +268,8 @@ void dieting(){
             if (my_fullness() < fullness_limit())
                 eat(1,$item[thyme jelly donut]);
         }
-        if (get_property("spiceMelangeUsed") == "false" || get_property("_aug16Cast") == "false"){
-            if (get_property("spiceMelangeUsed") == "false")
-                use ($item[spice melange]);
-        }
+        if (get_property("spiceMelangeUsed") == "false")
+            use ($item[spice melange]);
 		eat(fullness_limit() - my_fullness(), $item[thyme jelly donut]);
 		drink(inebriety_limit() - my_inebriety(), $item[Temps Tempranillo]);
 
@@ -721,7 +749,9 @@ void pearloP2(){
         equipStockingMimic();
         if (get_property(pearls[str].donePref) == "false" || str == "reef"){
             if (numeric_modifier(pearls[str].ele_res) < 18)
-                abort();
+                cli_execute("gain 18 " + pearls[str].ele_res);
+            if (numeric_modifier(pearls[str].ele_res) < 18)
+                abort("Resistance for " + pearls[str].ele_res + " is below 18");
             adv1(pearls[str].loc);
             break;
         }
@@ -1367,7 +1397,7 @@ void bulkFK(){
     }
     set_property("hatOverride","");
     step("phase: bulkFK god lobster");
-    while (get_property("_godLobsterFights") < 3){
+    while (get_property("_godLobsterFights").to_int() < 3){
         use($item[dish of clarified butter]);
     }
     if (get_property("_molehillMountainUsed") == false)

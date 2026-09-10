@@ -49,7 +49,10 @@ void spendGrimacePrimeMaps(){
     equip($item[drunkula's wineglass]);
     int n = item_amount($item[Map to Safety Shelter Grimace Prime]);
     while (my_adventures() > n){
-        adv1($location[Shadow Rift (The Misspelled Cemetary)]);
+        if (!adv1($location[Shadow Rift (The Misspelled Cemetary)])){
+            print("preascend: can't adventure in the Shadow Rift -- stopping Grimace-map spend-down", "red");
+            break;
+        }
     }
     if (item_amount($item[Map to Safety Shelter Grimace Prime]) > 0){
         mapgrim();
@@ -65,12 +68,21 @@ void pvpCleanup(){
 
 // Spend down BCZ substat casts while they're still cheaper than the current threshold.
 void bczCasts(){
-    while (my_basestat($stat[submuscle]) > BCZcost("BloodThinnerCasts"))
-        use_skill($skill[BCZ: Create Blood Thinner]);
-    while (my_basestat($stat[submoxie]) > BCZcost("PheromoneCocktailCasts"))
-        use_skill($skill[BCZ: Craft a Pheromone Cocktail]);
-    while (my_basestat($stat[submysticality]) > BCZcost("SpinalTapasCasts"))
-        use_skill($skill[BCZ: Prepare Spinal Tapas]);
+    while (my_basestat($stat[submuscle]) > BCZcost("BloodThinnerCasts")){
+        int before = my_basestat($stat[submuscle]);
+        if (!use_skill($skill[BCZ: Create Blood Thinner]) || my_basestat($stat[submuscle]) >= before)
+            break;
+    }
+    while (my_basestat($stat[submoxie]) > BCZcost("PheromoneCocktailCasts")){
+        int before = my_basestat($stat[submoxie]);
+        if (!use_skill($skill[BCZ: Craft a Pheromone Cocktail]) || my_basestat($stat[submoxie]) >= before)
+            break;
+    }
+    while (my_basestat($stat[submysticality]) > BCZcost("SpinalTapasCasts")){
+        int before = my_basestat($stat[submysticality]);
+        if (!use_skill($skill[BCZ: Prepare Spinal Tapas]) || my_basestat($stat[submysticality]) >= before)
+            break;
+    }
 }
 
 // Spend the day's 5 Monkey's Paw wishes on shadow bricks. Reads
@@ -80,30 +92,26 @@ void monkeyPawWishes(){
     if (monkeyWish < 5 && closet_amount($item[cursed monkey's paw]) > 0){
         cli_execute("closet take cursed monkey's paw");
     }
-    switch (monkeyWish){
-        case 0:
-            cli_execute("monkeypaw item shadow brick");
-            monkeyWish += 1;
-        case 1:
-            cli_execute("monkeypaw item shadow brick");
-            monkeyWish += 1;
-        case 2:
-            cli_execute("monkeypaw item shadow brick");
-            monkeyWish += 1;
-        case 3:
-            cli_execute("monkeypaw item shadow brick");
-            monkeyWish += 1;
-        case 4:
-            cli_execute("monkeypaw item shadow brick");
+    while (get_property("_monkeyPawWishesUsed").to_int() < 5){
+        int before = get_property("_monkeyPawWishesUsed").to_int();
+        cli_execute("monkeypaw item shadow brick");
+        if (get_property("_monkeyPawWishesUsed").to_int() <= before)
+            break;
     }
 }
 
 void septEmberCrafting(){
     while (to_int(get_property("availableSeptEmbers")) >= 2){
+        int before = to_int(get_property("availableSeptEmbers"));
         cli_execute("make Mmm-brr! brand");
+        if (to_int(get_property("availableSeptEmbers")) >= before)
+            break;
     }
     while (to_int(get_property("availableSeptEmbers")) == 1){
+        int before = to_int(get_property("availableSeptEmbers"));
         cli_execute("make wheel of camembert");
+        if (to_int(get_property("availableSeptEmbers")) >= before)
+            break;
     }
 }
 
@@ -120,24 +128,27 @@ void workshedSetup(){
     if (get_workshed() != $item[TakerSpace letter of Marque])
         return;
     visit_url("campground.php?action=workshed");
+    // Each loop bails on the first failed craft instead of spinning if a
+    // sub-ingredient runs out mid-run (the takerSpace* prefs wouldn't move).
     while (to_int(get_property("takerSpaceGold")) >= 1 && to_int(get_property("takerSpaceMast")) >= 1
         && to_int(get_property("takerSpaceAnchor")) >= 3 && to_int(get_property("takerSpaceRum")) >= 1){
-        cli_execute("make anchor bomb");
+        if (!create($item[anchor bomb])) break;
     }
-    while (to_int(get_property("takerSpaceSpice")) >= 1 && to_int(get_property("takerSpaceRum")) >= 2)
-        cli_execute("make tankard of spiced rum");
+    while (to_int(get_property("takerSpaceSpice")) >= 1 && to_int(get_property("takerSpaceRum")) >= 2){
+        if (!create($item[tankard of spiced rum])) break;
+    }
     while (to_int(get_property("takerSpaceSilk")) >= 2){
-        cli_execute("make silky pirate drawers");
+        if (!create($item[silky pirate drawers])) break;
     }
     while (to_int(get_property("takerSpaceMast")) >= 2){
-        cli_execute("make harpoon");
+        if (!create($item[harpoon])) break;
     }
     while (to_int(get_property("takerSpaceSpice")) >= 1){
-        cli_execute("make spices");
+        if (!create($item[spices])) break;
     }
     while (to_int(get_property("takerSpaceGold")) >= 1 && to_int(get_property("takerSpaceMast")) >= 1
         && to_int(get_property("takerSpaceAnchor")) >= 3 && to_int(get_property("takerSpaceRum")) >= 1){
-        cli_execute("make anchor bomb");
+        if (!create($item[anchor bomb])) break;
     }
 }
 

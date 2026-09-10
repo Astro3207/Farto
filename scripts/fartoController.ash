@@ -1,4 +1,4 @@
-import iotm;
+import iotm.ash;
 //List of all potentially account specific stuff
 //preference homeClanID
 //preference combatMacroID

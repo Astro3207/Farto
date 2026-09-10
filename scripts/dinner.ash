@@ -93,7 +93,7 @@ void closingMeatChores(){
     cli_execute("philter");
     if (my_meat() - 3000000 > 0){
         int new_meat = my_meat() - 3000000;
-        visit_Url("closet.php?addtake=add&action=addtakeclosetmeat&quantity=" + new_meat);
+        visit_url("closet.php?addtake=add&action=addtakeclosetmeat&quantity=" + new_meat);
     }
 }
 
