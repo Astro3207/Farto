@@ -709,6 +709,14 @@ boolean pearloP1Done(){
     }
     return true;
 }
+
+void resCheck(string str){
+    if (numeric_modifier(pearls[str].ele_res) < 18)
+        cli_execute("gain 18 " + numeric_modifier(pearls[str].ele_res));
+    if (numeric_modifier(pearls[str].ele_res) < 18)
+        abort(pearls[str].ele_res + " is below 18");
+}
+
 void pearloP1(){
     if (get_property("_fishyPipeUsed") == "false")
         use ($item[fishy pipe]);
@@ -724,10 +732,7 @@ void pearloP1(){
         set_property("subscript","looseFK");
         foreach str in $strings[trench,bar]{
             if (get_property(pearls[str].donePref) == "false" || str == "bar"){
-                if (numeric_modifier(pearls[str].ele_res) < 18)
-                    cli_execute("gain 18 " + numeric_modifier(pearls[str].ele_res));
-                if (numeric_modifier(pearls[str].ele_res) < 18)
-                    abort(pearls[str].ele_res + " is below 18");
+                resCheck(str);
                 equipStockingMimic();
                 adv1(pearls[str].loc);
                 break;
@@ -748,10 +753,7 @@ void pearloP2(){
             set_property("pantsOverride", ", equip really nice swim");
         equipStockingMimic();
         if (get_property(pearls[str].donePref) == "false" || str == "reef"){
-            if (numeric_modifier(pearls[str].ele_res) < 18)
-                cli_execute("gain 18 " + pearls[str].ele_res);
-            if (numeric_modifier(pearls[str].ele_res) < 18)
-                abort("Resistance for " + pearls[str].ele_res + " is below 18");
+            resCheck(str);
             adv1(pearls[str].loc);
             break;
         }
@@ -767,8 +769,7 @@ void pearloP3(){
     banishFish();
     foreach str in $strings[anemone,bar,trench]{
         if (get_property(pearls[str].donePref) == "false" || str == "trench"){
-            if (numeric_modifier(pearls[str].ele_res) < 18)
-                abort();
+            resCheck(str);
             adv1(pearls[str].loc);
             break;
         }
