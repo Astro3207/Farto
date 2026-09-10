@@ -1119,7 +1119,7 @@ void weakMonsters(){
     // combat gear on, not whatever the last dispatch left equipped.
     settleStance();
     string pick = fightPicker();
-    while (pick != "done"){
+    while (pick != "done" || looseFK()){
         // pearloP1() leaves subscript on "looseFK" -- re-assert it each pass.
         set_property("subscript","weakling");
 
