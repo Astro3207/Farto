@@ -1032,8 +1032,7 @@ string pickWeakling(boolean checkHP){
         && (!checkHP || safeToFK(to_monster("leaviathan"))))
         return "leaviathan";
     if ((get_property("questPAGhost") == "started" || (get_property("questPAGhost") == "unstarted"
-        && total_turns_played() >= to_int(get_property("nextParanormalActivity"))
-        && item_amount($item[almost-dead walkie-talkie]) > 0))
+        && total_turns_played() >= to_int(get_property("nextParanormalActivity")) && get_property("ghostLocation") != ""))
         && (!checkHP || safeToFK(ghostFor(walkieGhost()))))
         return "ghost";
     return "done";
