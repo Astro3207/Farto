@@ -147,7 +147,7 @@ void prepBuffs(){
     }
 
     //fam weight
-    foreach ef in $effects[Robot Friends,Healthy Green Glow,Chorale of Companionship,Human-Fish Hybrid,Whole Latte Love,Shortly Stacked,Thoughtful Empathy,Leash of Linguini,Empathy,Black Tongue,Man's Worst Enemy,Billiards Belligerence,You Can Really Taste the Dormouse,Kindly Resolve,Human-Machine Hybrid,Shrimpin' Ain't Easy,Over-Familiar With Dactyls,Loyal Tea,Warm Shoulders,One Foot Heavier,Work For Hours a Week,A Girl Named Sue,Panna Consideration,Loyal as a Rock,Candied Devil,Wildsun Boon,Only Dogs Love a Drunken Sailor,Best Pals,Heart of Green,Bestial Sympathy,Herder\, Bitter\, Fester\, Stranger,Party Soundtrack,Shortly Wired,Greased-Up Familiar,Crocodile Tear,Spiced Out,offhand remarkable]{
+    foreach ef in $effects[Robot Friends,Healthy Green Glow,Chorale of Companionship,Human-Fish Hybrid,Whole Latte Love,Shortly Stacked,Thoughtful Empathy,Leash of Linguini,Empathy,Black Tongue,Man's Worst Enemy,Billiards Belligerence,You Can Really Taste the Dormouse,Kindly Resolve,Human-Machine Hybrid,Shrimpin' Ain't Easy,Over-Familiar With Dactyls,Loyal Tea,Warm Shoulders,One Foot Heavier,Work For Hours a Week,A Girl Named Sue,Panna Consideration,Loyal as a Rock,Candied Devil,Wildsun Boon,Only Dogs Love a Drunken Sailor,Best Pals,Heart of Green,Bestial Sympathy,Herder\, Bitter\, Fester\, Stranger,Party Soundtrack,Shortly Wired,Greased-Up Familiar,Crocodile Tear,Spiced Out,offhand remarkable,Greased-Up Familiar,Crocodile Tear]{
         if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]) && ef.attributes != "nohookah")
             continue;
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
@@ -188,6 +188,7 @@ void prepBuffs(){
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
+    use ($item[fishy pipe]);
     //mus needs to be done later, shieldbutt may be able to do it
 #    foreach ef in $effects[Puissant Pressure,Incredibly Hulking,Juiced Out,Gr8ness]{
 #        if (have_effect(ef) == 0)
@@ -758,6 +759,7 @@ void pearloP2(){
         if (have_effect($effect[driving waterproofly]) == 0)
             set_property("pantsOverride", ", equip really nice swim");
         equipStockingMimic();
+        set_property("offOverride",",equip Kramco Sausage-o-Matic");
         if (get_property(pearls[str].donePref) == "false" || str == "reef"){
             resCheck(str);
             adv1(pearls[str].loc);
@@ -842,13 +844,14 @@ void backup(){
         if (have_effect($effect[everything looks purple]) == 0 && (get_property("famOverride") == "comma chameleon" || get_property("famOverride") == "stocking mimic")){
             set_property("offOverride",", equip roman candel");
         } else
-            set_property("offOverride","");
+            set_property("offOverride",",equip Kramco Sausage-o-Matic");
         set_property("maxOverride","familiar weight, equip eternity codpiece");
         if (have_effect($effect[driving waterproofly]) == 0)
             set_property("pantsOverride",", equip really nice swim");
         set_property("acc3Override",", equip backup camera");
         pearloP3();
     }
+    set_property("offOverride","");
     set_property("pantsOverride","");
     set_property("acc3Override","");
 }
@@ -918,28 +921,6 @@ int passiveDamage(){
 float MLDamageReduction()
 	return max(0.50,(1-(numeric_modifier($modifier[monster level])*0.004)));
 
-boolean buffML(int target,int HP){
-    int currentML = numeric_modifier("Monster level");
-    int targetML = currentML + (HP-target);
-    //Monster level. Needs reconsidering to work with weakMonsters()
-    foreach ef in $effects[Ur-Kel's Aria of Annoyance,Pride of the Puffin,Bloodbathed,Misplaced Rage,Manbait,Sweetbreads Flamb&eacute;,Red Lettered,Spangled Star,Tortious,Litterbug,Not Sharing,Para-lyzed Jaw,Contemptible Emanations,Lapdog,Ashen Burps,The Cupcake of Wrath,Gelded,Mysteriously Handsome]{
-        if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
-            continue;
-        if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
-            continue;
-        if (numeric_modifier("Monster level") >= targetML)
-            break;
-        if (have_effect(ef) == 0)
-            cli_execute(ef.default);
-    }
-    if (numeric_modifier("Monster level") < targetML)
-        change_mcd(11);
-    if (numeric_modifier("Monster level") >= targetML)
-        return true;
-    else
-        return false;
-}
-
 // -- HP-headroom math for fightPicker() ----------------------------------------
 // The double-ice build chips every monster each round (coldform proc plus the
 // passive-damage auras counted by passiveDamage()). If that chip damage kills a
@@ -960,6 +941,29 @@ int lowHPTarget()
 int highHPTarget()
     return (29 * passiveDamage()) + estimatedIceDamage();
 
+
+boolean buffML(monster m){
+    int currentML = numeric_modifier("Monster level");
+    int targetML = currentML + (lowHPTarget()-m.base_hp);
+    //Monster level. Needs reconsidering to work with weakMonsters()
+    foreach ef in $effects[Ur-Kel's Aria of Annoyance,Pride of the Puffin,Bloodbathed,Misplaced Rage,Manbait,Sweetbreads Flamb&eacute;,Red Lettered,Spangled Star,Tortious,Litterbug,Not Sharing,Para-lyzed Jaw,Contemptible Emanations,Lapdog,Ashen Burps,The Cupcake of Wrath,Gelded,Mysteriously Handsome]{
+        targetML = currentML + (lowHPTarget()-m.base_hp);
+        if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
+            continue;
+        if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
+            continue;
+        if (numeric_modifier("Monster level") >= targetML)
+            break;
+        if (have_effect(ef) == 0)
+            cli_execute(ef.default);
+    }
+    if (numeric_modifier("Monster level") < targetML)
+        change_mcd(11);
+    if (numeric_modifier("Monster level") >= targetML)
+        return true;
+    else
+        return false;
+}
 // Can monster m be free-killed right now without chip damage killing it first?
 // Toggles the april shower thoughts shield (extra double-ice) via offOverride when
 // the monster has HP to spare, and buffs ML to pad it when it's too fragile;
@@ -981,7 +985,7 @@ boolean safeToFK(monster m){
     set_property("offOverride","");
     if (m.base_hp > lowHPTarget())
         return true;
-    return buffML(m.base_hp, lowHPTarget());
+    return buffML(m);
 }
 
 // The single protonic ghost that haunts each almost-dead walkie-talkie zone, so
@@ -1063,14 +1067,6 @@ string pickWeakling(boolean checkHP){
         && available_amount($item[Apriling band quad tom]) > 0
         && (!checkHP || safeToFK($monster[giant sandworm])))
         return "sandworm";
-    if (get_property("_tiedUpFlamingMonsteraFought") == "false"
-        && mall_price($item[tied-up flaming monstera]) < 15000
-        && (!checkHP || safeToFK($monster[flaming monstera])))
-        return "monstera";
-    if (get_property("_tiedUpLeaviathanFought") == "false"
-        && mall_price($item[tied-up leaviathan ]) < 15000
-        && (!checkHP || safeToFK(to_monster("leaviathan"))))
-        return "leaviathan";
     if ((get_property("questPAGhost") == "started" || (get_property("questPAGhost") == "unstarted"
         && total_turns_played() >= to_int(get_property("nextParanormalActivity")) && get_property("ghostLocation") != ""))
         && (!checkHP || safeToFK(ghostFor(walkieGhost()))))
@@ -1202,18 +1198,6 @@ void weakMonsters(){
             // Out of quad toms -- stop other _aprilBandTomUses < 3 guards retrying.
             if (available_amount($item[Apriling band quad tom]) == 0)
                 set_property("_aprilBandTomUses","3");
-        } else if (pick == "monstera"){
-            step("phase: weakMonsters flaming monstera");
-            mimicPrep();
-            main@preadventure( );
-            use($item[tied-up flaming monstera]);
-            main@postadventure( );
-        } else if (pick == "leaviathan"){
-            step("phase: weakMonsters tied-up leaviathan");
-            mimicPrep();
-            main@preadventure( );
-            use($item[tied-up leaviathan ]);
-            main@postadventure( );
         } else if (pick == "ghost"){
             step("phase: weakMonsters paranormal ghost (walkie-talkie)");
             mimicPrep();
@@ -1225,6 +1209,20 @@ void weakMonsters(){
 
         settleStance();
         pick = fightPicker();
+    }
+    step("phase: special leaf monsters");
+    cli_execute("acquire 6 lit leaf lasso");
+    if (get_property("_tiedUpFlamingMonsteraFought") == "false"){
+        mimicPrep();
+        main@preadventure( );
+        use($item[tied-up flaming monstera]);
+        main@postadventure( );
+    }
+    if (get_property("_tiedUpLeaviathanFought") == "false"){
+        mimicPrep();
+        main@preadventure( );
+        use($item[tied-up leaviathan]);
+        main@postadventure( );
     }
 
     set_property("acc2Override","");
@@ -1330,10 +1328,10 @@ void bulkFK(){
         toChew = floor((spleen_limit()-my_spleen_use())/2);
         chew (toChew,$item[Extrovermectin&trade;]);
     }
-    step("phase: bulkFK habitat recall");
-    habitatRecall();
     step ("phase: use up hidden city");
     restOfHiddenCity();
+    step("phase: bulkFK habitat recall");
+    habitatRecall();
     step("phase: bulkFK backup camera");
     backup();
     step("phase: bulkFK cyberzone");

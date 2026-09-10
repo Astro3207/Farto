@@ -372,6 +372,14 @@ void preAdv(){
         set_property("mpAutoRecovery",       mpAutoRecovery);
         set_property("mpAutoRecoveryTarget", mpAutoRecoveryTarget);
         
+        if (get_property("_seadentWaveUsed") == "false"){
+            if (dayType() == 0 && contains_text(get_property("lastEncounter"),"gingerbread")){
+                use_skill($skill[Sea *dent: Summon a Wave]);
+            } else if (dayType() == 1 && contains_text(get_property("lastEncounter"),"shadow")){
+                use_skill($skill[Sea *dent: Summon a Wave]);
+            }
+        }
+
         //initiative
         if (jump_chance($monster[killer clownfish]) - numeric_modifier("Initiative Penalty") < 100){
             foreach ef in $effects[Bow-Legged Swagger,Natural 1,Patent Alacrity,Silent Hunting,Clear Ears\, Can't Lose,Poppy Performance,Hiding in Plain Sight,Digitalis\, Dig It,Ass Over Teakettle,Song of Slowness,Synthetic Buzz,Seal Clubbing Frenzy,Springy Fusilli]{

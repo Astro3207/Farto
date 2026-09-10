@@ -269,6 +269,12 @@ void main(int round, monster mob, string page_text) {
     if (get_property("script") == "FreeKill")
         use_skill($skill[Steal Monster's Heart]);
 
+    if ((my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[stocking mimic]) && (last_monster() == $monster[flaming monstera] || last_monster() == $monster[Leaviathan])){
+        while (current_round() > 0 && current_round() < 10 && monster_hp() > 9)
+            throw_item($item[facsimile dictionary]);
+        throw_items($item[lit leaf lasso],$item[lit leaf lasso]);
+    }
+
     if (get_property("subscript") == "weakling"){
         while (current_round() > 0 && current_round() < 30 && monster_hp() > 9){
             if (have_equipped($item[april shower thoughts shield]))
@@ -281,6 +287,8 @@ void main(int round, monster mob, string page_text) {
             if (my_hp() < 100)
                 throw_items($item[new age healing crystal],$item[new age healing crystal]);
         }
+        if (last_monster() == $monster[flaming leaflet])
+            throw_items($item[lit leaf lasso],$item[lit leaf lasso]);
         if (last_monster() == $monster[Ron "The Weasel" Copperhead]){
             use_skill($skill[Club 'Em Back in Time]);
             while (current_round() > 0 && current_round() < 30){

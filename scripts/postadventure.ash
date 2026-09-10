@@ -73,12 +73,12 @@ void shadowRealm(){
             else
                 set_property("acc3Override",",equip congressional medal of insanity");
         }
-        adv1($location[Shadow Rift (The Misspelled Cemetary)]);
+        adv1($location[Shadow Rift (The Nearby Plains)]);
         set_property("acc3Override","");
     }
     if (get_property("questRufus") == "step1" && get_property("_shadowAffinityToday") == "true") {
         use($item[closed-circuit pay phone]);
-        adv1($location[Shadow Rift (The Misspelled Cemetary)]);
+        adv1($location[Shadow Rift (The Nearby Plains)]);
     }
     set_property("maxOverride","");
     set_property("mainOverride","");
@@ -649,7 +649,7 @@ int pantsgivingAvailable(){
 // sweat, leprecondo, consumable top-ups, yeti, distill), then end-of-day.
 void postAdv(){
     // Bail loudly on a lost fight or a "stuck" last-adventure zone before doing anything else.
-    if (get_property("_lastCombatLost") == "true" && get_property("noncombatForcerActive") != "true" && LastAdvTxt().contains_text("Round 1") && my_location() != $location[the outer compound]){
+    if (get_property("_lastCombatLost") == "true" && get_property("noncombatForcerActive") != "true" && LastAdvTxt().contains_text("Round 1") && my_location() != $location[the outer compound] && last_monster() != $monster[flaming monstera] && last_monster() != $monster[leaviathan] && last_monster() != $monster[flaming leaflet]){
         cli_execute("cast tongue;cast cannel");
         abort("It appears you lost the last combat, look into that");
     }
