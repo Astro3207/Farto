@@ -572,16 +572,6 @@ void freeKillTurnGuard(){
         }
         visit_url("inv_equip.php?pwd="+my_hash()+"&which=2&action=equip&whichitem=4329");
     }
-    if (my_location() == $location[The Hidden Bowling Alley] && get_property("_seadentWaveUsed") == "false"){
-        use_skill($skill[sea *dent: Summon a wave]);
-        if (have_effect($effect[fishy]) == 0){
-            if (get_property("_fishyPipeUsed") == false){
-                use($item[fishy pipe]);
-            } else {
-                abort();
-            }
-        }
-    }
 }
 
 // Out of adventures: abort for a manual nightcap where needed, otherwise walk the

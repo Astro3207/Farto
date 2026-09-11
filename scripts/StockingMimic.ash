@@ -255,7 +255,15 @@ void dieting(){
                     use ($item[spice melange]);
             }
         } else {
-            eat(fullness_limit() - my_fullness(), $item[thyme jelly donut]);
+            while (my_fullness() < fullness_limit()){
+                if (get_property("legendaryNoodlesStomach") == 0){
+                    eat (cheapestPasta());
+                } else {
+                    eat ($item[thyme jelly donut]);
+                }
+                if (get_property("spiceMelangeUsed") == "false" && my_fullness() > 3 && my_inebriety() > 3)
+                    use ($item[spice melange]);
+            }
             drink(inebriety_limit() - my_inebriety(), $item[Temps Tempranillo]);
         }
         if (my_fullness() == fullness_limit() && get_property("_pantsgivingFullness").to_int() < 1){
@@ -546,6 +554,7 @@ void shadowBoss(){
 }
 void shadowRealmFK(){
     equipStockingMimic();
+    aa("facsimile");
     if (!contains_text(get_property("maxOverride"),"familiar"))
         set_property("maxOverride","familiar weight, equip eternity codpiece");
     if (get_property("questRufus") == "step1") {
@@ -824,6 +833,7 @@ void habitatRecall(){
         while (to_int(get_property("_monsterHabitatsFightsLeft")) > 0 || get_property("beGregariousFightsLeft").to_int() > 0){
             mimicPrep();
             MobiusMaybe();
+            aa("facsimile");
             if (get_property("beGregariousFightsLeft").to_int() == 1 && get_property("beGregariousCharges").to_int() == 0 && to_int(get_property("_monsterHabitatsRecalled")) == 3 && dayType() == 1){
                 if (mall_price($item[flask of embalming fluid]) > 1000)
                     abort("reanimated reanimator is too expensive rn");
@@ -896,7 +906,7 @@ void seals(){
         retrieve_item((10-n),$item[seal-blubber candle]);
         mimicPrep(",-weapon");
         set_property("mainOverride"," ");
-        cli_execute("equip adobe adze");
+        cli_execute("equip gnawed-up dog bone");
         main@preadventure( );
         use($item[figurine of a wretched-looking seal]);
     }
@@ -985,7 +995,8 @@ boolean safeToFK(monster m){
     set_property("offOverride","");
     if (m.base_hp > lowHPTarget())
         return true;
-    return buffML(m);
+    buffML(m);
+    return false;
 }
 
 // The single protonic ghost that haunts each almost-dead walkie-talkie zone, so
@@ -1119,7 +1130,7 @@ void weakMonsters(){
     // combat gear on, not whatever the last dispatch left equipped.
     settleStance();
     string pick = fightPicker();
-    while (pick != "done" || looseFK()){
+    while (pick != "done" || (looseFK() && dayType() == 0)){
         // pearloP1() leaves subscript on "looseFK" -- re-assert it each pass.
         set_property("subscript","weakling");
 
@@ -1354,6 +1365,7 @@ void bulkFK(){
         set_property("subscript","looseFK");
         if (baseballPlayers() == 9 && get_property("_curveballFightsLeft").to_int() == 0 && get_property("_baseballInnings").to_int() < 3)
             baseballD();
+        set_property("offOverride",",equip Kramco Sausage-o-Matic");
         shadowRealmFK();
     }
     set_property("subscript","");
@@ -1399,7 +1411,7 @@ void bulkFK(){
     step("phase: bulkFK reminisce");
     reminisce();
     step("phase: bulkFK glitch monster");
-    if (get_property("_glitchMonsterFights") == 0){
+    if (get_property("_glitchMonsterFights") == 0 && have_item($item[\[glitch season reward name\]])){
         mimicPrep();
         main@preadventure( );
         eat($item[[glitch season reward name]]);
