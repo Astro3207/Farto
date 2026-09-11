@@ -27,6 +27,8 @@ void clanAdv(){
     }
 }
 void cupOf13s(){
+    if (my_inebriety() >= inebriety_limit())
+        return;
     if (get_property("_cupOf13sJewels") == 13){
         if (to_int(get_property("valueOfAdventure")) > 10000){
             if (closet_amount($item[eelskin shield]) > 2){
