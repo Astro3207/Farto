@@ -422,7 +422,8 @@ void lianas(){
     if (get_property("zigguratLianas") == 0){
         cli_execute("acquire antique machete;equip weapon antique machete");
         foreach loc in $locations[An Overgrown Shrine (Northeast),An Overgrown Shrine (Southwest),An Overgrown Shrine (Southeast),An Overgrown Shrine (Northwest),A Massive Ziggurat]{
-            while (loc.turns_spent < 3) {
+            int n;
+            while (loc.turns_spent < 3 && n < 3) {
                 set_property("maxOverride","familiar exp, -weapon");
                 set_property("mainOverride"," ");
                 if (get_property("famOverride") != "chest mimic"){
@@ -433,6 +434,7 @@ void lianas(){
                         return;
                     }
                 }
+                n += 1;
                 adv1(loc);
             }
         }
