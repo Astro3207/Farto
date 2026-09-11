@@ -1222,7 +1222,7 @@ void weakMonsters(){
         pick = fightPicker();
     }
     step("phase: special leaf monsters");
-    cli_execute("acquire 6 lit leaf lasso");
+    cli_execute("buy 4 lit leaf lasso");
     if (get_property("_tiedUpFlamingMonsteraFought") == "false"){
         mimicPrep();
         main@preadventure( );
