@@ -585,7 +585,7 @@ void shadowRealmFK(){
     } else if (have_effect($effect[shadow affinity]) > 0){
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
     } else {
-        NCforce();
+        NCforce(false);
         if (get_property("rufusQuestType") == "entity"){
             if (to_int(get_property("_spikolodonSpikeUses")) < 5 && have_effect($effect[everything looks yellow]) == 0){
                 set_property("shirtOverride",", equip jurassic parka (spikolodon)");
@@ -1370,10 +1370,10 @@ void bulkFK(){
     }
     set_property("subscript","");
     step("phase: bulkFK NC force");
-    NCforce();
+    NCforce(false);
     while (get_property("noncombatForcerActive") == true){
         shadowRealmFK();
-        NCforce();
+        NCforce(false);
     }
     step("phase: machine elf");
     if (get_property("_machineTunnelsAdv").to_int() < 5){

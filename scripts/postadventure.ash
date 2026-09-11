@@ -342,7 +342,7 @@ void upgradeAutumnaton(){
     foreach key in locations {
         string type = (to_location(locations[key]).difficulty_level + " " + to_location(locations[key]).environment);
         if (!contains_text(get_property("autumnatonUpgrades"),upgradeLocation[type]) && upgradeLocation[type] != ""){
-            if (to_location(locations[key]) == $location[Shadow Rift (The Misspelled Cemetary)])
+            if (contains_text(to_location(locations[key]).to_string(),"Shadow Rift"))
                 continue;
             cli_execute("autumnaton send " + to_location(locations[key]));
             return;
@@ -726,17 +726,7 @@ void forceNoncombats(){
         camo();
     if (have_effect($effect[chilled to the bone]) > 0)
         use($item[hot Dreadsylvanian cocoa]);
-    while (get_property("_aprilBandTubaUses").to_int() < 3 && item_amount($item[Apriling band tuba]) > 0)
-        cli_execute("aprilband play tuba");
-    if (get_property("_claraBellUsed") == "false")
-        use($item[clara's bell]);
-    while (get_property("timesRested").to_int() < total_free_rests()){
-        cli_execute("unequip hat; equip apriling band helmet;camp rest free");
-        if (get_property("_cinchUsed").to_int() <= 40){
-            equip($slot[acc3],$item[cincho de mayo]);
-            use_skill($skill[Cincho: Fiesta Exit]);
-        }
-    }
+    NCforce(true);
     if ((get_property("questL06Friar") == "started" || get_property("questL06Friar") == "step1") && dayType() == 0 && get_property("seaAftercore") == "true"){
         if (get_property("questL06Friar") == "started")
             visit_url("friars.php?action=friars");

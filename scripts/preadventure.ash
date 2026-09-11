@@ -105,7 +105,7 @@ void preAdv(){
                 use_familiar($familiar[cooler yeti]);
                 if (have_effect($effect[heart of white]) == 0)
                     use($item[white candy heart]);
-            } else if (get_property("_knuckleboneDrops").to_int() < 100)
+            } else if (get_property("_knuckleboneDrops").to_int() < 100 && my_name().to_lower_case() == "fart scauce")
                 use_familiar($familiar[skeleton of crimbo past]);
             else if (maxOvr == "item drop" || get_property("_mapToACandyRichBlockDrops").to_int() < 1)
                 use_familiar($familiar[jill-of-all-trades]);

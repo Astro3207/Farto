@@ -651,8 +651,21 @@
 
 // ─── 6. ADVENTURING-STATE CHECKS ─────────────────────────────────────────────
 
-    void NCforce() {
-        if (get_property("noncombatForcerActive") != "true") {
+    // stack == false: pre-charge NC-forcing resources before a forcer is active (the
+    // original call sites' behavior). stack == true: forceNoncombats() wants to spend
+    // an additional resource to stack another forced NC on top of one already active.
+    // Loops -- spending one resource per pass -- until noncombatForcerActive no longer
+    // matches stack or today's free rests run out; a normal day can legitimately take
+    // ~20 passes, so loopCount aborts well above that instead of at a tight bound, but
+    // still catches the case where tuba/bell/cincho are all exhausted with free rests
+    // still left, which would otherwise spin forever since nothing changes state.
+    void NCforce(boolean stack) {
+        int loopCount = 0;
+        while (get_property("timesRested").to_int() < total_free_rests()){
+            if (loopCount++ > 50)
+                abort("NCforce: looped over 50 times with no progress -- probably out of tuba/bell/cincho to force NCs with");
+            if (get_property("noncombatForcerActive").to_boolean() != stack)
+                return;
             if (have_item($item[apriling band helmet]) && to_int(get_property("_aprilBandTubaUses")) < 3 && have_item($item[Apriling band tuba])) {
                 cli_execute("aprilband play tuba");
             }  else if (get_property("_claraBellUsed") == false && have_item($item[clara's bell])){
