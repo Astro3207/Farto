@@ -166,6 +166,14 @@ void cleanUp() {
     }
 }
 
+void waffleShadowGuy(){
+    float itDropMult = item_drop_modifier( )/100 + 1;
+    int shadowGuyValue = item_drops_array($monster[shadow guy])[0].rate/100 * itDropMult * mall_price(item_drops_array($monster[shadow guy])[0].drop);
+    int avgPrice = (mall_price($item[shadow brick]) + mall_price($item[shadow stick]))/2;
+    int otherGuyValue = (item_drops_array($monster[shadow slab])[0].rate/100 * itDropMult * avgPrice) - mall_price($item[waffle]);
+    if (shadowGuyValue < otherGuyValue)
+        throw_item($item[waffle]);
+}
 
 boolean free_location(){
     return $locations[cyberzone 3, cyberzone 2, cyberzone 1,The Red Zeppelin,An Unusually Quiet Barroom Brawl] contains my_location();
@@ -375,6 +383,8 @@ void main(int round, monster mob, string page_text) {
             throw_item($item[gingerbread cigarette]);
         if ((my_basestat($stat[submysticality]) - 118881) > BCZcost("GazeCasts") && last_monster() == $monster[shadow guy])
             use_skill($skill[BCZ: Refracted Gaze]);
+        else if (last_monster() == $monster[shadow guy])
+            waffleShadowGuy();
         if (get_property("subscript") == "looseFK" && (get_property("_curveballMonster").to_monster() != last_monster() || get_property("_curveballFightsLeft").to_int() == 0) && last_monster().boss != true)
             free_kill(page_text);
         if (get_property("_curveballMonster").to_monster() == last_monster())

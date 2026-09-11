@@ -177,13 +177,13 @@ void prepBuffs(){
     foreach ef in $effects[Steely-Eyed Squint,Spookyravin',Unbarking Dogs,Cold Hearted,One Very Clear Eye,Materiel Intel,Spitting Rhymes,Joyful Resolve,Lubricating Sauce]{
         if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
             continue;
-        if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
+        if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)) && to_skill(ef) != $skill[Steely-Eyed Squint])
             continue;
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
     foreach ef in $effects[Bow-Legged Swagger,null afternoon]{
-        if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
+        if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)) && to_skill(ef) != $skill[Bow-Legged Swagger])
             continue;
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
