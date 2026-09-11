@@ -949,7 +949,7 @@ int estimatedIceDamage(){
 int lowHPTarget()
     return (9 * passiveDamage()) + estimatedIceDamage();
 int highHPTarget()
-    return (29 * passiveDamage()) + estimatedIceDamage();
+    return (25 * passiveDamage()) + estimatedIceDamage();
 
 
 boolean buffML(monster m){
