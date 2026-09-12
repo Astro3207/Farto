@@ -18,7 +18,7 @@ skill butts(){
 }
 void dart() {
     while (to_int(get_property("_dartsLeft")) > 0 && current_round() > 0 && have_equipped($item[everfull dart holster])) {
-        if (have_effect($effect[everything looks red]) == 0)
+        if (have_effect($effect[everything looks red]) == 0 && my_adventures() > 40)
             use_skill($skill[Darts: Aim for the Bullseye]);
         else if (have_skill(butts()))
             use_skill(butts());
