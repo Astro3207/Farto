@@ -725,14 +725,22 @@ boolean looseFK(){
     return false;
 }
 
+void resCheck(string str){
+    if (numeric_modifier(pearls[str].ele_res) < 18)
+        cli_execute("gain 18 " + numeric_modifier(pearls[str].ele_res));
+    if (numeric_modifier(pearls[str].ele_res) < 18)
+        abort(pearls[str].ele_res + " is below 18");
+}
+
 void underwaterBaseball(){
     mimicPrep();
+    resCheck("bar");
     if (get_property("_curveballFightsLeft").to_int() == 0 && looseFK()){
         set_property("subscript","looseFK");
-        adv1($location[Dive Bar]);
+        adv1($location[The Dive Bar]);
         baseballD();
     } else if (get_property("_curveballFightsLeft").to_int() > 0){
-        adv1($location[Dive Bar]);
+        adv1($location[The Dive Bar]);
     }
 }
 
@@ -742,13 +750,6 @@ boolean pearloP1Done(){
             return false;
     }
     return true;
-}
-
-void resCheck(string str){
-    if (numeric_modifier(pearls[str].ele_res) < 18)
-        cli_execute("gain 18 " + numeric_modifier(pearls[str].ele_res));
-    if (numeric_modifier(pearls[str].ele_res) < 18)
-        abort(pearls[str].ele_res + " is below 18");
 }
 
 void pearloP1(){
