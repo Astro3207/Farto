@@ -52,7 +52,7 @@ void shadowRealm(){
         set_property("acc2Override",", equip blood cubic zirconia");
     if (to_int(get_property("_batWingsSwoopUsed")) < 11)
         set_property("backOverride",", equip bat wings");
-    if (get_property("questRufus") == "unstarted" && get_property("_shadowAffinityToday") == "true")
+    if (get_property("questRufus") == "unstarted" && get_property("_shadowAffinityToday") == "true" && dayType() == 1)
         use($item[closed-circuit pay phone]);
     if (get_property("rufusQuestType") == "items"){
         retrieve_item(3,to_item(get_property("rufusQuestTarget")));
@@ -731,7 +731,10 @@ void forceNoncombats(){
             findHiddenTemple();
         }
     } else {
-        cli_execute("ash import farto;shadowRealmNCForce()");
+        if (dayType() == 1)
+            cli_execute("ash import farto;shadowRealmNCForce()");
+        else   
+            abort("Have NCForces that should have been spent. This is a bug. Ley FS know");
     }
 }
 
