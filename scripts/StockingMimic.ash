@@ -1072,10 +1072,6 @@ location walkieGhost(){
 string pickWeakling(boolean checkHP){
     if (!checkHP)
         set_property("offOverride","");
-    if ((get_property("questPAGhost") == "started" || (get_property("questPAGhost") == "unstarted"
-        && total_turns_played() >= to_int(get_property("nextParanormalActivity")) && get_property("ghostLocation") != ""))
-        && (!checkHP || safeToFK(ghostFor(walkieGhost()))))
-        return "ghost";
     if (to_int(get_property("_aprilBandTomUses")) < 3
         && available_amount($item[Apriling band quad tom]) > 0
         && (!checkHP || safeToFK($monster[giant sandworm])))
@@ -1103,6 +1099,10 @@ string pickWeakling(boolean checkHP){
         && to_int(get_property("_augSkillsCast")) < 4
         && (!checkHP || safeToFK($monster[Skeletal cat])))
         return "augustCat";
+    if ((get_property("questPAGhost") == "started" || (get_property("questPAGhost") == "unstarted"
+        && total_turns_played() >= to_int(get_property("nextParanormalActivity")) && get_property("ghostLocation") != ""))
+        && (!checkHP || safeToFK(ghostFor(walkieGhost()))))
+        return "ghost";
     if ((to_int(get_property("_leafMonstersFought")) < 5
             || get_property("_tiedUpFlamingLeafletFought") == "false")
         && (!checkHP || safeToFK($monster[flaming leaflet])))

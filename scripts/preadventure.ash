@@ -131,7 +131,7 @@ void preAdv(){
             if (my_familiar() == $familiar[none] || my_familiar() == $familiar[purse rat] || get_property("maxOverride") == "-combat" || get_property("maxOverride") == "combat") return "";
             return ", equip Li'l Businessman Kit";
         }
-        if ((my_familiar() == $familiar[robortender] || my_familiar() == $familiar[Comma Chameleon])){
+        if ((my_familiar() == $familiar[robortender] || my_familiar() == $familiar[Comma Chameleon]) && get_property("script") == "Farto"){
             if (my_familiar() == $familiar[Comma Chameleon] && chameleon() != $familiar[robortender]){
                 retrieve_item(familiar_equipment($familiar[robortender]));
                 visit_url("inv_equip.php?which=2&action=equip&whichitem=" + familiar_equipment($familiar[robortender]).to_int());
