@@ -309,7 +309,7 @@ void main(int round, monster mob, string page_text) {
                 attack();
             }
         }
-        if (my_location() == $location[the red zeppelin] && get_property("_glarkCableUses").to_int() < 5)
+        if (my_location() == $location[the red zeppelin] && get_property("_glarkCableUses").to_int() < 5 && get_property("NCtoC") == "false")
             throw_item($item[glark cable]);
         if (my_location() == $location[Gingerbread Upscale Retail District] || my_location() == $location[Gingerbread civic center]){
             if (last_monster().phylum == $phylum[dude])

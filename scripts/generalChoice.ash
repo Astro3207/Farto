@@ -198,7 +198,6 @@ void main(int whichchoice, string page) {
         case 920:
         case 1467:
         case 1469:
-        case 1596:
             run_choice(3);
             break;
 
@@ -482,6 +481,10 @@ void main(int whichchoice, string page) {
                     }
                 }
             }
+            break;
+        case 1596:
+            set_property("NCtoC","true");
+            run_choice(3);
             break;
     }
 }

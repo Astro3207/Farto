@@ -634,6 +634,7 @@ int pantsgivingAvailable(){
 // sweat, leprecondo, consumable top-ups, yeti, distill), then end-of-day.
 void postAdv(){
     // Bail loudly on a lost fight or a "stuck" last-adventure zone before doing anything else.
+    set_property("NCtoC","false");
     if (get_property("_lastCombatLost") == "true" && get_property("noncombatForcerActive") != "true" && LastAdvTxt().contains_text("Round 1") && my_location() != $location[the outer compound] && last_monster() != $monster[flaming monstera] && last_monster() != $monster[leaviathan] && last_monster() != $monster[flaming leaflet]){
         cli_execute("cast tongue;cast cannel");
         abort("It appears you lost the last combat, look into that");

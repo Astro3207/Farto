@@ -971,7 +971,7 @@ int estimatedIceDamage(){
 int lowHPTarget()
     return (9 * passiveDamage()) + estimatedIceDamage();
 int highHPTarget()
-    return (25 * passiveDamage()) + estimatedIceDamage();
+    return (23 * passiveDamage()) + estimatedIceDamage();
 
 
 boolean buffML(monster m){
@@ -1210,8 +1210,12 @@ void weakMonsters(){
             set_property("hatOverride","");
         } else if (pick == "zeppelin"){
             step("phase: weakMonsters red zeppelin / archaeologist");
-            if (to_int(get_property("_glarkCableUses")) < 5
-                && can_adventure($location[A Mob of Zeppelin Protesters])){
+            if (to_int(get_property("_archSpadeDigs")) < 11) {
+                set_property("archSkeleton","true");
+                mimicPrep();
+                archaeologist();
+                set_property("archSkeleton","false");
+            } else if (to_int(get_property("_glarkCableUses")) < 5 && can_adventure($location[A Mob of Zeppelin Protesters])){
                 if (get_property("questL11Ron") == "step4")
                     set_property("mainOverride",", equip legendary seal-clubbing club");
                 else
@@ -1221,11 +1225,6 @@ void weakMonsters(){
                 retrieve_item(5,$item[glark cable]);
                 adv1($location[the red zeppelin]);
                 set_property("acc2Override","");
-            } else {
-                set_property("archSkeleton","true");
-                mimicPrep();
-                archaeologist();
-                set_property("archSkeleton","false");
             }
             set_property("mainOverride","");
         } else if (pick == "sandworm"){
