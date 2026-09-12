@@ -239,7 +239,8 @@ void dieting(){
 			cli_execute("uneffect " + ef);
 		}
 		if (have_effect($effect[Shadow Affinity]) == 0)
-			abort("dieting: Shadow Affinity fell off before the rollover-day binge");
+			if (!user_confirm("dieting: Shadow Affinity fell off before the rollover-day binge. Continue?"))
+                abort();
 		if (dayType() == 0)
 			use($item[law of averages]);
         if (have_item($item[Mayo Minder&trade;])){

@@ -114,7 +114,7 @@ void preAdv(){
             else if (maxOvr == "+combat")
                 use_familiar($familiar[Jumpsuited Hound Dog]);
             else
-                use_familiar($familiar[cookbookbat]);
+                use_familiar($familiar[robortender]);
         }
 
     // ── Familiar equip helper ─────────────────────────────────────────────────
@@ -124,9 +124,13 @@ void preAdv(){
             if (my_familiar() == $familiar[cooler yeti] || my_familiar() == $familiar[chest mimic]) return ", equip toy cupid bow";
             if (my_familiar() == $familiar[mini kiwi]) return ", equip aviator goggles";
             if (my_familiar() == $familiar[Hobo in Sheep's Clothing]) return ", equip half-height cigar";
-            if (my_familiar() == $familiar[comma chameleon]) return "";
+            if (my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[robortender]) return "";
             if (my_familiar() == $familiar[none] || my_familiar() == $familiar[purse rat] || get_property("maxOverride") == "-combat" || get_property("maxOverride") == "combat") return "";
             return ", equip Li'l Businessman Kit";
+        }
+        if (my_familiar() == $familiar[robortender] && get_property("_roboDrinks") != "drive-by shooting"){
+            retrieve_item($item[drive-by shooting]);
+            visit_url("inventory.php?action=robooze&which=1&whichitem=9396");
         }
 
     string maxOvr = get_property("maxOverride");
