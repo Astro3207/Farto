@@ -357,7 +357,7 @@ void main(int round, monster mob, string page_text) {
         return;
     }
 
-    if (my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[stocking mimic]){
+    if ((my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[stocking mimic]) && get_property("script") == "FreeKill"){
         if (my_location().zone == "Shadow Rift")
             use_skill($skill[swoop like a bat]);
         while (current_round() > 0 && current_round() < 30 && monster_hp() > 9 && have_equipped($item[april shower thoughts shield])){
@@ -800,6 +800,8 @@ void main(int round, monster mob, string page_text) {
         if (last_monster() == $monster[shadow matrix])
             sauce(6);
         if (last_monster().elemental_resistance > 85){
+            free_kill(page_text);
+            free_run(page_text);
             for i from 1 to 20 {
                 use_skill($skill[snowclone]);
             }

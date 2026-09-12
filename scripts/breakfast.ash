@@ -81,8 +81,10 @@ void clanBreakfasts(){
         cli_execute("breakfast; chips radium; chips wintergreen; chips ennui");
         visit_url("clan_rumpus.php?action=click&spot=5&furni=1");
     }
-    visit_url("showclan.php?whichclan=2047010939&action=joinclan&confirm=on");
-    cli_execute("breakfast");
+    if (get_property("_clanRumpusSpot3Visited") == "false"){
+        visit_url("showclan.php?whichclan=2047010939&action=joinclan&confirm=on");
+        cli_execute("breakfast");
+    }
     visit_url("showclan.php?whichclan=" + get_property("homeClanID").to_int() + "&action=joinclan&confirm=on");
 }
 
@@ -255,7 +257,7 @@ void glitchItem(){
 }
 
 void votingBooth(){
-    if (get_property("_voteToday").to_boolean())
+    if (have_item($item[&quot;I Voted!&quot; sticker]))
         return;
     if (have_item($item[voter registration form])){
         use($item[voter registration form]);

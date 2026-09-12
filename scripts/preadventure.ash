@@ -61,6 +61,7 @@ void mood(string function){
             if (have_effect(ef) == 0)
                 abort(ef + " did not increase");
         }
+        cli_execute("gain meat 3 eff");
     }
     if (function == "")
         function = get_property("maxOverride");
@@ -113,8 +114,10 @@ void preAdv(){
                 use_familiar($familiar[peace turkey]);
             else if (maxOvr == "+combat")
                 use_familiar($familiar[Jumpsuited Hound Dog]);
-            else
+            else if (have_familiar($familiar[robortender]))
                 use_familiar($familiar[robortender]);
+            else
+                use_familiar($familiar[comma chameleon]);
         }
 
     // ── Familiar equip helper ─────────────────────────────────────────────────
@@ -128,9 +131,15 @@ void preAdv(){
             if (my_familiar() == $familiar[none] || my_familiar() == $familiar[purse rat] || get_property("maxOverride") == "-combat" || get_property("maxOverride") == "combat") return "";
             return ", equip Li'l Businessman Kit";
         }
-        if (my_familiar() == $familiar[robortender] && get_property("_roboDrinks") != "drive-by shooting"){
-            retrieve_item($item[drive-by shooting]);
-            visit_url("inventory.php?action=robooze&which=1&whichitem=9396");
+        if ((my_familiar() == $familiar[robortender] || my_familiar() == $familiar[Comma Chameleon])){
+            if (my_familiar() == $familiar[Comma Chameleon] && chameleon() != $familiar[robortender]){
+                retrieve_item(familiar_equipment($familiar[robortender]));
+                visit_url("inv_equip.php?which=2&action=equip&whichitem=" + familiar_equipment($familiar[robortender]).to_int());
+            }
+            if (get_property("_roboDrinks") != "drive-by shooting"){
+                retrieve_item($item[drive-by shooting]);
+                visit_url("inventory.php?action=robooze&which=1&whichitem=9396");
+            }
         }
 
     string maxOvr = get_property("maxOverride");
@@ -292,6 +301,8 @@ void preAdv(){
             append(maximize, ", equip devilbone greaves");
         else if (get_property("pantsOverride") != "")
             append(maximize, get_property("pantsOverride"));
+        else if (to_int(get_property("_pantsgivingCount")) < 50 && available_amount($item[pantsgiving]) > 0 && !($locations[The Dark Elbow of the Woods,The Dark Heart of the Woods,The Dark Neck of the Woods,Pandamonium Slums,Infernal Rackets Backstage] contains my_location()))
+            append(maximize, ", equip pantsgiving");
         else if (get_property("sweat").to_int() < 90)
             append(maximize, ", equip designer sweatpants");
         else if (to_int(get_property("_pantsgivingCount")) < 500 && available_amount($item[pantsgiving]) > 0)

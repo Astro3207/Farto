@@ -163,6 +163,7 @@ void blackForest(){
 void outskirts() {
     if (get_property("questG09Muscle") == "finished" && get_property("questL05Goblin") != "started")
         return;
+    swordPrep();
     if (get_property("questG09Muscle") == "unstarted")
         visit_url("guild.php?place=challenge");
     if (get_property("questG09Muscle") == "started")
@@ -373,12 +374,11 @@ void unlock_zeppelin(){
             cli_execute(ef.default);
     }
     while(get_property("questL11Ron") != "step2"){
-        if (to_int(get_property("zeppelinProtestors")) < 80 && have_effect($effect[lucky!]) == 0){
-            getLucky();
-        }
         cli_execute("maximize sleaze damage, sleaze spell damage, equip candy cane sword cane");
         if ((numeric_modifier("sleaze damage")+numeric_modifier("sleaze spell damage")) < 1596 && to_int(get_property("zeppelinProtestors")) < 80)
             abort("not enough sleaze damage");
+        if (to_int(get_property("zeppelinProtestors")) < 80 && have_effect($effect[lucky!]) == 0)
+            getLucky();
         adv1($location[A Mob of Zeppelin Protesters]);
     }
     set_property("maxOverride","");
@@ -886,13 +886,14 @@ void spendAdv(){
     if (delay() && get_property("seaAftercore") == "true" && $location[the spooky forest].turns_spent < 5 && get_property("questM16Temple") != "finished"){
         if (have_effect($effect[Coated in Slime]) <= 6)
             camo();
+        swordPrep();
         delayPrep();
         findHiddenTemple();
     }
     azazelUnicornQuest();
     while (my_adventures() < 65 && to_int(get_property("blackForestProgress")) < 5)
         blackForest();
-    while (my_adventures() < 65 && get_property("questG09Muscle") != "finished" || get_property("questL05Goblin") == "started")
+    while (my_adventures() < 30 && (get_property("questG09Muscle") != "finished" || get_property("questL05Goblin") == "started"))
         outskirts();
     // Force the Hidden Temple unlock unconditionally once under 30 adventures, else
     // hold to the 5-spike / day-1 sea-aftercore window.
@@ -931,8 +932,10 @@ void spendAdv(){
         }
         set_property("acc1Override","");
     }
-    if (dayType() == 0 &&  my_adventures() < 10)
+    if (dayType() == 0 &&  my_adventures() < 10){
         banishFish();
+        set_property("famOverride","");
+    }
     level11Sprint();
 }
 

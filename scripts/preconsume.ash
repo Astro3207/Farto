@@ -170,7 +170,7 @@ void main(){
         partialConsume(0,1,0);
     } else {
         savedResources();
-        if (get_property("_infiniteJellyUsed") == "false" && my_fullness() < 5)
+        if (get_property("_milkOfMagnesiumUsed") == "false")
             cli_execute("CONSUME ORGANS 1 0 0");
     //    partialConsume(10,10,15);
         unsaveResources();

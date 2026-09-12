@@ -177,7 +177,7 @@ void prepBuffs(){
     foreach ef in $effects[Steely-Eyed Squint,Spookyravin',Unbarking Dogs,Cold Hearted,One Very Clear Eye,Materiel Intel,Spitting Rhymes,Joyful Resolve,Lubricating Sauce]{
         if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
             continue;
-        if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)) && to_skill(ef) != $skill[Steely-Eyed Squint])
+        if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)) && ef != $effect[Steely-Eyed Squint])
             continue;
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
@@ -943,7 +943,8 @@ int passiveDamage(){
 	int n = 2;
 	foreach ef in my_effects(){
 		if (numeric_modifier(ef, "Damage Aura") != 0
-			|| numeric_modifier(ef, "Sporadic Damage Aura") != 0)
+			|| numeric_modifier(ef, "Sporadic Damage Aura") != 0
+            || numeric_modifier(ef, "Thorns") != 0)
 			n += 1;
 	}
 	return n;
@@ -1016,7 +1017,10 @@ boolean safeToFK(monster m){
     set_property("offOverride","");
     if (m.base_hp > lowHPTarget())
         return true;
-    buffML(m);
+    if (!buffML(m)){
+        while (m.base_hp < lowHPTarget())
+            uneffectBuff();
+    }
     return false;
 }
 
@@ -1068,41 +1072,41 @@ location walkieGhost(){
 string pickWeakling(boolean checkHP){
     if (!checkHP)
         set_property("offOverride","");
-    if ((to_int(get_property("_leafMonstersFought")) < 5
-            || get_property("_tiedUpFlamingLeafletFought") == "false")
-        && (!checkHP || safeToFK($monster[flaming leaflet])))
-        return "leaflet";
-    if (get_property("_aug8Cast") == "false"
-        && to_int(get_property("_augSkillsCast")) < 4
-        && (!checkHP || safeToFK($monster[Skeletal cat])))
-        return "augustCat";
-    if (to_int(get_property("_brickoFights")) < 10
-        && (!checkHP || safeToFK($monster[BRICKO ooze])))
-        return "BRICKO";
-    if (to_int(get_property("_speakeasyFreeFights")) < 3
-        && (!checkHP || safeToFK(to_monster("traveling hobo"))))
-        return "speakeasy";
-    if (get_property("_cargoPocketEmptied") != "true"
-        && (!checkHP || safeToFK(to_monster("haxx0r"))))
-        return "shorts";
-    if (to_int(get_property("_lynyrdSnareUses")) < 3
-        && (!checkHP || safeToFK(to_monster("Lynyrd"))))
-        return "lynyrd";
-    if (contains_text(get_property("_trickOrTreatBlock"), "D")
-        && (!checkHP || safeToFK(to_monster("vandal kid"))))
-        return "trickortreat";
-    if ((to_int(get_property("_glarkCableUses")) < 5 || to_int(get_property("_archSpadeDigs")) < 11)
-        && can_adventure($location[A Mob of Zeppelin Protesters])
-        && (!checkHP || safeToFK(to_monster("red skeleton"))))
-        return "zeppelin";
-    if (to_int(get_property("_aprilBandTomUses")) < 3
-        && available_amount($item[Apriling band quad tom]) > 0
-        && (!checkHP || safeToFK($monster[giant sandworm])))
-        return "sandworm";
     if ((get_property("questPAGhost") == "started" || (get_property("questPAGhost") == "unstarted"
         && total_turns_played() >= to_int(get_property("nextParanormalActivity")) && get_property("ghostLocation") != ""))
         && (!checkHP || safeToFK(ghostFor(walkieGhost()))))
         return "ghost";
+    if (to_int(get_property("_aprilBandTomUses")) < 3
+        && available_amount($item[Apriling band quad tom]) > 0
+        && (!checkHP || safeToFK($monster[giant sandworm])))
+        return "sandworm";
+    if ((to_int(get_property("_glarkCableUses")) < 5 || to_int(get_property("_archSpadeDigs")) < 11)
+        && can_adventure($location[A Mob of Zeppelin Protesters])
+        && (!checkHP || safeToFK(to_monster("red snapper"))))
+        return "zeppelin";
+    if (contains_text(get_property("_trickOrTreatBlock"), "D")
+        && (!checkHP || safeToFK(to_monster("vandal kid"))))
+        return "trickortreat";
+    if (to_int(get_property("_lynyrdSnareUses")) < 3
+        && (!checkHP || safeToFK(to_monster("Lynyrd"))))
+        return "lynyrd";
+    if (get_property("_cargoPocketEmptied") != "true"
+        && (!checkHP || safeToFK(to_monster("haxx0r"))))
+        return "shorts";
+    if (to_int(get_property("_speakeasyFreeFights")) < 3
+        && (!checkHP || safeToFK(to_monster("traveling hobo"))))
+        return "speakeasy";
+    if (to_int(get_property("_brickoFights")) < 10
+        && (!checkHP || safeToFK($monster[BRICKO ooze])))
+        return "BRICKO";
+    if (get_property("_aug8Cast") == "false"
+        && to_int(get_property("_augSkillsCast")) < 4
+        && (!checkHP || safeToFK($monster[Skeletal cat])))
+        return "augustCat";
+    if ((to_int(get_property("_leafMonstersFought")) < 5
+            || get_property("_tiedUpFlamingLeafletFought") == "false")
+        && (!checkHP || safeToFK($monster[flaming leaflet])))
+        return "leaflet";
     return "done";
 }
 
@@ -1469,6 +1473,7 @@ void bulkFK(){
     seals();
     if (!contains_text(get_property("thoth19_event_list"),"postFK"))
         cli_execute("ptrack add postFK");
+    codpiece("none");
     embezzler();
 }
 
