@@ -728,6 +728,7 @@ boolean looseFK(){
 void underwaterBaseball(){
     mimicPrep();
     if (get_property("_curveballFightsLeft").to_int() == 0 && looseFK()){
+        set_property("subscript","looseFK");
         adv1($location[Dive Bar]);
         baseballD();
     } else if (get_property("_curveballFightsLeft").to_int() > 0){

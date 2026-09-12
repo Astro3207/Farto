@@ -389,7 +389,7 @@ void main(int round, monster mob, string page_text) {
             use_skill($skill[BCZ: Refracted Gaze]);
         else if (last_monster() == $monster[shadow guy])
             waffleShadowGuy();
-        if (get_property("subscript") == "looseFK" && (get_property("_curveballMonster").to_monster() != last_monster() || get_property("_curveballFightsLeft").to_int() == 0) && last_monster().boss != true)
+        if (get_property("subscript") == "looseFK" && (get_property("_curveballMonster").to_monster() != last_monster() || get_property("_curveballFightsLeft").to_int() == 0) && last_monster().boss == false)
             free_kill(page_text);
         if (get_property("_curveballMonster").to_monster() == last_monster())
             sauce(3);
