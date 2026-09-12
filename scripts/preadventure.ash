@@ -384,6 +384,14 @@ void preAdv(){
             }
         }
 
+    if (my_familiar() == $familiar[comma chameleon] && chameleon() != $familiar[stocking mimic] && get_property("subscript") != "NonSMFK"){
+        if (item_amount($item[bag of many confections]) == 0){
+            cli_execute("refresh all");
+            retrieve_item(1,$item[bag of many confections]);
+        }
+        visit_url("inv_equip.php?pwd="+my_hash()+"&which=2&action=equip&whichitem=4329");
+    }
+
         //initiative
         if (jump_chance($monster[killer clownfish]) - numeric_modifier("Initiative Penalty") < 100){
             foreach ef in $effects[Bow-Legged Swagger,Natural 1,Patent Alacrity,Silent Hunting,Clear Ears\, Can't Lose,Poppy Performance,Hiding in Plain Sight,Digitalis\, Dig It,Ass Over Teakettle,Song of Slowness,Synthetic Buzz,Seal Clubbing Frenzy,Springy Fusilli]{

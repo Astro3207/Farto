@@ -710,6 +710,11 @@ boolean looseFK(){
         set_property("maxOverride","familiar weight, equip eternity codpiece, equip legendary seal-clubbing");
         return true;
     }
+    if (item_amount($item[interesting coin]) > 0 && get_property("_interestingCoinHeads") == "false"){
+        print("fk is interesting coin");
+        set_property("maxOverride","familiar weight, equip eternity codpiece");
+        return true;
+    }
     if (get_property("_shadowBricksUsed").to_int() < 13){
         print ("FK is shadow brick");
         set_property("maxOverride","familiar weight, equip eternity codpiece");
@@ -719,6 +724,17 @@ boolean looseFK(){
     }
     return false;
 }
+
+void underwaterBaseball(){
+    mimicPrep();
+    if (get_property("_curveballFightsLeft").to_int() == 0 && looseFK()){
+        adv1($location[Dive Bar]);
+        baseballD();
+    } else if (get_property("_curveballFightsLeft").to_int() > 0){
+        adv1($location[Dive Bar]);
+    }
+}
+
 boolean pearloP1Done(){
     foreach str in $strings[anemone,trench,bar]{
         if (get_property(pearls[str].donePref) == "false")
@@ -742,7 +758,9 @@ void pearloP1(){
     }
     banishFish();
     aa("facsimile");
-    if (looseFK()){
+    if ((baseballPlayers() >= 8 && get_property("_baseballInnings").to_int() < 3) || get_property("_curveballFightsLeft").to_int() > 0) {
+        underwaterBaseball();
+    } else if (looseFK()){
         if (have_effect($effect[driving waterproofly]) == 0)
             set_property("pantsOverride",", equip really nice swim");
         set_property("acc3Override",", equip time lord badge of honor");

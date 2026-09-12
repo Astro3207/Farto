@@ -50,6 +50,10 @@ void free_kill(string ptext) {
             use_skill(sk);
         }
     }
+    if (item_amount($item[interesting coin]) > 0 && get_property("_interestingCoinHeads") == "false"){
+        while (get_property("_interestingCoinHeads") == "false" && current_round() > 0 && current_round() < 30)
+            throw_item($item[interesting coin]);
+    }
     if (available_amount($item[shadow brick]) > 0 && get_property("_shadowBricksUsed").to_int() < 13)
         throw_item($item[shadow brick]);
 }

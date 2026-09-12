@@ -567,13 +567,6 @@ void freeKillTurnGuard(){
         set_property("LastFKTurn",total_turns_played());
         abort("accidental turn spent during free kill");
     }
-    if (my_familiar() == $familiar[comma chameleon] && chameleon() != $familiar[stocking mimic] && get_property("subscript") != "NonSMFK"){
-        if (item_amount($item[bag of many confections]) == 0){
-            cli_execute("refresh all");
-            retrieve_item(1,$item[bag of many confections]);
-        }
-        visit_url("inv_equip.php?pwd="+my_hash()+"&which=2&action=equip&whichitem=4329");
-    }
 }
 
 // Out of adventures: abort for a manual nightcap where needed, otherwise walk the
