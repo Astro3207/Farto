@@ -735,7 +735,7 @@ void forceNoncombats(){
         if (dayType() == 1)
             cli_execute("ash import farto;shadowRealmNCForce()");
         else   
-            abort("Have NCForces that should have been spent. This is a bug. Ley FS know");
+            abort("Have NCForces that should have been spent. This is a bug. Let FS know");
     }
 }
 

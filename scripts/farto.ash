@@ -95,6 +95,8 @@ void garbo(){
     setDropWeighting($location[barf mountain]);
     if (have_effect($effect[Citizen of a Zone]) == 0){
         set_property("famOverride","patriotic eagle");
+    } else {
+        set_property("famOverride","");
     }
     if (!contains_text(get_property("trackedMonsters"),"garbage tourist:McHugeLarge Slash") && to_int(get_property("_knuckleboneDrops")) == 100){
         set_property("offOverride",", equip McHugeLarge left pole");
@@ -121,8 +123,9 @@ void cowo(){
     setDropWeighting($location[the coral corral]);
     if (have_effect($effect[Citizen of a Zone]) == 0){
         set_property("famOverride","patriotic eagle");
+    } else {
+        set_property("famOverride","");
     }
-
     if (!contains_text(get_property("trackedMonsters"),"garbage tourist:McHugeLarge Slash") && to_int(get_property("_knuckleboneDrops")) == 100){
         set_property("offOverride",", equip McHugeLarge left pole");
         set_property("acc1Override",", equip peridot of peril");

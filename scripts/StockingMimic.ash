@@ -606,6 +606,7 @@ void shadowRealmFK(){
     }
     if (get_property("_shadowAffinityToday") == false)
         use($item[closed-circuit pay phone]);
+    set_property("shirtOverride","");
     set_property("backOverride","");}
 void sandworm(){
     mimicPrep();

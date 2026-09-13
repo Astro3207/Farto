@@ -167,6 +167,10 @@ void main(){
         if (get_property("_borrowedTimeUsed") == false){
         //    use($item[borrowed time]);
         }
+        foreach ef in $effects[dirge of dreadfulness, Ur-Kel's Aria of Annoyance,Inigo's Incantation of Inspiration]{
+            if (have_effect(ef) > 0)
+                cli_execute("uneffect "+ef);
+        }
         partialConsume(0,1,0);
     } else {
         savedResources();
