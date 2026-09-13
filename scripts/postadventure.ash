@@ -94,7 +94,7 @@ void cookbookbat(){
         if (get_property("_cookbookbatQuestLastLocation").to_location().zone == "Memories")
             return;
         monster CBBMon = to_monster(get_property("_cookbookbatQuestMonster"));
-        if (have_effect($effect[everything looks green]) == 0 && have_effect($effect[Everything looks Beige]) == 0){
+        if (have_effect($effect[everything looks green]) == 0 && have_effect($effect[Everything looks Beige]) == 0 && have_item($item[Crepe paper parachute cape])){
             set_property("acc1Override","equip spring shoes");
             equip($slot[acc2],$item[spring shoes]);
             set_property("battleAction", "skill spring away");
@@ -110,7 +110,7 @@ void cookbookbat(){
                 run_combat();
                 set_property("battleAction", "custom combat script");
             }
-        } else if (get_property("_juneCleaverFightsLeft") == 0 && have_effect($effect[Everything looks Beige]) == 0){
+        } else if (get_property("_juneCleaverFightsLeft") == 0 && have_effect($effect[Everything looks Beige]) == 0 && have_item($item[Crepe paper parachute cape])){
             set_property("mainOverride","equip june cleaver");
             adv1(CBBLoc);
             visit_url("inventory.php?action=parachute");
