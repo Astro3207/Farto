@@ -35,14 +35,20 @@ void swordPrep(){
 
 // Pick the accessory to burn a delay turn on: club-em wanderer > "I Voted!" > spring shoes.
 void delayPrep(){
-    set_property("mainOverride","");
-    set_property("acc3Override","");
     if (get_property("clubEmNextWeekMonster") != "" && total_turns_played() >= get_property("clubEmNextWeekMonsterTurn").to_int() + 8)
         set_property("mainOverride",", equip legendary seal-clubbing club");
     else if (item_amount($item[&quot;I Voted!&quot; sticker]) > 0 && total_turns_played()%11 == 1 && get_property("_voteFreeFights").to_int() < 3)
         set_property("acc3Override",", equip I voted");
     else if (have_effect($effect[everything looks green]) == 0)
         set_property("acc3Override",", equip spring shoes");
+}
+
+// Clear whichever of the two common non-combat debuffs are currently up.
+void uneffectDebuffs(){
+    if (have_effect($effect[Coated in Slime]) > 0)
+        camo();
+    if (have_effect($effect[chilled to the bone]) > 0)
+        use($item[hot Dreadsylvanian cocoa]);
 }
 
 // Run one Rufus / Shadow Rift turn, equipping the gaze / bat-wings / entity gear the quest needs.
@@ -52,6 +58,8 @@ void shadowRealm(){
         set_property("acc2Override",", equip blood cubic zirconia");
     if (to_int(get_property("_batWingsSwoopUsed")) < 11)
         set_property("backOverride",", equip bat wings");
+    else
+        set_property("backOverride","");
     if (get_property("questRufus") == "unstarted" && get_property("_shadowAffinityToday") == "true" && dayType() == 1)
         use($item[closed-circuit pay phone]);
     if (get_property("rufusQuestType") == "items"){
@@ -137,24 +145,19 @@ void blackForest(){
     set_property("acc3Override",", equip blackberry galoshes");
     if (item_amount($item[reassembled blackbird]) == 0)
         set_property("famOverride","reassembled blackbird");
-    else {
+    else 
         swordPrep();
-    }
     if (item_amount($item[sunken eyes]) == 1 && item_amount($item[broken wings]) == 1)
         cli_execute("acquire reassembled blackbird");
-    if ((item_amount($item[sunken eyes]) == 1 && item_amount($item[broken wings]) == 0) || (item_amount($item[sunken eyes]) == 0 && item_amount($item[broken wings]) == 1)){
+    if ((item_amount($item[sunken eyes]) == 1 && item_amount($item[broken wings]) == 0) || (item_amount($item[sunken eyes]) == 0 && item_amount($item[broken wings]) == 1))
         set_property("acc2Override",", equip peridot of peril");
-    } else {
-        set_property("acc2Override","");
-    }
-    if ($location[the black forest].last_noncombat_turns_spent == 4){
+    if ($location[the black forest].last_noncombat_turns_spent == 4)
         set_property("mainOverride",", equip candy cane sword cane");
-        swordPrep();
-    } else {
-        set_property("mainOverride","");
-    }
     adv1($location[the black forest]);
+
     set_property("maxOverride","");
+    set_property("mainOverride","");
+    set_property("acc2Override","");
     set_property("acc3Override","");
     set_property("famOverride","");
 }
@@ -176,37 +179,15 @@ void outskirts() {
     visit_url("guild.php?place=challenge");
 }
 
-// In-run free kill: day 2 pushes the Black Forest / Guild challenge, day 1 spends
-// a yellow/red free kill in the Shadow Rift with the matching parka / dart holster.
-void inRunFK(){
-    if (get_property("script") != "6-kiss" && get_property("script") != "TTT" && get_property("script") != "slime" && dayType() == 1)
-        return;
-    if (dayType() == 0){
-        if (to_int(get_property("blackForestProgress")) < 5){
-            blackForest();
-        } else {
-            outskirts();
-        }
-    } else {
-        if (have_effect($effect[everything looks yellow]) == 0){
-            cli_execute("parka dilophosaur");
-            set_property("shirtOverride",", equip jurassic parka");
-            shadowRealm();
-        } else if (have_effect($effect[everything looks red]) == 0){
-            set_property("acc1Override",", equip everfull dart holster");
-            shadowRealm();
-        }
-        set_property("maxOverride","");
-        set_property("backOverride","");
-        set_property("shirtOverride","");
-        set_property("acc1Override","");
-    }
-}
-
 // Drive the Hidden Temple unlock: the choiceAdventure props select tree-holed
 // coin -> temple map -> sapling -> plant, then adventure the Spooky Forest.
 void findHiddenTemple(){
     print("Farto: findHiddenTemple");
+    if (get_property("questM16Temple") == "finished")
+        return;
+    uneffectDebuffs();
+    swordPrep();
+    set_property("maxOverride","-combat");
     if (item_amount($item[Spooky-Gro fertilizer]) == 0)
         cli_execute("acquire Spooky-Gro fertilizer");
     if (item_amount($item[tree-holed coin]) == 0 && item_amount($item[Spooky Temple map]) == 0){
@@ -222,9 +203,9 @@ void findHiddenTemple(){
         set_property("choiceAdventure504","3");
     } else if (item_amount($item[Spooky Temple map]) > 0 && item_amount($item[spooky sapling]) > 0){
         use($item[Spooky Temple map]);
-    } else
-        abort("Hidden temple not running for some reason");
+    }
     adv1($location[the spooky forest]);
+    set_property("maxOverride","");
 }
 
 // One Friars turn toward the next missing infernal item (dodecagram / candles / butterknife).
@@ -716,10 +697,7 @@ void postAdv(){
 void forceNoncombats(){
     if (get_property("noncombatForcerActive") != "true" || get_property("script") == "solobop")
         return;
-    if (have_effect($effect[Coated in Slime]) <= 6 && have_effect($effect[Coated in Slime]) > 0)
-        camo();
-    if (have_effect($effect[chilled to the bone]) > 0)
-        use($item[hot Dreadsylvanian cocoa]);
+    uneffectDebuffs();
     NCforce(true);
     if ((get_property("questL06Friar") == "started" || get_property("questL06Friar") == "step1") && dayType() == 0 && get_property("seaAftercore") == "true"){
         if (get_property("questL06Friar") == "started")
@@ -745,11 +723,8 @@ void forceNoncombats(){
 // spikes on a day-1 sea-aftercore turn, but forced unconditionally once under 30
 // adventures so a missed spike / dayType window still gets cleaned up before the day ends.
 void azazelUnicornQuest(){
-    if (get_property("questM10Azazel") != "finished"
-        && (my_adventures() < 45
-            || (get_property("_spikolodonSpikeUses").to_int() == 5 && (delay() || my_adventures() < 70) && get_property("seaAftercore") == "true" && dayType() == 0))){
-        if (have_effect($effect[Coated in Slime]) <= 6 && have_effect($effect[Coated in Slime]) > 0)
-            camo();
+    if (get_property("questM10Azazel") != "finished" && (my_adventures() < 45 || delay())){
+        uneffectDebuffs();
         if (get_property("questL06Friar") == "started")
             visit_url("friars.php?action=friars");
         location [item] friarItemLocations = {
@@ -759,25 +734,17 @@ void azazelUnicornQuest(){
         };
         foreach friarItem in friarItemLocations {
             while (item_amount(friarItem) == 0 && get_property("questL06Friar") == "step1"){
-                set_property("maxOverride",!delay() ? "" : "-combat");
-                if (!delay())
-                    swordPrep();
-                else
-                    delayPrep();
+                set_property("maxOverride","-combat");
+                swordPrep();
                 adv1(friarItemLocations[friarItem],0,"");
             }
         }
         if (get_property("questL06Friar") == "step2")
             visit_url("friars.php?action=ritual");
-        int backstage1 = item_amount($item[gin-soaked blotter paper]) + item_amount($item[beer-scented teddy bear]) + item_amount($item[giant marshmallow]);
-        int backstage2 = item_amount($item[booze-soaked cherry]) + item_amount($item[comfy pillow]) + item_amount($item[sponge cake]);
-        if (delay() && item_amount($item[observational glasses]) == 0){
-            set_property("maxOverride","combat");
-            delayPrep();
-            adv1($location[The Laugh Floor],0,"");
-        } else if (my_adventures() < 70){
-            if (have_effect($effect[Coated in Slime]) > 0)
-                camo();
+        if (get_property("questL06Friar") == "finished"){
+            int backstage1 = item_amount($item[gin-soaked blotter paper]) + item_amount($item[beer-scented teddy bear]) + item_amount($item[giant marshmallow]);
+            int backstage2 = item_amount($item[booze-soaked cherry]) + item_amount($item[comfy pillow]) + item_amount($item[sponge cake]);
+            //BC of the combat buffs, which is unusual, doing all at once
             while (item_amount($item[observational glasses]) == 0){
                 set_property("maxOverride","combat");
                 swordPrep();
@@ -787,64 +754,58 @@ void azazelUnicornQuest(){
                     cli_execute("aprilband effect c");
                 adv1($location[The Laugh Floor],0,"");
             }
-            while ((backstage1 < 2 || backstage2 < 2) && item_amount($item[Azazel's unicorn]) == 0){
-                if (have_effect($effect[Patent Aggression]) > 0)
-                    break;
-                set_property("maxOverride","combat");
-                swordPrep();
-                adv1($location[Infernal Rackets Backstage],0,"");
-                backstage1 = item_amount($item[gin-soaked blotter paper]) + item_amount($item[beer-scented teddy bear]) + item_amount($item[giant marshmallow]);
-                backstage2 = item_amount($item[booze-soaked cherry]) + item_amount($item[comfy pillow]) + item_amount($item[sponge cake]);
+            if ((backstage1 < 2 || backstage2 < 2) && item_amount($item[Azazel's unicorn]) == 0){
+                if (have_effect($effect[Patent Aggression]) == 0){
+                    set_property("maxOverride","-combat");
+                    else if (my_adventures() < 70)
+                        swordPrep();
+                    adv1($location[Infernal Rackets Backstage],0,"");
+                }
             }
         }
-        if (backstage1 > 1 && backstage2 > 1 && item_amount($item[observational glasses]) > 0){
-            cli_execute("equip acc3 observational glasses; acquire 5 bus pass; acquire 5 imp air");
-            visit_url("pandamonium.php?action=moan");
-            visit_url("pandamonium.php?action=moan");
-            visit_url("pandamonium.php?action=mourn");
-            visit_url("pandamonium.php?action=mourn&preaction=observe");
+    }
+    if (backstage1 > 1 && backstage2 > 1 && item_amount($item[observational glasses]) > 0){
+        cli_execute("equip acc3 observational glasses; acquire 5 bus pass; acquire 5 imp air");
+        visit_url("pandamonium.php?action=moan");
+        visit_url("pandamonium.php?action=moan");
+        visit_url("pandamonium.php?action=mourn");
+        visit_url("pandamonium.php?action=mourn&preaction=observe");
+        visit_url("pandamonium.php?action=sven");
+
+        string [string] svenBandmembers = {
+            "giant marshmallow": "Bognort",
+            "beer-scented teddy bear": "Stinkface",
+            "booze-soaked cherry": "Flargwurm",
+            "comfy pillow": "Jim"
+        };
+        int [string] presentGiftIds = {
+            "giant marshmallow": 4673,
+            "beer-scented teddy bear": 4670,
+            "booze-soaked cherry": 4671,
+            "comfy pillow": 4672
+        };
+        int [string] absentGiftIds = {
+            "giant marshmallow": 4675,
+            "beer-scented teddy bear": 4675,
+            "booze-soaked cherry": 4674,
+            "comfy pillow": 4674
+        };
+
+        foreach gift in $strings[giant marshmallow, beer-scented teddy bear, booze-soaked cherry, comfy pillow] {
             visit_url("pandamonium.php?action=sven");
-
-            string [string] svenBandmembers = {
-                "giant marshmallow": "Bognort",
-                "beer-scented teddy bear": "Stinkface",
-                "booze-soaked cherry": "Flargwurm",
-                "comfy pillow": "Jim"
-            };
-            int [string] presentGiftIds = {
-                "giant marshmallow": 4673,
-                "beer-scented teddy bear": 4670,
-                "booze-soaked cherry": 4671,
-                "comfy pillow": 4672
-            };
-            int [string] absentGiftIds = {
-                "giant marshmallow": 4675,
-                "beer-scented teddy bear": 4675,
-                "booze-soaked cherry": 4674,
-                "comfy pillow": 4674
-            };
-
-            foreach gift in $strings[giant marshmallow, beer-scented teddy bear, booze-soaked cherry, comfy pillow] {
-                visit_url("pandamonium.php?action=sven");
-                int giveId = item_amount(to_item(gift)) > 0 ? presentGiftIds[gift] : absentGiftIds[gift];
-                visit_url("pandamonium.php?action=sven&bandmember=" + svenBandmembers[gift] + "&togive=" + to_string(giveId) + "&preaction=try");
-            }
-            visit_url("pandamonium.php?action=temp");
-            cli_execute("drink steel margarita");
+            int giveId = item_amount(to_item(gift)) > 0 ? presentGiftIds[gift] : absentGiftIds[gift];
+            visit_url("pandamonium.php?action=sven&bandmember=" + svenBandmembers[gift] + "&togive=" + to_string(giveId) + "&preaction=try");
         }
+        visit_url("pandamonium.php?action=temp");
+        if (item_amount($item[steel margarita]) > 0)
+            drink($item[steel margarita]);
     }
 }
 
-// Level 11 sprint, run when the three "everything looks" copies are healthy or
-// under 60 adventures: unlock the Hidden Temple, then forged docs / Nostril, then
-// the Zeppelin and Spare quests.
 void level11Sprint(){
     if ((have_effect($effect[everything looks red]) > 3 && have_effect($effect[everything looks yellow]) > 3 && have_effect($effect[everything looks green]) > 3) || my_adventures() < 60){
-        // The Hidden Temple gates every worship / Hidden City task below, so unlock it
-        // first: drive the spooky forest tree-holed coin -> temple map -> sapling ->
-        // plant chain until questM16Temple reads finished.
-        while (get_property("questM16Temple") != "finished" && my_adventures() > 0)
-            findHiddenTemple();
+        is_familiar_equipment_locked (get_property("questM16Temple") != "finished")
+            return;
         if (get_property("questL11Black") == "step2"){
             retrieve_item($item[forged identification documents]);
             if (item_amount($item[bitchin' meatcar]) == 0)
@@ -881,61 +842,87 @@ void level11Sprint(){
     }
 }
 
+void ELKPrep(){
+    if (have_effect($effect[everything looks yellow]) == 0)
+        set_property("shirtOverride",",equip parka (dilophosaur)");
+    else if (have_effect($effect[everything looks red]) == 0)
+        set_property("acc1Override",", equip everfull dart holster");
+}
+
 // Burn the turn on the next task in priority order: forced NCs, spooky-forest
 // delay, the Azazel push, Black Forest / Guild loops, spikolodon temple, in-run
 // free kills, Shadow Rift, cookbookbat, Book of Facts wishes, then level 11.
 void spendAdv(){
     set_property("inSpendAdv","true");
     forceNoncombats();
-    if (delay() && get_property("seaAftercore") == "true" && $location[the spooky forest].turns_spent < 5 && get_property("questM16Temple") != "finished"){
-        if (have_effect($effect[Coated in Slime]) <= 6)
-            camo();
-        swordPrep();
-        delayPrep();
-        findHiddenTemple();
+    if (dayType() == 0){
+        if (delay() && get_property("seaAftercore") == "true"){
+            delayPrep()
+            if (get_property("questM16Temple") != "finished")
+                findHiddenTemple();
+            else if (get_property("questM10Azazel") != "finished")
+                azazelUnicornQuest();
+            else if (get_property("questG09Muscle") != "finished" || get_property("questL05Goblin") == "started")
+                outskirts();
+
+            set_property("mainOverride","");
+            set_property("acc3Override","");
+        }
+        if (free_Kill()){
+            if (get_property("script") != "6-kiss" && get_property("script") != "TTT" && get_property("script") != "slime" && dayType() == 1)
+                return;
+            ELKPrep();
+
+            if (to_int(get_property("blackForestProgress")) < 5)
+                blackForest();
+            else if (get_property("questG09Muscle") != "finished" || get_property("questL05Goblin") == "started")
+                outskirts();
+            else if (get_property("questM16Temple") != "finished")
+                findHiddenTemple();
+            else if (get_property("questM10Azazel") != "finished")
+                azazelUnicornQuest();
+
+            set_property("shirtOverride","");
+            set_property("acc1Override","");
+        }
+        if (my_adventures() < 65){
+            while (get_property("questM16Temple") != "finished")
+                findHiddenTemple();
+            while (get_property("questM10Azazel") != "finished")
+                azazelUnicornQuest();
+            while (to_int(get_property("blackForestProgress")) < 5)
+                blackForest();
+            while (my_adventures() < 30 && (get_property("questG09Muscle") != "finished" || get_property("questL05Goblin") == "started"))
+                outskirts();
+        }
     }
-    azazelUnicornQuest();
-    while (my_adventures() < 65 && to_int(get_property("blackForestProgress")) < 5)
-        blackForest();
-    while (my_adventures() < 30 && (get_property("questG09Muscle") != "finished" || get_property("questL05Goblin") == "started"))
-        outskirts();
-    // Force the Hidden Temple unlock unconditionally once under 30 adventures, else
-    // hold to the 5-spike / day-1 sea-aftercore window.
-    while (get_property("questM16Temple") != "finished"
-        && (my_adventures() < 30
-            || (get_property("_spikolodonSpikeUses").to_int() == 5 && my_adventures() < 70 && get_property("seaAftercore") == "true" && dayType() == 0))){
-        if (have_effect($effect[Patent Aggression]) > 0)
-            break;
-        swordPrep();
-        set_property("maxOverride","-combat");
-        cli_execute("gain 35 -combat rate 100 spendperturn");
-        findHiddenTemple();
-    }
-    set_property("maxOverride","");
-    if (free_Kill() && get_property("script") != "6-kiss"){
-        inRunFK();
-    }
-    if (get_property("encountersUntilSRChoice") == 0){
-        shadowRealm();
-    }
-    if (have_effect($effect[everything looks beige]) == 0 && (free_run() || get_property("_juneCleaverFightsLeft") == 0)){
+
+    if (have_effect($effect[everything looks beige]) == 0 && (free_run() || get_property("_juneCleaverFightsLeft") == 0))
         cookbookbat();
-    }
     location CBBLoc = to_location(get_property("_cookbookbatQuestLastLocation"));
     if (!contains_text(get_property("_perilLocations"), to_string(to_int(CBBLoc))) && CBBLoc!= $location[the primordial soup]
         && get_property("_cookbookbatQuestIngredient") == "Yeast of Boris"
         && have_effect($effect[everything looks beige]) > 30){
         cookbookbat();
     }
+
     if (my_adventures() < 60 && to_int(get_property("_bookOfFactsWishes")) < 3)
         BoFaWish();
-    if (free_run() && get_property("script") != "6-kiss" && get_property("script") != "TTT" && get_property("script") != "slime" && get_property("script") != "FreeKill"){
-        if (have_effect($effect[everything looks green]) == 0 && ((have_effect($effect[everything looks beige]) <= to_int(get_property("_juneCleaverFightsLeft"))) || have_effect($effect[everything looks beige]) >= 30)){
-            set_property("acc1Override",", equip spring shoes");
-            shadowRealm();
+    if (dayType() == 1){
+        if (get_property("script") != "6-kiss" && get_property("script") != "TTT" && get_property("script") != "slime" && get_property("script") != "FreeKill"){
+            if (free_Kill())
+            if (free_run() && ){
+                if (have_effect($effect[everything looks green]) == 0 && ((have_effect($effect[everything looks beige]) <= to_int(get_property("_juneCleaverFightsLeft"))) || have_effect($effect[everything looks beige]) >= 30)){
+                    set_property("acc1Override",", equip spring shoes");
+                    shadowRealm();
+                }
+                set_property("acc1Override","");
+            }
+            if (get_property("encountersUntilSRChoice") == 0)
+                shadowRealm();
         }
-        set_property("acc1Override","");
     }
+
     if (dayType() == 0 &&  my_adventures() < 10){
         banishFish();
         set_property("famOverride","");
@@ -953,14 +940,13 @@ void main(){
     }
     try {
         postAdv();
-        // These scripts drive their own turn spending; everything else hands off to spendAdv().
+        // This is to prevent an infinite postadventure loop
         if (my_adventures() != 0 && get_property("inSpendAdv") != "true"
             && !($strings[6-kiss,coat,stick,slime] contains get_property("script"))){
-            try {
+            try
                 spendAdv();
-            } finally {
+            finally 
                 set_property("inSpendAdv","false");
-            }
         }
     } finally {
         set_property("betweenBattleScript",boof);

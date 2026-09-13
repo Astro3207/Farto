@@ -102,7 +102,7 @@ void preAdv(){
                 use_familiar($familiar[chest mimic]);
                 if (have_effect($effect[heart of white]) == 0)
                     use($item[white candy heart]);
-            } else if ($familiar[cooler yeti].experience < 400 && get_property("_coolerYetiAdventures") == "false"){
+            } else if ($familiar[cooler yeti].experience < 400 && get_property("_coolerYetiAdventures") == "false" && (dayType() == 0 || inebriety_limit() - 4 > my_inebriety())){
                 use_familiar($familiar[cooler yeti]);
                 if (have_effect($effect[heart of white]) == 0)
                     use($item[white candy heart]);
