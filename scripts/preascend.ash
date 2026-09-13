@@ -204,7 +204,6 @@ void ascend(){
         visit_url("main.php");
         run_choice(-1);
     } else {
-        set_property("garbo_valueOfFreeFight","15000");
         visit_url("ascend.php?action=ascend&confirm=on&confirm2=on");
         visit_url("afterlife.php?action=pearlygates");
         visit_url("afterlife.php?place=deli");

@@ -166,7 +166,7 @@ void prepBuffs(){
     foreach ef in $effects[Loded,Meet the Meat,Tubes of Universal Meat,Holiday Bliss,So You Can Work More...,Legendary Pasta Eyeball,Polka of Plenty]{
         if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
             continue;
-        if (ef == $effect[Meet the Meat] && dayType() != 1)
+        if (ef == $effect[Meet the Meat] && get_property("_clanFortuneBuffUsed") == "true")
             continue;
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
             continue;
@@ -396,9 +396,6 @@ void FKPrep(){
 		if (have_effect(ef) == 0)
 			cli_execute(ef.default);
 	}
-
-	if (have_effect($effect[Yeg's Glory]) == 0 && my_daycount() > 1)
-		use($item[fancy chess set]);
 
 	if (have_effect($effect[Do I Know You From Somewhere?]) == 0){
 		if (item_amount($item[driftwood beach comb]) == 0)
@@ -755,16 +752,16 @@ boolean pearloP1Done(){
 void pearloP1(){
     if (get_property("_fishyPipeUsed") == "false")
         use ($item[fishy pipe]);
-    if (have_effect($effect[Wet Willied]) == 0){
+    if (have_effect($effect[Wet Willied]) == 0)
         use($item[willyweed]);
-    }
+    if (have_effect($effect[driving waterproofly]) == 0)
+        set_property("pantsOverride",", equip really nice swim");
     banishFish();
     aa("facsimile");
+    abort("point finger");
     if ((baseballPlayers() >= 8 && get_property("_baseballInnings").to_int() < 3) || get_property("_curveballFightsLeft").to_int() > 0) {
         underwaterBaseball();
     } else if (looseFK()){
-        if (have_effect($effect[driving waterproofly]) == 0)
-            set_property("pantsOverride",", equip really nice swim");
         set_property("acc3Override",", equip time lord badge of honor");
         set_property("subscript","looseFK");
         foreach str in $strings[trench,bar]{
@@ -1470,6 +1467,12 @@ void bulkFK(){
     }
     step("phase: bulkFK seals");
     seals();
+    if (get_property("eldritchTentaclesFought").to_int() < 11 && get_property("_eldritchTentacleFought") == "false"){
+        main@preadventure();
+        visit_url("place.php?whichplace=forestvillage&action=fv_scientist");
+        run_choice(1);
+        main@postadventure();
+    }
     if (!contains_text(get_property("thoth19_event_list"),"postFK"))
         cli_execute("ptrack add postFK");
     codpiece("none");

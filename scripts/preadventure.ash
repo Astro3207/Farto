@@ -442,6 +442,8 @@ void preAdv(){
         retrieve_item($item[stuffed yam stinkbomb]);
     if (item_amount($item[new age healing crystal]) < 100)
         retrieve_item(110,$item[new age healing crystal]);
+    if (item_amount($item[Arr\, M80]) < 60)
+        retrieve_item(70,$item[Arr\, M80]);
 }
 
 void main(){

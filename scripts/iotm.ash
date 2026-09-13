@@ -425,7 +425,6 @@
             abort("Not enough open slots to fill prereqs for outcome at slot " + outcomeSlot);
     }
     void baseballD() {
-        codpiece("none");
         string [int] lineup = split_string(get_property("baseballTeam"), ",");
         int players;
         foreach num in lineup { players = num + 1; }
@@ -477,8 +476,7 @@
                 if (pitchOrder[i] > 0)
                     fillPrereqs(pitchOrder[i], pitchChoice[i]);
             }
-            codpiece("none");
-            visit_url("inventory.php?pwd&action=pball&pwd=" + my_hash() + "&action=pball", false);
+            visit_url("inventory.php?pwd=" + my_hash() + "&action=pball",false);
             for x from 1 to 9 {
                 string pitch = get_property("pitchNum" + x);
                 run_choice(pitch == "" ? 4 : to_int(pitch));
@@ -489,7 +487,6 @@
             for x from 1 to 9 {
                 set_property("pitchNum" + x, "");
             }
-            codpiece("peridot of peril,blood cubic zirconia,baseball diamond,tuesday's ruby,tuesday's ruby");
         }
     }
 

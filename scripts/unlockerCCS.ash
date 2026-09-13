@@ -215,7 +215,6 @@ boolean [monster] hurtMobs = {
 
 void main(int round, monster mob, string page_text) {
     print ("monster hp is " + last_monster().base_hp);
-    print ("monster raw hp is " + last_monster().raw_hp);
     print ("monster level is "+ numeric_modifier("monster level"));
     print ("high stat is " + max(my_buffedstat($stat[muscle]),my_buffedstat($stat[mysticality]),my_buffedstat($stat[moxie])));
     if (last_monster() == $monster[black crayon mer-kin]){
@@ -230,14 +229,6 @@ void main(int round, monster mob, string page_text) {
             use_skill($skill[RECALL FACTS: %PHYLUM CIRCADIAN RHYTHMS]);
         if (have_equipped($item[roman candelabra]))
             use_skill($skill[blow the purple candle!]);
-    }
-    if (get_property("script") == "FreeKill" && have_equipped($item[backup camera]) && get_property("lastCopyableMonster") == "Black Crayon Mer-kin"){
-        use_skill($skill[BACK-UP TO YOUR LAST ENEMY]);
-        if (last_monster() == $monster[black crayon mer-kin]){
-            while (my_familiar() == $familiar[chest mimic] && to_int(get_property("_mimicEggsObtained")) < 11 && $familiar[chest mimic].experience > 50){
-                use_skill($skill[%FN, LAY AN EGG]);
-            }
-        }
     }
     if ($locations[cyberzone 1,cyberzone 2,cyberzone 3] contains my_location()){
         if (last_monster().phylum == $phylum[construct]){
@@ -276,6 +267,30 @@ void main(int round, monster mob, string page_text) {
     }
     if (last_monster() == $monster[shadow orrery]){
         attack(30);
+    }
+
+    // ── Group: comma chameleon / stocking mimic, subscript "weakling", script "FreeKill" ──
+    // The generic pre-combat buffs (avalanche/spikolodon/reanimate/bowling-ball/kill-a-lot)
+    // are kept ahead of this whole group so they still apply before every branch in it, same
+    // as they did before this section existed as its own block.
+    if (last_monster() != $monster[shadow scythe] && last_monster() != $monster[shadow spire] && last_monster() != $monster[Guard turtle]) {
+        if (have_skill($skill[McHugeLarge Avalanche]))         use_skill($skill[McHugeLarge Avalanche]);
+        if (have_skill($skill[Launch spikolodon spikes]))      use_skill($skill[Launch spikolodon spikes]);
+        if (have_skill($skill[Prepare to reanimate your Foe])) use_skill($skill[Prepare to reanimate your Foe]);
+        if (item_amount($item[cosmic bowling ball]) > 0){
+            use_skill($skill[Bowl Straight Up]);
+        }
+        if (to_int(last_monster()) == to_int(get_property("killThisGuy")) && get_property("swordSniff") == true)
+            use_skill($skill[%fn, kill a lot of these guys]);
+    }
+
+    if (get_property("script") == "FreeKill" && have_equipped($item[backup camera]) && get_property("lastCopyableMonster") == "Black Crayon Mer-kin"){
+        use_skill($skill[BACK-UP TO YOUR LAST ENEMY]);
+        if (last_monster() == $monster[black crayon mer-kin]){
+            while (my_familiar() == $familiar[chest mimic] && to_int(get_property("_mimicEggsObtained")) < 11 && $familiar[chest mimic].experience > 50){
+                use_skill($skill[%FN, LAY AN EGG]);
+            }
+        }
     }
 
     if (get_property("script") == "FreeKill")
@@ -333,17 +348,6 @@ void main(int round, monster mob, string page_text) {
         else
             abort();
         return;
-    }
-
-    if (last_monster() != $monster[shadow scythe] && last_monster() != $monster[shadow spire] && last_monster() != $monster[Guard turtle]) {
-        if (have_skill($skill[McHugeLarge Avalanche]))         use_skill($skill[McHugeLarge Avalanche]);
-        if (have_skill($skill[Launch spikolodon spikes]))      use_skill($skill[Launch spikolodon spikes]);
-        if (have_skill($skill[Prepare to reanimate your Foe])) use_skill($skill[Prepare to reanimate your Foe]);
-        if (item_amount($item[cosmic bowling ball]) > 0){
-            use_skill($skill[Bowl Straight Up]);
-        }
-        if (to_int(last_monster()) == to_int(get_property("killThisGuy")) && get_property("swordSniff") == true)
-            use_skill($skill[%fn, kill a lot of these guys]);
     }
 
     if ((my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[stocking mimic]) && last_monster() == $monster[black crayon flower]){
