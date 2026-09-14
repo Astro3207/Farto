@@ -244,7 +244,7 @@ void firstBreakfast(){
 void dailySkills(){
     foreach sk in $skills[Lunch Break, Spaghetti Breakfast, Grab a Cold One,
         Summon Kokomo Resort Pass, Perfect Freeze, Acquire Rhinestones,
-        Prevent Scurvy and Sobriety, That's Not a Knife]{
+        Prevent Scurvy and Sobriety, That's Not a Knife,Bowl Full of Jelly,Eye and a Twist,Chubby and Plump]{
         if (have_skill(sk))
             use_skill(sk);
     }
