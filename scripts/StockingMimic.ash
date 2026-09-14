@@ -182,6 +182,15 @@ void prepBuffs(){
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
+    //crit rate
+    foreach ef in $effects[Berry Critical,Mark of Candy Cain,Invisible (20 Minutes Ago),Mariachi Moisture]{
+        if (numeric_modifier("Critical Hit Percent") >= 100)
+            break;
+        if (to_skill(ef) != $skill[none])
+            continue;
+        if (have_effect(ef) == 0)
+            cli_execute(ef.default);
+    }
     foreach ef in $effects[Bow-Legged Swagger,null afternoon]{
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)) && to_skill(ef) != $skill[Bow-Legged Swagger])
             continue;
@@ -342,6 +351,22 @@ void FKPrep(){
 	retrieve_item(25, $item[bag of many confections]);
 	set_property("script", "FreeKill");
     retrieve_item($item[burning paper crane]);
+    step("phase: 9 special buffs");
+    foreach ef in $effects[Robot Friends,Healthy Green Glow,Shortly Stacked,Shortly Wired,steely-eyed squint,Human-Fish Hybrid,Black Tongue,Human-Machine Hybrid,Warm Shoulders]{
+        if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
+            continue;
+        if (have_effect(ef) == 0)
+            cli_execute(ef.default);
+    }
+    step("phase: FKPrep hidden temple");
+	if (my_ascensions() != get_property("lastTempleAdventures").to_int()
+		&& get_property("questM16Temple") == "finished"){
+		use($item[stone wool]);
+		set_property("choiceAdventure582", "1");
+		set_property("choiceAdventure579", "3");
+		adv1($location[The Hidden Temple]);
+		useMayamRings();
+	}
 	step("phase: FKPrep buffs");
 	useMayamRings();
     if (have_effect($effect[Hammertime]) == 0)
@@ -413,16 +438,6 @@ void FKPrep(){
 		stashreturn(it);
 	}
 
-	step("phase: FKPrep hidden temple");
-	if (dayType() == 1
-		&& my_ascensions() != get_property("lastTempleAdventures").to_int()
-		&& get_property("questM16Temple") == "finished"){
-		use($item[stone wool]);
-		set_property("choiceAdventure582", "1");
-		set_property("choiceAdventure579", "3");
-		adv1($location[The Hidden Temple]);
-		useMayamRings();
-	}
     if (get_property("questPAGhost") == "unstarted" && !have_item($item[protonic accelerator pack])
         && total_turns_played() >= get_property("nextParanormalActivity").to_int()){
         use($item[almost-dead walkie-talkie]);
@@ -684,7 +699,7 @@ boolean looseFK(){
         return true;
     }
     if (have_effect($effect[everything looks red]) == 0){
-        set_property("maxOverride","familiar weight, equip eternity codpiece, equip everfull dart holster");
+        set_property("maxOverride","familiar weight, equip everfull dart holster");
         print ("FK is bullseye");
         return true;
     }
@@ -725,7 +740,7 @@ boolean looseFK(){
 
 void resCheck(string str){
     if (numeric_modifier(pearls[str].ele_res) < 18)
-        cli_execute("gain 18 " + numeric_modifier(pearls[str].ele_res));
+        cli_execute("gain 18 " + pearls[str].ele_res);
     if (numeric_modifier(pearls[str].ele_res) < 18)
         abort(pearls[str].ele_res + " is below 18");
 }
@@ -759,7 +774,10 @@ void pearloP1(){
         set_property("pantsOverride",", equip really nice swim");
     banishFish();
     aa("facsimile");
-    abort("point finger");
+    equip($slot[acc2],$item[mafia pointer finger ring ]);
+    set_property("acc2Override",", equip mafia pointer finger");
+    if (numeric_modifier("Critical Hit Percent") < 100)
+        abort("can't guarantee critical hit");
     if ((baseballPlayers() >= 8 && get_property("_baseballInnings").to_int() < 3) || get_property("_curveballFightsLeft").to_int() > 0) {
         underwaterBaseball();
     } else if (looseFK()){
@@ -775,6 +793,7 @@ void pearloP1(){
         }
     }
     set_property("pantsOverride","");
+    set_property("acc2Override","");
 }
 void pearloP2(){
     if (get_property("_fishyPipeUsed") == "false")
@@ -977,6 +996,7 @@ boolean buffML(monster m){
     int targetML = currentML + (lowHPTarget()-m.base_hp);
     //Monster level. Needs reconsidering to work with weakMonsters()
     foreach ef in $effects[Ur-Kel's Aria of Annoyance,Pride of the Puffin,Bloodbathed,Misplaced Rage,Manbait,Sweetbreads Flamb&eacute;,Red Lettered,Spangled Star,Tortious,Litterbug,Not Sharing,Para-lyzed Jaw,Contemptible Emanations,Lapdog,Ashen Burps,The Cupcake of Wrath,Gelded,Mysteriously Handsome]{
+        abort("The ML buffing is acting odd. Check it out");
         targetML = currentML + (lowHPTarget()-m.base_hp);
         if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
             continue;
@@ -1074,6 +1094,9 @@ string pickWeakling(boolean checkHP){
         && available_amount($item[Apriling band quad tom]) > 0
         && (!checkHP || safeToFK($monster[giant sandworm])))
         return "sandworm";
+    if (to_int(get_property("_lynyrdSnareUses")) < 3
+        && (!checkHP || safeToFK(to_monster("Lynyrd"))))
+        return "lynyrd";
     if ((to_int(get_property("_glarkCableUses")) < 5 || to_int(get_property("_archSpadeDigs")) < 11)
         && can_adventure($location[A Mob of Zeppelin Protesters])
         && (!checkHP || safeToFK(to_monster("red snapper"))))
@@ -1081,9 +1104,6 @@ string pickWeakling(boolean checkHP){
     if (contains_text(get_property("_trickOrTreatBlock"), "D")
         && (!checkHP || safeToFK(to_monster("vandal kid"))))
         return "trickortreat";
-    if (to_int(get_property("_lynyrdSnareUses")) < 3
-        && (!checkHP || safeToFK(to_monster("Lynyrd"))))
-        return "lynyrd";
     if (get_property("_cargoPocketEmptied") != "true"
         && (!checkHP || safeToFK(to_monster("haxx0r"))))
         return "shorts";
@@ -1348,8 +1368,6 @@ void bulkFK(){
         weakMonsters();
     step("phase: August Golem");
         augustGolem();
-    //need to finish: science tent
-    //eat eldritch pizza
     step("phase: bulkFK spleen (Extrovermectin)");
     if (item_amount($item[4-D camera]) == 0)
         retrieve_item($item[4-D camera]);
@@ -1465,6 +1483,8 @@ void bulkFK(){
         if (fullness_limit() - my_fullness() >= 3)
             eat($item[eldritch mushroom pizza]);
         cli_execute("unequip devilbone corset; unequip angelbone chopsticks");
+        cli_execute("ash import dinner;heavyWeightBooze()");
+        cli_execute("unequip devilbone rosary;unequip angelbone dice;unequip devilbone greaves;unequip angelbone totem; familiar comma chameleon");
     }
     step("phase: bulkFK seals");
     seals();
