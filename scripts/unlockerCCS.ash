@@ -32,6 +32,10 @@ void dart() {
 void free_kill(string ptext) {
     foreach sk in $skills[Spit jurassic acid, Darts: Aim for the Bullseye] {
         if (contains_text(ptext, to_string(sk))) {
+            if (sk == $skill[Darts: Aim for the Bullseye] && my_adventures() < 40)
+                continue;
+            if (sk == $skill[Spit jurassic acid] && my_adventures() < 10)
+                continue;
             use_skill(sk);
             if (sk == $skill[Darts: Aim for the Bullseye])
                 while (to_int(get_property("_dartsLeft")) > 0 && current_round() > 0) use_skill(sk);
@@ -449,6 +453,8 @@ void main(int round, monster mob, string page_text) {
         } else if (last_monster() == $monster[angry tourist] && to_int(get_property("_knuckleboneDrops")) < 100){
             sniff($monster[angry tourist]);
         }
+        free_kill(page_text);
+        free_run(page_text);
         dart();
         cleanUp();
         return;

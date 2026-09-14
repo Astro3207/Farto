@@ -290,7 +290,7 @@ void preAdv(){
             append(maximize, ", equip devilbone corset");
         else if (get_property("shirtOverride") != "")
             append(maximize, get_property("shirtOverride"));
-        else if (yellowReady && my_adventures() > 100)
+        else if (yellowReady && (my_adventures() > 100 || dayType() == 1))
             append(maximize, ", equip parka (dilophosaur)");
         else if (spikeReady)
             append(maximize, ", equip parka (spikolodon)");
@@ -312,9 +312,9 @@ void preAdv(){
             append(maximize, ", equip angelbone dice");
         else if (get_property("acc1Override") != "")
             append(maximize, get_property("acc1Override"));
-        else if (dartReady && my_adventures() > 40)
+        else if (dartReady && (my_adventures() > 40 || dayType() == 1))
             append(maximize, ", equip everfull dart holster");
-        else if (greenReady && my_adventures() > 30)
+        else if (greenReady && (my_adventures() > 30 || dayType() == 1))
             append(maximize, ", equip spring shoes");
         else if (bcz)
             append(maximize, ", equip blood cubic zirconia");

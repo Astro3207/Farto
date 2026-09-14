@@ -188,7 +188,7 @@ void stillsuit(){
 
 // Pull a few cheap meat/init accessories into inventory for the day.
 void grabAccessories(){
-    foreach it in $items[mother's necklace, pearl diver's necklace, giant yellow hat, perfume-soaked bandana,filthy knitted dread sack]
+    foreach it in $items[mother's necklace, pearl diver's necklace, giant yellow hat, perfume-soaked bandana,filthy knitted dread sack, mini kiwi bikini]
         retrieve_item(it);
 }
 

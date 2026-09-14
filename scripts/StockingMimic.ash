@@ -1317,7 +1317,7 @@ void embezzler(){
 }
 
 void restOfHiddenCity(){
-    if (!can_adventure($location[An Overgrown Shrine (Southeast)]))
+    if (!can_adventure($location[An Overgrown Shrine (Southeast)]) || (get_property("zigguratLianas") > 0 && to_int(get_property("_drunkPygmyBanishes")) >= 11))
         return;
     set_property("maxOverride","familiar experience");
     while (to_int(get_property("_drunkPygmyBanishes")) < 11){

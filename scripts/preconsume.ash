@@ -155,6 +155,8 @@ boolean littleMore(){
 }
 
 void main(){
+    if (my_inebriety() >= inebriety_limit()-1)
+        return;
     if (item_amount($item[Mayo Minder&trade;]) > 0 && get_property("mayoMinderSetting") != "")
         use($item[Mayo Minder&trade;]);
  //   legendaryPasta();

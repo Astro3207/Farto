@@ -630,6 +630,10 @@ void postAdv(){
         if (have_effect(ef) > 0)
             cli_execute("uneffect " + ef);
     }
+    if (item_amount($item[tiny stillsuit]) > 0 && have_familiar($familiar[tickle-me emilio]) && familiar_equipped_equipment($familiar[tickle-me emilio]) != $item[tiny stillsuit]){
+        use_familiar($familiar[tickle-me emilio]);
+        equip($item[tiny stillsuit]);
+    }
     // Mer-kin Elementary: remember the choice ids seen so the queue stays a 6-wide FIFO.
     if (my_location() == $location[mer-kin elementary school] && to_monster(get_property("lastEncounter")) == $monster[none] && $ints[396, 397, 398, 399, 400, 401] contains last_choice()){
         buffer elementaryQueue = to_buffer(get_property("elementaryQueue"));
@@ -723,6 +727,8 @@ void forceNoncombats(){
 // spikes on a day-1 sea-aftercore turn, but forced unconditionally once under 30
 // adventures so a missed spike / dayType window still gets cleaned up before the day ends.
 void azazelUnicornQuest(){
+    int backstage1 = item_amount($item[gin-soaked blotter paper]) + item_amount($item[beer-scented teddy bear]) + item_amount($item[giant marshmallow]);
+    int backstage2 = item_amount($item[booze-soaked cherry]) + item_amount($item[comfy pillow]) + item_amount($item[sponge cake]);
     if (get_property("questM10Azazel") != "finished" && (my_adventures() < 45 || delay())){
         uneffectDebuffs();
         if (get_property("questL06Friar") == "started")
@@ -742,8 +748,6 @@ void azazelUnicornQuest(){
         if (get_property("questL06Friar") == "step2")
             visit_url("friars.php?action=ritual");
         if (get_property("questL06Friar") == "finished"){
-            int backstage1 = item_amount($item[gin-soaked blotter paper]) + item_amount($item[beer-scented teddy bear]) + item_amount($item[giant marshmallow]);
-            int backstage2 = item_amount($item[booze-soaked cherry]) + item_amount($item[comfy pillow]) + item_amount($item[sponge cake]);
             //BC of the combat buffs, which is unusual, doing all at once
             while (item_amount($item[observational glasses]) == 0){
                 set_property("maxOverride","combat");
@@ -757,8 +761,7 @@ void azazelUnicornQuest(){
             if ((backstage1 < 2 || backstage2 < 2) && item_amount($item[Azazel's unicorn]) == 0){
                 if (have_effect($effect[Patent Aggression]) == 0){
                     set_property("maxOverride","-combat");
-                    else if (my_adventures() < 70)
-                        swordPrep();
+                    swordPrep();
                     adv1($location[Infernal Rackets Backstage],0,"");
                 }
             }
@@ -804,7 +807,7 @@ void azazelUnicornQuest(){
 
 void level11Sprint(){
     if ((have_effect($effect[everything looks red]) > 3 && have_effect($effect[everything looks yellow]) > 3 && have_effect($effect[everything looks green]) > 3) || my_adventures() < 60){
-        is_familiar_equipment_locked (get_property("questM16Temple") != "finished")
+        if (get_property("questM16Temple") != "finished")
             return;
         if (get_property("questL11Black") == "step2"){
             retrieve_item($item[forged identification documents]);
@@ -857,7 +860,7 @@ void spendAdv(){
     forceNoncombats();
     if (dayType() == 0){
         if (delay() && get_property("seaAftercore") == "true"){
-            delayPrep()
+            delayPrep();
             if (get_property("questM16Temple") != "finished")
                 findHiddenTemple();
             else if (get_property("questM10Azazel") != "finished")
@@ -886,6 +889,12 @@ void spendAdv(){
             set_property("acc1Override","");
         }
         if (my_adventures() < 65){
+            while (available_amount($item[observational glasses]) == 0)
+                azazelUnicornQuest();
+            while (to_int(get_property("blackForestProgress")) < 5)
+                blackForest();
+        }
+        if (my_adventures() < 35){
             while (get_property("questM16Temple") != "finished")
                 findHiddenTemple();
             while (get_property("questM10Azazel") != "finished")
@@ -897,31 +906,27 @@ void spendAdv(){
         }
     }
 
-    if (have_effect($effect[everything looks beige]) == 0 && (free_run() || get_property("_juneCleaverFightsLeft") == 0))
+    if (have_effect($effect[everything looks beige]) == 0 && (free_run() || get_property("_juneCleaverFightsLeft") == 0) && my_adventures() > 30)
         cookbookbat();
     location CBBLoc = to_location(get_property("_cookbookbatQuestLastLocation"));
     if (!contains_text(get_property("_perilLocations"), to_string(to_int(CBBLoc))) && CBBLoc!= $location[the primordial soup]
         && get_property("_cookbookbatQuestIngredient") == "Yeast of Boris"
-        && have_effect($effect[everything looks beige]) > 30){
+        && have_effect($effect[everything looks beige]) > 30 && my_adventures() > 30){
         cookbookbat();
+    }
+
+    if (free_run()){
+        set_property("famOverride", "cookbookbat");
+        set_property("mainOverride",", equip june cleaver");
+        set_property("pantsOverride", ", equip designer sweatpants");
+        adv1($location[barf mountain]);
+        set_property("famOverride", "");
+        set_property("mainOverride","");
+        set_property("pantsOverride", "");
     }
 
     if (my_adventures() < 60 && to_int(get_property("_bookOfFactsWishes")) < 3)
         BoFaWish();
-    if (dayType() == 1){
-        if (get_property("script") != "6-kiss" && get_property("script") != "TTT" && get_property("script") != "slime" && get_property("script") != "FreeKill"){
-            if (free_Kill())
-            if (free_run() && ){
-                if (have_effect($effect[everything looks green]) == 0 && ((have_effect($effect[everything looks beige]) <= to_int(get_property("_juneCleaverFightsLeft"))) || have_effect($effect[everything looks beige]) >= 30)){
-                    set_property("acc1Override",", equip spring shoes");
-                    shadowRealm();
-                }
-                set_property("acc1Override","");
-            }
-            if (get_property("encountersUntilSRChoice") == 0)
-                shadowRealm();
-        }
-    }
 
     if (dayType() == 0 &&  my_adventures() < 10){
         banishFish();
