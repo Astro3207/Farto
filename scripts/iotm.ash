@@ -635,7 +635,12 @@
         } else if (action == "treat"){
             while (contains_text(get_property("_trickOrTreatBlock"),"L")){
                 string before = get_property("_trickOrTreatBlock");
-                int houseToVisit = index_of(before, "L");
+                int houseToVisit;
+                if (contains_text(get_property("_trickOrTreatBlock"),"S")){
+                    houseToVisit = index_of(before, "S");
+                } else {
+                    houseToVisit = index_of(before, "L");
+                }
                 visit_url("place.php?whichplace=town&action=town_trickortreat");
                 visit_url("choice.php?whichchoice=804&pwd=" + my_hash() + "&option=3&whichhouse=" + houseToVisit);
                 if (get_property("_trickOrTreatBlock") == before){

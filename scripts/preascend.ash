@@ -158,6 +158,10 @@ void finalChores(){
     if (to_int(get_property("sweat")) > 50 && my_adventures() == 0){
         use_skill($skill[Make Sweat-Ade]);
     }
+    if (item_amount($item[interesting coin]) == 7){
+        create($item[Roth IPA]);
+        create($item[homeowner's loam]);
+    }
     cli_execute("garden pick");
     if (have_skill($skill[That's not a knife]))
         use_skill($skill[That's not a knife]);

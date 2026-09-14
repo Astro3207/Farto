@@ -163,8 +163,10 @@ void prepBuffs(){
     }
 
     //meat drop
-    foreach ef in $effects[Loded,Meet the Meat,Tubes of Universal Meat,Holiday Bliss,So You Can Work More...,Legendary Pasta Eyeball,Polka of Plenty]{
+    foreach ef in $effects[Incredibly Well Lit,Loded,Meet the Meat,Tubes of Universal Meat,Holiday Bliss,So You Can Work More...,Legendary Pasta Eyeball,Polka of Plenty]{
         if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
+            continue;
+        if (ef == $effect[Incredibly Well Lit] && dayType() == 0)
             continue;
         if (ef == $effect[Meet the Meat] && get_property("_clanFortuneBuffUsed") == "true")
             continue;
@@ -1414,7 +1416,7 @@ void bulkFK(){
     set_property("subscript","");
     step("phase: bulkFK NC force");
     NCforce(false);
-    while (get_property("noncombatForcerActive") == true){
+    while (get_property("noncombatForcerActive") == true || get_property("encountersUntilSRChoice").to_int() == 0){
         shadowRealmFK();
         NCforce(false);
     }
