@@ -48,7 +48,7 @@ void free_kill(string ptext) {
         Gingerbread Mob Hit, Club 'Em Back in Time] {
         if (my_location() == $location[hobopolis town square] && sk == $skill[Club 'Em Back in Time])
             continue;
-        if (sk == $skill[BCZ: Sweat Bullets] && ((my_basestat($stat[submoxie]) - 118881) <= BCZcost("SweatBulletsCasts") || get_property("_bczSweatBulletsCasts").to_int() >= 13))
+        if (sk == $skill[BCZ: Sweat Bullets] && ((my_basestat($stat[submoxie]) - 62500) <= BCZcost("SweatBulletsCasts") || get_property("_bczSweatBulletsCasts").to_int() >= 13))
             continue;
         if (contains_text(ptext, to_string(sk))) {
             use_skill(sk);
@@ -320,6 +320,8 @@ void main(int round, monster mob, string page_text) {
             if (my_hp() < 100)
                 throw_items($item[new age healing crystal],$item[new age healing crystal]);
         }
+        if (last_monster() == $monster[eldritch tentacle])
+            sauce(4);
         if (last_monster() == $monster[flaming leaflet])
             throw_items($item[lit leaf lasso],$item[lit leaf lasso]);
         if (last_monster() == $monster[Ron "The Weasel" Copperhead]){
@@ -393,7 +395,7 @@ void main(int round, monster mob, string page_text) {
         }
         if (my_location() == $location[Gingerbread Civic Center])
             throw_item($item[gingerbread cigarette]);
-        if ((my_basestat($stat[submysticality]) - 118881) > BCZcost("GazeCasts") && last_monster() == $monster[shadow guy])
+        if ((my_basestat($stat[submysticality]) - 62500) > BCZcost("GazeCasts") && last_monster() == $monster[shadow guy])
             use_skill($skill[BCZ: Refracted Gaze]);
         else if (last_monster() == $monster[shadow guy])
             waffleShadowGuy();

@@ -614,6 +614,8 @@ int pantsgivingAvailable(){
 // resource chores (Law of Averages, autumn-aton, resin, trainset, universe skill,
 // sweat, leprecondo, consumable top-ups, yeti, distill), then end-of-day.
 void postAdv(){
+    if (contains_text(visit_url("main.php"),"You're fighting"))
+        run_combat();
     // Bail loudly on a lost fight or a "stuck" last-adventure zone before doing anything else.
     set_property("NCtoC","false");
     if (get_property("_lastCombatLost") == "true" && get_property("noncombatForcerActive") != "true" && LastAdvTxt().contains_text("Round 1") && my_location() != $location[the outer compound] && last_monster() != $monster[flaming monstera] && last_monster() != $monster[leaviathan] && last_monster() != $monster[flaming leaflet]){
@@ -906,12 +908,12 @@ void spendAdv(){
         }
     }
 
-    if (have_effect($effect[everything looks beige]) == 0 && (free_run() || get_property("_juneCleaverFightsLeft") == 0) && my_adventures() > 30)
+    if (have_effect($effect[everything looks beige]) == 0 && (free_run() || get_property("_juneCleaverFightsLeft") == 0) && my_adventures() > 50)
         cookbookbat();
     location CBBLoc = to_location(get_property("_cookbookbatQuestLastLocation"));
     if (!contains_text(get_property("_perilLocations"), to_string(to_int(CBBLoc))) && CBBLoc!= $location[the primordial soup]
         && get_property("_cookbookbatQuestIngredient") == "Yeast of Boris"
-        && have_effect($effect[everything looks beige]) > 30 && my_adventures() > 30){
+        && have_effect($effect[everything looks beige]) > 30 && my_adventures() > 50){
         cookbookbat();
     }
 

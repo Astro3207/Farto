@@ -358,6 +358,8 @@ void FKPrep(){
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
+    step("phase: FKPrep buffs");
+	useMayamRings();
     step("phase: FKPrep hidden temple");
 	if (my_ascensions() != get_property("lastTempleAdventures").to_int()
 		&& get_property("questM16Temple") == "finished"){
@@ -367,8 +369,6 @@ void FKPrep(){
 		adv1($location[The Hidden Temple]);
 		useMayamRings();
 	}
-	step("phase: FKPrep buffs");
-	useMayamRings();
     if (have_effect($effect[Hammertime]) == 0)
         use($item[too legit potion]);
     effect[int] beretBuffs;
@@ -645,7 +645,7 @@ void archaeologist(){
                 retrieve_item(5,$item[glark cable]);
                 adv1($location[the red zeppelin]);
             } else
-                abort();
+                abort("Ran out of glarks to charge spade");
         }
         main@preadventure( );
         use($item[Archaeologist's Spade]);
@@ -685,10 +685,13 @@ void uneffectBuff(){
 }
 boolean looseFK(){
     set_property("maxOverride","familiar weight, equip eternity codpiece");
-    if ((my_basestat($stat[submoxie]) - 118881) > BCZcost("SweatBulletsCasts") && get_property("_bczSweatBulletsCasts").to_int() < 13){
+    if ((my_basestat($stat[submoxie]) - 62500) > BCZcost("SweatBulletsCasts") && get_property("_bczSweatBulletsCasts").to_int() < 13){
         set_property("maxOverride","familiar weight, equip eternity codpiece");
         print ("FK is sweat");
         return true;
+    }
+    if (get_property("_bczSweatBulletsCasts").to_int() < 9){
+        abort("Script has been skipping over sweat bullets for some reason");
     }
     if (get_property("_gingerbreadMobHitUsed") == "false"){
         print ("FK is gingerbread");
@@ -996,7 +999,6 @@ boolean buffML(monster m){
     int targetML = currentML + (lowHPTarget()-m.base_hp);
     //Monster level. Needs reconsidering to work with weakMonsters()
     foreach ef in $effects[Ur-Kel's Aria of Annoyance,Pride of the Puffin,Bloodbathed,Misplaced Rage,Manbait,Sweetbreads Flamb&eacute;,Red Lettered,Spangled Star,Tortious,Litterbug,Not Sharing,Para-lyzed Jaw,Contemptible Emanations,Lapdog,Ashen Burps,The Cupcake of Wrath,Gelded,Mysteriously Handsome]{
-        abort("The ML buffing is acting odd. Check it out");
         targetML = currentML + (lowHPTarget()-m.base_hp);
         if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
             continue;
@@ -1035,10 +1037,11 @@ boolean safeToFK(monster m){
     set_property("offOverride","");
     if (m.base_hp > lowHPTarget())
         return true;
-    if (!buffML(m)){
+    if (buffML(m))
+        return true;
+    else
         while (m.base_hp < lowHPTarget())
             uneffectBuff();
-    }
     return false;
 }
 
@@ -1494,8 +1497,10 @@ void bulkFK(){
         run_choice(1);
         main@postadventure();
     }
-    if (!contains_text(get_property("thoth19_event_list"),"postFK"))
-        cli_execute("ptrack add postFK");
+    if (!contains_text(get_property("thoth19_event_list"),"postFKD2"))
+        cli_execute("ptrack add postFKD2");
+    else if (!contains_text(get_property("thoth19_event_list"),"postFKD1") && dayType() == 0)
+        cli_execute("ptrack add postFKD1");
     codpiece("none");
     embezzler();
 }
@@ -1511,10 +1516,14 @@ void main(){
         starter();
         if (get_property("expressCardUsed") == "false"){
             if (get_property("prusias_profitTracking_date") != today_to_string( ))
-                cli_execute("ptrack add preprep");
+                cli_execute("ptrack add preprepD2");
+            else if (!contains_text(get_property("thoth19_event_list"),"postprepD1") && dayType() == 0)
+                cli_execute("ptrack add postprepD1");
             FKPrep();
-            if (!contains_text(get_property("thoth19_event_list"),"postprep"))
-                cli_execute("ptrack add postprep");
+            if (!contains_text(get_property("thoth19_event_list"),"postprepD2"))
+                cli_execute("ptrack add postprepD2");
+            else if (!contains_text(get_property("thoth19_event_list"),"postprepD1") && dayType() == 0)
+                cli_execute("ptrack add postprepD1");
         }
         bulkFK();
     } finally {

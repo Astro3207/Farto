@@ -235,6 +235,8 @@ void main(){
     workshedSetup();
     step("phase: ascension prep");
     finalChores();
+    if (!contains_text(get_property("thoth19_event_list"),"postFarmD2"))
+        cli_execute("ptrack add postFarmD2");
     step("phase: ascend");
     ascend();
 }

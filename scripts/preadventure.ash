@@ -424,8 +424,10 @@ void preAdv(){
     }
     if (item_amount($item[dry noodles]) < 2)
         retrieve_item(2,$item[dry noodles]);
-    if (item_amount($item[logic grenade]) < 1)
-        retrieve_item(1,$item[logic grenade]);
+    if (item_amount($item[lit leaf lasso]) < 2)
+        buy(2,$item[lit leaf lasso]);
+    if (item_amount($item[logic grenade]) < 2)
+        retrieve_item(2,$item[logic grenade]);
     if (item_amount($item[glitched malware]) < 1)
         retrieve_item(1,$item[glitched malware]);
     if (get_property("subscript") == "weakling" || get_property("subscript") == "looseFK"){

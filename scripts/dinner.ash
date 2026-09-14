@@ -60,7 +60,7 @@ void augSkills(){
             cli_execute("cast Aug. 7th");
     }
     if (get_property("_heartstoneLuckUsed") == "false"){
-    //    use_skill($skill[heartstone: %LUCK]);
+        use_skill($skill[heartstone: %LUCK]);
     }
 }
 
@@ -147,6 +147,8 @@ void main(){
     dayShorteners();
     step("phase: closing meat chores");
     closingMeatChores();
+    if (!contains_text(get_property("thoth19_event_list"),"postFarmD1"))
+        cli_execute("ptrack add postFarmD1");
     step("phase: inbox cleanup");
     fartScauceInboxCleanup();
 }
