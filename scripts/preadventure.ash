@@ -394,8 +394,7 @@ void preAdv(){
                 use_skill($skill[Sea *dent: Summon a Wave]);
             }
         }
-
-    if (my_familiar() == $familiar[comma chameleon] && chameleon() != $familiar[stocking mimic] && get_property("subscript") != "NonSMFK"){
+    if (my_familiar() == $familiar[comma chameleon] && chameleon() != $familiar[stocking mimic] && get_property("subscript") != "NonSMFK" && get_property("subscript") != "stompingBoots"){
         if (item_amount($item[bag of many confections]) == 0){
             cli_execute("refresh all");
             retrieve_item(1,$item[bag of many confections]);

@@ -264,7 +264,12 @@ void main(int round, monster mob, string page_text) {
             throw_item($item[stuffed yam stinkbomb]);
         }
     }
-    if (get_property("subscript"))
+    if (get_property("subscript") == "stompingBoots"){
+        if (last_monster() == $monster[infinite meat bug])
+            abort();
+        runaway();
+    }
+
     if (last_monster() == $monster[shadow spire]){
         if (current_round() > 0)
             use_skill($skill[saucegeyser]);

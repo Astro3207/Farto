@@ -866,7 +866,7 @@ void spendAdv(){
                 findHiddenTemple();
             else if (get_property("questM10Azazel") != "finished")
                 azazelUnicornQuest();
-            else if (get_property("questG09Muscle") != "finished" && my_class() == $class[seal clubber])
+            else if ((get_property("questG09Muscle") != "finished" && my_class() == $class[seal clubber]) || get_property("questL05Goblin") == "started")
                 outskirts();
 
             set_property("mainOverride","");
@@ -879,7 +879,7 @@ void spendAdv(){
 
             if (to_int(get_property("blackForestProgress")) < 5)
                 blackForest();
-            else if (get_property("questG09Muscle") != "finished" && my_class() == $class[seal clubber])
+            else if ((get_property("questG09Muscle") != "finished" && my_class() == $class[seal clubber]) || get_property("questL05Goblin") == "started")
                 outskirts();
             else if (get_property("questM16Temple") != "finished")
                 findHiddenTemple();
@@ -902,7 +902,7 @@ void spendAdv(){
                 azazelUnicornQuest();
             while (to_int(get_property("blackForestProgress")) < 5)
                 blackForest();
-            while (my_adventures() < 30 && (get_property("questG09Muscle") != "finished" && my_class() == $class[seal clubber]))
+            while (my_adventures() < 30 && ((get_property("questG09Muscle") != "finished" && my_class() == $class[seal clubber]) || get_property("questL05Goblin") == "started"))
                 outskirts();
         }
     }

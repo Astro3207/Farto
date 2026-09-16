@@ -262,6 +262,8 @@ void dieting(){
                 }
                 if (get_property("spiceMelangeUsed") == "false" && my_fullness() > 3 && my_inebriety() > 3)
                     use ($item[spice melange]);
+                if (have_skill($skill[Sweat Out Some Booze]))
+                    use_skill($skill[Sweat Out Some Booze]);
             }
             if (get_property("_mimeArmyShotglassUsed") == "false")
                 drink($item[Temps Tempranillo]);
@@ -844,7 +846,7 @@ void altFam(familiar fam){
         use_familiar(fam);
         set_property("famOverride",fam.to_string());
     } else {
-        if (get_property("commaFamiliar") != fam.to_string()){
+        if (chameleon() != fam){
             retrieve_item(familiar_equipment(fam));
             visit_url("inv_equip.php?which=2&action=equip&whichitem=" + familiar_equipment(fam).to_int());
             set_property("commaFamiliar",fam.to_string());
@@ -1440,20 +1442,36 @@ void bulkFK(){
         set_property("acc2Override", "");
         set_property("offOverride", "");
     }
-    if (get_property("_machineTunnelsAdv").to_int() < 5){
+    if (get_property("_banderRunaways").to_int() < 20){
         set_auto_attack(0);
-        while (get_property("_machineTunnelsAdv").to_int() < 5){
+        if (have_effect($effect[Apriling Band Battle Cadence]) == 0)
+            cli_execute("aprilband effect c");
+        while (get_property("_banderRunaways").to_int() < (my_familiar().familiar_weight() + weight_adjustment( ))/5){
+            if ($location[Cobb's Knob Treasury].combat_percent < 100)
+                cli_execute("gain 15 combat");
             set_property("subscript","stompingBoots");
             set_property("maxOverride","familiar weight");
-            altFam($familiar[Pair of Stomping Boots]);
-            if (get_property("questL05Goblin") == "started"){
-                
+            if (get_property("_banderRunaways").to_int() < ((my_familiar().familiar_weight() + weight_adjustment( ))/5 - 3)){
+                set_property("offOverride",", equip rake");
+                set_property("mainOverride",", equip june cleaver");
+                set_property("acc1Override",", equip spring shoes");
             } else {
-                
+                set_property("offOverride","");
+                set_property("mainOverride","");
+                set_property("acc1Override","");
             }
+            altFam($familiar[Pair of Stomping Boots]);
+            if (get_property("_pantsgivingCount").to_int() < 50)
+                set_property("pantsOverride",", equip pantsgiving");
+            else if (get_property("sweat").to_int() < 90)
+                set_property("pantsOverride",", equip designer sweatpants");
+            else
+                set_property("pantsOverride","");
+            adv1($location[Cobb's Knob Treasury]);
         }
         set_property("subscript","");
         aa("facsimile");
+        set_property("pantsOverride","");
     }
     step("phase: bulkFK reminisce");
     reminisce();
