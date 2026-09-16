@@ -949,10 +949,11 @@ void main(){
         // This is to prevent an infinite postadventure loop
         if (my_adventures() != 0 && get_property("inSpendAdv") != "true"
             && !($strings[6-kiss,coat,stick,slime] contains get_property("script"))){
-            try
+            try{
                 spendAdv();
-            finally 
+            } finally { 
                 set_property("inSpendAdv","false");
+            }
         }
     } finally {
         set_property("betweenBattleScript",boof);

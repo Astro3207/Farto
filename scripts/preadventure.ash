@@ -438,7 +438,7 @@ void preAdv(){
     } else {
         put_closet(item_amount($item[shard of double-ice]),$item[shard of double-ice]);
     }
-    if (item_amount($item[pulled red taffy]) == 0)
+    if (item_amount($item[pulled red taffy]) == 0 && mall_price($item[pulled red taffy]) < (redTaffyValue() - 100))
         retrieve_item($item[pulled red taffy]);
     if (item_amount($item[stuffed yam stinkbomb]) == 0)
         retrieve_item($item[stuffed yam stinkbomb]);

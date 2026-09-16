@@ -840,16 +840,16 @@ void gingerbread(){
 }
 
 void altFam(familiar fam){
-    if (get_property("commaFamiliar") != fam.to_string() && my_familiar() != fam){
-        if (have_familiar(fam)){
-            use_familiar(fam);
-            set_property("famOverride",fam.to_string());
-        } else {
+    if (have_familiar(fam)){
+        use_familiar(fam);
+        set_property("famOverride",fam.to_string());
+    } else {
+        if (get_property("commaFamiliar") != fam.to_string()){
             retrieve_item(familiar_equipment(fam));
             visit_url("inv_equip.php?which=2&action=equip&whichitem=" + familiar_equipment(fam).to_int());
             set_property("commaFamiliar",fam.to_string());
-            set_property("famOverride","comma chameleon");
         }
+        set_property("famOverride","comma chameleon");
     }
 }
 
@@ -1411,13 +1411,12 @@ void bulkFK(){
     }
     step("phase: machine elf");
     if (get_property("_machineTunnelsAdv").to_int() < 5){
-        altFam($familiar[machine elf]);
         if (have_effect($effect[Inside The Snowglobe]) == 0)
             use($item[Deep Machine Tunnels snowglobe]);
         while (get_property("_machineTunnelsAdv").to_int() < 5){
+            altFam($familiar[machine elf]);
             set_property("subscript","NonSMFK");
             set_property("maxOverride","item drop");
-            set_property("famOverride","comma Chameleon");
             adv1($location[The Deep Machine Tunnels]);
         }
         set_property("subscript","");
@@ -1425,7 +1424,6 @@ void bulkFK(){
     }
     if (get_property("_pocketProfessorLectures").to_int() == 0 && get_property("_locketMonstersFought").split_string(",").count() < 3){
         set_property("maxOverride","familiar weight");
-        set_property("famOverride","comma Chameleon");
         set_property("pantsOverride",", equip tearaway Pants");
         set_property("offOverride", ", equip kol con snowglobe");
         set_property("acc1Override", ", equip Mr. Cheeng's spectacles");
@@ -1442,9 +1440,20 @@ void bulkFK(){
         set_property("acc2Override", "");
         set_property("offOverride", "");
     }
-    abort("pair of stomping boots");
-    if (get_property("questL05Goblin") == "started"){
-
+    if (get_property("_machineTunnelsAdv").to_int() < 5){
+        set_auto_attack(0);
+        while (get_property("_machineTunnelsAdv").to_int() < 5){
+            set_property("subscript","stompingBoots");
+            set_property("maxOverride","familiar weight");
+            altFam($familiar[Pair of Stomping Boots]);
+            if (get_property("questL05Goblin") == "started"){
+                
+            } else {
+                
+            }
+        }
+        set_property("subscript","");
+        aa("facsimile");
     }
     step("phase: bulkFK reminisce");
     reminisce();

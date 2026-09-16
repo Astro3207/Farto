@@ -252,7 +252,7 @@ void main(int round, monster mob, string page_text) {
             use_skill($skill[spring away]);
         }
     }
-    if (get_property("subscript") =="screech"){
+    if (get_property("subscript") == "screech"){
         use_skill($skill[%fn, Release the Patriotic Screech!]);
         if (dayType() == 1){
             if (get_property("_snokebombUsed").to_int() < 3)
@@ -264,7 +264,7 @@ void main(int round, monster mob, string page_text) {
             throw_item($item[stuffed yam stinkbomb]);
         }
     }
-
+    if (get_property("subscript"))
     if (last_monster() == $monster[shadow spire]){
         if (current_round() > 0)
             use_skill($skill[saucegeyser]);

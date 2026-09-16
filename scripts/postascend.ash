@@ -6,8 +6,9 @@ void closetShinies(){
 }
 
 void main(){
-    visit_url("peevpee.php?action=smashstone&pwd&confirm=on&shatter=Smash+that+Hippy+Crap%21");
-    visit_url("showclan.php?whichclan=72876&action=joinclan&confirm=on");
+    if (my_name().to_lower_case() == "fart scauce")
+        visit_url("peevpee.php?action=smashstone&pwd&confirm=on&shatter=Smash+that+Hippy+Crap%21");
+    visit_url("showclan.php?whichclan=" + get_property("homeClanID").to_int() + "&action=joinclan&confirm=on");
     int [int] clanIds = {2047010985,2047010683,2047010572,2047010988,2047010986,2047010667,2047010939};
     foreach num in clanIds{
         set_property(clanIds[num] + "SewersDone", "false");

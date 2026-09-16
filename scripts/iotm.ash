@@ -651,6 +651,32 @@
         }
     }
 
+    // ── Pulled Red Taffy ─────────────────────────────────────────────────────────
+
+    // Drop weights for using a pulled red taffy underwater (Briny Deeps).
+    float [item] redTaffyWeights = {
+        $item[Alewife™ Ale]: 0.03,             $item[bazookafish bubble gum]: 0.03,
+        $item[beefy fish meat]: 0.03,          $item[dull fish scale]: 0.0925,
+        $item[eel battery]: 0.03,              $item[eel sauce]: 0.03,
+        $item[glistening fish meat]: 0.03,     $item[high-pressure seltzer bottle]: 0.03,
+        $item[imitation crab crate]: 0.03,     $item[ink bladder]: 0.03,
+        $item[live nautical mine]: 0.03,       $item[Mer-kin healscroll]: 0.03,
+        $item[Mer-kin lunchbox]: 0.0925,       $item[Mer-kin thingpouch]: 0.03,
+        $item[pufferfish spine]: 0.03,         $item[rough fish scale]: 0.03,
+        $item[salinated mint julep]: 0.03,     $item[sand dollar]: 0.125,
+        $item[sea lace]: 0.03,                 $item[seaweed]: 0.03,
+        $item[shark cartilage]: 0.03,          $item[slick fish meat]: 0.03,
+        $item[slug of rum]: 0.03,              $item[slug of shochu]: 0.03,
+        $item[slug of vodka]: 0.03,            $item[soggy seed packet]: 0.03,
+    };
+
+    float redTaffyValue() {
+        float value;
+        foreach it in redTaffyWeights
+            value += redTaffyWeights[it] * mall_price(it);
+        return value;
+    }
+
 // ─── 6. ADVENTURING-STATE CHECKS ─────────────────────────────────────────────
 
     // stack == false: pre-charge NC-forcing resources before a forcer is active (the
