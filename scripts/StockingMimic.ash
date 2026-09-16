@@ -147,7 +147,7 @@ void prepBuffs(){
     }
 
     //fam weight
-    foreach ef in $effects[Robot Friends,Healthy Green Glow,Chorale of Companionship,Human-Fish Hybrid,Whole Latte Love,Shortly Stacked,Thoughtful Empathy,Leash of Linguini,Empathy,Black Tongue,Man's Worst Enemy,Billiards Belligerence,You Can Really Taste the Dormouse,Kindly Resolve,Human-Machine Hybrid,Shrimpin' Ain't Easy,Over-Familiar With Dactyls,Loyal Tea,Warm Shoulders,One Foot Heavier,Work For Hours a Week,A Girl Named Sue,Panna Consideration,Loyal as a Rock,Candied Devil,Wildsun Boon,Only Dogs Love a Drunken Sailor,Best Pals,Heart of Green,Bestial Sympathy,Herder\, Bitter\, Fester\, Stranger,Party Soundtrack,Shortly Wired,Greased-Up Familiar,Crocodile Tear,Spiced Out,offhand remarkable,Greased-Up Familiar,Crocodile Tear]{
+    foreach ef in $effects[Robot Friends,Healthy Green Glow,Chorale of Companionship,Human-Fish Hybrid,Whole Latte Love,Shortly Stacked,Thoughtful Empathy,Leash of Linguini,blood bond,Empathy,Black Tongue,Man's Worst Enemy,Billiards Belligerence,You Can Really Taste the Dormouse,Kindly Resolve,Human-Machine Hybrid,Shrimpin' Ain't Easy,Over-Familiar With Dactyls,Loyal Tea,Warm Shoulders,One Foot Heavier,Work For Hours a Week,A Girl Named Sue,Panna Consideration,Loyal as a Rock,Candied Devil,Wildsun Boon,Only Dogs Love a Drunken Sailor,Best Pals,Heart of Green,Bestial Sympathy,Herder\, Bitter\, Fester\, Stranger,Party Soundtrack,Shortly Wired,Greased-Up Familiar,Crocodile Tear,Spiced Out,offhand remarkable,Greased-Up Familiar,Crocodile Tear]{
         if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]) && ef.attributes != "nohookah")
             continue;
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
@@ -298,10 +298,17 @@ void dieting(){
 				break;
 			if (have_effect(fo) > 0)
 				continue;
-			if (effect_to_item(fo) == $item[Black and White Apron Meal Kit] && my_class() == $class[seal clubber]){
-				retrieve_item($item[cranberries]);
-				visit_url("inv_use.php?which=3&whichitem=11472");
-				visit_url("choice.php?whichchoice=1518&option=1&meal=0&ingredients0%5B%5D=672");
+			if (effect_to_item(fo) == $item[Black and White Apron Meal Kit]){
+                if (my_class() == $class[seal clubber]){
+                    retrieve_item($item[cranberries]);
+                    visit_url("inv_use.php?which=3&whichitem=11472");
+                    visit_url("choice.php?whichchoice=1518&option=1&meal=0&ingredients0%5B%5D=672");
+                } else if (my_class() == $class[pastamancer]){
+                    retrieve_item($item[philosopher's scone]);
+                    visit_url("inv_use.php?which=3&whichitem=11472");
+                    visit_url("choice.php?whichchoice=1518&option=1&meal=1&ingredients1%5B%5D=4956");
+                }else
+                    abort();
 			} else if (effect_to_item(fo).mall_price() < 30000){
 				eat(effect_to_item(fo));
 			}
@@ -1461,9 +1468,10 @@ void bulkFK(){
                 set_property("acc1Override","");
             }
             altFam($familiar[Pair of Stomping Boots]);
-            if (get_property("_pantsgivingCount").to_int() < 50)
+            if (get_property("_pantsgivingCount").to_int() < 50){
+                stashgrab($item[pantsgiving]);
                 set_property("pantsOverride",", equip pantsgiving");
-            else if (get_property("sweat").to_int() < 90)
+            } else if (get_property("sweat").to_int() < 90)
                 set_property("pantsOverride",", equip designer sweatpants");
             else
                 set_property("pantsOverride","");
