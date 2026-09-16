@@ -1433,6 +1433,7 @@ void bulkFK(){
     }
     if (get_property("_pocketProfessorLectures").to_int() == 0 && get_property("_locketMonstersFought").split_string(",").count() < 3){
         set_property("maxOverride","familiar weight");
+        set_property("subscript","NonSMFK");
         set_property("pantsOverride",", equip tearaway Pants");
         set_property("offOverride", ", equip kol con snowglobe");
         set_property("acc1Override", ", equip Mr. Cheeng's spectacles");
@@ -1448,6 +1449,7 @@ void bulkFK(){
         set_property("acc1Override", "");
         set_property("acc2Override", "");
         set_property("offOverride", "");
+        set_property("subscript","");
     }
     if (get_property("_banderRunaways").to_int() < 20){
         set_auto_attack(0);
