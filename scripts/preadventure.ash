@@ -301,7 +301,7 @@ void preAdv(){
             append(maximize, ", equip devilbone greaves");
         else if (get_property("pantsOverride") != "")
             append(maximize, get_property("pantsOverride"));
-        else if (to_int(get_property("_pantsgivingCount")) < 50 && available_amount($item[pantsgiving]) > 0 && !($locations[The Dark Elbow of the Woods,The Dark Heart of the Woods,The Dark Neck of the Woods,Pandamonium Slums,Infernal Rackets Backstage] contains my_location()))
+        else if (to_int(get_property("_pantsgivingCount")) < 4 && available_amount($item[pantsgiving]) > 0 && !($locations[The Dark Elbow of the Woods,The Dark Heart of the Woods,The Dark Neck of the Woods,Pandamonium Slums,Infernal Rackets Backstage] contains my_location()))
             append(maximize, ", equip pantsgiving");
         else if (get_property("sweat").to_int() < 90)
             append(maximize, ", equip designer sweatpants");

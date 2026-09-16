@@ -705,15 +705,14 @@ void forceNoncombats(){
         return;
     uneffectDebuffs();
     NCforce(true);
-    if ((get_property("questL06Friar") == "started" || get_property("questL06Friar") == "step1") && dayType() == 0 && get_property("seaAftercore") == "true"){
+    if (get_property("questM16Temple") != "finished" && get_property("seaAftercore") == "true"){
+        while (get_property("noncombatForcerActive") == "true" && get_property("questM16Temple") != "finished")
+            findHiddenTemple();
+    } else if ((get_property("questL06Friar") == "started" || get_property("questL06Friar") == "step1") && dayType() == 0 && get_property("seaAftercore") == "true"){
         if (get_property("questL06Friar") == "started")
             visit_url("friars.php?action=friars");
         while (get_property("noncombatForcerActive") == "true" && (get_property("questL06Friar") == "started" || get_property("questL06Friar") == "step1")){
             friars();
-        }
-    } else if (get_property("questM16Temple") != "finished" && get_property("seaAftercore") == "true"){
-        while (get_property("noncombatForcerActive") == "true" && get_property("questM16Temple") != "finished"){
-            findHiddenTemple();
         }
     } else {
         if (dayType() == 1)
@@ -867,7 +866,7 @@ void spendAdv(){
                 findHiddenTemple();
             else if (get_property("questM10Azazel") != "finished")
                 azazelUnicornQuest();
-            else if (get_property("questG09Muscle") != "finished" || get_property("questL05Goblin") == "started")
+            else if (get_property("questG09Muscle") != "finished" && my_class() == $class[seal clubber])
                 outskirts();
 
             set_property("mainOverride","");
@@ -880,7 +879,7 @@ void spendAdv(){
 
             if (to_int(get_property("blackForestProgress")) < 5)
                 blackForest();
-            else if (get_property("questG09Muscle") != "finished" || get_property("questL05Goblin") == "started")
+            else if (get_property("questG09Muscle") != "finished" && my_class() == $class[seal clubber])
                 outskirts();
             else if (get_property("questM16Temple") != "finished")
                 findHiddenTemple();
@@ -903,7 +902,7 @@ void spendAdv(){
                 azazelUnicornQuest();
             while (to_int(get_property("blackForestProgress")) < 5)
                 blackForest();
-            while (my_adventures() < 30 && (get_property("questG09Muscle") != "finished" || get_property("questL05Goblin") == "started"))
+            while (my_adventures() < 30 && (get_property("questG09Muscle") != "finished" && my_class() == $class[seal clubber]))
                 outskirts();
         }
     }

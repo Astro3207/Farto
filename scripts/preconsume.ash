@@ -130,7 +130,8 @@ string [string] saveResourceBackupProp = {
     "_docClocksThymeCocktailDrunk": "pcBackup_docClocksThymeCocktailDrunk",
     "currentMojoFilters": "pcBackup_currentMojoFilters",
     "spiceMelangeUsed": "pcBackup_spiceMelangeUsed",
-    "_aug16Cast": "pcBackup_aug16Cast"
+    "_aug16Cast": "pcBackup_aug16Cast",
+    "_mimeArmyShotglassUsed": "pcBackup_mimeArmyShotglassUsed"
 };
 
 void savedResources(){
@@ -140,6 +141,7 @@ void savedResources(){
     set_property("currentMojoFilters","3");
     set_property("spiceMelangeUsed","true");
     set_property("_aug16Cast", "true");
+    set_property("_mimeArmyShotglassUsed","true");
 }
 
 void unsaveResources(){
@@ -160,10 +162,10 @@ void main(){
     if (item_amount($item[Mayo Minder&trade;]) > 0 && get_property("mayoMinderSetting") != "")
         use($item[Mayo Minder&trade;]);
  //   legendaryPasta();
-    cupOf13s();
     timeArrow();
     clanAdv();
     if (dayType() == 1){
+        cupOf13s();
         astral();
         yeti();
         if (get_property("_borrowedTimeUsed") == false){
@@ -176,8 +178,18 @@ void main(){
         partialConsume(0,1,0);
     } else {
         savedResources();
+        if (get_property("_borrowedTimeUsed") == "false")
+            use($item[borrowed time]);
+        if (get_property("_syntheticDogHairPillUsed") == "false" && item_amount($item[synthetic dog hair pill]) > 0)
+            use($item[synthetic dog hair pill]);
+        if (get_property("_distentionPillUsed") == "false" && item_amount($item[distention pill]) > 0 && my_inebriety() > 0)
+            use($item[distention pill]);
+        if (get_property("_sweetToothUsed") == "false")
+            use($item[sweet tooth]);
+        if (get_property("_voraciTeaUsed") == "false")
+            use($item[Cuppa Voraci tea]);
         if (get_property("_milkOfMagnesiumUsed") == "false")
-            cli_execute("CONSUME ORGANS 1 0 0");
+            cli_execute("CONSUME ORGANS 0 0 0");
     //    partialConsume(10,10,15);
         unsaveResources();
     }

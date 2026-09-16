@@ -410,10 +410,6 @@ void main(int whichchoice, string page) {
             run_choice(3);
             break;
         case 1497:
-            if (my_name().to_lower_case() == "aintthatthetruth"){
-                if (user_confirm("Press yes to abort if this is right after looping. You are at the rufus dialog."))
-                    abort();
-            }
             if (have_effect($effect[shadow affinity]) > 0){
                 run_choice(2);
             } else if (get_property("rufusDesiredEntity") == "shadow scythe"){

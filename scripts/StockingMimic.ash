@@ -186,8 +186,6 @@ void prepBuffs(){
     }
     //crit rate
     foreach ef in $effects[Berry Critical,Mark of Candy Cain,Invisible (20 Minutes Ago),Mariachi Moisture]{
-        if (numeric_modifier("Critical Hit Percent") >= 100)
-            break;
         if (to_skill(ef) != $skill[none])
             continue;
         if (have_effect(ef) == 0)
@@ -252,13 +250,12 @@ void dieting(){
 		if (have_effect($effect[Shadow Affinity]) == 0)
 			if (!user_confirm("dieting: Shadow Affinity fell off before the rollover-day binge. Continue?"))
                 abort();
-		if (dayType() == 0)
+		if (dayType() == 0){
 			use($item[law of averages]);
-        if (have_item($item[Mayo Minder&trade;])){
-            if (get_property("mayoMinderSetting") != "Mayodiol")
+            if (have_item($item[Mayo Minder&trade;]) && get_property("mayoMinderSetting") != "Mayodiol")
                 use($item[Mayo Minder&trade;]);
             while (my_fullness() < fullness_limit()){
-                if (get_property("legendaryNoodlesStomach") == 0){
+                if (get_property("legendaryNoodlesStomach") == 0 && fullness_limit()-my_fullness() > 1){
                     eat (cheapestPasta());
                 } else {
                     eat ($item[thyme jelly donut]);
@@ -266,16 +263,8 @@ void dieting(){
                 if (get_property("spiceMelangeUsed") == "false" && my_fullness() > 3 && my_inebriety() > 3)
                     use ($item[spice melange]);
             }
-        } else {
-            while (my_fullness() < fullness_limit()){
-                if (get_property("legendaryNoodlesStomach") == 0){
-                    eat (cheapestPasta());
-                } else {
-                    eat ($item[thyme jelly donut]);
-                }
-                if (get_property("spiceMelangeUsed") == "false" && my_fullness() > 3 && my_inebriety() > 3)
-                    use ($item[spice melange]);
-            }
+            if (get_property("_mimeArmyShotglassUsed") == "false")
+                drink($item[Temps Tempranillo]);
             drink(inebriety_limit() - my_inebriety(), $item[Temps Tempranillo]);
         }
         if (my_fullness() == fullness_limit() && get_property("_pantsgivingFullness").to_int() < 1){
@@ -1453,6 +1442,10 @@ void bulkFK(){
         set_property("acc2Override", "");
         set_property("offOverride", "");
     }
+    abort("pair of stomping boots");
+    if (get_property("questL05Goblin") == "started"){
+
+    }
     step("phase: bulkFK reminisce");
     reminisce();
     step("phase: bulkFK glitch monster");
@@ -1482,17 +1475,19 @@ void bulkFK(){
         main@preadventure( );
         use($item[envyfish egg]);
     }
-    if (dayType() == 0 && fullness_limit() - my_fullness() >= 1){
-        equip($item[devilbone corset]);
-        equip($slot[acc3],$item[angelbone chopsticks]);
-        if (fullness_limit() - my_fullness() >= 3)
-            eat($item[eldritch mushroom pizza]);
-        cli_execute("unequip devilbone corset; unequip angelbone chopsticks");
-        cli_execute("ash import dinner;heavyWeightBooze()");
-        cli_execute("unequip devilbone rosary;unequip angelbone dice;unequip devilbone greaves;unequip angelbone totem; familiar comma chameleon");
+    if (my_class() == $class[seal clubber]){
+        if (dayType() == 0 && fullness_limit() - my_fullness() >= 1){
+            equip($item[devilbone corset]);
+            equip($slot[acc3],$item[angelbone chopsticks]);
+            if (fullness_limit() - my_fullness() >= 3)
+                eat($item[eldritch mushroom pizza]);
+            cli_execute("unequip devilbone corset; unequip angelbone chopsticks");
+            cli_execute("ash import dinner;heavyWeightBooze()");
+            cli_execute("unequip devilbone rosary;unequip angelbone dice;unequip devilbone greaves;unequip angelbone totem; familiar comma chameleon");
+        }
+        step("phase: bulkFK seals");
+        seals();
     }
-    step("phase: bulkFK seals");
-    seals();
     if (get_property("eldritchTentaclesFought").to_int() < 11 && get_property("_eldritchTentacleFought") == "false"){
         main@preadventure();
         visit_url("place.php?whichplace=forestvillage&action=fv_scientist");
