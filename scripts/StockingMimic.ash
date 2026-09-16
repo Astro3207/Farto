@@ -349,6 +349,7 @@ void FKPrep(){
 	}
 
 	retrieve_item(25, $item[bag of many confections]);
+    retrieve_item(25, $item[stomp box]);
 	set_property("script", "FreeKill");
     retrieve_item($item[burning paper crane]);
     step("phase: 9 special buffs");
@@ -854,6 +855,7 @@ void altFam(familiar fam){
         set_property("famOverride",fam.to_string());
     } else {
         if (chameleon() != fam){
+            print (2);
             retrieve_item(familiar_equipment(fam));
             visit_url("inv_equip.php?which=2&action=equip&whichitem=" + familiar_equipment(fam).to_int());
             set_property("commaFamiliar",fam.to_string());

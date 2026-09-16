@@ -386,7 +386,7 @@ void preAdv(){
         set_property("hpAutoRecoveryTarget", hpAutoRecoveryTarget);
         set_property("mpAutoRecovery",       mpAutoRecovery);
         set_property("mpAutoRecoveryTarget", mpAutoRecoveryTarget);
-        
+        codpiece("peridot of peril,blood cubic zirconia,baseball diamond,tuesday's ruby,tuesday's ruby");
         if (get_property("_seadentWaveUsed") == "false"){
             if (dayType() == 0 && contains_text(get_property("lastEncounter"),"gingerbread")){
                 use_skill($skill[Sea *dent: Summon a Wave]);
