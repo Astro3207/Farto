@@ -49,7 +49,7 @@ void spendGrimacePrimeMaps(){
     equip($item[drunkula's wineglass]);
     int n = item_amount($item[Map to Safety Shelter Grimace Prime]);
     while (my_adventures() > n){
-        if (!adv1($location[Shadow Rift (The Misspelled Cemetary)])){
+        if (!adv1($location[barf mountain])){
             print("preascend: can't adventure in the Shadow Rift -- stopping Grimace-map spend-down", "red");
             break;
         }

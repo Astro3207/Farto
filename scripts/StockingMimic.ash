@@ -186,7 +186,7 @@ void prepBuffs(){
     }
     //crit rate
     foreach ef in $effects[Berry Critical,Mark of Candy Cain,Invisible (20 Minutes Ago),Mariachi Moisture]{
-        if (to_skill(ef) != $skill[none])
+        if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
             continue;
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
@@ -270,7 +270,8 @@ void dieting(){
             drink(inebriety_limit() - my_inebriety(), $item[Temps Tempranillo]);
         }
         if (my_fullness() == fullness_limit() && get_property("_pantsgivingFullness").to_int() < 1){
-            stashgrab($item[pantsgiving]);
+            if (item_amount($item[pantsgiving]) == 0)
+                stashgrab($item[pantsgiving]);
             equip($item[pantsgiving]);
             use_familiar($familiar[patriotic eagle]);
             retrieve_item($item[dish of clarified butter]);
@@ -339,7 +340,8 @@ void FKPrep(){
             cli_execute("PVP_MAB; unequip pants");
         }
     }
-    aa("facsimile");
+    if (get_auto_attack() == 0)
+        aa("facsimile");
 	if (get_property("_shadowAffinityToday") == "false")
 		use($item[closed-circuit pay phone]);
 
@@ -568,7 +570,8 @@ void shadowBoss(){
 }
 void shadowRealmFK(){
     equipStockingMimic();
-    aa("facsimile");
+    if (get_auto_attack() == 0)
+        aa("facsimile");
     if (!contains_text(get_property("maxOverride"),"familiar"))
         set_property("maxOverride","familiar weight, equip eternity codpiece");
     if (get_property("questRufus") == "step1") {
@@ -777,7 +780,8 @@ void pearloP1(){
     if (have_effect($effect[driving waterproofly]) == 0)
         set_property("pantsOverride",", equip really nice swim");
     banishFish();
-    aa("facsimile");
+    if (get_auto_attack() == 0)
+        aa("facsimile");
     equip($slot[acc2],$item[mafia pointer finger ring ]);
     set_property("acc2Override",", bonus mafia pointer finger");
     if (numeric_modifier("Critical Hit Percent") < 100)
@@ -876,7 +880,8 @@ void habitatRecall(){
         while (to_int(get_property("_monsterHabitatsFightsLeft")) > 0 || get_property("beGregariousFightsLeft").to_int() > 0){
             mimicPrep();
             MobiusMaybe();
-            aa("facsimile");
+            if (get_auto_attack() == 0)
+                aa("facsimile");
             if (get_property("beGregariousFightsLeft").to_int() == 1 && get_property("beGregariousCharges").to_int() == 0 && to_int(get_property("_monsterHabitatsRecalled")) == 3 && dayType() == 1){
                 if (mall_price($item[flask of embalming fluid]) > 1000)
                     abort("reanimated reanimator is too expensive rn");
@@ -1320,8 +1325,15 @@ boolean weakMonstersLeft(){
     return false;
 }
 
+boolean EmbezBetter(){
+    int n = mall_price($item[11-leaf clover])/700;
+    if (n < (numeric_modifier($modifier[meat drop])/100 + 1))
+        return true;
+    return false;
+}
+
 void embezzler(){
-    while ((get_property("_aprilBandSaxophoneUses").to_int() < 3 || numeric_modifier("Meat drop") > 4400) && dayType() == 1){
+    while ((get_property("_aprilBandSaxophoneUses").to_int() < 3 || EmbezBetter()) && dayType() == 1){
         altFam($familiar[robortender]);
         if (get_property("_roboDrinks") != "drive-by shooting"){
             retrieve_item($item[drive-by shooting]);
@@ -1368,7 +1380,8 @@ void bulkFK(){
     // Arm the player's combat macro as the native auto-attack so a standalone
     // bulkFK() run (FKPrep skipped because the express card is already used) still fights.
     starter();
-    aa("facsimile");
+    if (get_auto_attack() == 0)
+        aa("facsimile");
     if (weakMonstersLeft())
         weakMonsters();
     step("phase: August Golem");
@@ -1410,7 +1423,7 @@ void bulkFK(){
         set_property("subscript","looseFK");
         if (baseballPlayers() == 9 && get_property("_curveballFightsLeft").to_int() == 0 && get_property("_baseballInnings").to_int() < 3)
             baseballD();
-        set_property("offOverride",",equip Kramco Sausage-o-Matic");
+        set_property("offOverride",",bonus Kramco Sausage-o-Matic");
         shadowRealmFK();
     }
     set_property("subscript","");
@@ -1455,7 +1468,7 @@ void bulkFK(){
     }
     if (get_property("_banderRunaways").to_int() < 20){
         set_auto_attack(0);
-        if (have_effect($effect[Apriling Band Battle Cadence]) == 0)
+        if (have_effect($effect[Apriling Band Battle Cadence]) == 0 && total_turns_played() >= get_property("nextAprilBandTurn").to_int())
             cli_execute("aprilband effect c");
         while (get_property("_banderRunaways").to_int() < (my_familiar().familiar_weight() + weight_adjustment( ))/5){
             if ($location[Cobb's Knob Treasury].combat_percent < 100)
@@ -1473,8 +1486,10 @@ void bulkFK(){
             }
             altFam($familiar[Pair of Stomping Boots]);
             if (get_property("_pantsgivingCount").to_int() < 50){
-                stashgrab($item[pantsgiving]);
-                set_property("pantsOverride",", equip pantsgiving");
+                if (item_amount($item[pantsgiving]) == 0)
+                    stashgrab($item[pantsgiving]);
+                if (item_amount($item[pantsgiving]) > 0)
+                    set_property("pantsOverride",", equip pantsgiving");
             } else if (get_property("sweat").to_int() < 90)
                 set_property("pantsOverride",", equip designer sweatpants");
             else
@@ -1482,7 +1497,8 @@ void bulkFK(){
             adv1($location[Cobb's Knob Treasury]);
         }
         set_property("subscript","");
-        aa("facsimile");
+        if (get_auto_attack() == 0)
+            aa("facsimile");
         set_property("pantsOverride","");
     }
     step("phase: bulkFK reminisce");
@@ -1533,6 +1549,7 @@ void bulkFK(){
         run_choice(1);
         main@postadventure();
     }
+    stashreturn($item[pantsgiving]);
     if (!contains_text(get_property("thoth19_event_list"),"postFKD2"))
         cli_execute("ptrack add postFKD2");
     else if (!contains_text(get_property("thoth19_event_list"),"postFKD1") && dayType() == 0)

@@ -408,7 +408,7 @@ void main(int round, monster mob, string page_text) {
             attack();
         if (get_property("subscript") == "looseFK" && (get_property("_curveballMonster").to_monster() != last_monster() || get_property("_curveballFightsLeft").to_int() == 0) && last_monster().boss == false)
             free_kill(page_text);
-        if (get_property("_curveballMonster").to_monster() == last_monster())
+        if (get_property("_curveballMonster").to_monster() == last_monster() && get_property("_curveballFightsLeft").to_int() > 0)
             sauce(3);
         if (get_property("subscript") == "looseFK" && current_round() > 0 && last_monster().boss == false &&(my_location() != $location[Shadow Rift (The Misspelled Cemetary)] || have_effect($effect[shadow affinity]) == 0))
             abort();

@@ -24,7 +24,10 @@ string [string] adventureAbortMessages = {
 void swordPrep(){
     set_property("famOverride","sword of s words");
     use_familiar($familiar[sword of s words]);
+    int loopCount = 0;
     while (get_property("swordOfSWordsMonster") != "1085"){
+        if (loopCount++ > 20)
+            abort("swordPrep: looped over 20 times with no progress -- probably out of grizzled survivor reminisces");
         set_property("killThisGuy","1085");
         set_property("swordSniff","true");
         cli_execute("reminisce grizzled survivor");
@@ -253,9 +256,7 @@ void BoFaWish(){
         };
     } else if (my_class() == $class[pastamancer]){
         wish_map = {
-            "31":	1010,
-            "32":	1010,
-            "33":	1010,
+            "33":	48,
             "58":	185,
             "264":	185
         };
@@ -270,10 +271,6 @@ void BoFaWish(){
     }
     foreach loc in wish_map{
         if ((!contains_text(get_property("_perilLocations"),loc) || get_property("rwbLocation") == to_location(to_int(loc))) && can_adventure(to_location(to_int(loc)))){
-            if (have_effect($effect[Everything Looks Red, White and Blue]) == 0 && to_int(get_property("_bookOfFactsWishes")) < 2){
-                set_property("famOverride","patriotic eagle");
-                set_property("BoFaWishRWB","true");
-            }
             set_property("acc1Override",", equip peridot of peril");
             set_property("choiceAdventureScript","");
             set_property("choiceAdventure1557","1&bandersnatch=" + wish_map[loc]);
@@ -360,6 +357,8 @@ void unlock_zeppelin(){
             abort("not enough sleaze damage");
         if (to_int(get_property("zeppelinProtestors")) < 80 && have_effect($effect[lucky!]) == 0)
             getLucky();
+        user_confirm("wait 10 sec. At red zepp chec dafuq is happening");
+        wait(10);
         adv1($location[A Mob of Zeppelin Protesters]);
     }
     set_property("maxOverride","");
@@ -657,7 +656,8 @@ void postAdv(){
         }
     }
     lawOfAverages();
-    clanFortune();
+    if (is_online("OnlyFax"))
+        clanFortune();
     if (get_property("autumnatonQuestLocation") == "" && item_amount($item[autumn-aton]) > 0){
         upgradeAutumnaton();
     }
@@ -890,7 +890,12 @@ void spendAdv(){
             set_property("acc1Override","");
         }
         if (my_adventures() < 65){
-            while (available_amount($item[observational glasses]) == 0)
+            // azazelUnicornQuest() only advances when questM10Azazel is unfinished and
+            // (my_adventures() < 45 || delay()); outside that window it's a no-op, so the
+            // loop condition mirrors it to avoid spinning forever with no progress.
+            while (available_amount($item[observational glasses]) == 0
+                && get_property("questM10Azazel") != "finished"
+                && (my_adventures() < 45 || delay()) && have_effect($effect[Patent Aggression]) == 0)
                 azazelUnicornQuest();
             while (to_int(get_property("blackForestProgress")) < 5)
                 blackForest();
@@ -898,7 +903,7 @@ void spendAdv(){
         if (my_adventures() < 35){
             while (get_property("questM16Temple") != "finished")
                 findHiddenTemple();
-            while (get_property("questM10Azazel") != "finished")
+            while (get_property("questM10Azazel") != "finished" && have_effect($effect[Patent Aggression]) == 0)
                 azazelUnicornQuest();
             while (to_int(get_property("blackForestProgress")) < 5)
                 blackForest();

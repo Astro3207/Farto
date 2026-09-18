@@ -699,8 +699,11 @@
             }  else if (get_property("_claraBellUsed") == false && have_item($item[clara's bell])){
                 use($item[clara's bell]);
             } else if (have_item($item[Cincho de Mayo])){
+                int cinchRestLoopCount = 0;
                 while (to_int(get_property("_cinchUsed")) > 40
                     && to_int(get_property("timesRested")) < total_free_rests()) {
+                    if (cinchRestLoopCount++ > 50)
+                        abort("NCforce: cincho rest-down looped over 50 times with no progress -- camp rest free is probably failing");
                     cli_execute("unequip hat; equip apriling band helmet; camp rest free");
                 }
                 if (to_int(get_property("_cinchUsed")) <= 40) {
@@ -1147,7 +1150,6 @@
         set_property("subscript", "");
         set_property("betweenBattleScript",   betweenBattleScriptStorage);
         set_property("afterAdventureScript",  afterAdventureScriptStorage);
-        set_property("choiceAdventureScript", choiceAdventureScriptStorage);
         set_property("battleAction",          battleActionStorage);
         set_property("customCombatScript",    ccsStorage);
         set_property("hpAutoRecovery",        hpAutoRecoveryStorage);

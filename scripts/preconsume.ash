@@ -189,7 +189,7 @@ void main(){
         if (get_property("_voraciTeaUsed") == "false")
             use($item[Cuppa Voraci tea]);
         if (get_property("_milkOfMagnesiumUsed") == "false")
-            cli_execute("CONSUME ORGANS 0 0 0");
+            cli_execute("CONSUME ORGANS 1 0 0");
     //    partialConsume(10,10,15);
         unsaveResources();
     }
