@@ -121,40 +121,21 @@ void garbo(){
 
 void cowo(){
     setDropWeighting($location[the coral corral]);
-    if (have_effect($effect[Citizen of a Zone]) == 0){
-        set_property("famOverride","patriotic eagle");
-    } else {
-        set_property("famOverride","");
-    }
-    if (!contains_text(get_property("trackedMonsters"),"garbage tourist:McHugeLarge Slash") && to_int(get_property("_knuckleboneDrops")) == 100){
-        set_property("offOverride",", equip McHugeLarge left pole");
-        set_property("acc1Override",", equip peridot of peril");
-    } else if (!contains_text(get_property("trackedMonsters"),"angry tourist:McHugeLarge Slash") && to_int(get_property("_knuckleboneDrops")) < 100){
-        set_property("offOverride",", equip McHugeLarge left pole");
-    } else {
-        set_property("offOverride","");
-        set_property("acc1Override","");
-    }
-
+    set_property("famOverride","");
     if (!everfullReady()) {
         set_property("acc1Override",", equip everfull dart holster");
     } else {
         set_property("acc1Override","");
     }
-    if (have_effect($effect[driving waterproofly]) > 0
-        && ((to_int(get_property("_pantsgivingCount")) >= 500 && dayType() == 1)
-            || (to_int(get_property("_pantsgivingCount")) >= 50 && dayType() == 0))){
+    if ((to_int(get_property("_pantsgivingCount")) >= 500 && dayType() == 1)
+            || (to_int(get_property("_pantsgivingCount")) >= 50 && dayType() == 0))
         if (available_amount($item[pantsgiving]) > 0)
             stashreturn($item[pantsgiving]);
-        if (my_fullness() < fullness_limit() || my_inebriety() < inebriety_limit())
-            cli_execute("CONSUME ALL");
-    } else {
-        set_property("pantsOverride",", equip really nice swimming trunk");
-    }
+    if (have_effect($effect[driving waterproofly]) == 0)
+        set_property("backOverride",", equip elf guard scuba tank");
     if (!contains_text(get_property("banishedMonsters"),"Mer-kin rustler")
         || !contains_text(get_property("banishedMonsters"),"sea cowboy"))
             equip(banishGear($location[The Coral Corral]));
-    set_property("famEquipOverride",", equip little bitty bathysphere");
     adv1($location[the coral corral],0,"");
 }
 
@@ -168,8 +149,12 @@ void main(){
             stashgrab($item[pantsgiving]);
         set_property("script","farto");
         while (my_adventures() > 0){
-            if (my_class() == $class[none])
-                garbo();
+            if (dayType() == 0)
+                main@postadventure();
+            if (get_property("questL05Goblin") == "started")
+                outskirts();
+            else if (my_class() == $class[pastamancer])
+                cowo();
             else{
                 if (get_property("_stenchAirportToday") == "false")
                     use($item[one-day ticket to Dinseylandfill]);

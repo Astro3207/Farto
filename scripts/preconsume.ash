@@ -46,21 +46,7 @@ void cupOf13s(){
         }
     }
 }
-void partialConsume(int leaveStomach, int leaveLiver, int leaveSpleen){
-    int toEat = fullness_limit() - my_fullness() - leaveStomach;
-    int toDrink = inebriety_limit() - my_inebriety() - leaveLiver;
-    int toSpleen = spleen_limit() - my_spleen_use() - leaveSpleen;
-    cli_execute("CONSUME ORGANS " + max(0,toEat) + " " + max(0,toDrink) + " " + max(0,toSpleen));
-}
-void yeti(){
-    if ($familiar[cooler yeti].experience > 400 && get_property("_coolerYetiAdventures") == "false"){
-        cli_execute("CONSUME ORGANS 2 3 0");
-        use_familiar($familiar[cooler yeti]);
-        visit_url("main.php?talktoyeti=1", false);    
-        run_choice(2);
-        cli_execute("drink doc clock's t");
-    }
-}
+
 void legendaryPasta(){
     if (get_property("_legendaryNoodlesSpleen") == false){
         set_property("choiceAdventure1599","1");
@@ -83,39 +69,37 @@ void legendaryPasta(){
     }
 }
 
-string organType(item it){
-    if (it.fullness > 0)
-        return "fullness";
-    if (it.inebriety > 0)
-        return "inebriety";
-    if (it.spleen > 0)
-        return "spleen";
-    return "none";
+int baseMeat(){
+    if (get_property("baseMeat") == "")
+        return 300;
+    else
+        return get_property("baseMeat").to_int();
 }
 
-float expectedAdventures(item it){
-    string range = it.adventures;
-    if (range == "")
-        return 0.0;
-    if (!range.contains_text("-"))
-        return range.to_float();
-    string [int] bounds = split_string(range, "-");
-    return (bounds[0].to_float() + bounds[1].to_float()) / 2.0;
-}
-
-int costPerAdv(item it){
-    if (organType(it) == "none"){
-        print("a none food item");
+// meat you'd expect to gain from an item's granted effect's Meat Drop bonus alone,
+// on top of whatever CONSUME already values the item's adventures/organ fill at
+int total_meat_value(item it){
+    if (numeric_modifier(itemEffectNotes(it).ef,"meat drop") > 0)
+        return (numeric_modifier(itemEffectNotes(it).ef,"meat drop")/100) * baseMeat() * itemEffectNotes(it).turns;
+    else
         return 0;
-    } else {
-        if (organType(it) == "inebriety")
-            return (mall_price(it)/expectedAdventures(it)/it.inebriety);
-        if (organType(it) == "fullness")
-            return (mall_price(it)/expectedAdventures(it)/it.fullness);
-        if (organType(it) == "spleen")
-            return (mall_price(it)/expectedAdventures(it)/it.spleen);
+}
+
+void partialConsume(int leaveStomach, int leaveLiver, int leaveSpleen){
+    int toEat = fullness_limit() - my_fullness() - leaveStomach;
+    int toDrink = inebriety_limit() - my_inebriety() - leaveLiver;
+    int toSpleen = spleen_limit() - my_spleen_use() - leaveSpleen;
+    cli_execute("CONSUME ORGANS " + max(0,toEat) + " " + max(0,toDrink) + " " + max(0,toSpleen));
+}
+
+void yeti(){
+    if ($familiar[cooler yeti].experience > 400 && get_property("_coolerYetiAdventures") == "false"){
+        cli_execute("CONSUME ORGANS 2 3 0");
+        use_familiar($familiar[cooler yeti]);
+        visit_url("main.php?talktoyeti=1", false);    
+        run_choice(2);
+        cli_execute("drink doc clock's t");
     }
-    return 0;
 }
 
 // savedResources() marks these four dailies as already-used so nothing else
@@ -151,7 +135,7 @@ void unsaveResources(){
 
 boolean littleMore(){
     savedResources();
-    cli_execute("CONSUME ORGANS 0 5 0");
+    cli_execute("CONSUME ORGANS 0 1 0");
     unsaveResources();
     return true;
 }
@@ -189,7 +173,7 @@ void main(){
         if (get_property("_voraciTeaUsed") == "false")
             use($item[Cuppa Voraci tea]);
         if (get_property("_milkOfMagnesiumUsed") == "false")
-            cli_execute("CONSUME ORGANS 1 0 0");
+            cli_execute("CONSUME ORGANS 0 0 0");
     //    partialConsume(10,10,15);
         unsaveResources();
     }

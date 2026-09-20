@@ -169,7 +169,14 @@ void blackForest(){
 void outskirts() {
     if (get_property("questG09Muscle") == "finished" && get_property("questL05Goblin") != "started")
         return;
-    swordPrep();
+    if (get_property("_banderRunaways").to_int() < (my_familiar().familiar_weight() + weight_adjustment( ))/5)
+        altFam($familiar[Pair of Stomping Boots]);
+    else
+        swordPrep();
+    if (get_property("famOverride") != "sword of s words")
+        set_property("unconditionalOverride","familiar weight");
+    else 
+        set_property("unconditionalOverride","");
     if (get_property("questG09Muscle") == "unstarted")
         visit_url("guild.php?place=challenge");
     if (get_property("questG09Muscle") == "started")
@@ -180,6 +187,8 @@ void outskirts() {
         adv1($location[The Outskirts of Cobb's Knob]);
     }
     visit_url("guild.php?place=challenge");
+    set_property("unconditionalOverride","");
+    set_property("famOverride","");
 }
 
 // Drive the Hidden Temple unlock: the choiceAdventure props select tree-holed
@@ -189,7 +198,10 @@ void findHiddenTemple(){
     if (get_property("questM16Temple") == "finished")
         return;
     uneffectDebuffs();
-    swordPrep();
+    if (get_property("_banderRunaways").to_int() < (my_familiar().familiar_weight() + weight_adjustment( ))/5)
+        altFam($familiar[Pair of Stomping Boots]);
+    else
+        swordPrep();
     set_property("maxOverride","-combat");
     if (item_amount($item[Spooky-Gro fertilizer]) == 0)
         cli_execute("acquire Spooky-Gro fertilizer");
@@ -353,15 +365,14 @@ void unlock_zeppelin(){
     }
     while(get_property("questL11Ron") != "step2"){
         cli_execute("maximize sleaze damage, sleaze spell damage, equip candy cane sword cane");
+        set_property("unconditionalOverride","sleaze damage, sleaze spell damage, equip candy cane sword cane");
         if ((numeric_modifier("sleaze damage")+numeric_modifier("sleaze spell damage")) < 1596 && to_int(get_property("zeppelinProtestors")) < 80)
             abort("not enough sleaze damage");
         if (to_int(get_property("zeppelinProtestors")) < 80 && have_effect($effect[lucky!]) == 0)
             getLucky();
-        user_confirm("wait 10 sec. At red zepp chec dafuq is happening");
-        wait(10);
         adv1($location[A Mob of Zeppelin Protesters]);
     }
-    set_property("maxOverride","");
+    set_property("unconditionalOverride","");
 }
 
 // Banish all three pygmy types out of the Hidden Bowling Alley (11 drunk-pygmy
@@ -463,7 +474,7 @@ void screechRefresh(){
 void constructBanish(){
     if (get_property("_cyberFreeFights").to_int() >= 10)
         return;
-    if (patrioticDelays() < 11)
+    if (dayType() == 0)
         return;
     if (get_property("screechCombats").to_int() > 0 && !contains_text(get_property("banishedPhyla"),"construct")){
         screechRefresh();
@@ -473,6 +484,7 @@ void constructBanish(){
         set_property("famOverride","patriotic eagle");
         set_property("maxOverride","ml, -10 familiar weight, -equip drunkula's wineglass,-equip backup camera");
         set_property("acc3Override",",equip spring shoes");
+        abort("CCS keeps spending a combat turn. Figure dat bish out");
         adv1($location[Madness Bakery],0,"");
     }
     set_property("subscript","");
@@ -686,7 +698,7 @@ void postAdv(){
         run_choice(2);
         cli_execute("drink doc clock's t");
     }
-    if (my_inebriety() < inebriety_limit() && ((to_int(get_property("familiarSweat")) >= 672 && dayType() == 0) || (to_int(get_property("familiarSweat")) >= 1024 && dayType() == 1))){
+    if (my_inebriety() < inebriety_limit() && dayType() != 0 && my_adventures() < 60){
         visit_url("inventory.php?"+my_hash()+"&action=distill");
         run_choice(1);
     }
@@ -730,7 +742,7 @@ void forceNoncombats(){
 void azazelUnicornQuest(){
     int backstage1 = item_amount($item[gin-soaked blotter paper]) + item_amount($item[beer-scented teddy bear]) + item_amount($item[giant marshmallow]);
     int backstage2 = item_amount($item[booze-soaked cherry]) + item_amount($item[comfy pillow]) + item_amount($item[sponge cake]);
-    if (get_property("questM10Azazel") != "finished" && (my_adventures() < 45 || delay())){
+    if (get_property("questM10Azazel") != "finished" && (my_adventures() < 65 || delay())){
         uneffectDebuffs();
         if (get_property("questL06Friar") == "started")
             visit_url("friars.php?action=friars");
@@ -804,6 +816,16 @@ void azazelUnicornQuest(){
         if (item_amount($item[steel margarita]) > 0)
             drink($item[steel margarita]);
     }
+}
+
+void chargeFams(){
+    if (!can_adventure($location[An Overgrown Shrine (Southeast)]))
+        return;
+    adv1($location[An Overgrown Shrine (Southeast)]);
+    use_familiar($familiar[mini kiwi]);
+    equip($item[antique machete]);
+    visit_url("inventory.php?action=parachute");
+    visit_url("choice.php?option=1&whichchoice=1543&monid=1426");
 }
 
 void level11Sprint(){
@@ -890,17 +912,6 @@ void spendAdv(){
             set_property("acc1Override","");
         }
         if (my_adventures() < 65){
-            // azazelUnicornQuest() only advances when questM10Azazel is unfinished and
-            // (my_adventures() < 45 || delay()); outside that window it's a no-op, so the
-            // loop condition mirrors it to avoid spinning forever with no progress.
-            while (available_amount($item[observational glasses]) == 0
-                && get_property("questM10Azazel") != "finished"
-                && (my_adventures() < 45 || delay()) && have_effect($effect[Patent Aggression]) == 0)
-                azazelUnicornQuest();
-            while (to_int(get_property("blackForestProgress")) < 5)
-                blackForest();
-        }
-        if (my_adventures() < 35){
             while (get_property("questM16Temple") != "finished")
                 findHiddenTemple();
             while (get_property("questM10Azazel") != "finished" && have_effect($effect[Patent Aggression]) == 0)
@@ -911,29 +922,28 @@ void spendAdv(){
                 outskirts();
         }
     }
+    if (have_effect($effect[everything looks beige]) == 0 && (my_adventures() > 50 || dayType() == 1))
+        chargeFams();
 
-    if (have_effect($effect[everything looks beige]) == 0 && (free_run() || get_property("_juneCleaverFightsLeft") == 0) && my_adventures() > 50)
-        cookbookbat();
     location CBBLoc = to_location(get_property("_cookbookbatQuestLastLocation"));
     if (!contains_text(get_property("_perilLocations"), to_string(to_int(CBBLoc))) && CBBLoc!= $location[the primordial soup]
         && get_property("_cookbookbatQuestIngredient") == "Yeast of Boris"
         && have_effect($effect[everything looks beige]) > 30 && my_adventures() > 50){
         cookbookbat();
     }
-
-    if (free_run()){
+    if (free_run() && my_inebriety() <= inebriety_limit()){
+        set_property("maxOverride","combat");
         set_property("famOverride", "cookbookbat");
         set_property("mainOverride",", equip june cleaver");
         set_property("pantsOverride", ", equip designer sweatpants");
-        adv1($location[barf mountain]);
+        adv1($location[cobb's knob treasury]);
+        set_property("maxOverride","");
         set_property("famOverride", "");
         set_property("mainOverride","");
         set_property("pantsOverride", "");
     }
-
     if (my_adventures() < 60 && to_int(get_property("_bookOfFactsWishes")) < 3)
         BoFaWish();
-
     if (dayType() == 0 &&  my_adventures() < 10){
         banishFish();
         set_property("famOverride","");

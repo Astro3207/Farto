@@ -29,6 +29,16 @@ void dart() {
     }
 }
 
+void farmingStuff(){
+    dart();
+    if (have_skill($skill[extract]))
+        use_skill($skill[extract]);
+    if (have_item($item[porquoise-handled sixgun]))
+        throw_item($item[porquoise-handled sixgun]);
+    if (have_item($item[pulled red taffy]))
+        throw_item($item[pulled red taffy]);
+}
+
 void free_kill(string ptext) {
     foreach sk in $skills[Spit jurassic acid, Darts: Aim for the Bullseye] {
         if (contains_text(ptext, to_string(sk))) {
@@ -70,6 +80,10 @@ void free_run(string ptext) {
             if (my_location() == $location[hobopolis town square] && sk == $skill[snokebomb]) continue;
             use_skill(sk);
         }
+    }
+    if (my_familiar() == $familiar[pair of stomping boots] || ((my_familiar() == $familiar[comma chameleon] && get_property("commaFamiliar") == "Pair of Stomping Boots"))){
+        print("HELLO WORLD");
+        runaway();
     }
 }
 
@@ -114,7 +128,6 @@ boolean [location] sauceLocs = {
     $location[The Secret Government Laboratory]:   true,
     $location[Seaside Megalopolis]:                true,
     $location[The Jungles of Ancient Loathing]:    true,
-    $location[The spooky forest]:                  true,
     $location[The Bubblin' Caldera]:               true,
     $location[The Red Queen's Garden]:             true,
     $location[The Laugh Floor]:                    true,
@@ -253,6 +266,8 @@ void main(int round, monster mob, string page_text) {
         }
     }
     if (get_property("subscript") == "screech"){
+        if (contains_text(last_monster().attributes,"WANDERER"))
+            abort("wanderer");
         use_skill($skill[%fn, Release the Patriotic Screech!]);
         if (dayType() == 1){
             if (get_property("_snokebombUsed").to_int() < 3)
@@ -260,8 +275,12 @@ void main(int round, monster mob, string page_text) {
             else
                 throw_item($item[peppermint parasol]);
         } else {
-            free_run(page_text);
             throw_item($item[stuffed yam stinkbomb]);
+        }
+        if (get_property("script") == "FreeKill") {
+            free_run(page_text);
+            if (current_round() > 0)
+                abort("use free run");
         }
     }
     if (get_property("subscript") == "stompingBoots"){
@@ -381,6 +400,7 @@ void main(int round, monster mob, string page_text) {
             if (my_hp() < 100)
                 throw_items($item[new age healing crystal],$item[new age healing crystal]);
         }
+        if (have_skill($skill[Prepare to reanimate your Foe])) use_skill($skill[Prepare to reanimate your Foe]);
         while (current_round() > 0 && current_round() < 10){
             throw_item($item[facsimile dictionary]);
             if (have_effect($effect[everything looks purple]) == 0 && have_equipped($item[roman candelabra]))
@@ -408,8 +428,10 @@ void main(int round, monster mob, string page_text) {
             attack();
         if (get_property("subscript") == "looseFK" && (get_property("_curveballMonster").to_monster() != last_monster() || get_property("_curveballFightsLeft").to_int() == 0) && last_monster().boss == false)
             free_kill(page_text);
-        if (get_property("_curveballMonster").to_monster() == last_monster() && get_property("_curveballFightsLeft").to_int() > 0)
-            sauce(3);
+        if (get_property("_curveballMonster").to_monster() == last_monster() && get_property("_curveballFightsLeft").to_int() > 0){
+            sauce(5);
+            use_skill($skill[carbohydrate cudgel]);
+        }
         if (get_property("subscript") == "looseFK" && current_round() > 0 && last_monster().boss == false &&(my_location() != $location[Shadow Rift (The Misspelled Cemetary)] || have_effect($effect[shadow affinity]) == 0))
             abort();
         if (current_round() > 0 && current_round() < 10)
@@ -799,15 +821,24 @@ void main(int round, monster mob, string page_text) {
         if (contains_text(get_property("banishedMonsters"),"hacker"))
             use_skill($skill[Sea *dent: Throw a Lightning Bolt]);
     }
+    if (my_location() == $location[cobb's knob treasury]){
+        if (last_monster() == $monster[Knob Goblin Embezzler])
+            attack(5);
+        else
+            free_run(page_text);
+    }
+    if (my_location() == $location[the black forest]){
+        free_kill(page_text);
+    }
     if (my_location() == $location[the coral corral]){
-        if (have_equipped($item[sheriff pistol]))
-            use_skill($skill[Assert your Authority]);
         if (last_monster() == $monster[mer-kin rustler])
             use_skill(combatBan());
         if (last_monster() == $monster[sea cowboy])
             use_skill(combatBan());
-        dart();
-        free_kill(page_text);
+        farmingStuff();
+        attack();
+        attack();
+        attack();
         cleanUp();
         return;
     }
@@ -862,6 +893,7 @@ void main(int round, monster mob, string page_text) {
     }
 
     if (my_location() == $location[The Spooky Forest]) { free_run(page_text); return; }
+    if (my_location() == $location[The Outskirts of Cobb's Knob]) { free_run(page_text);}
 
     if (my_location() == $location[Investigating a Plaintive Telegram]) {
         if (last_monster() == $monster[Former Sheriff Dan Driscoll])  attack(18);

@@ -49,11 +49,21 @@ void spendGrimacePrimeMaps(){
     equip($item[drunkula's wineglass]);
     int n = item_amount($item[Map to Safety Shelter Grimace Prime]);
     while (my_adventures() > n){
-        if (!adv1($location[barf mountain])){
+        if (have_effect($effect[null afternoon]) == 0)
+            use($item[null-day exploit]);
+        if (my_class() == $class[pastamancer]){
+            if (have_effect($effect[driving waterproofly]) == 0)
+                set_property("backOverride",", equip elf guard scuba tank");
+            use_familiar($familiar[comma chameleon]);
+            set_property("script","farto");
+            adv1($location[coral corral]);
+            equip ($item[angelbone totem]);
+        } else if (!adv1($location[barf mountain])){
             print("preascend: can't adventure in the Shadow Rift -- stopping Grimace-map spend-down", "red");
             break;
         }
     }
+    finisher();
     if (item_amount($item[Map to Safety Shelter Grimace Prime]) > 0){
         mapgrim();
     }
@@ -224,12 +234,17 @@ void ascend(){
 void main(){
     step("phase: mood/nightcap");
     dailyMoodAndNightcap();
+    starter();
     step("phase: burn semi useful overdrunk turns at barf");
     stenchAirportFarm();
     step("phase: finish nightcapping");
     equipBonesAndConsume();
-    step("phase: grimace prime maps");
-    spendGrimacePrimeMaps();
+    try {
+        step("phase: grimace prime maps");
+        spendGrimacePrimeMaps();
+    } finally {
+        finisher();
+    }
     step("phase: pvp");
     pvpCleanup();
     step("phase: other iotm todos");

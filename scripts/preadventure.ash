@@ -61,7 +61,9 @@ void mood(string function){
             if (have_effect(ef) == 0)
                 abort(ef + " did not increase");
         }
-        cli_execute("gain meat 3 eff");
+        cli_execute("gain meat drop 3 eff");
+        if (my_location().environment == "underwater")
+            cli_execute("gain better diver 3 eff");
     }
     if (function == "")
         function = get_property("maxOverride");
@@ -106,7 +108,7 @@ void preAdv(){
                 use_familiar($familiar[cooler yeti]);
                 if (have_effect($effect[heart of white]) == 0)
                     use($item[white candy heart]);
-            } else if (get_property("_knuckleboneDrops").to_int() < 100 && my_name().to_lower_case() == "fart scauce")
+            } else if (get_property("_knuckleboneDrops").to_int() < 100 && my_name().to_lower_case() == "fart scauce" && my_location().environment != "underwater")
                 use_familiar($familiar[skeleton of crimbo past]);
             else if (maxOvr == "item drop" || get_property("_mapToACandyRichBlockDrops").to_int() < 1)
                 use_familiar($familiar[jill-of-all-trades]);
@@ -123,6 +125,7 @@ void preAdv(){
     // ── Familiar equip helper ─────────────────────────────────────────────────
         string famEquip(){
             if (get_property("famEquipOverride") != "") return get_property("famEquipOverride");
+            if (have_effect($effect[driving waterproofly]) == 0 && my_location().environment == "underwater" && my_familiar() != $familiar[comma chameleon]) return ", equip little bitty bathysphere";
             if (my_familiar() == $familiar[skeleton of crimbo past]) return ", equip small peppermint-flavored sugar walking crook";
             if (my_familiar() == $familiar[cooler yeti] || my_familiar() == $familiar[chest mimic]) return ", equip toy cupid bow";
             if (my_familiar() == $familiar[mini kiwi]) return ", equip aviator goggles";
@@ -131,14 +134,22 @@ void preAdv(){
             if (my_familiar() == $familiar[none] || my_familiar() == $familiar[purse rat] || get_property("maxOverride") == "-combat" || get_property("maxOverride") == "combat") return "";
             return ", equip Li'l Businessman Kit";
         }
-        if ((my_familiar() == $familiar[robortender] || my_familiar() == $familiar[Comma Chameleon]) && get_property("script") == "Farto"){
-            if (my_familiar() == $familiar[Comma Chameleon] && chameleon() != $familiar[robortender]){
-                retrieve_item(familiar_equipment($familiar[robortender]));
+        if ((my_familiar() == $familiar[robortender] || (my_familiar() == $familiar[Comma Chameleon]) && chameleon() == $familiar[none]) && get_property("script") == "farto"){
+            print(chameleon(),"red");
+            if (dayType() == 0)
+                abort("not worth the resources D1, script it out");
+            if (my_familiar() == $familiar[Comma Chameleon] && chameleon() == $familiar[none]){
+                retrieve_item(item_amount(familiar_equipment($familiar[robortender]))+1,familiar_equipment($familiar[robortender]));
                 visit_url("inv_equip.php?which=2&action=equip&whichitem=" + familiar_equipment($familiar[robortender]).to_int());
+                set_property("commaFamiliar","Robortender");
             }
-            if (get_property("_roboDrinks") != "drive-by shooting"){
+            if (!contains_text(get_property("_roboDrinks"), "drive-by shooting")){
                 retrieve_item($item[drive-by shooting]);
                 visit_url("inventory.php?action=robooze&which=1&whichitem=9396");
+            }
+            if (!contains_text(get_property("_roboDrinks"), "Bloody Nora")){
+                retrieve_item($item[Bloody Nora]);
+                visit_url("inventory.php?action=robooze&which=1&whichitem=9388");
             }
         }
 
@@ -276,7 +287,9 @@ void preAdv(){
             append(maximize, ", equip roman candelabra");
         else if (get_property("maxOverride") == "combat" || get_property("maxOverride") == "-combat")
             append(maximize, "");
-        else if (get_property("subscript") == "garbo")
+        else if (get_property("script") == "farto" && !have_item($item[haiku katana]))
+            append(maximize, ", equip Kramco Sausage-o-Matic");
+        else if (get_property("script") == "farto")
             append(maximize, ", equip kol con");
         else
             append(maximize, ", equip carnivorous potted plant");
@@ -331,6 +344,8 @@ void preAdv(){
             append(maximize, ", equip mafia thumb ring");
         else if (avalancheReady)
             append(maximize, ", equip McHugeLarge left ski");
+        else if (get_property("script") == "farto" && !have_item($item[haiku katana]))
+            append(maximize, ", equip spring shoes");
         else
             append(maximize, ", equip lucky gold ring");
         // Acc3
@@ -342,6 +357,8 @@ void preAdv(){
             append(maximize, ", equip Mesmereyes");
         else if (MobiusNCReady())
             append(maximize, ", equip mobius ring");
+        else if (get_property("script") == "farto")
+            append(maximize, ", equip mafia pointer finger ring");
         else if (get_property("script") == "6-kiss")
             append(maximize, ", equip Dreadsylvania Auditor's badge");
         else
@@ -403,6 +420,18 @@ void preAdv(){
         visit_url("inv_equip.php?pwd="+my_hash()+"&which=2&action=equip&whichitem=4329");
     }
 
+        //monster level
+        foreach ef in $effects[Ur-Kel's Aria of Annoyance,Pride of the Puffin,Bloodbathed,Misplaced Rage,Manbait,Sweetbreads Flamb&eacute;,Red Lettered,Spangled Star,Tortious,Litterbug,Not Sharing,Para-lyzed Jaw,Contemptible Emanations,Lapdog,Ashen Burps,The Cupcake of Wrath,Gelded,Mysteriously Handsome]{
+            if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
+                continue;
+            if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
+                continue;
+            if (numeric_modifier("Monster level") >= 150)
+                break;
+            if (have_effect(ef) == 0)
+                cli_execute(ef.default);
+        }
+
         //initiative
         if (jump_chance($monster[killer clownfish]) - numeric_modifier("Initiative Penalty") < 100){
             foreach ef in $effects[Bow-Legged Swagger,Natural 1,Patent Alacrity,Silent Hunting,Clear Ears\, Can't Lose,Poppy Performance,Hiding in Plain Sight,Digitalis\, Dig It,Ass Over Teakettle,Song of Slowness,Synthetic Buzz,Seal Clubbing Frenzy,Springy Fusilli]{
@@ -438,8 +467,12 @@ void preAdv(){
     } else {
         put_closet(item_amount($item[shard of double-ice]),$item[shard of double-ice]);
     }
-    if (item_amount($item[pulled red taffy]) == 0 && mall_price($item[pulled red taffy]) < (redTaffyValue() - 100))
-        retrieve_item($item[pulled red taffy]);
+    if (item_amount($item[4-D camera]) == 0)
+        retrieve_item($item[4-D camera]);
+    if (item_amount($item[pulled green taffy]) == 0)
+        retrieve_item($item[pulled green taffy]);
+    if (item_amount($item[pulled red taffy]) < 100 && mall_price($item[pulled red taffy]) < (redTaffyValue() - 100))
+        buy($item[pulled red taffy], 2000, redTaffyValue() - 100);
     if (item_amount($item[stuffed yam stinkbomb]) == 0)
         retrieve_item($item[stuffed yam stinkbomb]);
     if (item_amount($item[new age healing crystal]) < 100)

@@ -71,6 +71,45 @@
             return ETIManualAssignment[ef];
     }
 
+    record EffectNote {
+        int turns;
+        effect ef;
+        string modifier;
+    };
+
+    EffectNote [item] notes;
+
+    // Parses "N Effect Name (modifier)" out of it.notes, caches it in `notes`, and
+    // hands the record straight back -- so itemEffectNotes(it).ef / .turns works
+    // in one call instead of calling this to populate `notes` then indexing it.
+    EffectNote itemEffectNotes(item it){
+        if (notes contains it)
+            return notes[it];
+        matcher m = create_matcher("(\\d+) (.+?) \\((.+?)\\)", it.notes);
+        if (m.find()){
+            notes[it].turns = m.group(1).to_int();
+            notes[it].ef = m.group(2).to_effect();
+            notes[it].modifier = m.group(3);
+        }
+        return notes[it];
+    }
+
+    int organSpace(item it){
+        int n = max(it.fullness, it.spleen, it.inebriety);
+        return max(n,1);
+    }
+
+    // Mean of it.adventures' "X-Y" range (or just X, for a fixed-adventure item).
+    float averageAdventures(item it){
+        if (it.adventures == "")
+            return 0.0;
+        string [int] range = it.adventures.split_string("-");
+        float total;
+        foreach key, v in range
+            total += v.to_float();
+        return total / range.count();
+    }
+
     // Use a skill if it appears as an option on the current page
     void use_if_have_skill(string page_text, skill sk) {
         if (contains_text(page_text, to_string(sk)))
@@ -605,8 +644,7 @@
     void aprilBand(){
         if (get_property("_aprilBandInstruments").to_int() >= 2)
             return;
-        if (get_property("_aprilBandInstruments").to_int() == 0)
-            cli_execute("aprilband item quad tom");
+        cli_execute("aprilband item quad tom");
         if (dayType() == 0)
             cli_execute("aprilband item tuba");
         else
@@ -622,6 +660,23 @@
         else
             visit_url("inv_equip.php?which=2&action=equip&whichitem=4329");
         return $familiar[none];
+    }
+
+    void altFam(familiar fam){
+        if (have_familiar(fam)){
+            use_familiar(fam);
+            set_property("famOverride",fam.to_string());
+        } else {
+            use_familiar($familiar[comma chameleon]);
+            if (chameleon() != fam){
+                retrieve_item(familiar_equipment(fam));
+                visit_url("inv_equip.php?which=2&action=equip&whichitem=" + familiar_equipment(fam).to_int());
+                if (chameleon() != fam)
+                    abort();
+                set_property("commaFamiliar",fam.to_string());
+            }
+            set_property("famOverride","comma chameleon");
+        }
     }
 
     // ─── TRICK OR TREAT ───────────────────────────────────────────────────────
@@ -655,7 +710,7 @@
 
     // Drop weights for using a pulled red taffy underwater (Briny Deeps).
     float [item] redTaffyWeights = {
-        $item[Alewife™ Ale]: 0.03,             $item[bazookafish bubble gum]: 0.03,
+        $item[Alewife&trade; Ale]: 0.03,             $item[bazookafish bubble gum]: 0.03,
         $item[beefy fish meat]: 0.03,          $item[dull fish scale]: 0.0925,
         $item[eel battery]: 0.03,              $item[eel sauce]: 0.03,
         $item[glistening fish meat]: 0.03,     $item[high-pressure seltzer bottle]: 0.03,
