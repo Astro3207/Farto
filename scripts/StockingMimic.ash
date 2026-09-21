@@ -1683,7 +1683,7 @@ void miscellaneousFams(){
         set_property("subscript","");
         set_property("maxOverride","familiar weight");
     }
-    if (get_property("_pocketProfessorLectures").to_int() == 0 && get_property("_locketMonstersFought").split_string(",").count() < 3){
+    if (get_property("_pocketProfessorLectures").to_int() == 0 && get_property("_locketMonstersFought").split_string(",").count() < 3 && dayType() == 1){
         set_property("maxOverride","familiar weight");
         set_property("famOverride","comma Chameleon");
         set_property("pantsOverride",", equip tearaway Pants");
@@ -1957,7 +1957,7 @@ void main(){
             if (get_property("prusias_profitTracking_date") != today_to_string( ))
                 cli_execute("ptrack add preprepD2");
             else if (!contains_text(get_property("thoth19_event_list"),"postprepD1") && dayType() == 0)
-                cli_execute("ptrack add postprepD1");
+                cli_execute("ptrack add preprepD1");
             set_property("inSpendAdv","true");
             set_property("script","FreeKill");
             FKPrep();
