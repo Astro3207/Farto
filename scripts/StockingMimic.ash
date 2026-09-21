@@ -1015,7 +1015,7 @@ void gingerbread(){
     retrieve_item(29,$item[gingerbread cigarette]);
     if (get_property("_gingerbreadCityTurns").to_int() < 30){
         mimicPrep();
-        if (get_property("_gingerbreadCityTurns").to_int() == 9 || get_property("_gingerbreadCityTurns").to_int() == 19)
+        if (get_property("_gingerbreadCityTurns").to_int() == 19)
             adv1($location[Gingerbread civic center]);
         else   
             adv1($location[Gingerbread Upscale Retail District]);
@@ -1648,11 +1648,11 @@ void restOfHiddenCity(){
     if (!can_adventure($location[An Overgrown Shrine (Southeast)]) || (get_property("zigguratLianas") > 0 && to_int(get_property("_drunkPygmyBanishes")) >= 11))
         return;
     set_property("maxOverride","familiar experience");
-    if (dayType() == 1)
-        abort("do patriotic recharge");
     while (to_int(get_property("_drunkPygmyBanishes")) < 11){
         if (!contains_text(get_property("banishedMonsters"),"pygmy bowler") && contains_text(get_property("banishedMonsters"),"pygmy orderlies"))
             set_property("famOverride","patriotic eagle");
+        else if (contains_text(get_property("banishedMonsters"),"pygmy orderlies") && dayType() == 1 && get_property("screechCombats").to_int() > 0)
+            abort("do patriotic recharge");
         else
             set_property("famOverride","chest mimic");
         drunkPygmy();
@@ -1682,6 +1682,25 @@ void miscellaneousFams(){
         }
         set_property("subscript","");
         set_property("maxOverride","familiar weight");
+    }
+    if (get_property("_pocketProfessorLectures").to_int() == 0 && get_property("_locketMonstersFought").split_string(",").count() < 3){
+        set_property("maxOverride","familiar weight");
+        set_property("famOverride","comma Chameleon");
+        set_property("pantsOverride",", equip tearaway Pants");
+        set_property("offOverride", ", equip kol con snowglobe");
+        set_property("acc1Override", ", equip Mr. Cheeng's spectacles");
+        set_property("acc2Override", ", equip Lucky gold ring");
+        set_property("acc3Override", ", equip Portable Laughing Stock");
+        altFam($familiar[Pocket Professor]);
+        main@preadventure();
+        cli_execute("reminisce Black Crayon Flower");
+        while (get_property("_chainedRelativityMonster") == "Black Crayon Flower")
+            run_combat();
+        set_property("pantsOverride","");
+        set_property("offOverride", "");
+        set_property("acc1Override", "");
+        set_property("acc2Override", "");
+        set_property("offOverride", "");
     }
     if (get_property("_banderRunaways").to_int() < 20){
         set_auto_attack(0);

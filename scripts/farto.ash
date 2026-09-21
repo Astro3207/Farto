@@ -153,7 +153,7 @@ void main(){
                 main@postadventure();
             if (get_property("questL05Goblin") == "started")
                 outskirts();
-            else if (my_class() == $class[pastamancer])
+            else if (my_class() == $class[pastamancer] && (numeric_modifier($modifier[meat drop]) > 1700 || dayType() == 0))
                 cowo();
             else{
                 if (get_property("_stenchAirportToday") == "false")

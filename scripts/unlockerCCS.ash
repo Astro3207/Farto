@@ -237,7 +237,7 @@ void main(int round, monster mob, string page_text) {
     if (last_monster() == $monster[black crayon mer-kin]){
         if (get_property("_monsterHabitatsFightsLeft") == 0 && to_int(get_property("_monsterHabitatsRecalled")) < 3){
             use_skill($skill[RECALL FACTS: MONSTER HABITATS]);
-        } else if (get_property("_monsterHabitatsFightsLeft") == 0 && get_property("beGregariousFightsLeft").to_int() == 0 && get_property("beGregariousCharges").to_int() > 0){
+        } else if (get_property("_monsterHabitatsFightsLeft") == 0 && get_property("beGregariousFightsLeft").to_int() == 0 && get_property("beGregariousCharges").to_int() > 0 && dayType() == 1){
             use_skill($skill[Be Gregarious]);
         } else if (get_property("commaFamiliar") == "Reanimated Reanimator" && get_property("_badlyRomanticArrows") == "0"){
             use_skill($skill[Wink at]);

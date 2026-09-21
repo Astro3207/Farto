@@ -56,7 +56,10 @@ void spendGrimacePrimeMaps(){
                 set_property("backOverride",", equip elf guard scuba tank");
             use_familiar($familiar[comma chameleon]);
             set_property("script","farto");
-            adv1($location[coral corral]);
+            if (can_adventure($location[barf mountain])){
+                adv1($location[barf mountain]);
+            } else
+                adv1($location[coral corral]);
             equip ($item[angelbone totem]);
         } else if (!adv1($location[barf mountain])){
             print("preascend: can't adventure in the Shadow Rift -- stopping Grimace-map spend-down", "red");
@@ -235,8 +238,6 @@ void main(){
     step("phase: mood/nightcap");
     dailyMoodAndNightcap();
     starter();
-    step("phase: burn semi useful overdrunk turns at barf");
-    stenchAirportFarm();
     step("phase: finish nightcapping");
     equipBonesAndConsume();
     try {

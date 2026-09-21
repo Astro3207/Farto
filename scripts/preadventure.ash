@@ -98,8 +98,8 @@ void preAdv(){
             string maxOvr = get_property("maxOverride");
             if (famOvr != "")
                 use_familiar(famOvr.to_familiar());
-            else if (have_effect($effect[Citizen of a Zone]) == 0 && get_property("screechCombats").to_int() > 0)
-                use_familiar($familiar[patriotic eagle]);
+    //        else if (have_effect($effect[Citizen of a Zone]) == 0 && get_property("screechCombats").to_int() > 0)
+       //         use_familiar($familiar[patriotic eagle]);
             else if ($familiar[chest mimic].experience < 900){
                 use_familiar($familiar[chest mimic]);
                 if (have_effect($effect[heart of white]) == 0)
@@ -134,7 +134,7 @@ void preAdv(){
             if (my_familiar() == $familiar[none] || my_familiar() == $familiar[purse rat] || get_property("maxOverride") == "-combat" || get_property("maxOverride") == "combat") return "";
             return ", equip Li'l Businessman Kit";
         }
-        if ((my_familiar() == $familiar[robortender] || (my_familiar() == $familiar[Comma Chameleon]) && chameleon() == $familiar[none]) && get_property("script") == "farto"){
+        if ((my_familiar() == $familiar[robortender] || (my_familiar() == $familiar[Comma Chameleon]) && (chameleon() == $familiar[none] || chameleon() == $familiar[robortender])) && get_property("script") == "farto"){
             print(chameleon(),"red");
             if (dayType() == 0)
                 abort("not worth the resources D1, script it out");
@@ -412,7 +412,7 @@ void preAdv(){
                 use_skill($skill[Sea *dent: Summon a Wave]);
             }
         }
-    if (my_familiar() == $familiar[comma chameleon] && chameleon() != $familiar[stocking mimic] && get_property("subscript") != "NonSMFK" && get_property("subscript") != "stompingBoots"){
+    if (my_familiar() == $familiar[comma chameleon] && chameleon() != $familiar[stocking mimic] && get_property("script") == "FreeKill" && get_property("subscript") != "NonSMFK" && get_property("subscript") != "stompingBoots"){
         if (item_amount($item[bag of many confections]) == 0){
             cli_execute("refresh all");
             retrieve_item(1,$item[bag of many confections]);
