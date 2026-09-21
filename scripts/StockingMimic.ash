@@ -453,7 +453,7 @@ void dieting(){
 		eat(fullness_limit() - my_fullness(), $item[thyme jelly donut]);
 		drink(inebriety_limit() - my_inebriety(), $item[Temps Tempranillo]);
 
-	//	doSpleen();
+	doSpleen();
 	} else {
 		foreach dr in $items[Feliz Navidad]{
 			if (valueOfFamPot(dr) > valueOfOrgan("liver"))
@@ -1565,6 +1565,7 @@ void nonlocationBasedWeakMonsters(){
         }
         main@postadventure( );
     }
+    abort("eat mushroom pizza");
     step("phase: special leaf monsters");
     cli_execute("buy 4 lit leaf lasso");
     if (get_property("_tiedUpFlamingMonsteraFought") == "false"){
@@ -1842,7 +1843,7 @@ void bulkFKD1(){
     equip($slot[acc3],$item[time lord badge of honor]);
     buffML($monster[Flaming leaflet]);
     locationBasedAdventuring();
-    if (my_spleen_use() == 0){
+    if (my_spleen_use() < 10){
         use_familiar($familiar[stooper]);
         equip($item[devilbone greaves]);
         equip($slot[acc1],$item[angelbone dice]);

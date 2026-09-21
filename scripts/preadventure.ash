@@ -290,7 +290,7 @@ void preAdv(){
         else if (get_property("script") == "farto" && !have_item($item[haiku katana]))
             append(maximize, ", equip Kramco Sausage-o-Matic");
         else if (get_property("script") == "farto")
-            append(maximize, ", equip kol con");
+            append(maximize, ", equip kol con snowglobe");
         else
             append(maximize, ", equip carnivorous potted plant");
         // Back
