@@ -342,6 +342,7 @@ void main(int round, monster mob, string page_text) {
     }
 
     if (get_property("subscript") == "weakling"){
+        if (have_skill($skill[Prepare to reanimate your Foe])) use_skill($skill[Prepare to reanimate your Foe]);
         while (current_round() > 0 && current_round() < 30 && monster_hp() > 9){
             if (have_equipped($item[april shower thoughts shield]))
                 use_skill($skill[shieldbutt]);
