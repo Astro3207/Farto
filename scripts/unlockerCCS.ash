@@ -265,11 +265,19 @@ void main(int round, monster mob, string page_text) {
             use_skill($skill[spring away]);
         }
     }
-    if (get_property("subscript") == "screech"){
+
+    phylum [location] ScreechCheck = {
+        $location[the briniest deepests]:$phylum[fish],
+        $location[madness bakery]:$phylum[construct]
+    };
+
+    if (get_property("subscript") == "screech" && last_monster().phylum == ScreechCheck[my_location()]){
         if (contains_text(last_monster().attributes,"WANDERER"))
             abort("wanderer");
         use_skill($skill[%fn, Release the Patriotic Screech!]);
+        print("Ya boi");
         if (dayType() == 1){
+            print("Ya boi1");
             if (get_property("_snokebombUsed").to_int() < 3)
                 use_skill($skill[snokebomb]);
             else
@@ -364,6 +372,8 @@ void main(int round, monster mob, string page_text) {
                     use_skill($skill[shieldbutt]);
             }
         }
+        if (have_equipped($item[congressional medal of insanity]))
+            use_skill($skill[saucegeyser]);
         while (current_round() > 0 && current_round() < 30 && monster_hp() > 9){
             if (have_equipped($item[april shower thoughts shield]))
                 use_skill($skill[shieldbutt]);
@@ -450,6 +460,13 @@ void main(int round, monster mob, string page_text) {
     if (sauceLocs[my_location()] || sauceMobs[last_monster()]) {
         if (!free_monster() && !free_location()){
             free_run(page_text);
+        }
+        if (my_location() == $location[The Laugh Floor] || my_location() == $location[Infernal Rackets Backstage]){
+            if (dayType() == 0 && my_class() == $class[seal clubber]){
+                use_skill($skill[Sea *dent: Talk to Some Fish]);
+                if (last_monster() != $monster[some fish])
+                    abort("talk to some fish didn't work for some reason");
+            }
         }
         sauce(7);
         attack();
@@ -831,10 +848,12 @@ void main(int round, monster mob, string page_text) {
         free_kill(page_text);
     }
     if (my_location() == $location[the coral corral]){
-        if (last_monster() == $monster[mer-kin rustler])
-            use_skill(combatBan());
-        if (last_monster() == $monster[sea cowboy])
-            use_skill(combatBan());
+        if (!contains_text(get_property("banishedPhyla"), "fish")){
+            if (last_monster() == $monster[mer-kin rustler])
+                use_skill(combatBan());
+            if (last_monster() == $monster[sea cowboy])
+                use_skill(combatBan());
+        }
         farmingStuff();
         attack();
         attack();
@@ -892,7 +911,7 @@ void main(int round, monster mob, string page_text) {
         return;
     }
 
-    if (my_location() == $location[The Spooky Forest]) { free_run(page_text); return; }
+    if (my_location() == $location[The Spooky Forest]) { abort("Check spikolodon or else run"); free_run(page_text); return; }
     if (my_location() == $location[The Outskirts of Cobb's Knob]) { free_run(page_text);}
 
     if (my_location() == $location[Investigating a Plaintive Telegram]) {

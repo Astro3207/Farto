@@ -98,6 +98,7 @@ void garbo(){
     } else {
         set_property("famOverride","");
     }
+    set_property("backOverride","");
     if (!contains_text(get_property("trackedMonsters"),"garbage tourist:McHugeLarge Slash") && to_int(get_property("_knuckleboneDrops")) == 100){
         set_property("offOverride",", equip McHugeLarge left pole");
         set_property("acc1Override",", equip peridot of peril");
@@ -133,10 +134,17 @@ void cowo(){
             stashreturn($item[pantsgiving]);
     if (have_effect($effect[driving waterproofly]) == 0)
         set_property("backOverride",", equip elf guard scuba tank");
+    item banItem = $item[none];
     if (!contains_text(get_property("banishedMonsters"),"Mer-kin rustler")
         || !contains_text(get_property("banishedMonsters"),"sea cowboy"))
-            equip(banishGear($location[The Coral Corral]));
+            banItem = banishGear($location[The Coral Corral]);
+    if (banItem != $item[none])
+        equip(banItem);
     adv1($location[the coral corral],0,"");
+    // banishGear() leaves a slot override behind, and preadventure feeds every override to
+    // the maximizer, so without this the banish item stays forced on in other zones.
+    if (banItem != $item[none])
+        set_property(to_string(to_slot(banItem)) + "Override", "");
 }
 
 //unusued, bunchu free kills, spooky VHS tape (shadow rift is a great target), god lobster,  red zeppelin? debatable tbh
@@ -153,7 +161,7 @@ void main(){
                 main@postadventure();
             if (get_property("questL05Goblin") == "started")
                 outskirts();
-            else if (my_class() == $class[pastamancer] && (numeric_modifier($modifier[meat drop]) > 1700 || dayType() == 0))
+            else if (((my_class() == $class[pastamancer] || have_effect($effect[fishy]) > 0) && numeric_modifier($modifier[meat drop]) > 1700) || dayType() == 0)
                 cowo();
             else{
                 if (get_property("_stenchAirportToday") == "false")

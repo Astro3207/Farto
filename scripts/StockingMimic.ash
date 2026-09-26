@@ -29,7 +29,7 @@ void monkeyPaw(string buffType){
                 cli_execute("monkeypaw effect " + ef);
         }
     } else if (buffType == "familiar weight"){
-        foreach ef in $effects[covetous robbery, joy, Chow Downed, squirming like a toad, \[1701\]Hip to the Jive, all is forgiven, heavy petting, Braaaaaains, Low on the Hog, Leisurely Amblin', frosty,sinuses for miles]{
+        foreach ef in $effects[covetous robbery, \[1701\]Hip to the Jive, Down With Chow,Chow Downed, squirming like a toad, heavy petting, cute vision, meat puppet, Braaaaaains, frosty,sinuses for miles]{
             if (to_int(get_property("_monkeyPawWishesUsed")) == 5)
                 return;
             if (have_effect(ef) == 0)
@@ -155,13 +155,17 @@ void prepBuffs(){
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
+    if (have_effect($effect[Happy Salamander]) == 0){
+        visit_url("showclan.php?whichclan=2047010939&action=joinclan&confirm=on");
+        visit_url("clan_rumpus.php?action=click&spot=4&furni=1");
+        visit_url("showclan.php?whichclan=" + get_property("homeClanID").to_int() + "&action=joinclan&confirm=on");
+    }
     while (have_effect($effect[blue swayed]) < 50){
         use($item[pulled blue taffy]);
     }
     while (have_effect($effect[She Ate Too Much Candy]) < 25){
         use($item[Prunets]);
     }
-
     //meat drop
     foreach ef in $effects[Incredibly Well Lit,Loded,Meet the Meat,Tubes of Universal Meat,Holiday Bliss,So You Can Work More...,Legendary Pasta Eyeball,Polka of Plenty]{
         if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
@@ -459,7 +463,14 @@ void dieting(){
 			if (valueOfFamPot(dr) > valueOfOrgan("liver"))
 				drink(dr);
 		}
-		foreach fo in $effects[In the Depths, Sugar-Frosted Pet Guts, Beefy Heart]{
+        if (get_property("_cupOf13sJewels") == 13){
+            cli_execute("make 4 asbestos meat stack; acquire tombstone-shaped Crimboween cookie; acquire grease gun");
+            visit_url("inventory.php?action=cupof13s");
+            visit_url("choice.php?option=1&whichchoice=1601&"+my_hash()+"&whichitem1=376&whichitem2=2200&whichitem3=1708");
+            visit_url("inventory.php?action=cupof13s");
+            visit_url("choice.php?option=1&whichchoice=1601&"+my_hash()+"&whichitem1=376&whichitem2=376&whichitem3=376");
+        }
+		foreach fo in $effects[In the Depths, Sugar-Frosted Pet Guts, ratabunga\, dude!, Beefy Heart]{
 			if (my_fullness() >= fullness_limit())
 				break;
 			if (have_effect(fo) > 0)
@@ -494,6 +505,39 @@ void useMayamRings(){
 		+ " mayam rings eye meat yam clock");
 }
 
+item candyPick(){
+    foreach it in $items[]{
+        if (it.candy == true && mall_price(it) < 200 && item_amount(it) > 0){
+            return it;
+        }
+    }
+    abort("script in buying candy");
+    return $item[none];
+}
+
+float optimalCandy(){
+    float perCandyPrice = 100.0;
+    float perPound = 27.0 * freeKillCount("both");
+    int pounds = floor(perPound / (2.0 * perCandyPrice));
+    return pounds * pounds;
+}
+
+void feedCandy(){
+    while (get_property("mimicCandiesFed").to_int() < optimalCandy()){
+//        int numFed = min(item_amount(candyPick()),(optimalCandy() - get_property("mimicCandiesFed").to_int()));
+        if (contains_text(visit_url("inventory.php?pwd=" + my_hash() + "&action=candy&which=1&whichitem=" + candyPick().to_int()).to_string(),"quickly consumes")){
+            if (get_property("lastStockingMimicReset").to_int() != my_ascensions( )){
+                set_property("lastStockingMimicReset",my_ascensions( ));
+                set_property("mimicCandiesFed","1");
+            } else {
+                set_property("mimicCandiesFed",get_property("mimicCandiesFed").to_int() + 1);
+            }
+        } else {
+            cli_execute("refresh all");
+        }
+    }
+}
+
 void FKPrep(){
 	step("phase: FKPrep start");
 	starter();
@@ -501,7 +545,7 @@ void FKPrep(){
 	// pref) as the native KoL auto-attack -- round 0 only works when the macro is
 	// set natively, not embedded in a mafia CCS. starter() just cleared the
 	// auto-attack, so re-arm it here.
-    if (dayType() == 0){
+    if (dayType() == 0 && have_effect($effect[shadow affinity]) == 0){
         int peevp = pvp_attacks_left();
         if (peevp > 0 && count(current_pvp_stances( )) > 0) {
             cli_execute("PVP_MAB; unequip pants");
@@ -543,20 +587,20 @@ void FKPrep(){
         use($item[too legit potion]);
     effect[int] beretBuffs;
     if (dayType() == 0){
-        beretBuffs[0] = $effect[Optimist Primal];
+        beretBuffs[0] = $effect[joy];
         beretBuffs[1] = $effect[Whole Latte Love];
         beretBuffs[2] = $effect[Bureaucratized];
         beretBuffs[3] = $effect[Christmessy];
         beretBuffs[4] = $effect[Sweet Incentive];
     } else if (dayType() == 1){
-        beretBuffs[0] = $effect[Always be Collecting];
-        beretBuffs[1] = $effect[Amorous Avarice];
-        beretBuffs[2] = $effect[A View to Some Meat];
-        beretBuffs[3] = $effect[Cravin' for a Ravin'];
-        beretBuffs[4] = $effect[Leisurely Amblin'];
+        beretBuffs[0] = $effect[Optimist Primal];
+        beretBuffs[1] = $effect[Beastly Flavor];
+        beretBuffs[2] = $effect[Toothy Grin];
+        beretBuffs[3] = $effect[Phairly Pheromonal];
+        beretBuffs[4] = $effect[Souper Vengeful];
     }
     while (get_property("_beretBuskingUses").to_int() < 5){
-        beretBusking("familiar weight",beretBuffs[get_property("_beretBuskingUses").to_int()].to_string());
+        beretBusking("familiar weight,meat drop",beretBuffs[get_property("_beretBuskingUses").to_int()].to_string());
     }
 	prepBuffs();
 	monkeypaw("familiar weight");
@@ -598,7 +642,17 @@ void FKPrep(){
 		cli_execute("beach head 10");
 		cli_execute("combo 10");
 	}
-
+    if (my_name().to_lower_case() == "fart scauce"){
+        foreach ef in $effects[familiar.enq]{
+            if (have_effect(ef) > 0)
+                continue;
+            if (numeric_modifier(ef,"familiar weight") * 27 * freeKillCount("both") > mall_price($item[pocket wish])){
+                cli_execute("genie effect " + ef);
+            }
+        }
+        altFam($familiar[stocking mimic]);
+        feedCandy();
+    }
 	step("phase: FKPrep stash pops");
 	// Stash-borrowed one-a-day item pops.
 	foreach it in $items[defective Game Grid token, BittyCar MeatCar, Platinum Yendorian Express Card]{
@@ -1015,11 +1069,11 @@ void gingerbread(){
     retrieve_item(29,$item[gingerbread cigarette]);
     if (get_property("_gingerbreadCityTurns").to_int() < 30){
         mimicPrep();
-        if (get_property("_gingerbreadCityTurns").to_int() == 19)
-            adv1($location[Gingerbread civic center]);
-        else   
-            adv1($location[Gingerbread Upscale Retail District]);
+        adv1($location[Gingerbread Upscale Retail District]);
     }
+    if (contains_text(LastAdvTxt(),"almost midnight"))
+        adv1($location[Gingerbread Civic Center]);
+   //     adv1($location[Gingerbread Civic Centers]);
 }
 
 void habitatRecall(){
@@ -1475,6 +1529,7 @@ void locationBasedWeakMonsters(){
         LBMWPrep (false);
         pearloP1();
     }
+    set_property("subscript","weakling");
     while (to_int(get_property("_speakeasyFreeFights")) < 3){
         step("phase: weakMonsters traveling hobo");
         LBMWPrep (true);
@@ -1484,7 +1539,7 @@ void locationBasedWeakMonsters(){
         step("phase: weakMonsters paranormal ghost (walkie-talkie)");
         LBMWPrep (true);
         location ghostLoc = walkieGhost();
-        if (ghostLoc != $location[none])
+        while (ghostLoc != $location[none])
             adv1(ghostLoc);
     }
     while (to_int(get_property("_glarkCableUses")) < 5 && can_adventure($location[A Mob of Zeppelin Protesters])){
@@ -1551,6 +1606,12 @@ void nonlocationBasedWeakMonsters(){
         step("phase: weakMonsters giant sandworm (quad tom)");
         sandworm();
     }
+    if (my_fullness() < fullness_limit()){
+        equip($item[devilbone corset]);
+        equip($slot[acc3],$item[angelbone chopsticks]);
+        eat($item[eldritch mushroom pizza]);
+        cli_execute("unequip devilbone corset; unequip angelbone chopsticks");
+    }
     while (to_int(get_property("_leafMonstersFought")) < 5
             || get_property("_tiedUpFlamingLeafletFought") == "false"){
         step("phase: weakMonsters flaming leaflets");
@@ -1565,7 +1626,6 @@ void nonlocationBasedWeakMonsters(){
         }
         main@postadventure( );
     }
-    abort("eat mushroom pizza");
     step("phase: special leaf monsters");
     cli_execute("buy 4 lit leaf lasso");
     if (get_property("_tiedUpFlamingMonsteraFought") == "false"){
@@ -1626,6 +1686,7 @@ boolean EmbezBetter(){
 
 void embezzler(){
     while ((get_property("_aprilBandSaxophoneUses").to_int() < 3 || EmbezBetter()) && dayType() == 1){
+        abort("maximize meat drop");
         altFam($familiar[robortender]);
         if (get_property("_roboDrinks") != "drive-by shooting"){
             retrieve_item($item[drive-by shooting]);
@@ -1863,6 +1924,7 @@ void bulkFKD1(){
     buffML($monster[Flaming leaflet]);
     locationBasedAdventuring();
     if (my_spleen_use() < 10){
+        abort("What happened with the totem exploit?");
         use_familiar($familiar[stooper]);
         equip($item[devilbone greaves]);
         equip($slot[acc1],$item[angelbone dice]);
@@ -1956,7 +2018,7 @@ void main(){
         if (get_property("expressCardUsed") == "false"){
             if (get_property("prusias_profitTracking_date") != today_to_string( ))
                 cli_execute("ptrack add preprepD2");
-            else if (!contains_text(get_property("thoth19_event_list"),"postprepD1") && dayType() == 0)
+            else if (!contains_text(get_property("thoth19_event_list"),"preprepD1") && dayType() == 0)
                 cli_execute("ptrack add preprepD1");
             set_property("inSpendAdv","true");
             set_property("script","FreeKill");

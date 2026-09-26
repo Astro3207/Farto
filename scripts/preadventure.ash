@@ -104,6 +104,8 @@ void preAdv(){
                 use_familiar($familiar[chest mimic]);
                 if (have_effect($effect[heart of white]) == 0)
                     use($item[white candy heart]);
+            } else if (numeric_modifier("familiar weight") > 49){
+                use_familiar($familiar[comma chameleon]);
             } else if ($familiar[cooler yeti].experience < 400 && get_property("_coolerYetiAdventures") == "false" && (dayType() == 0 || inebriety_limit() - 4 > my_inebriety())){
                 use_familiar($familiar[cooler yeti]);
                 if (have_effect($effect[heart of white]) == 0)
@@ -208,7 +210,7 @@ void preAdv(){
         if (get_property("hatOverride") != "")
             append(maximize, get_property("hatOverride"));
         // Mainhand
-        if (have_equipped($item[angelbone totem]))
+        if (have_equipped($item[angelbone totem]) || my_spleen_use() > 15)
             append(maximize, ", equip angelbone totem");
         else if (get_property("mainOverride") != "")
             append(maximize, get_property("mainOverride"));
@@ -270,6 +272,8 @@ void preAdv(){
             append(maximize, get_property("mainOverride"));
         else if (get_property("weaponOverride") != "")
             append(maximize, get_property("weaponOverride"));
+        else if (dayType() == 0 && my_class() == $class[seal clubber])
+            append(maximize, ", equip monodent");
         else if (jokesterReady && get_property("script") != "coat" && get_property("script") != "stick" && get_property("script") != "farto")
             append(maximize, ", equip The Jokester's gun");
         else if (my_basestat($stat[muscle]) >= 200 && get_property("script") == "6-kiss")
@@ -287,7 +291,7 @@ void preAdv(){
             append(maximize, ", equip roman candelabra");
         else if (get_property("maxOverride") == "combat" || get_property("maxOverride") == "-combat")
             append(maximize, "");
-        else if (get_property("script") == "farto" && !have_item($item[haiku katana]))
+        else if (get_property("script") == "farto" && !have_item($item[haiku katana]) && dayType() == 1)
             append(maximize, ", equip Kramco Sausage-o-Matic");
         else if (get_property("script") == "farto")
             append(maximize, ", equip kol con snowglobe");

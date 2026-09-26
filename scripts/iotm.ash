@@ -247,8 +247,12 @@
                 break;
             }
         }
-        set_property(to_string(to_slot(it)) + "Override", ", equip " + it);
-        print(to_string(to_slot(it)) + "Override");
+        // No candidate leaves it at $item[none]; writing an override for it would
+        // create a junk "noneOverride" property.
+        if (it != $item[none]) {
+            set_property(to_string(to_slot(it)) + "Override", ", equip " + it);
+            print(to_string(to_slot(it)) + "Override");
+        }
         return it;
     }
 
@@ -657,8 +661,6 @@
         matcher m = create_matcher("<b>\\d+</b> pound ([^,]+), Chameleon", visit_url("charpane.php"));
         if (m.find())
             return to_familiar(m.group(1));
-        else
-            visit_url("inv_equip.php?which=2&action=equip&whichitem=4329");
         return $familiar[none];
     }
 
@@ -747,13 +749,16 @@
         while (get_property("timesRested").to_int() < total_free_rests()){
             if (loopCount++ > 50)
                 abort("NCforce: looped over 50 times with no progress -- probably out of tuba/bell/cincho to force NCs with");
-            if (get_property("noncombatForcerActive").to_boolean() != stack)
+            if (get_property("noncombatForcerActive").to_boolean() == true && stack == false)
                 return;
             if (have_item($item[apriling band helmet]) && to_int(get_property("_aprilBandTubaUses")) < 3 && have_item($item[Apriling band tuba])) {
+                print(1,"red");
                 cli_execute("aprilband play tuba");
             }  else if (get_property("_claraBellUsed") == false && have_item($item[clara's bell])){
+                print(2,"red");
                 use($item[clara's bell]);
             } else if (have_item($item[Cincho de Mayo])){
+                print(3,"red");
                 int cinchRestLoopCount = 0;
                 while (to_int(get_property("_cinchUsed")) > 40
                     && to_int(get_property("timesRested")) < total_free_rests()) {

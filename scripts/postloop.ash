@@ -2,6 +2,7 @@ import iotm.ash;
 set_property("choiceAdventureScript","generalChoice.ash");
 if (my_storage_meat( ) > 0)
     cli_execute ("hagnk all");
+set_property("_clanRumpusSpot4Visited","true");
 if (my_basestat($stat[moxie]) < 200 || my_basestat($stat[mysticality]) < 200) {
     use_familiar($familiar[cooler yeti]);
     maximize("cold res",false);

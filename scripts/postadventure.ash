@@ -480,11 +480,12 @@ void constructBanish(){
         screechRefresh();
     }
     set_property("subscript","screech");
+    use_familiar($familiar[patriotic eagle]);
+    set_auto_attack("7451");
     while (get_property("screechCombats") == "0" && !contains_text(get_property("banishedPhyla"),"construct")){
         set_property("famOverride","patriotic eagle");
         set_property("maxOverride","ml, -10 familiar weight, -equip drunkula's wineglass,-equip backup camera");
         set_property("acc3Override",",equip spring shoes");
-        abort("CCS keeps spending a combat turn. Figure dat bish out");
         adv1($location[Madness Bakery],0,"");
     }
     set_property("subscript","");
@@ -660,13 +661,17 @@ void postAdv(){
         if (have_effect($effect[fishy]) == 0)
             abort("Out of fishy");
     }
-    freeKillTurnGuard();
     if (get_property("script") == "FreeKill"){
         if (dayType() == 1){
             if (get_property("_eldritchTentaclesFoughtToday").to_int() == 11 && have_effect($effect[eldritch attunement]) > 0)
                 cli_execute("uneffect eldritch attunement");
         }
+        if (get_property("freeMeat").to_int() != my_meat( )){
+            print ("FK meat profit of " + (my_meat( ) - get_property("freeMeat").to_int()));
+            set_property("freeMeat",my_meat());
+        }
     }
+    freeKillTurnGuard();
     lawOfAverages();
     if (is_online("OnlyFax"))
         clanFortune();
@@ -916,6 +921,9 @@ void spendAdv(){
                 findHiddenTemple();
             while (get_property("questM10Azazel") != "finished" && have_effect($effect[Patent Aggression]) == 0)
                 azazelUnicornQuest();
+            if (get_property("questM10Azazel") != "finished"){
+                print(numeric_modifier("combat rate"));
+            }
             while (to_int(get_property("blackForestProgress")) < 5)
                 blackForest();
             while (my_adventures() < 30 && ((get_property("questG09Muscle") != "finished" && my_class() == $class[seal clubber]) || get_property("questL05Goblin") == "started"))

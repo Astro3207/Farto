@@ -115,7 +115,8 @@ string [string] saveResourceBackupProp = {
     "currentMojoFilters": "pcBackup_currentMojoFilters",
     "spiceMelangeUsed": "pcBackup_spiceMelangeUsed",
     "_aug16Cast": "pcBackup_aug16Cast",
-    "_mimeArmyShotglassUsed": "pcBackup_mimeArmyShotglassUsed"
+    "_mimeArmyShotglassUsed": "pcBackup_mimeArmyShotglassUsed",
+    "_sweatOutSomeBoozeUsed": "pcBackup_sweatOutSomeBoozeUsed"
 };
 
 void savedResources(){
@@ -126,6 +127,7 @@ void savedResources(){
     set_property("spiceMelangeUsed","true");
     set_property("_aug16Cast", "true");
     set_property("_mimeArmyShotglassUsed","true");
+    set_property("_sweatOutSomeBoozeUsed","3");
 }
 
 void unsaveResources(){
@@ -133,7 +135,7 @@ void unsaveResources(){
         set_property(prop, get_property(backup));
 }
 
-boolean littleMore(){
+boolean oneMore(){
     savedResources();
     cli_execute("CONSUME ORGANS 0 1 0");
     unsaveResources();
