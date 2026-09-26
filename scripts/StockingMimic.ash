@@ -1546,8 +1546,7 @@ void locationBasedWeakMonsters(){
     if (get_property("questPAGhost") == "started" && get_property("ghostLocation") != ""){
         step("phase: weakMonsters paranormal ghost (walkie-talkie)");
         LBMWPrep (true);
-        location ghostLoc = walkieGhost();
-        while (ghostLoc != $location[none])
+        while (get_property("ghostLocation").to_location() != $location[none])
             adv1(ghostLoc);
     }
     while (to_int(get_property("_glarkCableUses")) < 5 && can_adventure($location[A Mob of Zeppelin Protesters])){
