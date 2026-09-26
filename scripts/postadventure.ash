@@ -236,9 +236,7 @@ void friars(){
 // Burn the day's Law of Averages while under 100 adventures: unconditional on day
 // 1, day 2 only once Steely-Eyed Squint is up so the copy is worthwhile.
 void lawOfAverages(){
-    if (my_adventures() < 100 && get_property("_lawOfAveragesUsed") == "0" && dayType() == 1)
-        use($item[law of averages]);
-    if (my_adventures() < 100 && get_property("_lawOfAveragesUsed") == "0" && dayType() == 0 && have_effect($effect[Steely-Eyed Squint]) > 0)
+    if (my_adventures() < 100 && get_property("_lawOfAveragesUsed") == "0" && dayType() == 1 && have_item($item[law of averages]))
         use($item[law of averages]);
 }
 

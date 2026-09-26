@@ -78,6 +78,7 @@ void free_run(string ptext) {
     foreach sk in $skills[spring away, snokebomb] {
         if (contains_text(ptext, to_string(sk))) {
             if (my_location() == $location[hobopolis town square] && sk == $skill[snokebomb]) continue;
+            if (sk == $skill[spring away] && my_adventures() < 30) continue;
             use_skill(sk);
         }
     }
