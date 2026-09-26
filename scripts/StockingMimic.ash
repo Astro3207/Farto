@@ -505,21 +505,27 @@ void useMayamRings(){
 		+ " mayam rings eye meat yam clock");
 }
 
+float optimalCandy(){
+    float perCandyPrice = 100.0;
+    float perPound = 27.0 * freeKillCount("both");
+    int pounds = floor(perPound / (2.0 * perCandyPrice)) - 5;
+    return pounds * pounds;
+}
+
 item candyPick(){
     foreach it in $items[]{
         if (it.candy == true && mall_price(it) < 200 && item_amount(it) > 0){
             return it;
         }
     }
-    abort("script in buying candy");
+    foreach it in $items[]{
+        if (it.candy == true && mall_price(it) <= 100){
+            buy(it,(optimalCandy() - get_property("mimicCandiesFed").to_int()),100);
+            return it;
+        }
+    }
+    abort("Lmao you ran out of cheap candy");
     return $item[none];
-}
-
-float optimalCandy(){
-    float perCandyPrice = 100.0;
-    float perPound = 27.0 * freeKillCount("both");
-    int pounds = floor(perPound / (2.0 * perCandyPrice));
-    return pounds * pounds;
 }
 
 void feedCandy(){
@@ -560,9 +566,10 @@ void FKPrep(){
 	if (my_inebriety() < inebriety_limit()){
 		dieting();
 	}
-
-	retrieve_item(25, $item[bag of many confections]);
-    retrieve_item(25, $item[stomp box]);
+    if (my_name().to_lower_case() == "fart scauce"){
+        retrieve_item(25, $item[bag of many confections]);
+        retrieve_item(25, $item[stomp box]);
+    }
 	set_property("script", "FreeKill");
     retrieve_item($item[burning paper crane]);
     step("phase: 9 special buffs");
