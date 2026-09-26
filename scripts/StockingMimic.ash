@@ -419,7 +419,8 @@ void dieting(){
 		if (have_effect($effect[Shadow Affinity]) == 0)
 			if (!user_confirm("dieting: Shadow Affinity fell off before the rollover-day binge. Continue?"))
                 abort();
-        use($item[law of averages]);
+        if (have_item($item[law of averages]))
+            use($item[law of averages]);
         if (have_item($item[Mayo Minder&trade;]) && get_property("mayoMinderSetting") != "Mayodiol")
             use($item[Mayo Minder&trade;]);
         if (closet_amount($item[Bowl of Infinite Jelly]) > 0 && my_fullness() == fullness_limit()-1)
