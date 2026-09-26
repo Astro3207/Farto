@@ -756,7 +756,7 @@ void cyberzone() {
         if (!contains_text(get_property("banishedPhyla"), "construct")) {
             set_property("hpAutoRecoveryTarget","0.25");
             cli_execute("recover hp");
-            foreach mon in $monsters[greyhat hacker,greenhat hacker,redhat hacker,purplehat hacker] {
+            foreach mon in $monsters[greyhat hacker,greenhat hacker,redhat hacker,purplehat hacker,bluehat hacker] {
                 if (hackerZone contains mon && hackerZone[mon] != $location[cyberzone 1]) {
                     adv1(hackerZone[mon], 0, "");
                     break;
