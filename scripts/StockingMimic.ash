@@ -141,13 +141,13 @@ void chibiHandling(){
     }
 }
 void prepBuffs(){
-    foreach ef in $effects[benetton's medley of diversity, inigo's incantation of inspiration,Familial Ties,Busker Do,Swimming Head]{
+    foreach ef in $effects[benetton's medley of diversity, inigo's incantation of inspiration]{
         if (have_effect(ef) > 0)
             cli_execute("uneffect " + ef);
     }
 
     //fam weight
-    foreach ef in $effects[Robot Friends,Healthy Green Glow,Chorale of Companionship,Human-Fish Hybrid,Whole Latte Love,Shortly Stacked,Thoughtful Empathy,Leash of Linguini,blood bond,Empathy,Black Tongue,Man's Worst Enemy,Billiards Belligerence,You Can Really Taste the Dormouse,Kindly Resolve,Human-Machine Hybrid,Shrimpin' Ain't Easy,Over-Familiar With Dactyls,Loyal Tea,Warm Shoulders,One Foot Heavier,Work For Hours a Week,A Girl Named Sue,Panna Consideration,Loyal as a Rock,Candied Devil,Wildsun Boon,Only Dogs Love a Drunken Sailor,Best Pals,Heart of Green,Bestial Sympathy,Herder\, Bitter\, Fester\, Stranger,Party Soundtrack,Shortly Wired,Greased-Up Familiar,Crocodile Tear,Spiced Out,offhand remarkable,Greased-Up Familiar,Crocodile Tear]{
+    foreach ef in $effects[Robot Friends,Healthy Green Glow,Chorale of Companionship,Human-Fish Hybrid,Whole Latte Love,Shortly Stacked,Thoughtful Empathy,Leash of Linguini,blood bond,Empathy,Black Tongue,Man's Worst Enemy,Billiards Belligerence,You Can Really Taste the Dormouse,Kindly Resolve,Human-Machine Hybrid,Shrimpin' Ain't Easy,Over-Familiar With Dactyls,Loyal Tea,Warm Shoulders,One Foot Heavier,Work For Hours a Week,A Girl Named Sue,Panna Consideration,Loyal as a Rock,Candied Devil,Wildsun Boon,Only Dogs Love a Drunken Sailor,Best Pals,Heart of Green,Bestial Sympathy,Herder\, Bitter\, Fester\, Stranger,Party Soundtrack,Shortly Wired,Greased-Up Familiar,Crocodile Tear,Spiced Out,offhand remarkable,Greased-Up Familiar,Crocodile Tear,Familial Ties,Busker Do,Swimming Head]{
         if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]) && ef.attributes != "nohookah")
             continue;
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
@@ -179,6 +179,7 @@ void prepBuffs(){
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
+    cli_execute("gain meat drop 7 eff 12 turns");
     //item drop
     foreach ef in $effects[Steely-Eyed Squint,Spookyravin',Unbarking Dogs,Cold Hearted,One Very Clear Eye,Materiel Intel,Spitting Rhymes,Joyful Resolve,Lubricating Sauce]{
         if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
@@ -380,7 +381,7 @@ int freeKillCount(string leg){
 int valueOfOrgan(string organ){
     if (organ == "stomach"){
         //based off of baked veggie ricotta casserole
-        return (8*get_property("valueOfAdventure").to_int()) - mall_price($item[baked veggie ricotta casserole]);
+        return (8*get_property("valueOfAdventure").to_int()) - mall_price($item[St. Sneaky Pete's Whey]) - mall_price($item[St. Sneaky Pete's Whey]) - mall_price($item[Vegetable of Jarlsberg]) - mall_price($item[Vegetable of Jarlsberg]);
     } else if (organ == "liver"){
         //based off of  Sacramento wine
         return (5.5*get_property("valueOfAdventure").to_int()) - mall_price($item[Sacramento wine]);
@@ -409,6 +410,7 @@ void dieting(){
 		// Strip every effect that might get in the way of effect extenders
         if (have_item($item[Bowl of Infinite Jelly]))
             put_closet($item[Bowl of Infinite Jelly]);
+        use_skill($skill[disco nap]);
 		foreach ef in my_effects(){
 			if ($effects[Shadow Affinity, On the Trail, Lucky!, Apriling Band Battle Cadence,
 				Everything Looks Red, Everything Looks Yellow, Everything Looks Green,
@@ -435,7 +437,7 @@ void dieting(){
                 abort("uneffect jelly-coated insides");
             if (get_property("spiceMelangeUsed") == "false" && my_fullness() > 3 && my_inebriety() > 3)
                 use ($item[spice melange]);
-            if (have_skill($skill[Sweat Out Some Booze]))
+            if (have_skill($skill[Sweat Out Some Booze]) && get_property("sweat").to_int() > 25)
                 use_skill($skill[Sweat Out Some Booze]);
         }
         if (get_property("_mimeArmyShotglassUsed") == "false")
@@ -660,6 +662,7 @@ void FKPrep(){
         }
         altFam($familiar[stocking mimic]);
         feedCandy();
+        abort();
     }
 	step("phase: FKPrep stash pops");
 	// Stash-borrowed one-a-day item pops.
@@ -1559,12 +1562,14 @@ void locationBasedWeakMonsters(){
             set_property("mainOverride",", equip angelbone totem");
             equip($slot[off-hand],$item[angelbone totem]);
             equip($slot[off-hand],$item[shrunken head]);
+            set_property("offOverride",", equip shrunken head");
             equip($slot[weapon],$item[angelbone totem]);
         }
         retrieve_item(5,$item[glark cable]);
         adv1($location[the red zeppelin]);
         set_property("mainOverride","");
         set_property("acc2Override","");
+        set_property("offOverride","");
     }
 }
 
@@ -1613,7 +1618,7 @@ void nonlocationBasedWeakMonsters(){
         step("phase: weakMonsters giant sandworm (quad tom)");
         sandworm();
     }
-    if (my_fullness() < fullness_limit()){
+    if (my_fullness() < fullness_limit() && my_class() != $class[seal clubber]){
         equip($item[devilbone corset]);
         equip($slot[acc3],$item[angelbone chopsticks]);
         eat($item[eldritch mushroom pizza]);
@@ -1693,7 +1698,6 @@ boolean EmbezBetter(){
 
 void embezzler(){
     while ((get_property("_aprilBandSaxophoneUses").to_int() < 3 || EmbezBetter()) && dayType() == 1){
-        abort("maximize meat drop");
         altFam($familiar[robortender]);
         if (get_property("_roboDrinks") != "drive-by shooting"){
             retrieve_item($item[drive-by shooting]);
@@ -1768,6 +1772,7 @@ void miscellaneousFams(){
         set_property("offOverride", "");
         set_property("acc1Override", "");
         set_property("acc2Override", "");
+        set_property("acc3Override", "");
         set_property("offOverride", "");
     }
     if (get_property("_banderRunaways").to_int() < 20){
@@ -1804,6 +1809,9 @@ void miscellaneousFams(){
         if (get_auto_attack() == 0)
             aa("facsimile");
         set_property("pantsOverride","");
+        set_property("offOverride","");
+        set_property("mainOverride","");
+        set_property("acc1Override","");
     }
 }
 
@@ -1829,6 +1837,8 @@ void bulkFKD2(){
         toChew = floor((spleen_limit()-my_spleen_use())/2);
         chew (toChew,$item[Extrovermectin&trade;]);
     }
+    if (dayType() == 1 && get_property("_backUpUses").to_int() < 11 && !contains_text(get_property("banishedPhyla"),"fish"))
+        banishFish();
     step ("phase: use up hidden city");
     restOfHiddenCity();
     step("phase: bulkFK habitat recall");
@@ -1953,6 +1963,7 @@ void bulkFKD1(){
             toChew = floor((spleen_limit()-my_spleen_use())/2);
             chew (toChew,$item[Extrovermectin&trade;]);
         }
+        abort("What happened with the totem exploit?");
         use_familiar($familiar[comma chameleon]);
         cli_execute("maximize familiar weight");
     }

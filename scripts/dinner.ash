@@ -139,8 +139,8 @@ void main(){
     step("phase: aug skills");
     augSkills();
     cli_execute ("maximize adv; av-snapshot.ash");
-    step("phase: clockwork maid");
-    clockworkMaid();
+ //   step("phase: clockwork maid");
+   // clockworkMaid();
     step("phase: final outfit");
     finalOutfit();
     step("phase: day shorteners");

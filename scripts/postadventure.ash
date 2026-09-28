@@ -479,7 +479,7 @@ void constructBanish(){
     }
     set_property("subscript","screech");
     use_familiar($familiar[patriotic eagle]);
-    set_auto_attack("7451");
+    set_auto_attack(0);
     while (get_property("screechCombats") == "0" && !contains_text(get_property("banishedPhyla"),"construct")){
         set_property("famOverride","patriotic eagle");
         set_property("maxOverride","ml, -10 familiar weight, -equip drunkula's wineglass,-equip backup camera");
@@ -756,9 +756,13 @@ void azazelUnicornQuest(){
         };
         foreach friarItem in friarItemLocations {
             while (item_amount(friarItem) == 0 && get_property("questL06Friar") == "step1"){
-                set_property("maxOverride","-combat");
-                swordPrep();
-                adv1(friarItemLocations[friarItem],0,"");
+                if (get_property("questL05Goblin") == "started" && get_property("noncombatForcerActive") == false && get_property("_spikolodonSpikeUses").to_int() < 5) {
+                    outskirts();
+                } else {
+                    set_property("maxOverride","-combat");
+                    swordPrep();
+                    adv1(friarItemLocations[friarItem],0,"");
+                }
             }
         }
         if (get_property("questL06Friar") == "step2")

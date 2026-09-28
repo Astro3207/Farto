@@ -210,9 +210,7 @@ void preAdv(){
         if (get_property("hatOverride") != "")
             append(maximize, get_property("hatOverride"));
         // Mainhand
-        if (have_equipped($item[angelbone totem]) || my_spleen_use() > 15)
-            append(maximize, ", equip angelbone totem");
-        else if (get_property("mainOverride") != "")
+        if (get_property("mainOverride") != "")
             append(maximize, get_property("mainOverride"));
         else if (get_property("weaponOverride") != "")
             append(maximize, get_property("weaponOverride"));
@@ -264,7 +262,7 @@ void preAdv(){
         else if (my_familiar() == $familiar[cooler yeti] || my_familiar() == $familiar[chest mimic])
             append(maximize, ", equip giant yellow hat");
         // Mainhand
-        if (have_equipped($item[angelbone totem]))
+        if (have_equipped($item[angelbone totem]) || my_spleen_use() > 15)
             append(maximize, ", equip angelbone totem");
         else if (clubEmReady)
             append(maximize, ", equip legendary seal-clubbing club");
