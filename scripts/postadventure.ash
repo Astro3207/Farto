@@ -173,9 +173,12 @@ void outskirts() {
         altFam($familiar[Pair of Stomping Boots]);
     else
         swordPrep();
-    if (get_property("famOverride") != "sword of s words")
-        set_property("unconditionalOverride","familiar weight");
-    else 
+    if (get_property("famOverride") != "sword of s words"){
+        if (get_property("_spikolodonSpikeUses").to_int() < 5)
+            set_property("unconditionalOverride","familiar weight,equip parka (spikolodon)");
+        else
+            set_property("unconditionalOverride","familiar weight");
+    }else 
         set_property("unconditionalOverride","");
     if (get_property("questG09Muscle") == "unstarted")
         visit_url("guild.php?place=challenge");
@@ -716,8 +719,6 @@ void postAdv(){
 // Force-noncombat branch of spendAdv(): clear slime, spend free rests / tuba /
 // clara bell, then push whichever NC-eligible quest (friars / temple / shadow) applies.
 void forceNoncombats(){
-    if (get_property("noncombatForcerActive") != "true" || get_property("script") == "solobop")
-        return;
     uneffectDebuffs();
     NCforce(true);
     if (get_property("questM16Temple") != "finished" && get_property("seaAftercore") == "true"){
@@ -729,7 +730,7 @@ void forceNoncombats(){
         while (get_property("noncombatForcerActive") == "true" && (get_property("questL06Friar") == "started" || get_property("questL06Friar") == "step1")){
             friars();
         }
-    } else {
+    } else if (get_property("noncombatForcerActive") == "true"){
         if (dayType() == 1)
             cli_execute("ash import farto;shadowRealmNCForce()");
         else   
@@ -845,7 +846,7 @@ void level11Sprint(){
                 retrieve_item($item[bitchin' meatcar]);
             adv1($location[The Shore, Inc. Travel Agency]);
         } else if (get_property("questL11Worship") == "step1" || get_property("questL11Worship") == "step2"){
-            if (item_amount($item[the Nostril of the Serpent]) == 0){
+            if (item_amount($item[the Nostril of the Serpent]) == 0 && get_property("questL11Worship") != "step2"){
                 use($item[stone wool]);
                 set_property("choiceAdventure582","1");
                 set_property("choiceAdventure579","2");
@@ -887,7 +888,6 @@ void ELKPrep(){
 // free kills, Shadow Rift, cookbookbat, Book of Facts wishes, then level 11.
 void spendAdv(){
     set_property("inSpendAdv","true");
-    forceNoncombats();
     if (dayType() == 0){
         if (delay() && get_property("seaAftercore") == "true"){
             delayPrep();
@@ -918,20 +918,10 @@ void spendAdv(){
             set_property("shirtOverride","");
             set_property("acc1Override","");
         }
-        if (my_adventures() < 65){
-            while (get_property("questM16Temple") != "finished")
-                findHiddenTemple();
-            while (get_property("questM10Azazel") != "finished" && have_effect($effect[Patent Aggression]) == 0)
-                azazelUnicornQuest();
-            if (get_property("questM10Azazel") != "finished"){
-                print(numeric_modifier("combat rate"));
-            }
-            while (to_int(get_property("blackForestProgress")) < 5)
-                blackForest();
-            while (my_adventures() < 30 && ((get_property("questG09Muscle") != "finished" && my_class() == $class[seal clubber]) || get_property("questL05Goblin") == "started"))
-                outskirts();
-        }
+        forceNoncombats();
     }
+    if (get_property("questL05Goblin") != "started" && to_int(get_property("blackForestProgress")) >= 5 && item_amount($item[observational glasses]) > 0 && have_effect($effect[Patent Aggression]) > 0)
+        cli_execute("uneffect Patent Aggression");
     if (have_effect($effect[everything looks beige]) == 0 && (my_adventures() > 50 || dayType() == 1))
         chargeFams();
 

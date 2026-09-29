@@ -312,7 +312,8 @@ void main(int round, monster mob, string page_text) {
     // as they did before this section existed as its own block.
     if (last_monster() != $monster[shadow scythe] && last_monster() != $monster[shadow spire] && last_monster() != $monster[Guard turtle]) {
         if (have_skill($skill[McHugeLarge Avalanche]))         use_skill($skill[McHugeLarge Avalanche]);
-        if (have_equipped($item[Jurassic Parka]))      use_skill($skill[Launch spikolodon spikes]);
+        if (have_skill($skill[Launch spikolodon spikes]))      use_skill($skill[Launch spikolodon spikes]);
+        if (have_skill($skill[sing along]))      use_skill($skill[sing along]);
         if (have_skill($skill[Prepare to reanimate your Foe])) use_skill($skill[Prepare to reanimate your Foe]);
         if (item_amount($item[cosmic bowling ball]) > 0){
             use_skill($skill[Bowl Straight Up]);
@@ -466,7 +467,7 @@ void main(int round, monster mob, string page_text) {
         if (my_location() == $location[The Laugh Floor] || my_location() == $location[Infernal Rackets Backstage]){
             if (dayType() == 0 && my_class() == $class[seal clubber]){
                 use_skill($skill[Sea *dent: Talk to Some Fish]);
-                if (last_monster() != $monster[some fish] && !contains_text(last_monster().attributes,"BOSS"))
+                if (last_monster() != $monster[some fish] && last_monster().copyable == true)
                     abort("talk to some fish didn't work for some reason");
             }
         }

@@ -374,8 +374,8 @@ void preAdv(){
         abort();
 
     // Sheriff override — only in non-slime non-angelbone-totem context
-    if (get_property("script") != "slime" && sheriff && !have_equipped($item[angelbone totem]) && get_property("script") != "coat" && get_property("script") != "stick" && get_property("script") != "FreeKill" && get_property("script") != "farto")
-        cli_execute("equip sheriff pistol; equip acc2 sheriff moustache; equip acc3 sheriff badge");
+ //   if (get_property("script") != "slime" && sheriff && !have_equipped($item[angelbone totem]) && get_property("script") != "coat" && get_property("script") != "stick" && get_property("script") != "FreeKill" && get_property("script") != "farto")
+   //     cli_execute("equip sheriff pistol; equip acc2 sheriff moustache; equip acc3 sheriff badge");
 
     // Free kill flag
     set_property("freeKillReady",

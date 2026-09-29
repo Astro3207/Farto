@@ -30,10 +30,11 @@ void main(){
         cli_execute("preascend");
     }
     if (dayType() == 0){
-        cli_execute("postloop");
-        cli_execute("preconsume");
-    //    if (numeric_modifier("familiar weight") < 300)
+        if (numeric_modifier("familiar weight") < 200){
+            cli_execute("postloop");
+            cli_execute("preconsume");
             cli_execute("farto");
+        }
         cli_execute("stockingmimic");
         if (user_confirm("Ready to run dinner?"))
             cli_execute("dinner");

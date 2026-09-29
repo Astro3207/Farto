@@ -222,6 +222,8 @@ void firstBreakfast(){
     perilsForeseen();
     spookyTapes();
     alliedRadio();
+    if (have_item($item[SongBoom&trade; BoomBox]) && get_property("boomBoxSong") != "Total Eclipse of Your Meat")
+        use($item[SongBoom&trade; BoomBox]);
 
     step("phase: unaccompanied miner");
     unaccompaniedMiner();

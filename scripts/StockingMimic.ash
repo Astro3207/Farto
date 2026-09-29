@@ -532,7 +532,7 @@ item candyPick(){
 }
 
 void feedCandy(){
-    while (get_property("mimicCandiesFed").to_int() < optimalCandy()){
+    while (get_property("mimicCandiesFed").to_int() < optimalCandy() || get_property("lastStockingMimicReset").to_int() != my_ascensions( )){
 //        int numFed = min(item_amount(candyPick()),(optimalCandy() - get_property("mimicCandiesFed").to_int()));
         if (contains_text(visit_url("inventory.php?pwd=" + my_hash() + "&action=candy&which=1&whichitem=" + candyPick().to_int()).to_string(),"quickly consumes")){
             if (get_property("lastStockingMimicReset").to_int() != my_ascensions( )){
@@ -662,7 +662,6 @@ void FKPrep(){
         }
         altFam($familiar[stocking mimic]);
         feedCandy();
-        abort();
     }
 	step("phase: FKPrep stash pops");
 	// Stash-borrowed one-a-day item pops.
@@ -1941,7 +1940,6 @@ void bulkFKD1(){
     buffML($monster[Flaming leaflet]);
     locationBasedAdventuring();
     if (my_spleen_use() < 10){
-        abort("What happened with the totem exploit?");
         use_familiar($familiar[stooper]);
         equip($item[devilbone greaves]);
         equip($slot[acc1],$item[angelbone dice]);
@@ -1963,7 +1961,6 @@ void bulkFKD1(){
             toChew = floor((spleen_limit()-my_spleen_use())/2);
             chew (toChew,$item[Extrovermectin&trade;]);
         }
-        abort("What happened with the totem exploit?");
         use_familiar($familiar[comma chameleon]);
         cli_execute("maximize familiar weight");
     }
