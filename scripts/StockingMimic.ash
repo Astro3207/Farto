@@ -1871,11 +1871,9 @@ void bulkFKD2(){
     }
     set_property("subscript","");
     step("phase: bulkFK NC force");
-    NCforce(false);
-    while (get_property("noncombatForcerActive") == true || get_property("encountersUntilSRChoice").to_int() == 0){
-        shadowRealmFK();
-        NCforce(false);
-    }
+	while (get_property("encountersUntilSRChoice").to_int() == 0 || NCforce(false)){
+	    shadowRealmFK();
+	}
     miscellaneousFams();
     step("phase: bulkFK reminisce");
     reminisce();
