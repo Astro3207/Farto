@@ -320,6 +320,8 @@ void main(int round, monster mob, string page_text) {
         }
         if (to_int(last_monster()) == to_int(get_property("killThisGuy")) && get_property("swordSniff") == true)
             use_skill($skill[%fn, kill a lot of these guys]);
+    } else if (last_monster() == $monster[shadow spire]){
+        sauce(4);
     }
 
     if (get_property("script") == "FreeKill" && have_equipped($item[backup camera]) && get_property("lastCopyableMonster") == "Black Crayon Mer-kin"){
@@ -405,7 +407,7 @@ void main(int round, monster mob, string page_text) {
     }
 
     if ((my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[stocking mimic]) && get_property("script") == "FreeKill"){
-        if (my_location().zone == "Shadow Rift")
+        if (my_location().zone == "Shadow Rift" && last_monster().boss == false)
             use_skill($skill[swoop like a bat]);
         while (current_round() > 0 && current_round() < 30 && monster_hp() > 9 && have_equipped($item[april shower thoughts shield])){
             if (have_equipped($item[april shower thoughts shield]))

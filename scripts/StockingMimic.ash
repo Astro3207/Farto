@@ -579,6 +579,8 @@ void FKPrep(){
     foreach ef in $effects[Robot Friends,Healthy Green Glow,Shortly Stacked,Shortly Wired,steely-eyed squint,Human-Fish Hybrid,Black Tongue,Human-Machine Hybrid,Warm Shoulders]{
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
             continue;
+        if (buffCount() >= 10)
+            break;
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
@@ -791,7 +793,7 @@ void shadowBoss(){
         set_property("shirtOverride",", equip ultracolor");
     } else if (get_property("rufusQuestTarget") == "shadow spire"){
         set_property("hpAutoRecovery",0.36);
-        set_property("hpAutoRecoveryTarget",0.36);
+        set_property("hpAutoRecoveryTarget",0.80);
         cli_execute("recover hp");
         if (have_item($item[petrified wood wizard's pouch]))
             set_property("maxOverride","familiar weight, equip petrified wood wizard's pouch");
@@ -845,6 +847,7 @@ void shadowRealmFK(){
             else
                 set_property("offOverride","");
             if (get_property("noncombatForcerActive") == "true" || get_property("encountersUntilSRChoice").to_int() == 0){
+                set_auto_attack(0);
                 shadowBoss();
             }
         }

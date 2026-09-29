@@ -71,6 +71,13 @@
             return ETIManualAssignment[ef];
     }
 
+    int buffCount() {
+        int n = 0;
+        foreach eff, turns in my_effects()
+            if (turns < 2147483647) n++;
+        return n;
+    }
+
     record EffectNote {
         int turns;
         effect ef;
