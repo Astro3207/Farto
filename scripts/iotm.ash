@@ -751,13 +751,14 @@
     // ~20 passes, so loopCount aborts well above that instead of at a tight bound, but
     // still catches the case where tuba/bell/cincho are all exhausted with free rests
     // still left, which would otherwise spin forever since nothing changes state.
-    void NCforce(boolean stack) {
+// returns true if have NC ready; false if no NC sources left
+    boolean NCforce(boolean stack) {
         int loopCount = 0;
         while (get_property("timesRested").to_int() < total_free_rests()){
             if (loopCount++ > 50)
                 abort("NCforce: looped over 50 times with no progress -- probably out of tuba/bell/cincho to force NCs with");
             if (get_property("noncombatForcerActive").to_boolean() == true && stack == false)
-                return;
+                return true;
             if (have_item($item[apriling band helmet]) && to_int(get_property("_aprilBandTubaUses")) < 3 && have_item($item[Apriling band tuba])) {
                 print(1,"red");
                 cli_execute("aprilband play tuba");
@@ -768,7 +769,7 @@
                 print(3,"red");
                 int cinchRestLoopCount = 0;
                 while (to_int(get_property("_cinchUsed")) > 40
-                    && to_int(get_property("timesRested")) < total_free_rests()) {
+                        && to_int(get_property("timesRested")) < total_free_rests()) {
                     if (cinchRestLoopCount++ > 50)
                         abort("NCforce: cincho rest-down looped over 50 times with no progress -- camp rest free is probably failing");
                     cli_execute("unequip hat; equip apriling band helmet; camp rest free");
@@ -776,9 +777,14 @@
                 if (to_int(get_property("_cinchUsed")) <= 40) {
                     equip($slot[acc3], $item[cincho de mayo]);
                     use_skill($skill[Cincho: Fiesta Exit]);
+                } else {
+                    return false;
                 }
+            } else {
+                return false;
             }
         }
+        return get_property("noncombatForcerActive").to_boolean();
     }
 
     // Returns true if there are free-run resources available to burn for delay.
