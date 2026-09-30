@@ -358,8 +358,6 @@ void unlock_zeppelin(){
     if (ron == "step2" || ron == "step3" || ron == "step4" || ron == "finished"
         || !can_adventure($location[A Mob of Zeppelin Protesters]))
         return;
-    set_property("maxOverride","sleaze damage, sleaze spell damage");
-    set_property("mainOverride",", equip candy cane sword cane");
     foreach ef in $effects[Bendin' Hell,Belch the Rainbow&trade;,Amorous,Blood-Gorged,Sleazy Hands,Benetton's Medley of Diversity,Greasy Peasy,Takin' It Greasy,Cuts Like a Lightly-Buttered Knife,Colorful Gratitude,Sleazy Weapon,Stained,Crud&eacute;,Why So Serious?,Improprie Tea,Boschface,All Glory To the Toad,Herder\, Bitter\, Fester\, Stranger,Yoloswagyoloswag]{
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
             continue;
@@ -370,7 +368,7 @@ void unlock_zeppelin(){
         cli_execute("maximize sleaze damage, sleaze spell damage, equip candy cane sword cane");
         set_property("unconditionalOverride","sleaze damage, sleaze spell damage, equip candy cane sword cane");
         if ((numeric_modifier("sleaze damage")+numeric_modifier("sleaze spell damage")) < 1596 && to_int(get_property("zeppelinProtestors")) < 80)
-            abort("not enough sleaze damage");
+            abort("Buff up to 1600 sleaze damage to unlock zeppelin");
         if (to_int(get_property("zeppelinProtestors")) < 80 && have_effect($effect[lucky!]) == 0)
             getLucky();
         adv1($location[A Mob of Zeppelin Protesters]);
@@ -403,7 +401,7 @@ void drunkPygmy(){
             set_property("acc2Override","");
         }
         if (!contains_text(get_property("banishedMonsters"),"pygmy janitor"))
-            abort();
+            abort("Banish pygmy janitors with ice house");
         cli_execute("closet put * bowling ball");
         adv1($location[The Hidden Bowling Alley]);
     }

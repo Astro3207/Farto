@@ -1707,9 +1707,9 @@ void embezzler(){
         }
         set_property("script","embezzler");
         if (get_property("_batWingsFreeFights").to_int() < 5){
-            set_property("unconditionalOverride","meat drop; equip mafia pointer finger, equip bat wings");
+            set_property("unconditionalOverride","meat drop, equip mafia pointer finger, equip bat wings");
         } else {
-            set_property("unconditionalOverride","meat drop; equip mafia pointer finger");
+            set_property("unconditionalOverride","meat drop, equip mafia pointer finger");
         }
         if (have_effect($effect[Lucky!]) == 0){
             getLucky();

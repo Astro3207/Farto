@@ -111,7 +111,7 @@ void fartScauceInboxCleanup(){
     if (my_name().to_lower_case() != "fart scauce")
         return;
     int deleted = 0;
-    foreach str in $strings[3690803,1053259,1699424,1533476]{
+    foreach str in $strings[3690803,1053259,1699424,1533476,3877087]{
         matcher m = create_matcher("name=\"sel(\\d+)\"></td><td class=small><b>From</b> <a href=\"showplayer\\.php\\?who=" + str, messages());
         while (m.find()){
             visit_url("messages.php?the_action=delete&box=Inbox&sel"+ m.group(1) + "=on");

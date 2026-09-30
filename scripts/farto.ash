@@ -157,6 +157,8 @@ void main(){
             stashgrab($item[pantsgiving]);
         set_property("script","farto");
         while (my_adventures() > 0){
+            if (numeric_modifier("sleaze damage") + numeric_modifier("sleaze spell damage") > 1600)
+                unlock_zeppelin();
             if (dayType() == 0 && (get_property("questM16Temple") != "finished" || get_property("questM10Azazel") != "finished" || to_int(get_property("blackForestProgress")) < 5 || get_property("questL05Goblin") == "started")){
                 if (get_property("questM16Temple") != "finished")
                     findHiddenTemple();
