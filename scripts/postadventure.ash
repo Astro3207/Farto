@@ -749,7 +749,7 @@ void azazelUnicornQuest(){
     int backstage1 = item_amount($item[gin-soaked blotter paper]) + item_amount($item[beer-scented teddy bear]) + item_amount($item[giant marshmallow]);
     int backstage2 = item_amount($item[booze-soaked cherry]) + item_amount($item[comfy pillow]) + item_amount($item[sponge cake]);
     print("Farto: Azazel Quest");
-    if (get_property("questM10Azazel") != "finished" && (my_adventures() < 65 || delay())){
+    if (get_property("questM10Azazel") != "finished"){
         uneffectDebuffs();
         if (get_property("questL06Friar") == "started")
             visit_url("friars.php?action=friars");
