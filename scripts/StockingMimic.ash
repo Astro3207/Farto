@@ -802,6 +802,7 @@ void shadowBoss(){
     }
 }
 void shadowRealmFK(){
+    cli_execute("uneffect coldform");  // make sure we appropriately remove coldform when first entering shadowrealm
     equipStockingMimic();
     if (get_auto_attack() == 0)
         aa("facsimile");
@@ -1393,8 +1394,6 @@ void weakMonsters(){
     set_property("acc3Override",", equip time lord badge of honor");
     set_property("subscript","weakling");
     retrieve_item($item[shard of double-ice]);
-    if (have_effect($effect[coldform]) == 0)
-        use($item[phial of coldness]);
     equip($slot[acc3],$item[time lord badge of honor]);
     // fightPicker() returns one key per call, in strict priority order; run that
     // fight, then re-ask. It also sets offOverride and buffs ML as needed.
@@ -1402,6 +1401,9 @@ void weakMonsters(){
     // combat gear on, not whatever the last dispatch left equipped.
     settleStance();
     string pick = fightPicker();
+    if (pick != "done" && have_effect($effect[coldform]) == 0)   //moved and rewritten so coldform isnt wasted if script is rerun
+        use($item[phial of coldness]);
+
     while (pick != "done"){
         // pearloP1() leaves subscript on "looseFK" -- re-assert it each pass.
         set_property("subscript","weakling");
@@ -1857,7 +1859,6 @@ void bulkFKD2(){
     if (get_property("_shadowAffinityToday") == "false")
         shadowRealmFK();
     while (have_effect($effect[shadow affinity]) > 0){
-        cli_execute("uneffect coldform");
         shadowRealmFK();
     }
     step("phase: bulkFK loose FK");
@@ -1870,11 +1871,9 @@ void bulkFKD2(){
     }
     set_property("subscript","");
     step("phase: bulkFK NC force");
-    NCforce(false);
-    while (get_property("noncombatForcerActive") == true || get_property("encountersUntilSRChoice").to_int() == 0){
-        shadowRealmFK();
-        NCforce(false);
-    }
+	while (get_property("encountersUntilSRChoice").to_int() == 0 || NCforce(false)){
+	    shadowRealmFK();
+	}
     miscellaneousFams();
     step("phase: bulkFK reminisce");
     reminisce();
