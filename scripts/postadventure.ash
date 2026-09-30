@@ -143,6 +143,7 @@ void cookbookbat(){
 // One Black Forest turn toward the blackbird. On the 4th NC turn, equip the CCS
 // cane and pause for a manual check that the sword NC fired.
 void blackForest(){
+    print("Farto: black forest");
     set_property("maxOverride","combat");
     cli_execute("acquire blackberry galoshes");
     set_property("acc3Override",", equip blackberry galoshes");
@@ -167,6 +168,7 @@ void blackForest(){
 
 // Finish the Guild muscle challenge (Cobb's Knob outskirts). No-op once finished.
 void outskirts() {
+    print("Farto: Outskirts");
     if (get_property("questG09Muscle") == "finished" && get_property("questL05Goblin") != "started")
         return;
     if (get_property("_banderRunaways").to_int() < (my_familiar().familiar_weight() + weight_adjustment( ))/5)
@@ -746,6 +748,7 @@ void forceNoncombats(){
 void azazelUnicornQuest(){
     int backstage1 = item_amount($item[gin-soaked blotter paper]) + item_amount($item[beer-scented teddy bear]) + item_amount($item[giant marshmallow]);
     int backstage2 = item_amount($item[booze-soaked cherry]) + item_amount($item[comfy pillow]) + item_amount($item[sponge cake]);
+    print("Farto: Azazel Quest");
     if (get_property("questM10Azazel") != "finished" && (my_adventures() < 65 || delay())){
         uneffectDebuffs();
         if (get_property("questL06Friar") == "started")
