@@ -47,7 +47,7 @@ void mood(string function){
                 continue;
             } else if (ef == $effect[The Ballad of Richie Thingfinder] && get_property("_thingfinderCasts") == 10){
                 continue;
-            } else if (ef == $effect[sweat equity] && ((my_basestat($stat[submoxie]) - 118881) < BCZcost("SweatEquity"))){
+            } else if (ef == $effect[sweat equity] && ((my_basestat($stat[submoxie]) - 118881) < BCZcost("SweatEquityCasts"))){
                 continue;
             } else if (ef == $effect[Legendary Pasta Eyeball] && my_class() == $class[pastamancer]){
                 continue;
@@ -165,7 +165,7 @@ void preAdv(){
     boolean dartReady = have_effect($effect[everything looks red]) == 0;
     boolean greenReady = have_effect($effect[everything looks green]) == 0;
     boolean yellowReady = have_effect($effect[everything looks yellow]) == 0;
-    boolean bcz = (my_basestat($stat[submoxie]) - 118881) > BCZcost("SweatBullets");
+    boolean bcz = (my_basestat($stat[submoxie]) - 118881) > BCZcost("SweatBulletsCasts");
     boolean vote = item_amount($item[&quot;I Voted!&quot; sticker]) > 0 && total_turns_played()%11 == 1 && get_property("_voteFreeFights").to_int() < 3;
     boolean sheriff = get_property("_assertYourAuthorityCast").to_int() < 3 && item_amount($item[Sheriff pistol]) >= 1 && !clubEmReady;
 
@@ -198,7 +198,7 @@ void preAdv(){
         else if (yellowReady && !freeSomething)  append(maximize, ", equip jurassic parka");
         else if (!freeSomething)                 append(maximize, ", equip chamoisole");
 
-        if ((my_basestat($stat[submoxie]) - 62500) > BCZcost("SweatBullets") && !freeSomething)
+        if ((my_basestat($stat[submoxie]) - 62500) > BCZcost("SweatBulletsCasts") && !freeSomething)
             append(maximize, ", equip blood cubic zirconia");
         else if (dartReady && !freeSomething)    append(maximize, ", equip everfull dart holster");
         if (avalancheReady)                      append(maximize, ", equip mchugelarge left ski");
