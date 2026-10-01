@@ -481,6 +481,7 @@ void dieting(){
 			if (effect_to_item(fo) == $item[Black and White Apron Meal Kit]){
                 if (valueOfFamPot($item[Black and White Apron Meal Kit]) < valueOfOrgan("liver"))
                     continue;
+                retrieve_item($item[Black and White Apron Meal Kit]);
                 if (my_class() == $class[seal clubber]){
                     retrieve_item($item[cranberries]);
                     visit_url("inv_use.php?which=3&whichitem=11472");

@@ -177,6 +177,7 @@ void finalChores(){
     }
     cli_execute("garden pick");
     use($item[packet of rock seeds]);
+    cli_execute("garden pick");
     if (have_skill($skill[That's not a knife]))
         use_skill($skill[That's not a knife]);
     cli_execute("acquire 1 one-day ticket to Dinseylandfill; acquire 1 Calzone of Legend; acquire 1 Deep Dish of Legend; acquire 1 Pizza of Legend; acquire 1 borrowed time; acquire 1 abstraction: category");
