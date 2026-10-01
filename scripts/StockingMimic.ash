@@ -1115,7 +1115,7 @@ void habitatRecall(){
     }
 }
 void backup(){
-    while (to_int(get_property("_backUpUses")) < 11){
+    while (to_int(get_property("_backUpUses")) < 11 && get_property("lastCopyableMonster") == "Black Crayon Mer-kin"){
         if (to_int(get_property("_mimicEggsObtained")) < 11 && $familiar[chest mimic].experience > 100){
             set_property("famOverride","chest mimic");
         } else
