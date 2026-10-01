@@ -1726,7 +1726,7 @@ void restOfHiddenCity(){
         if (!contains_text(get_property("banishedMonsters"),"pygmy bowler") && contains_text(get_property("banishedMonsters"),"pygmy orderlies"))
             set_property("famOverride","patriotic eagle");
         else if (contains_text(get_property("banishedMonsters"),"pygmy orderlies") && dayType() == 1 && get_property("screechCombats").to_int() > 0)
-            abort("do patriotic recharge");
+            set_property("famOverride","patriotic eagle");
         else
             set_property("famOverride","chest mimic");
         drunkPygmy();
