@@ -418,7 +418,9 @@ void main(int whichchoice, string page) {
             run_choice(3);
             break;
         case 1497:
-            if (have_effect($effect[shadow affinity]) > 0){
+            if (dayType() == 0)
+                run_choice(2);
+            else if (have_effect($effect[shadow affinity]) > 0){
                 run_choice(2);
             } else if (get_property("rufusDesiredEntity") == "shadow scythe"){
                 run_choice(2);

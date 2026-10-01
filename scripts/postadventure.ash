@@ -22,6 +22,7 @@ string [string] adventureAbortMessages = {
 
 // Equip the sword of s words and sniff its target (monster id 307) so the sword drop lines up.
 void swordPrep(){
+  //  abort("Add in Vampire Vinter");
     set_property("famOverride","sword of s words");
     use_familiar($familiar[sword of s words]);
     int loopCount = 0;
