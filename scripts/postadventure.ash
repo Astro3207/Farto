@@ -22,19 +22,37 @@ string [string] adventureAbortMessages = {
 
 // Equip the sword of s words and sniff its target (monster id 307) so the sword drop lines up.
 void swordPrep(){
-  //  abort("Add in Vampire Vinter");
-    set_property("famOverride","sword of s words");
-    use_familiar($familiar[sword of s words]);
-    int loopCount = 0;
-    while (get_property("swordOfSWordsMonster") != "1085"){
-        if (loopCount++ > 20)
-            abort("swordPrep: looped over 20 times with no progress -- probably out of grizzled survivor reminisces");
-        set_property("killThisGuy","1085");
-        set_property("swordSniff","true");
-        cli_execute("reminisce grizzled survivor");
+    if (item_amount($item[1950 Vampire Vintner wine]) == 0){
+        if (get_property("vintnerCharge").to_int() > 10){
+            if (have_effect($effect[stenchform]) == 0)
+                use($item[phial of stench]);
+            if (item_amount($item[pufferfish spine]) < 30)
+                retrieve_item(30,$item[pufferfish spine]);
+            if (item_amount($item[grody jug]) == 0)
+                retrieve_item($item[grody jug]);
+            if (item_amount($item[shard of double-ice]) == 0)
+                retrieve_item($item[shard of double-ice]);
+        }
+        if (get_property("vintnerCharge").to_int() == 13){
+            set_property("maxOverride","-mus,-mys,-mox");
+            if (numeric_modifier("monster level").to_int() != 10)
+                tuneML(30);
+        }
+        altFam($familiar[vampire vintner]);
+    } else {
+        set_property("famOverride","sword of s words");
+        use_familiar($familiar[sword of s words]);
+        int loopCount = 0;
+        while (get_property("swordOfSWordsMonster") != "1085"){
+            if (loopCount++ > 20)
+                abort("swordPrep: looped over 20 times with no progress -- probably out of grizzled survivor reminisces");
+            set_property("killThisGuy","1085");
+            set_property("swordSniff","true");
+            cli_execute("reminisce grizzled survivor");
+        }
+        set_property("killThisGuy","");
+        set_property("swordSniff","false");
     }
-    set_property("killThisGuy","");
-    set_property("swordSniff","false");
 }
 
 // Pick the accessory to burn a delay turn on: club-em wanderer > "I Voted!" > spring shoes.
@@ -536,8 +554,10 @@ void banishFish(){
         }
         if (have_effect($effect[fishy]) == 0)
             use($item[fishy pipe]);
-        if (have_effect($effect[driving waterproofly]) == 0)
+        if (have_effect($effect[driving waterproofly]) == 0){
             set_property("pantsOverride",", equip really nice swimming trunk");
+            cli_execute("equip really nice swim");
+        }
         retrieve_item($item[peppermint parasol]);
         adv1($location[The briniest deepests]);
     } else

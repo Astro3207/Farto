@@ -235,6 +235,11 @@ void main(int round, monster mob, string page_text) {
     print ("monster hp is " + last_monster().base_hp);
     print ("monster level is "+ numeric_modifier("monster level"));
     print ("high stat is " + max(my_buffedstat($stat[muscle]),my_buffedstat($stat[mysticality]),my_buffedstat($stat[moxie])));
+    
+    if (get_property("vintnerCharge").to_int() == 13 && (my_familiar() == $familiar[vampire vintner] || (my_familiar() == $familiar[Comma Chameleon] && chameleon() == $familiar[Vampire Vintner]))){
+        abort("Manually charge up vintner for now");   
+    }
+
     if (last_monster() == $monster[black crayon mer-kin]){
         if (get_property("_monsterHabitatsFightsLeft") == 0 && to_int(get_property("_monsterHabitatsRecalled")) < 3){
             use_skill($skill[RECALL FACTS: MONSTER HABITATS]);
@@ -461,17 +466,16 @@ void main(int round, monster mob, string page_text) {
         use_skill($skill[Club 'Em Into Next Week]); sauce(2); attack(5); return;
     }
 
+    if (my_location() == $location[The Laugh Floor] || my_location() == $location[Infernal Rackets Backstage] || my_location() == $location[The Dark Elbow of the Woods]){
+        if (dayType() == 0 && my_class() == $class[seal clubber]){
+            use_skill($skill[Sea *dent: Talk to Some Fish]);
+        }
+    }
+
     // ── Category: pure sauce locations ────────────────────────────────────────
     if (sauceLocs[my_location()] || sauceMobs[last_monster()]) {
         if (!free_monster() && !free_location()){
             free_run(page_text);
-        }
-        if (my_location() == $location[The Laugh Floor] || my_location() == $location[Infernal Rackets Backstage]){
-            if (dayType() == 0 && my_class() == $class[seal clubber]){
-                use_skill($skill[Sea *dent: Talk to Some Fish]);
-                if (last_monster() != $monster[some fish] && last_monster().copyable == true)
-                    abort("talk to some fish didn't work for some reason");
-            }
         }
         sauce(7);
         attack();

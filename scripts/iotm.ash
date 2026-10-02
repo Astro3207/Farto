@@ -202,6 +202,80 @@
         return get_property("dayType").to_int();
     }
 
+    
+    boolean [effect] mlEffects = $effects[Ur-Kel's Aria of Annoyance, Pride of the Puffin,
+        Bloodbathed, Misplaced Rage, Manbait, Sweetbreads Flamb&eacute;, Red Lettered,
+        Spangled Star, Tortious, Litterbug, Not Sharing, Para-lyzed Jaw,
+        Contemptible Emanations, Lapdog, Ashen Burps, The Cupcake of Wrath, Gelded,
+        Mysteriously Handsome];
+
+    
+    int mcd_max(){
+        if (canadia_available()) return 11;
+        if (gnomads_available()) return 10;
+        if (knoll_available() && retrieve_item($item[detuned radio])) return 10;
+        return 0;
+    }
+
+    
+    int mlMiss(int base, int target, int maxMcd){
+        if (base > target) return base - target;
+        if (base + maxMcd < target) return target - maxMcd - base;
+        return 0;
+    }
+
+    
+    void tuneML(int targetML){
+        int base = numeric_modifier("monster level").to_int() - current_mcd();
+        boolean [effect] tried;   // a failed cast/shrug (song cap, no MP) isn't retried
+        int loopCount = 0;
+        while (mlMiss(base, targetML, mcd_max()) > 0){
+            if (loopCount++ > 30)
+                abort("tuneML: looped over 30 times -- an effect's ML probably isn't what mafia predicts");
+            effect best = $effect[none];
+            boolean bestIsShrug;
+            int bestMiss = mlMiss(base, targetML, mcd_max());
+
+            foreach ef, turns in my_effects(){
+                if (tried contains ef || turns == 2147483647) continue;
+                if (to_skill(ef) == $skill[none]) continue;
+                int ml = numeric_modifier(ef, "Monster Level").to_int();
+                if (ml == 0) continue;
+                int miss = mlMiss(base - ml, targetML, mcd_max());
+                if (miss >= bestMiss) continue;
+                best = ef;
+                bestIsShrug = true;
+                bestMiss = miss;
+            }
+            foreach ef in mlEffects{
+                if (tried contains ef || have_effect(ef) > 0) continue;
+                if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef))) continue;
+                if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish])) continue;
+                int ml = numeric_modifier(ef, "Monster Level").to_int();
+                int miss = mlMiss(base + ml, targetML, mcd_max());
+                if (miss >= bestMiss) continue;
+                best = ef;
+                bestIsShrug = false;
+                bestMiss = miss;
+            }
+            if (best == $effect[none]) break;
+
+            tried[best] = true;
+            if (bestIsShrug)
+                cli_execute("shrug " + best);
+            else
+                cli_execute(best.default);
+            base = numeric_modifier("monster level").to_int() - current_mcd();
+        }
+
+        int mcd = max(0, min(mcd_max(), targetML - base));
+        if (mcd != current_mcd())
+            change_mcd(mcd);
+        int got = numeric_modifier("monster level").to_int();
+        print("tuneML: wanted " + targetML + ", got " + got
+            + (got == targetML ? "" : " (off by " + (got - targetML) + ")"), got == targetML ? "blue" : "red");
+    }
+
 // ─── 3. BANISH UTILITIES ─────────────────────────────────────────────────────
 
     record ban {

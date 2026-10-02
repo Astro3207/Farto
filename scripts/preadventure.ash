@@ -37,7 +37,7 @@ void mood(string function){
                 cli_execute("uneffect " + ef);
         foreach ef in $effects[Only Dogs Love a Drunken Sailor,How to Scam Tourists,Best Pals,Sweat equity, Flapper Dancin',Legendary Pasta Eyeball,
             The Ballad of Richie Thingfinder,material witness,
-            pride of the puffin, Singer's Faithful Ocelot,Drescher's Annoying Noise, Leash of Linguini, empathy,Thoughtful Empathy,
+            Singer's Faithful Ocelot, Leash of Linguini, empathy,Thoughtful Empathy,
             Disco Leer,Polka of Plenty,Tubes of Universal Meat,Lubricating Sauce,Strength of the Tortoise]{
             if (ef == $effect[material witness] && get_property("_jukebox") == "false"){
                 visit_url("showclan.php?whichclan=2046992052&action=joinclan&confirm=on");
@@ -255,124 +255,124 @@ void preAdv(){
         if (get_property("backOverride") != "")
             append(maximize, get_property("famEquipOverride"));
     } else {
+    //    print (maximize.to_string(),"red");
         if (get_property("unconditionalOverride") == ""){
-        // Hat
-        if (get_property("hatOverride") != "")
-            append(maximize, get_property("hatOverride"));
-        else if (my_familiar() == $familiar[cooler yeti] || my_familiar() == $familiar[chest mimic])
-            append(maximize, ", equip giant yellow hat");
-        // Mainhand
-        if (have_equipped($item[angelbone totem]) || my_spleen_use() > 15)
-            append(maximize, ", equip angelbone totem");
-        else if (clubEmReady)
-            append(maximize, ", equip legendary seal-clubbing club");
-        else if (get_property("mainOverride") != "")
-            append(maximize, get_property("mainOverride"));
-        else if (get_property("weaponOverride") != "")
-            append(maximize, get_property("weaponOverride"));
-        else if (dayType() == 0 && my_class() == $class[seal clubber])
-            append(maximize, ", equip monodent");
-        else if (jokesterReady && get_property("script") != "coat" && get_property("script") != "stick" && get_property("script") != "farto")
-            append(maximize, ", equip The Jokester's gun");
-        else if (my_basestat($stat[muscle]) >= 200 && get_property("script") == "6-kiss")
-            append(maximize, ", equip dreadful glove");
-        else
-            append(maximize, ", equip june cleaver");
-        // Offhand
-        if (have_equipped($item[Drunkula's wineglass]))
-            append(maximize, ", equip Drunkula's wineglass");
-        else if (get_property("offOverride") != "")
-            append(maximize, get_property("offOverride"));
-        else if (get_property("shrunkenHeadZombieMonster") == "" && get_property("script") != "6-kiss" && item_amount($item[shrunken head]) > 0 && my_adventures() > 50)
-            append(maximize, ", equip shrunken head");
-        else if (clubEmExact && have_effect($effect[everything looks purple]) == 0)
-            append(maximize, ", equip roman candelabra");
-        else if (get_property("maxOverride") == "combat" || get_property("maxOverride") == "-combat")
-            append(maximize, "");
-        else if (get_property("script") == "farto" && !have_item($item[haiku katana]) && dayType() == 1)
-            append(maximize, ", equip Kramco Sausage-o-Matic");
-        else if (get_property("script") == "farto")
-            append(maximize, ", equip kol con snowglobe");
-        else
-            append(maximize, ", equip carnivorous potted plant");
-        // Back
-        if (get_property("backOverride") != "")
-            append(maximize, get_property("backOverride"));
-        else if (batReady)
-            append(maximize, ", equip bat wings");
-        // Shirt
-        if (have_equipped($item[devilbone corset]))
-            append(maximize, ", equip devilbone corset");
-        else if (get_property("shirtOverride") != "")
-            append(maximize, get_property("shirtOverride"));
-        else if (yellowReady && (my_adventures() > 100 || dayType() == 1))
-            append(maximize, ", equip parka (dilophosaur)");
-        else if (spikeReady)
-            append(maximize, ", equip parka (spikolodon)");
-        else if (my_basestat($stat[mysticality]) >= 200 && get_property("script") == "6-kiss")
-            append(maximize, ", equip dreadful sweater");
-        // Pants
-        if (have_equipped($item[devilbone greaves]))
-            append(maximize, ", equip devilbone greaves");
-        else if (get_property("pantsOverride") != "")
-            append(maximize, get_property("pantsOverride"));
-        else if (to_int(get_property("_pantsgivingCount")) < 4 && available_amount($item[pantsgiving]) > 0 && !($locations[The Dark Elbow of the Woods,The Dark Heart of the Woods,The Dark Neck of the Woods,Pandamonium Slums,Infernal Rackets Backstage] contains my_location()))
-            append(maximize, ", equip pantsgiving");
-        else if (get_property("sweat").to_int() < 90)
-            append(maximize, ", equip designer sweatpants");
-        else if (to_int(get_property("_pantsgivingCount")) < 500 && available_amount($item[pantsgiving]) > 0)
-            append(maximize, ", equip pantsgiving");
-        // Acc1
-        if (have_equipped($item[angelbone dice]))
-            append(maximize, ", equip angelbone dice");
-        else if (get_property("acc1Override") != "")
-            append(maximize, get_property("acc1Override"));
-        else if (dartReady && (my_adventures() > 40 || dayType() == 1))
-            append(maximize, ", equip everfull dart holster");
-        else if (greenReady && (my_adventures() > 30 || dayType() == 1))
-            append(maximize, ", equip spring shoes");
-        else if (bcz)
-            append(maximize, ", equip blood cubic zirconia");
-        else if (vote)
-            append(maximize, ", equip &quot;I Voted!&quot; sticker");
-        else
-            append(maximize, ", equip mafia thumb ring");
-        // Acc2
-        if (have_equipped($item[angelbone chopsticks]))
-            append(maximize, ", equip angelbone chopsticks");
-        else if (get_property("acc2Override") != "")
-            append(maximize, get_property("acc2Override"));
-        else if (have_equipped($item[angelbone dice]))
-            append(maximize, ", equip mafia thumb ring");
-        else if (avalancheReady)
-            append(maximize, ", equip McHugeLarge left ski");
-        else if (get_property("script") == "farto" && !have_item($item[haiku katana]))
-            append(maximize, ", equip spring shoes");
-        else
-            append(maximize, ", equip lucky gold ring");
-        // Acc3
-        if (have_equipped($item[devilbone rosary]))
-            append(maximize, ", equip devilbone rosary");
-        else if (get_property("acc3Override") != "")
-            append(maximize, get_property("acc3Override"));
-        else if (get_property("subscript") == "village")
-            append(maximize, ", equip Mesmereyes");
-        else if (MobiusNCReady())
-            append(maximize, ", equip mobius ring");
-        else if (get_property("script") == "farto")
-            append(maximize, ", equip mafia pointer finger ring");
-        else if (get_property("script") == "6-kiss")
-            append(maximize, ", equip Dreadsylvania Auditor's badge");
-        else
-            append(maximize, ", equip ordnance magnet");
-        // Fam equip
-        append(maximize, famEquip());
+            // Hat
+            if (get_property("hatOverride") != "")
+                append(maximize, get_property("hatOverride"));
+            else if (my_familiar() == $familiar[cooler yeti] || my_familiar() == $familiar[chest mimic])
+                append(maximize, ", equip giant yellow hat");
+            // Mainhand
+            if (have_equipped($item[angelbone totem]) || my_spleen_use() > 15)
+                append(maximize, ", equip angelbone totem");
+            else if (clubEmReady)
+                append(maximize, ", equip legendary seal-clubbing club");
+            else if (get_property("mainOverride") != "")
+                append(maximize, get_property("mainOverride"));
+            else if (get_property("weaponOverride") != "")
+                append(maximize, get_property("weaponOverride"));
+            else if (dayType() == 0 && my_class() == $class[seal clubber])
+                append(maximize, ", equip monodent");
+            else if (jokesterReady && get_property("script") != "coat" && get_property("script") != "stick" && get_property("script") != "farto")
+                append(maximize, ", equip The Jokester's gun");
+            else if (my_basestat($stat[muscle]) >= 200 && get_property("script") == "6-kiss")
+                append(maximize, ", equip dreadful glove");
+            else
+                append(maximize, ", equip june cleaver");
+            // Offhand
+            if (have_equipped($item[Drunkula's wineglass]))
+                append(maximize, ", equip Drunkula's wineglass");
+            else if (get_property("offOverride") != "")
+                append(maximize, get_property("offOverride"));
+            else if (get_property("shrunkenHeadZombieMonster") == "" && get_property("script") != "6-kiss" && item_amount($item[shrunken head]) > 0 && my_adventures() > 50)
+                append(maximize, ", equip shrunken head");
+            else if (clubEmExact && have_effect($effect[everything looks purple]) == 0)
+                append(maximize, ", equip roman candelabra");
+            else if (get_property("maxOverride") == "combat" || get_property("maxOverride") == "-combat")
+                append(maximize, "");
+            else if (get_property("script") == "farto" && !have_item($item[haiku katana]) && dayType() == 1)
+                append(maximize, ", equip Kramco Sausage-o-Matic");
+            else if (get_property("script") == "farto")
+                append(maximize, ", equip kol con snowglobe");
+            else
+                append(maximize, ", equip carnivorous potted plant");
+            // Back
+            if (get_property("backOverride") != "")
+                append(maximize, get_property("backOverride"));
+            else if (batReady)
+                append(maximize, ", equip bat wings");
+            // Shirt
+            if (have_equipped($item[devilbone corset]))
+                append(maximize, ", equip devilbone corset");
+            else if (get_property("shirtOverride") != "")
+                append(maximize, get_property("shirtOverride"));
+            else if (yellowReady && (my_adventures() > 100 || dayType() == 1))
+                append(maximize, ", equip parka (dilophosaur)");
+            else if (spikeReady)
+                append(maximize, ", equip parka (spikolodon)");
+            else if (my_basestat($stat[mysticality]) >= 200 && get_property("script") == "6-kiss")
+                append(maximize, ", equip dreadful sweater");
+            // Pants
+            if (have_equipped($item[devilbone greaves]))
+                append(maximize, ", equip devilbone greaves");
+            else if (get_property("pantsOverride") != "")
+                append(maximize, get_property("pantsOverride"));
+            else if (to_int(get_property("_pantsgivingCount")) < 4 && available_amount($item[pantsgiving]) > 0 && !($locations[The Dark Elbow of the Woods,The Dark Heart of the Woods,The Dark Neck of the Woods,Pandamonium Slums,Infernal Rackets Backstage] contains my_location()))
+                append(maximize, ", equip pantsgiving");
+            else if (get_property("sweat").to_int() < 90)
+                append(maximize, ", equip designer sweatpants");
+            else if (to_int(get_property("_pantsgivingCount")) < 500 && available_amount($item[pantsgiving]) > 0)
+                append(maximize, ", equip pantsgiving");
+            // Acc1
+            if (have_equipped($item[angelbone dice]))
+                append(maximize, ", equip angelbone dice");
+            else if (get_property("acc1Override") != "")
+                append(maximize, get_property("acc1Override"));
+            else if (dartReady && (my_adventures() > 40 || dayType() == 1))
+                append(maximize, ", equip everfull dart holster");
+            else if (greenReady && (my_adventures() > 30 || dayType() == 1))
+                append(maximize, ", equip spring shoes");
+            else if (bcz)
+                append(maximize, ", equip blood cubic zirconia");
+            else if (vote)
+                append(maximize, ", equip &quot;I Voted!&quot; sticker");
+            else
+                append(maximize, ", equip mafia thumb ring");
+            // Acc2
+            if (have_equipped($item[angelbone chopsticks]))
+                append(maximize, ", equip angelbone chopsticks");
+            else if (get_property("acc2Override") != "")
+                append(maximize, get_property("acc2Override"));
+            else if (have_equipped($item[angelbone dice]))
+                append(maximize, ", equip mafia thumb ring");
+            else if (avalancheReady)
+                append(maximize, ", equip McHugeLarge left ski");
+            else if (get_property("script") == "farto" && !have_item($item[haiku katana]))
+                append(maximize, ", equip spring shoes");
+            else
+                append(maximize, ", equip lucky gold ring");
+            // Acc3
+            if (have_equipped($item[devilbone rosary]))
+                append(maximize, ", equip devilbone rosary");
+            else if (get_property("acc3Override") != "")
+                append(maximize, get_property("acc3Override"));
+            else if (get_property("subscript") == "village")
+                append(maximize, ", equip Mesmereyes");
+            else if (MobiusNCReady())
+                append(maximize, ", equip mobius ring");
+            else if (get_property("script") == "farto")
+                append(maximize, ", equip mafia pointer finger ring");
+            else if (get_property("script") == "6-kiss")
+                append(maximize, ", equip Dreadsylvania Auditor's badge");
+            else
+                append(maximize, ", equip ordnance magnet");
+            // Fam equip
+            append(maximize, famEquip());
+        }
     }
-    }
-
+  //  print (maximize.to_string(),"red");
     if (!maximize(maximize.to_string(), false))
         abort();
-
     // Sheriff override — only in non-slime non-angelbone-totem context
  //   if (get_property("script") != "slime" && sheriff && !have_equipped($item[angelbone totem]) && get_property("script") != "coat" && get_property("script") != "stick" && get_property("script") != "FreeKill" && get_property("script") != "farto")
    //     cli_execute("equip sheriff pistol; equip acc2 sheriff moustache; equip acc3 sheriff badge");
@@ -481,6 +481,10 @@ void preAdv(){
         retrieve_item(110,$item[new age healing crystal]);
     if (item_amount($item[Arr\, M80]) < 60)
         retrieve_item(70,$item[Arr\, M80]);
+
+    if (get_property("maxOverride") == "-mus,-mys,-mox"){
+        set_property("maxOverride","");
+    }
 }
 
 void main(){

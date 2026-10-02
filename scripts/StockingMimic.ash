@@ -1526,6 +1526,9 @@ void LBMWPrep(boolean CMOI){
     mimicPrep();
 }
 
+void roseGarden(){
+ //   abort("insert temporary rose garden script here");
+}
 
 void locationBasedWeakMonsters(){
     step("phase: weakMonsters start");
@@ -1758,7 +1761,7 @@ void miscellaneousFams(){
         set_property("subscript","");
         set_property("maxOverride","familiar weight");
     }
-    if (get_property("_pocketProfessorLectures").to_int() == 0 && get_property("_locketMonstersFought").split_string(",").count() < 3 && dayType() == 1){
+    if (get_property("_pocketProfessorLectures").to_int() == 0 && get_property("_locketMonstersFought").split_string(",").count() < 3 && !contains_text(get_property("_locketMonstersFought"),"1199") && dayType() == 1){
         set_property("maxOverride","familiar weight");
         set_property("famOverride","comma Chameleon");
         set_property("pantsOverride",", equip tearaway Pants");
@@ -1844,6 +1847,8 @@ void bulkFKD2(){
         banishFish();
     step ("phase: use up hidden city");
     restOfHiddenCity();
+    step ("phase: rose garden");
+    roseGarden();
     step("phase: bulkFK habitat recall");
     habitatRecall();
     step("phase: bulkFK backup camera");
@@ -1926,6 +1931,8 @@ void locationBasedAdventuring(){
     miscellaneousFams();
     step ("phase: use up hidden city");
     restOfHiddenCity();
+    step ("phase: rose garden");
+    roseGarden();
     step("phase: bulkFK habitat recall");
     habitatRecall();
     step("phase: bulkFK backup camera");
