@@ -1136,7 +1136,7 @@ void backup(){
     set_property("acc3Override","");
 }
 void mimicEgg(){
-    while (item_amount($item[mimic egg]) > 0 && dayType() == 1){
+    while (item_amount($item[mimic egg]) > 0 && dayType() == 1 && contains_text(get_property("mimicEggMonsters"),"1202")){
         mimicPrep();
         main@preadventure( );
         cli_execute("c2t_megg fight Black Crayon Mer-kin");
