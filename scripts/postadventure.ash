@@ -944,7 +944,7 @@ void spendAdv(){
     }
     if (get_property("questL05Goblin") != "started" && to_int(get_property("blackForestProgress")) >= 5 && item_amount($item[observational glasses]) > 0 && have_effect($effect[Patent Aggression]) > 0)
         cli_execute("uneffect Patent Aggression");
-    if (have_effect($effect[everything looks beige]) == 0 && (my_adventures() > 50 || dayType() == 1))
+    if (have_effect($effect[everything looks beige]) == 0 && (my_adventures() > 50 || dayType() == 1) && have_item($item[crepe paper parachute]))
         chargeFams();
 
     location CBBLoc = to_location(get_property("_cookbookbatQuestLastLocation"));
