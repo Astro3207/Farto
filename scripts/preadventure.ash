@@ -3,7 +3,7 @@ import postadventure.ash;
 
 void mood(string function){
     if (get_property("script") == "6-kiss"){
-        foreach ef in $effects[Troubled Waters, Pride of the Puffin, Ur-Kel's Aria of Annoyance, Drescher's Annoying Noise, Let's Go Shopping!]
+        foreach ef in $effects[Troubled Waters, Pride of the Puffin, Ur-Kel's Aria of Annoyance, Drescher's Annoying Noise, ode to booze, Let's Go Shopping!]
             if (have_effect(ef) > 0)
                 cli_execute("uneffect " + ef);
         if (current_mcd() > 0)
