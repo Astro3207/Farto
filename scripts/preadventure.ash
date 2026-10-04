@@ -105,12 +105,15 @@ void preAdv(){
                 if (have_effect($effect[heart of white]) == 0)
                     use($item[white candy heart]);
             } else if (numeric_modifier("familiar weight") > 49){
-                altFam($familiar[robortender]);
+                if (have_familiar($familiar[robortender]))
+                    use_familiar($familiar[robortender]);
+                else
+                    use_familiar($familiar[comma chameleon]);
             } else if ($familiar[cooler yeti].experience < 400 && get_property("_coolerYetiAdventures") == "false" && (dayType() == 0 || inebriety_limit() - 4 > my_inebriety())){
                 use_familiar($familiar[cooler yeti]);
                 if (have_effect($effect[heart of white]) == 0)
                     use($item[white candy heart]);
-            } else if (get_property("_knuckleboneDrops").to_int() < 100 && my_name().to_lower_case() == "fart scauce" && my_location().environment != "underwater")
+            } else if (get_property("_knuckleboneDrops").to_int() < 100 && item_amount($item[knucklebone]) < 10000 && my_name().to_lower_case() == "fart scauce" && my_location().environment != "underwater")
                 use_familiar($familiar[skeleton of crimbo past]);
             else if (maxOvr == "item drop" || get_property("_mapToACandyRichBlockDrops").to_int() < 1)
                 use_familiar($familiar[jill-of-all-trades]);
@@ -137,7 +140,6 @@ void preAdv(){
             return ", equip Li'l Businessman Kit";
         }
         if ((my_familiar() == $familiar[robortender] || (my_familiar() == $familiar[Comma Chameleon]) && (chameleon() == $familiar[none] || chameleon() == $familiar[robortender])) && get_property("script") == "farto"){
-            print(chameleon(),"red");
             if (dayType() == 0)
                 abort("not worth the resources D1, script it out");
             if (my_familiar() == $familiar[Comma Chameleon] && chameleon() == $familiar[none]){
@@ -255,7 +257,6 @@ void preAdv(){
         if (get_property("backOverride") != "")
             append(maximize, get_property("famEquipOverride"));
     } else {
-    //    print (maximize.to_string(),"red");
         if (get_property("unconditionalOverride") == ""){
             // Hat
             if (get_property("hatOverride") != "")
@@ -370,7 +371,7 @@ void preAdv(){
             append(maximize, famEquip());
         }
     }
-  //  print (maximize.to_string(),"red");
+
     if (!maximize(maximize.to_string(), false))
         abort();
     // Sheriff override — only in non-slime non-angelbone-totem context
@@ -466,7 +467,7 @@ void preAdv(){
             take_closet($item[shard of double-ice]);
         else 
             retrieve_item($item[shard of double-ice]);
-    } else {
+    } else if (chameleon() != $familiar[vampire vintner]){
         put_closet(item_amount($item[shard of double-ice]),$item[shard of double-ice]);
     }
     if (item_amount($item[4-D camera]) == 0)

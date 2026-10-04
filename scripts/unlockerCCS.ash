@@ -237,6 +237,16 @@ void main(int round, monster mob, string page_text) {
     print ("high stat is " + max(my_buffedstat($stat[muscle]),my_buffedstat($stat[mysticality]),my_buffedstat($stat[moxie])));
     
     if (get_property("vintnerCharge").to_int() == 13 && (my_familiar() == $familiar[vampire vintner] || (my_familiar() == $familiar[Comma Chameleon] && chameleon() == $familiar[Vampire Vintner]))){
+        if (current_round() == 1){
+            throw_items($item[grody jug],$item[pufferfish spine]);
+        }
+        while (current_round() > 1 && current_round() < 20){
+            throw_items($item[pufferfish spine],$item[pufferfish spine]);
+        }
+        if (current_round() == 20)
+            throw_item($item[pufferfish spine]);
+        while (current_round() > 20 && current_round() < 26)
+            throw_item($item[facsimile dictionary]);
         abort("Manually charge up vintner for now");   
     }
 
@@ -318,7 +328,7 @@ void main(int round, monster mob, string page_text) {
     if (last_monster() != $monster[shadow scythe] && last_monster() != $monster[shadow spire] && last_monster() != $monster[Guard turtle] && !have_equipped($item[backup camera])) {
         if (have_skill($skill[McHugeLarge Avalanche]))         use_skill($skill[McHugeLarge Avalanche]);
         if (have_skill($skill[Launch spikolodon spikes]))      use_skill($skill[Launch spikolodon spikes]);
-        if (have_skill($skill[sing along]))      use_skill($skill[sing along]);
+        if (have_skill($skill[sing along]) && my_familiar() != $familiar[pair of stomping boots] && chameleon() != $familiar[pair of stomping boots])      use_skill($skill[sing along]);
         if (have_skill($skill[Prepare to reanimate your Foe])) use_skill($skill[Prepare to reanimate your Foe]);
         if (item_amount($item[cosmic bowling ball]) > 0){
             use_skill($skill[Bowl Straight Up]);

@@ -11,7 +11,7 @@ void astral(){
     }
 }
 void timeArrow(){
-    if (to_int(get_property("valueOfAdventure"))*5 > mall_price($item[time's arrow])){
+    if (to_int(get_property("valueOfAdventure"))*5 > mall_price($item[time's arrow]) || my_adventures() < 3){
         retrieve_item($item[time's arrow]);
         cli_execute("csend time's arrow to botticelli");
     }
@@ -94,7 +94,8 @@ void partialConsume(int leaveStomach, int leaveLiver, int leaveSpleen){
 
 void yeti(){
     if ($familiar[cooler yeti].experience > 400 && get_property("_coolerYetiAdventures") == "false"){
-        cli_execute("CONSUME ORGANS 2 3 0");
+        if (my_fullness() < 2)
+            cli_execute("CONSUME ORGANS 2 3 0");
         use_familiar($familiar[cooler yeti]);
         visit_url("main.php?talktoyeti=1", false);    
         run_choice(2);
@@ -137,6 +138,10 @@ void unsaveResources(){
 
 boolean oneMore(){
     savedResources();
+    foreach ef in $effects[dirge of dreadfulness, Ur-Kel's Aria of Annoyance,Inigo's Incantation of Inspiration]{
+        if (have_effect(ef) > 0)
+            cli_execute("uneffect "+ef);
+    }
     cli_execute("CONSUME ORGANS 0 1 0");
     unsaveResources();
     return true;
@@ -152,6 +157,7 @@ void main(){
     clanAdv();
     if (dayType() == 1){
         cupOf13s();
+        cli_execute("uneffect ur-kel");
         astral();
         yeti();
         if (get_property("_borrowedTimeUsed") == false){
@@ -174,6 +180,10 @@ void main(){
             use($item[sweet tooth]);
         if (get_property("_voraciTeaUsed") == "false")
             use($item[Cuppa Voraci tea]);
+        foreach ef in $effects[dirge of dreadfulness, Ur-Kel's Aria of Annoyance,Inigo's Incantation of Inspiration]{
+            if (have_effect(ef) > 0)
+                cli_execute("uneffect "+ef);
+        }
         if (get_property("_milkOfMagnesiumUsed") == "false")
             cli_execute("CONSUME ORGANS 0 0 0");
     //    partialConsume(10,10,15);

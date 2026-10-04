@@ -845,7 +845,7 @@
                     && to_int(get_property("timesRested")) < total_free_rests()) {
                     if (cinchRestLoopCount++ > 50)
                         abort("NCforce: cincho rest-down looped over 50 times with no progress -- camp rest free is probably failing");
-                    cli_execute("unequip hat; equip apriling band helmet; camp rest free");
+                    cli_execute("familiar Skeleton of Crimbo Past; unequip hat; equip apriling band helmet; camp rest free");
                 }
                 if (to_int(get_property("_cinchUsed")) <= 40) {
                     equip($slot[acc3], $item[cincho de mayo]);

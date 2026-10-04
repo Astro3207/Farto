@@ -22,12 +22,12 @@ string [string] adventureAbortMessages = {
 
 // Equip the sword of s words and sniff its target (monster id 307) so the sword drop lines up.
 void swordPrep(){
-    if (item_amount($item[1950 Vampire Vintner wine]) == 0){
+    if ((item_amount($item[1950 Vampire Vintner wine]) == 0 && get_property("vintnerCharge").to_int() < 13) || (get_property("vintnerCharge").to_int() == 13 && my_location() == $location[the black forest])){
         if (get_property("vintnerCharge").to_int() > 10){
             if (have_effect($effect[stenchform]) == 0)
                 use($item[phial of stench]);
-            if (item_amount($item[pufferfish spine]) < 30)
-                retrieve_item(30,$item[pufferfish spine]);
+            if (item_amount($item[pufferfish spine]) < 38)
+                retrieve_item(38,$item[pufferfish spine]);
             if (item_amount($item[grody jug]) == 0)
                 retrieve_item($item[grody jug]);
             if (item_amount($item[shard of double-ice]) == 0)
@@ -36,7 +36,7 @@ void swordPrep(){
         if (get_property("vintnerCharge").to_int() == 13){
             set_property("maxOverride","-mus,-mys,-mox");
             if (numeric_modifier("monster level").to_int() != 10)
-                tuneML(30);
+                tuneML(50);
         }
         altFam($familiar[vampire vintner]);
     } else {
@@ -198,7 +198,7 @@ void outskirts() {
         if (get_property("_spikolodonSpikeUses").to_int() < 5)
             set_property("unconditionalOverride","familiar weight,equip parka (spikolodon)");
         else
-            set_property("unconditionalOverride","familiar weight");
+            set_property("unconditionalOverride","");
     }else 
         set_property("unconditionalOverride","");
     if (get_property("questG09Muscle") == "unstarted")
@@ -783,7 +783,8 @@ void azazelUnicornQuest(){
                     outskirts();
                 } else {
                     set_property("maxOverride","-combat");
-                    swordPrep();
+                    if (get_property("noncombatForcerActive") == false)
+                        swordPrep();
                     adv1(friarItemLocations[friarItem],0,"");
                 }
             }

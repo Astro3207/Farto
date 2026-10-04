@@ -164,9 +164,11 @@ void main(){
                     findHiddenTemple();
                 else if (available_amount($item[observational glasses]) == 0)
                     azazelUnicornQuest();
-                else if (get_property("questM10Azazel") != "finished" && have_effect($effect[Patent Aggression]) == 0)
+                else if (get_property("questM10Azazel") != "finished" && have_effect($effect[Patent Aggression]) == 0){
+                    if (my_adventures() == 1)
+                        cli_execute("ash import preconsume; timeArrow()");
                     azazelUnicornQuest();
-                else if (to_int(get_property("blackForestProgress")) < 5)
+                }else if (to_int(get_property("blackForestProgress")) < 5)
                     blackForest();
                 else if ((get_property("questG09Muscle") != "finished" && my_class() == $class[seal clubber]) || get_property("questL05Goblin") == "started")
                     outskirts();

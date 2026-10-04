@@ -29,11 +29,12 @@ void monkeyPaw(string buffType){
                 cli_execute("monkeypaw effect " + ef);
         }
     } else if (buffType == "familiar weight"){
-        foreach ef in $effects[covetous robbery, \[1701\]Hip to the Jive, Down With Chow,Chow Downed, squirming like a toad, heavy petting, cute vision, meat puppet, Braaaaaains, frosty,sinuses for miles]{
+        foreach ef in $effects[covetous robbery, Sweet Incentive, Down With Chow,Chow Downed, squirming like a toad, heavy petting, cute vision, meat puppet, Braaaaaains, frosty,sinuses for miles]{
             if (to_int(get_property("_monkeyPawWishesUsed")) == 5)
                 return;
-            if (have_effect(ef) == 0)
+            if (have_effect(ef) == 0){
                 cli_execute("monkeypaw effect " + ef);
+            }
         }
     }
 }
@@ -437,7 +438,7 @@ void dieting(){
                 abort("uneffect jelly-coated insides");
             if (get_property("spiceMelangeUsed") == "false" && my_fullness() > 3 && my_inebriety() > 3)
                 use ($item[spice melange]);
-            if (have_skill($skill[Sweat Out Some Booze]) && get_property("sweat").to_int() > 25)
+            if (have_skill($skill[Sweat Out Some Booze]) && get_property("sweat").to_int() >= 25)
                 use_skill($skill[Sweat Out Some Booze]);
         }
         if (get_property("_mimeArmyShotglassUsed") == "false")
@@ -565,7 +566,8 @@ void FKPrep(){
         aa("facsimile");
 	if (get_property("_shadowAffinityToday") == "false")
 		use($item[closed-circuit pay phone]);
-
+    if (item_amount($item[black garden rose]) > 0)
+        use($item[black garden rose]);
 	step("phase: FKPrep dieting");
 	if (my_inebriety() < inebriety_limit()){
 		dieting();
@@ -603,8 +605,8 @@ void FKPrep(){
         beretBuffs[0] = $effect[joy];
         beretBuffs[1] = $effect[Whole Latte Love];
         beretBuffs[2] = $effect[Bureaucratized];
-        beretBuffs[3] = $effect[Christmessy];
-        beretBuffs[4] = $effect[Sweet Incentive];
+        beretBuffs[3] = $effect[\[1701\]Hip to the Jive];
+        beretBuffs[4] = $effect[Christmessy];
     } else if (dayType() == 1){
         beretBuffs[0] = $effect[Optimist Primal];
         beretBuffs[1] = $effect[Beastly Flavor];
@@ -1526,8 +1528,90 @@ void LBMWPrep(boolean CMOI){
     mimicPrep();
 }
 
+// -- Black Rose Garden (choice 1637) -------------------------------------------
+// Every thing in the garden is a choice.php form: option 1 plus rgpoi/rgx/rgy/rgf.
+// Walking around is client-side only, so posting a point's form interacts
+// with it from anywhere. rgpoi indexes are renumbered after each action, so
+// re-parse the current page before every interaction.
+
+record rosePoi {
+    int i;
+    int x;
+    int y;
+    int f;
+    string label;      // button text minus " at position x,y"
+    boolean disabled;  // e.g. "blocked by monster at 7,15"
+};
+
+string [int] roseLoot     = {0: "wine", 1: "bowl", 2: "incense"};
+string [int] roseMonsters = {0: "flamingo", 1: "golem", 2: "ghost", 3: "angel", 4: "gnome"};
+
+boolean inRoseGarden(string page){
+    return contains_text(page, "name=whichchoice value=\"1637\"");
+}
+
+rosePoi [int] rosePois(string page){
+    rosePoi [int] out;
+    matcher m = create_matcher("class=rgpoi data-x=\"(\\d+)\" data-y=\"(\\d+)\" data-i=\"(\\d+)\">"
+        + ".*?name=\"rgf\" value=\"(-?\\d+)\"><input type=submit class=\"button( disabled)?\""
+        + " value=\"(.+?) at position", page);
+    while (m.find())
+        out[count(out)] = new rosePoi(m.group(3).to_int(), m.group(1).to_int(),
+            m.group(2).to_int(), m.group(4).to_int(), m.group(6), m.group(5) != "");
+    return out;
+}
+
+// First enabled point whose label starts with verb and names one of keys.
+rosePoi roseFind(rosePoi [int] pois, string verb, string [int] keys){
+    foreach _, p in pois{
+        if (p.disabled || !p.label.starts_with(verb)) continue;
+        foreach k, key in keys
+            if (contains_text(p.label.to_lower_case(), key))
+                return p;
+    }
+    return new rosePoi(-1);
+}
+
+string roseInteract(rosePoi p){
+    print("Rose garden: " + p.label + " at " + p.x + "," + p.y, "blue");
+    return run_choice(1, "rgpoi=" + p.i + "&rgx=" + p.x + "&rgy=" + p.y + "&rgf=" + p.f);
+}
+
+// Loot every wine / bowl / incense first, then fight every listed monster, then
+// leave. Fights get the usual mimic prep and pre/post-adventure hooks, which
+// means re-entering the garden afterwards, because the maximize can't run
+// from inside the choice. Loot that a monster was blocking unlocks once it dies.
 void roseGarden(){
- //   abort("insert temporary rose garden script here");
+    string garden = "campground.php?action=rosegarden";
+    string page = visit_url(garden);
+    int loopCount = 0;
+    while (inRoseGarden(page)){
+        if (loopCount++ > 40)
+            abort("roseGarden: looped over 40 times -- an interaction probably isn't changing the garden");
+        rosePoi [int] pois = rosePois(page);
+
+        rosePoi loot = roseFind(pois, "Take", roseLoot);
+        if (loot.i >= 0){
+            page = roseInteract(loot);
+            continue;
+        }
+
+        rosePoi mob = roseFind(pois, "Fight", roseMonsters);
+        if (mob.i < 0) break;
+        run_choice(2);   // step out so the maximizer can change gear
+        mimicPrep();
+        main@preadventure();
+        page = visit_url(garden);
+        mob = roseFind(rosePois(page), "Fight", roseMonsters);
+        if (mob.i < 0) continue;
+        roseInteract(mob);
+        if (current_round() > 0)
+            run_combat();
+        main@postadventure();
+        page = visit_url(garden);
+    }
+    if (inRoseGarden(page))
+        run_choice(2);
 }
 
 void locationBasedWeakMonsters(){
@@ -1933,6 +2017,9 @@ void locationBasedAdventuring(){
     restOfHiddenCity();
     step ("phase: rose garden");
     roseGarden();
+    if (dayType() == 1 && mall_price($item[Homeowner's loam]) < 50000){
+        abort("Script in using loams for black rose garden");
+    }
     step("phase: bulkFK habitat recall");
     habitatRecall();
     step("phase: bulkFK backup camera");
