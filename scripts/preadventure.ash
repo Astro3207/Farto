@@ -469,7 +469,7 @@ void preAdv(){
             take_closet($item[shard of double-ice]);
         else 
             retrieve_item($item[shard of double-ice]);
-    } else if (chameleon() != $familiar[vampire vintner]){
+    } else if (my_familiar != $familiar[vampire vintner]){
         put_closet(item_amount($item[shard of double-ice]),$item[shard of double-ice]);
     }
     if (item_amount($item[4-D camera]) == 0)

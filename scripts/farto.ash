@@ -160,6 +160,7 @@ void main(){
             if (numeric_modifier("sleaze damage") + numeric_modifier("sleaze spell damage") > 1600)
                 unlock_zeppelin();
             if (dayType() == 0 && (get_property("questM16Temple") != "finished" || get_property("questM10Azazel") != "finished" || to_int(get_property("blackForestProgress")) < 5 || get_property("questL05Goblin") == "started")){
+                cli_execute("postadventure");
                 if (get_property("questM16Temple") != "finished")
                     findHiddenTemple();
                 else if (available_amount($item[observational glasses]) == 0)
@@ -172,9 +173,9 @@ void main(){
                     blackForest();
                 else if ((get_property("questG09Muscle") != "finished" && my_class() == $class[seal clubber]) || get_property("questL05Goblin") == "started")
                     outskirts();
-            } else if (((my_class() == $class[pastamancer] || have_effect($effect[fishy]) > 0) && numeric_modifier($modifier[meat drop]) > 1700) || dayType() == 0)
+            } else if (((my_class() == $class[pastamancer] || have_effect($effect[fishy]) > 0) && numeric_modifier($modifier[meat drop]) > 1700) || dayType() == 0){
                 cowo();
-            else{
+            }else{
                 if (get_property("_stenchAirportToday") == "false")
                     use($item[one-day ticket to Dinseylandfill]);
                 garbo();

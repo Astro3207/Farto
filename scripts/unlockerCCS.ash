@@ -245,9 +245,9 @@ void main(int round, monster mob, string page_text) {
         }
         if (current_round() == 20)
             throw_item($item[pufferfish spine]);
+        abort("Throw shard of double ice and send me the results");  
         while (current_round() > 20 && current_round() < 25)
             throw_item($item[facsimile dictionary]);
-        abort("Manually charge up vintner for now");   
     }
 
     if (last_monster() == $monster[black crayon mer-kin]){

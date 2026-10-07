@@ -929,10 +929,20 @@ void spendAdv(){
             if (item_amount($item[shard of double-ice]) == 0)
                 retrieve_item($item[shard of double-ice]);
             set_property("famOverride","vampire vintner");
-            set_property("maxOverride","moxie, equip really nice swim, equip little bitty bathy, equip black glass, equip peridot");
+            set_property("maxOverride","moxie");
+            set_property("pantsOverride",", equip really nice swim");
+            set_property("acc1Override",", equip black glass");
+            set_property("acc2Override",", equip peridot");
+            set_property("famEquipOverride",", equip little bitty bathy");
             if (numeric_modifier("monster level").to_int() != 10)
                 tuneML(10);
-            abort("Hit up the sea");
+            adv1($location[the caliginous abyss]);
+            set_property("famOverride","");
+            set_property("maxOverride","");
+            set_property("pantsOverride","");
+            set_property("acc1Override","");
+            set_property("acc1Override","");
+            set_property("famEquipOverride","");
         }
         if (free_Kill()){
             if (get_property("script") != "6-kiss" && get_property("script") != "TTT" && get_property("script") != "slime" && dayType() == 1)
