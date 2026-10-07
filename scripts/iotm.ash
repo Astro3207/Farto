@@ -1056,6 +1056,7 @@
             matcher m = create_matcher("^\\s*(.+?)\\s*$", raw);
             if (!find(m)) continue;
             effect e = to_effect(m.group(1));
+            if (m.group(1).to_lower_case() == "hip to the jive") e = to_effect(1701);   // ambiguous name; always the 1701 one
             if (e != $effect[none]) out[e] = true;
         }
         return out;

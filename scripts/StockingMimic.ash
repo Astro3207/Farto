@@ -605,8 +605,8 @@ void FKPrep(){
         beretBuffs[0] = $effect[joy];
         beretBuffs[1] = $effect[Whole Latte Love];
         beretBuffs[2] = $effect[Bureaucratized];
-        beretBuffs[3] = $effect[\[1701\]Hip to the Jive];
-        beretBuffs[4] = $effect[Christmessy];
+        beretBuffs[3] = $effect[Christmessy];
+        beretBuffs[4] = $effect[\[1701\]Hip to the Jive];
     } else if (dayType() == 1){
         beretBuffs[0] = $effect[Optimist Primal];
         beretBuffs[1] = $effect[Beastly Flavor];
@@ -615,7 +615,10 @@ void FKPrep(){
         beretBuffs[4] = $effect[Souper Vengeful];
     }
     while (get_property("_beretBuskingUses").to_int() < 5){
-        beretBusking("familiar weight,meat drop",beretBuffs[get_property("_beretBuskingUses").to_int()].to_string());
+        if (beretBuffs[get_property("_beretBuskingUses").to_int()] == $effect[\[1701\]Hip to the Jive])
+            beretBusking("meat drop","Candied Teeth,Cool Catlike,Takin' It Greasy,Pharmaceutically Cool,Earthen Fist,Delayed Gratification,Work For Hours a Week,Stinking Cloud,Uncaged Power,Infernal Thirst");
+        else
+            beretBusking("15 familiar weight,meat drop",beretBuffs[get_property("_beretBuskingUses").to_int()].to_string());
     }
 	prepBuffs();
 	monkeypaw("familiar weight");
@@ -658,7 +661,7 @@ void FKPrep(){
 		cli_execute("combo 10");
 	}
     if (my_name().to_lower_case() == "fart scauce"){
-        foreach ef in $effects[familiar.enq]{
+        foreach ef in $effects[familiar.enq, your days are numbed]{
             if (have_effect(ef) > 0)
                 continue;
             if (numeric_modifier(ef,"familiar weight") * 27 * freeKillCount("both") > mall_price($item[pocket wish])){
@@ -1853,6 +1856,7 @@ void miscellaneousFams(){
         set_property("acc1Override", ", equip Mr. Cheeng's spectacles");
         set_property("acc2Override", ", equip Lucky gold ring");
         set_property("acc3Override", ", equip Portable Laughing Stock");
+        set_property("subscript","NonSMFK");
         altFam($familiar[Pocket Professor]);
         main@preadventure();
         cli_execute("reminisce Black Crayon Flower");
@@ -1864,6 +1868,7 @@ void miscellaneousFams(){
         set_property("acc2Override", "");
         set_property("acc3Override", "");
         set_property("offOverride", "");
+        set_property("subscript","");
     }
     if (get_property("_banderRunaways").to_int() < 20){
         set_auto_attack(0);
@@ -2129,6 +2134,8 @@ void main(){
     try {
         starter();
         if (get_property("expressCardUsed") == "false"){
+            if (get_property("_gitUpdated") == false)
+                cli_execute("breakfast.ash");
             if (get_property("prusias_profitTracking_date") != today_to_string( ))
                 cli_execute("ptrack add preprepD2");
             else if (!contains_text(get_property("thoth19_event_list"),"preprepD1") && dayType() == 0)
@@ -2136,9 +2143,10 @@ void main(){
             set_property("inSpendAdv","true");
             set_property("script","FreeKill");
             FKPrep();
-            if (!contains_text(get_property("thoth19_event_list"),"postprepD2"))
+            if (!contains_text(get_property("thoth19_event_list"),"postprepD2")){
+                stashreturn($item[pantsgiving]);
                 cli_execute("ptrack add postprepD2");
-            else if (!contains_text(get_property("thoth19_event_list"),"postprepD1") && dayType() == 0)
+            }else if (!contains_text(get_property("thoth19_event_list"),"postprepD1") && dayType() == 0)
                 cli_execute("ptrack add postprepD1");
         }
         if (dayType() == 0)

@@ -236,7 +236,7 @@ void main(int round, monster mob, string page_text) {
     print ("monster level is "+ numeric_modifier("monster level"));
     print ("high stat is " + max(my_buffedstat($stat[muscle]),my_buffedstat($stat[mysticality]),my_buffedstat($stat[moxie])));
     
-    if (get_property("vintnerCharge").to_int() == 13 && (my_familiar() == $familiar[vampire vintner] || (my_familiar() == $familiar[Comma Chameleon] && chameleon() == $familiar[Vampire Vintner]))){
+    if (get_property("vintnerCharge").to_int() == 13 && my_familiar() == $familiar[vampire vintner]){
         if (current_round() == 1){
             throw_items($item[grody jug],$item[pufferfish spine]);
         }
@@ -245,7 +245,7 @@ void main(int round, monster mob, string page_text) {
         }
         if (current_round() == 20)
             throw_item($item[pufferfish spine]);
-        while (current_round() > 20 && current_round() < 26)
+        while (current_round() > 20 && current_round() < 25)
             throw_item($item[facsimile dictionary]);
         abort("Manually charge up vintner for now");   
     }
@@ -417,7 +417,7 @@ void main(int round, monster mob, string page_text) {
             use_skill($skill[deliver your thesis!]);
         if (my_hp() < 500)
             throw_items($item[new age healing crystal],$item[new age healing crystal]);
-        sauce(3);
+        sauce(4);
         return;
     }
 

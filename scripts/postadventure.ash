@@ -22,33 +22,28 @@ string [string] adventureAbortMessages = {
 
 // Equip the sword of s words and sniff its target (monster id 307) so the sword drop lines up.
 void swordPrep(){
-    if ((item_amount($item[1950 Vampire Vintner wine]) == 0 && get_property("vintnerCharge").to_int() < 13) || (get_property("vintnerCharge").to_int() == 13 && my_location() == $location[the black forest])){
-        if (get_property("vintnerCharge").to_int() > 10){
-            if (have_effect($effect[stenchform]) == 0)
-                use($item[phial of stench]);
-            if (item_amount($item[pufferfish spine]) < 38)
-                retrieve_item(38,$item[pufferfish spine]);
-            if (item_amount($item[grody jug]) == 0)
-                retrieve_item($item[grody jug]);
-            if (item_amount($item[shard of double-ice]) == 0)
-                retrieve_item($item[shard of double-ice]);
-        }
-        if (get_property("vintnerCharge").to_int() == 13){
-            set_property("maxOverride","-mus,-mys,-mox");
-            if (numeric_modifier("monster level").to_int() != 10)
-                tuneML(50);
-        }
+    if (item_amount($item[1950 Vampire Vintner wine]) == 0 && get_property("vintnerCharge").to_int() < 13){
         altFam($familiar[vampire vintner]);
     } else {
         set_property("famOverride","sword of s words");
         use_familiar($familiar[sword of s words]);
         int loopCount = 0;
-        while (get_property("swordOfSWordsMonster") != "1085"){
-            if (loopCount++ > 20)
-                abort("swordPrep: looped over 20 times with no progress -- probably out of grizzled survivor reminisces");
-            set_property("killThisGuy","1085");
-            set_property("swordSniff","true");
-            cli_execute("reminisce grizzled survivor");
+        if (item_amount($item[synthetic dog hair pill]) < 10){
+            while (get_property("swordOfSWordsMonster") != "1085"){
+                if (loopCount++ > 20)
+                    abort("swordPrep: looped over 20 times with no progress -- probably out of grizzled survivor reminisces");
+                set_property("killThisGuy","1085");
+                set_property("swordSniff","true");
+                cli_execute("reminisce grizzled survivor");
+            }
+        } else {
+            while (get_property("swordOfSWordsMonster") != "1566"){
+                if (loopCount++ > 20)
+                    abort("swordPrep: looped over 20 times with no progress -- probably out of reminisces");
+                set_property("killThisGuy","1566");
+                set_property("swordSniff","true");
+                cli_execute("reminisce Sloppy Seconds Burger");
+            }
         }
         set_property("killThisGuy","");
         set_property("swordSniff","false");
@@ -591,7 +586,7 @@ void endOfDayHandling(){
     if (my_adventures() != 0)
         return;
     if (have_equipped($item[drunkula's wineglass]))
-        abort("Done for the day");
+        return;
     if ($strings[solobop, 6-kiss, coat, stick,TTT] contains get_property("script")){
         if (!have_equipped($item[angelbone chopsticks])){
             equip($slot[acc3],$item[angelbone chopsticks]);
@@ -923,6 +918,21 @@ void spendAdv(){
 
             set_property("mainOverride","");
             set_property("acc3Override","");
+        }
+        if (item_amount($item[1950 Vampire Vintner wine]) == 0 && get_property("vintnerCharge").to_int() == 13 && my_adventures() < 9){
+            if (have_effect($effect[stenchform]) == 0)
+                use($item[phial of stench]);
+            if (item_amount($item[pufferfish spine]) < 38)
+                retrieve_item(38,$item[pufferfish spine]);
+            if (item_amount($item[grody jug]) == 0)
+                retrieve_item($item[grody jug]);
+            if (item_amount($item[shard of double-ice]) == 0)
+                retrieve_item($item[shard of double-ice]);
+            set_property("famOverride","vampire vintner");
+            set_property("maxOverride","moxie, equip really nice swim, equip little bitty bathy, equip black glass, equip peridot");
+            if (numeric_modifier("monster level").to_int() != 10)
+                tuneML(10);
+            abort("Hit up the sea");
         }
         if (free_Kill()){
             if (get_property("script") != "6-kiss" && get_property("script") != "TTT" && get_property("script") != "slime" && dayType() == 1)

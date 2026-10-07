@@ -176,6 +176,7 @@ void main(int whichchoice, string page) {
         // ── simple: a single fixed run_choice(#), grouped by that number, then by case # ──
         case 633:
         case 705:
+        case 806:
         case 1344:
         case 1471:
         case 1472:
@@ -443,11 +444,13 @@ void main(int whichchoice, string page) {
         case 1557:
             if (my_location() == $location[the black forest]){
                 if (item_amount($item[broken wings]) == 0){
-                    run_choice(1, "bandersnatch=416");
+                    run_choice(1, "bandersnatch=1374");
                 } else if (item_amount($item[sunken eyes]) == 0){
                     run_choice(1, "bandersnatch=414");
                 }
             }
+            if (my_location() == $location[The Caliginous Abyss])
+                run_choice(1, "bandersnatch=1748");
             if (my_location() == $location[Madness Bakery])
                 run_choice(1, "bandersnatch=1748");
             if (my_location() == $location[barf mountain])

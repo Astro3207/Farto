@@ -176,7 +176,8 @@ void finalChores(){
         create($item[homeowner's loam]);
     }
     cli_execute("garden pick");
-    use($item[packet of rock seeds]);
+    if (have_item($item[packet of rock seeds]))
+        use($item[packet of rock seeds]);
     cli_execute("garden pick");
     if (have_skill($skill[That's not a knife]))
         use_skill($skill[That's not a knife]);

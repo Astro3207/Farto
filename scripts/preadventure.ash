@@ -115,6 +115,8 @@ void preAdv(){
                     use($item[white candy heart]);
             } else if (get_property("_knuckleboneDrops").to_int() < 100 && item_amount($item[knucklebone]) < 10000 && my_name().to_lower_case() == "fart scauce" && my_location().environment != "underwater")
                 use_familiar($familiar[skeleton of crimbo past]);
+            else if (get_property("_swordOfSWordsKills").to_int() < 100)
+                use_familiar($familiar[sword of s words]);
             else if (maxOvr == "item drop" || get_property("_mapToACandyRichBlockDrops").to_int() < 1)
                 use_familiar($familiar[jill-of-all-trades]);
             else if (maxOvr == "-combat")
