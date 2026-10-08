@@ -240,11 +240,12 @@ void main(int round, monster mob, string page_text) {
         if (current_round() == 1){
             throw_items($item[grody jug],$item[pufferfish spine]);
         }
-        while (current_round() > 1 && current_round() < 20){
+        while (current_round() > 1 && current_round() < 5){
+            throw_items($item[crayon shavings],$item[pufferfish spine]);
+        }
+        while (current_round() > 4 && current_round() < 22){
             throw_items($item[pufferfish spine],$item[pufferfish spine]);
         }
-        if (current_round() == 20)
-            throw_item($item[pufferfish spine]);
         abort("Throw shard of double ice and send me the results");  
         while (current_round() > 20 && current_round() < 25)
             throw_item($item[facsimile dictionary]);
