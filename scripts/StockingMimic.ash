@@ -411,7 +411,8 @@ void dieting(){
 		// Strip every effect that might get in the way of effect extenders
         if (have_item($item[Bowl of Infinite Jelly]))
             put_closet($item[Bowl of Infinite Jelly]);
-        use_skill($skill[disco nap]);
+        if (have_effect($effect[Marked by the Don]) > 0)
+            use_skill($skill[disco nap]);
 		foreach ef in my_effects(){
 			if ($effects[Shadow Affinity, On the Trail, Lucky!, Apriling Band Battle Cadence,
 				Everything Looks Red, Everything Looks Yellow, Everything Looks Green,
