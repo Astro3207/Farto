@@ -684,17 +684,15 @@ void FKPrep(){
 		cli_execute("beach head 10");
 		cli_execute("combo 10");
 	}
-    if (my_name().to_lower_case() == "fart scauce"){
-        foreach ef in $effects[familiar.enq, All Is Forgiven, loyal tea]{
-            if (have_effect(ef) > 0)
-                continue;
-            if (numeric_modifier(ef,"familiar weight") * 27 * freeKillCount("both") > mall_price($item[pocket wish])){
-                cli_execute("genie effect " + ef);
-            }
+    foreach ef in $effects[familiar.enq, All Is Forgiven, loyal tea]{
+        if (have_effect(ef) > 0)
+            continue;
+        if (numeric_modifier(ef,"familiar weight") * 27 * freeKillCount("both") > mall_price($item[pocket wish])){
+            cli_execute("genie effect " + ef);
         }
-        altFam($familiar[stocking mimic]);
-        feedCandy();
     }
+    altFam($familiar[stocking mimic]);
+    feedCandy();
 	step("phase: FKPrep stash pops");
 	// Stash-borrowed one-a-day item pops.
 	foreach it in $items[defective Game Grid token, BittyCar MeatCar, Platinum Yendorian Express Card]{
@@ -759,7 +757,7 @@ void augustCat(){
 
 void augustGolem(){
     print("attempting to call august golem");
-    if (get_property("_aug22Cast") == false && to_int(get_property("_augSkillsCast")) < 5) {
+    if (get_property("_aug22Cast") == false && to_int(get_property("_augSkillsCast")) <= 5) {
         main@preadventure( );
         cli_execute("cast Aug. 22");
         main@postadventure( );
