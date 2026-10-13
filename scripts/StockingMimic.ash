@@ -1953,13 +1953,38 @@ void peridotFishing(){
     string perilLocations;
     repeat {
         perilLocations = get_property("_perilLocations");
-        foreach loc in $locations[]{
+        foreach loc in $locations[The Spooky Forest,The Unquiet Garves,The Bat Hole Entrance,
+              Guano Junction,The Batrat and Ratbat Burrow,
+              The Beanbat Chamber,Outskirts of Camp Logging Camp,Camp Logging Camp,
+              South of the Border,Cobb's Knob Laboratory,
+              The Penultimate Fantasy Airship,The Sleazy Back Alley,
+              The Haunted Pantry,The Outskirts of Cobb's Knob,
+              The Haiku Dungeon,The Briny Deeps,The Brinier Deepers,The Briniest Deepests,
+              An Octopus's Garden,The Wreck of the Edgar Fitzsimmons,
+              Madness Reef,The Marinara Trench,
+              Anemone Mine,The Dive Bar,The Mer-Kin Outpost,The Coral Corral,Mer-kin Elementary School,
+              Mer-kin Library,The Red Queen's Garden,
+              The Enormous Greater-Than Sign,Noob Cave,
+              The Laugh Floor,Infernal Rackets Backstage,
+              Cobb's Knob Barracks,Cobb's Knob Kitchens,
+              Cobb's Knob Harem,Cobb's Knob Treasury,
+              The Defiled Cranny,The Defiled Niche,
+              The Defiled Nook,The Goatlet,
+              The Hidden Temple,The Smut Orc Logging Camp,
+              The Caliginous Abyss,Dreadsylvanian Woods,
+              Dreadsylvanian Village,Dreadsylvanian Castle,
+              The Hidden Bowling Alley,The Hidden Park,
+              The Degrassi Knoll Restroom,The Degrassi Knoll Bakery,
+              The Degrassi Knoll Gym,The Degrassi Knoll Garage,
+              The Old Landfill,The Arid\, Extra-Dry Desert,
+              The Red Zeppelin,The Thinknerd Warehouse,
+              The Haunted Kitchen,The Haunted Conservatory,
+              The Black Forest,The Skeleton Store,
+              Madness Bakery,The Overgrown Lot,The Deep Machine Tunnels,
+              An Unusually Quiet Barroom Brawl,The Fungus Plains,
+              Hero's Field,Vanya's Castle,Megalo-City,Pandamonium Slums]{
             set_property("subscript","peridot");
             if (periledLocations()[loc] == false && can_adventure(loc) == true && loc.wanderers == true){
-                if ($locations[The Slime Tube,The Roulette Tables,The Poker Room,The Limerick Dungeon,The Primordial Soup,Poisoned Spleen,Bloated and Nauseous,Seaside Megalopolis,Mer-kin Colosseum,Mer-kin Gymnasium,Cyberzone 1,Cyberzone 2,Cyberzone 3,The Road to the White Citadel,Whitey's Grove,The Knob Shaft,Itznotyerzitz Mine,Mt. Molehill,The Defiled Alcove,A Mob of Zeppelin Protesters] contains loc)
-                    continue;
-                if (loc.zone == "Hobopolis")
-                    continue;
                 if (loc == $location[Pandamonium Slums] && available_amount($item[Hey Deze map]) == 0)
                     continue;
                 mimicPrep();
