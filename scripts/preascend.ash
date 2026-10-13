@@ -223,7 +223,7 @@ void ascend(){
         visit_url("afterlife.php?action=ascend&confirmascend=1&whichsign=8&gender=1&whichclass=6&whichpath=55&asctype=2&lamesignok=1&nopetok=1");
         visit_url("main.php");
         run_choice(-1);
-    } else if (my_name().to_lower_case() == "fart scauce" && user_confirm("Grab PYEC?")){
+    } else if (my_name().to_lower_case() == "fart scauce" && get_property("runType") == "world event" && user_confirm("Grab PYEC?")){
         visit_url("showclan.php?whichclan=2047009940&action=joinclan&confirm=on");
         take_stash(1,$item[Platinum Yendorian Express Card]);
         set_property("garbo_valueOfFreeFight","1000");
