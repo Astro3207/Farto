@@ -558,10 +558,8 @@ void feedCandy(){
             if (get_property("lastStockingMimicReset").to_int() != my_ascensions( )){
                 set_property("lastStockingMimicReset",my_ascensions( ));
                 set_property("mimicCandiesFed",numFed);
-                user_confirm("continue1?");
             } else {
                 set_property("mimicCandiesFed",get_property("mimicCandiesFed").to_int() + numFed);
-                user_confirm("continue2?");
             }
         } else {
             cli_execute("refresh all");
@@ -593,10 +591,8 @@ void FKPrep(){
 		dieting();
 	}
     if (my_name().to_lower_case() == "fart scauce"){
-        print ("Check if the script is actually buying some confections");
-        retrieve_item(25, $item[bag of many confections]);
+        retrieve_item(40, $item[bag of many confections]);
         retrieve_item(25, $item[stomp box]);
-        user_confirm ("Check if the script is actually buying some confections");
     } else {
         abort();
     }

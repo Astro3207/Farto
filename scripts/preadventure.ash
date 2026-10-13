@@ -104,7 +104,7 @@ void preAdv(){
                 use_familiar(famOvr.to_familiar());
     //        else if (have_effect($effect[Citizen of a Zone]) == 0 && get_property("screechCombats").to_int() > 0)
        //         use_familiar($familiar[patriotic eagle]);
-            else if (item_amount($item[1950 Vampire Vintner wine]) == 0 && get_property("vintnerCharge").to_int() < 13 && dayType() == 0)
+            else if (item_amount($item[1950 Vampire Vintner wine]) == 0 && dayType() == 0)
                 use_familiar($familiar[vampire vintner]);
             else if ($familiar[chest mimic].experience < 900){
                 use_familiar($familiar[chest mimic]);
