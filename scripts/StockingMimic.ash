@@ -926,7 +926,9 @@ void MobiusMaybe(){
     if (get_property("_timeCopsFoughtToday").to_int() < 10)
         set_property("acc2Override",", equip mobius ring");
 }
-void uneffectBuff(){
+// Shrug the effect giving the most of your highest buffed stat. Returns false
+// when there was nothing to shrug or the shrug failed.
+boolean uneffectBuff(){
     float [stat] adjBase_Stat = {
         $stat[muscle]:30,
         $stat[mysticality]:50,
@@ -953,7 +955,13 @@ void uneffectBuff(){
             toRemove = ef;
         }
     }
-    cli_execute("uneffect " + toRemove);
+    // Nothing left to shed (stats are all from gear, or the only buff is
+    // wine-befouled), or the uneffect didn't take -- tell the caller to stop.
+    if (toRemove == $effect[none])
+        return false;
+    if (!cli_execute("uneffect " + toRemove))
+        return false;
+    return have_effect(toRemove) == 0;
 }
 boolean looseFK(){
     set_property("maxOverride","familiar weight, equip eternity codpiece");
@@ -1109,6 +1117,10 @@ void pearloP3(){
     }
 }
 void gingerbread(){
+    if (my_name().to_lower_case() == "the great white hunter"){
+        set_property("_gingerbreadCityTurns","30");
+        return;
+    }
     if (get_property("gingerbreadCityAvailable") == false){
         if (get_property("_gingerbreadCityToday") == false)
             use($item[counterfeit city]);
@@ -1253,33 +1265,23 @@ int highHPTarget()
     return (23 * passiveDamage()) + estimatedIceDamage();
 
 
+// m.base_hp already includes current ML, so test it directly against
+// lowHPTarget() after each buff rather than tracking an ML target.
 boolean buffML(monster m){
-    int currentML = numeric_modifier("Monster level");
-    int targetML = currentML + (lowHPTarget()-m.base_hp);
-    //Monster level. Needs reconsidering to work with weakMonsters()
     foreach ef in $effects[Ur-Kel's Aria of Annoyance,Pride of the Puffin,Bloodbathed,Misplaced Rage,Manbait,Sweetbreads Flamb&eacute;,Red Lettered,Spangled Star,Tortious,Litterbug,Not Sharing,Para-lyzed Jaw,Contemptible Emanations,Lapdog,Ashen Burps,The Cupcake of Wrath,Gelded,Mysteriously Handsome]{
-        targetML = currentML + (lowHPTarget()-m.base_hp);
+        if (m.base_hp > lowHPTarget())
+            break;
         if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
             continue;
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
             continue;
-        if (numeric_modifier("Monster level") >= targetML)
-            break;
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
-    if (numeric_modifier("Monster level") < targetML)
-        change_mcd(11);
-    if (numeric_modifier("Monster level") >= targetML)
-        return true;
-    else
-        return false;
+    if (m.base_hp <= lowHPTarget() && mcd_max() > current_mcd())
+        change_mcd(mcd_max());
+    return m.base_hp > lowHPTarget();
 }
-// Can monster m be free-killed right now without chip damage killing it first?
-// Toggles the april shower thoughts shield (extra double-ice) via offOverride when
-// the monster has HP to spare, and buffs ML to pad it when it's too fragile;
-// returns false only when even a maxed ML can't make it safe -- the caller then
-// skips the fight. A $monster[none] (name lookup missed) is treated as safe.
 boolean safeToFK(monster m){
     print(m + " HP will be " + m.base_hp);
     print("Icicle damage is " + estimatedIceDamage());
@@ -1298,10 +1300,13 @@ boolean safeToFK(monster m){
         return true;
     if (buffML(m))
         return true;
+    while (m.base_hp <= lowHPTarget())
+        if (!uneffectBuff())
+            break;
+    if (m.base_hp <= lowHPTarget())
+        return false;
     else
-        while (m.base_hp < lowHPTarget())
-            uneffectBuff();
-    return false;
+        return true;
 }
 
 // The single protonic ghost that haunts each almost-dead walkie-talkie zone, so
@@ -1367,7 +1372,7 @@ string pickWeakling(boolean checkHP){
         && (!checkHP || safeToFK(to_monster("vandal kid"))))
         return "trickortreat";
     if (get_property("_cargoPocketEmptied") != "true"
-        && (!checkHP || safeToFK(to_monster("haxx0r"))))
+        && (!checkHP || safeToFK($monster[1335 HaXx0r])))
         return "shorts";
     if (to_int(get_property("_speakeasyFreeFights")) < 3
         && (!checkHP || safeToFK(to_monster("traveling hobo"))))
