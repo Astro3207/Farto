@@ -265,7 +265,7 @@ void lawOfAverages(){
 void sweatpants(){
     if (get_property("_sweatOutSomeBoozeUsed").to_int() < 3 && my_inebriety() > 3 && get_property("sweat").to_int() >= 25)
         use_skill($skill[sweat out some booze]);
-    else if (to_int(get_property("_pantsgivingCount")) >= 500 && ((dayType() == 0 && my_adventures() > 100) || dayType() == 1) && get_property("sweat").to_int() >= 15){
+    else if (to_int(get_property("_pantsgivingCount")) >= 500 && ((dayType() == 0 && my_adventures() > 100) || dayType() == 1) && get_property("sweat").to_int() >= 50){
         use_skill($skill[Make Sweat-Ade]);
     }
 }
