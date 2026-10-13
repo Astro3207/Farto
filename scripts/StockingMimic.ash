@@ -1956,7 +1956,7 @@ void peridotFishing(){
         foreach loc in $locations[]{
             set_property("subscript","peridot");
             if (periledLocations()[loc] == false && can_adventure(loc) == true && loc.wanderers == true){
-                if ($locations[The Slime Tube,The Roulette Tables,The Poker Room,The Limerick Dungeon,The Primordial Soup,Poisoned Spleen,Bloated and Nauseous,Seaside Megalopolis,Mer-kin Colosseum,Mer-kin Gymnasium,Cyberzone 1,Cyberzone 2,Cyberzone 3,The Road to the White Citadel,Whitey's Grove,The Knob Shaft,Itznotyerzitz Mine,The Defiled Alcove,A Mob of Zeppelin Protesters] contains loc)
+                if ($locations[The Slime Tube,The Roulette Tables,The Poker Room,The Limerick Dungeon,The Primordial Soup,Poisoned Spleen,Bloated and Nauseous,Seaside Megalopolis,Mer-kin Colosseum,Mer-kin Gymnasium,Cyberzone 1,Cyberzone 2,Cyberzone 3,The Road to the White Citadel,Whitey's Grove,The Knob Shaft,Itznotyerzitz Mine,Mt. Molehill,The Defiled Alcove,A Mob of Zeppelin Protesters] contains loc)
                     continue;
                 if (loc.zone == "Hobopolis")
                     continue;
