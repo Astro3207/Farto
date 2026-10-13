@@ -553,13 +553,13 @@ item candyPick(){
 
 void feedCandy(){
     while (get_property("mimicCandiesFed").to_int() < optimalCandy() || get_property("lastStockingMimicReset").to_int() != my_ascensions( )){
-//        int numFed = min(item_amount(candyPick()),(optimalCandy() - get_property("mimicCandiesFed").to_int()));
-        if (contains_text(visit_url("inventory.php?pwd=" + my_hash() + "&action=candy&which=1&whichitem=" + candyPick().to_int()).to_string(),"quickly consumes")){
+        int numFed = min(item_amount(candyPick()),(optimalCandy() - get_property("mimicCandiesFed").to_int()));
+        if (contains_text(visit_url("familiarbinger.php?action=binge&pwd=" + my_hash() + "&qty="+numFed+"&whichitem=" + candyPick().to_int()).to_string(),"quickly consumes")){
             if (get_property("lastStockingMimicReset").to_int() != my_ascensions( )){
                 set_property("lastStockingMimicReset",my_ascensions( ));
-                set_property("mimicCandiesFed","1");
+                set_property("mimicCandiesFed",numFed);
             } else {
-                set_property("mimicCandiesFed",get_property("mimicCandiesFed").to_int() + 1);
+                set_property("mimicCandiesFed",get_property("mimicCandiesFed").to_int() + numFed);
             }
         } else {
             cli_execute("refresh all");
@@ -1954,7 +1954,7 @@ void peridotFishing(){
         foreach loc in $locations[]{
             set_property("subscript","peridot");
             if (periledLocations()[loc] == false && can_adventure(loc) == true && loc.wanderers == true){
-                if ($locations[Hobopolis Town Square,Burnbarrel Blvd.,The Copperhead Club,Exposure Esplanade,The Heap,The Ancient Hobo Burial Ground,The Purple Light District,The Slime Tube,The Roulette Tables,The Poker Room,The Limerick Dungeon,The Primordial Soup,Poisoned Spleen,Bloated and Nauseous,Seaside Megalopolis,Mer-kin Colosseum,Cyberzone 1,Cyberzone 2,Cyberzone 3,The Knob Shaft,Itznotyerzitz Mine,The Defiled Alcove,A Mob of Zeppelin Protesters] contains loc)
+                if ($locations[Hobopolis Town Square,Burnbarrel Blvd.,The Copperhead Club,Exposure Esplanade,The Heap,The Ancient Hobo Burial Ground,The Purple Light District,The Slime Tube,The Roulette Tables,The Poker Room,The Limerick Dungeon,The Primordial Soup,Poisoned Spleen,Bloated and Nauseous,Seaside Megalopolis,Mer-kin Colosseum,Cyberzone 1,Cyberzone 2,Cyberzone 3,The Road to the White Citadel,The Knob Shaft,Itznotyerzitz Mine,The Defiled Alcove,A Mob of Zeppelin Protesters] contains loc)
                     continue;
                 mimicPrep();
                 set_property("offOverride",", equip Kramco Sausage-o-Matic");
