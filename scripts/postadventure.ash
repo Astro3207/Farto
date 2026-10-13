@@ -207,6 +207,7 @@ void outskirts() {
     }
     visit_url("guild.php?place=challenge");
     visit_url("guild.php?place=paco");
+    run_choice(1);
     set_property("unconditionalOverride","");
     set_property("famOverride","");
 }
@@ -927,7 +928,7 @@ void spendAdv(){
             set_property("mainOverride","");
             set_property("acc3Override","");
         }
-        if (item_amount($item[1950 Vampire Vintner wine]) == 0 && get_property("vintnerCharge").to_int() == 8 && have_effect($effect[fishy]) > 0){
+        if (item_amount($item[1950 Vampire Vintner wine]) == 0 && get_property("vintnerCharge").to_int() == 0 && have_effect($effect[fishy]) > 0){
             if (have_effect($effect[stenchform]) == 0)
                 use($item[phial of stench]);
             if (item_amount($item[pufferfish spine]) < 38)
