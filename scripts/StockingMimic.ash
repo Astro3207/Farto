@@ -183,9 +183,10 @@ void prepBuffs(){
         visit_url("clan_rumpus.php?action=click&spot=4&furni=1");
         visit_url("showclan.php?whichclan=" + get_property("homeClanID").to_int() + "&action=joinclan&confirm=on");
     }
-    while (have_effect($effect[blue swayed]) < 50){
+    while (have_effect($effect[blue swayed]) < 50)
         use($item[pulled blue taffy]);
-    }
+    while (have_effect($effect[Cold Hearted]) < 20)
+        use($item[love song of icy revenge]);
     while (have_effect($effect[She Ate Too Much Candy]) < 25){
         use($item[Prunets]);
     }
@@ -204,7 +205,7 @@ void prepBuffs(){
     }
     cli_execute("gain meat drop 7 eff 12 turns");
     //item drop
-    foreach ef in $effects[Steely-Eyed Squint,Spookyravin',Unbarking Dogs,Cold Hearted,One Very Clear Eye,Materiel Intel,Spitting Rhymes,Joyful Resolve,Lubricating Sauce]{
+    foreach ef in $effects[Steely-Eyed Squint,Spookyravin',Unbarking Dogs,One Very Clear Eye,Materiel Intel,Spitting Rhymes,Joyful Resolve,Lubricating Sauce]{
         if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
             continue;
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)) && ef != $effect[Steely-Eyed Squint])
@@ -750,16 +751,17 @@ void shorts(){
 void augustCat(){
     if (get_property("_aug8Cast") == false && to_int(get_property("_augSkillsCast")) < 4) {
         main@preadventure( );
-        cli_execute("cast Aug. 8");
+        use_skill($skill[Aug. 8th: Cat Day]);
         main@postadventure( );
     }
+    if (dayType() == 0)
+        abort();
 }
 
 void augustGolem(){
-    print("attempting to call august golem");
-    if (get_property("_aug22Cast") == false && to_int(get_property("_augSkillsCast")) <= 5) {
+    if (get_property("_aug22Cast") == false && to_int(get_property("_augSkillsCast")) < 5) {
         main@preadventure( );
-        cli_execute("cast Aug. 22");
+        use_skill($skill[Aug. 22nd: Tooth Fairy Day]);
         main@postadventure( );
     }
 }
@@ -1954,7 +1956,9 @@ void peridotFishing(){
         foreach loc in $locations[]{
             set_property("subscript","peridot");
             if (periledLocations()[loc] == false && can_adventure(loc) == true && loc.wanderers == true){
-                if ($locations[Hobopolis Town Square,Burnbarrel Blvd.,The Copperhead Club,Exposure Esplanade,The Heap,The Ancient Hobo Burial Ground,The Purple Light District,The Slime Tube,The Roulette Tables,The Poker Room,The Limerick Dungeon,The Primordial Soup,Poisoned Spleen,Bloated and Nauseous,Seaside Megalopolis,Mer-kin Colosseum,Mer-kin Gymnasium,Cyberzone 1,Cyberzone 2,Cyberzone 3,The Road to the White Citadel,Whitey's Grove,The Knob Shaft,Itznotyerzitz Mine,The Defiled Alcove,A Mob of Zeppelin Protesters] contains loc)
+                if ($locations[The Slime Tube,The Roulette Tables,The Poker Room,The Limerick Dungeon,The Primordial Soup,Poisoned Spleen,Bloated and Nauseous,Seaside Megalopolis,Mer-kin Colosseum,Mer-kin Gymnasium,Cyberzone 1,Cyberzone 2,Cyberzone 3,The Road to the White Citadel,Whitey's Grove,The Knob Shaft,Itznotyerzitz Mine,The Defiled Alcove,A Mob of Zeppelin Protesters] contains loc)
+                    continue;
+                if (loc.zone == "Hobopolis")
                     continue;
                 if (loc == $location[Pandamonium Slums] && available_amount($item[Hey Deze map]) == 0)
                     continue;
