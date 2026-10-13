@@ -596,8 +596,6 @@ void FKPrep(){
     if (my_name().to_lower_case() == "fart scauce"){
         retrieve_item(25, $item[bag of many confections]);
         retrieve_item(25, $item[stomp box]);
-    } else {
-        abort();
     }
 	set_property("script", "FreeKill");
     retrieve_item($item[burning paper crane]);
@@ -605,6 +603,9 @@ void FKPrep(){
     foreach ef in $effects[Robot Friends,Healthy Green Glow,Shortly Stacked,Shortly Wired,steely-eyed squint,Human-Fish Hybrid,Black Tongue,Human-Machine Hybrid,Warm Shoulders]{
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
             continue;
+        if (buffCount() == 5 && !get_property("_bagOTricksUsed").to_boolean()
+            && available_amount($item[Bag o' Tricks]) > 0)
+            use(1, $item[Bag o' Tricks]);
         if (buffCount() >= 10)
             break;
         if (have_effect(ef) == 0)
