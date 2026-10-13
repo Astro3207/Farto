@@ -35,10 +35,10 @@ void mood(string function){
         foreach ef in $effects[Yes\, Can Haz, ode to booze]
             if (have_effect(ef) > 0)
                 cli_execute("uneffect " + ef);
-        foreach ef in $effects[Only Dogs Love a Drunken Sailor,How to Scam Tourists,Best Pals,Sweat equity, Flapper Dancin',Legendary Pasta Eyeball,
+        foreach ef in $effects[Only Dogs Love a Drunken Sailor,Best Pals,Sweat equity, Flapper Dancin',Legendary Pasta Eyeball,
             The Ballad of Richie Thingfinder,material witness,
             Singer's Faithful Ocelot, Leash of Linguini, empathy,Thoughtful Empathy,
-            Disco Leer,Polka of Plenty,Tubes of Universal Meat,Lubricating Sauce,Strength of the Tortoise]{
+            Disco Leer,Polka of Plenty,Tubes of Universal Meat,Lubricating Sauce,Strength of the Tortoise, party soundtrack]{
             if (ef == $effect[material witness] && get_property("_jukebox") == "false"){
                 visit_url("showclan.php?whichclan=2046992052&action=joinclan&confirm=on");
             } else if (ef == $effect[material witness] && get_property("_jukebox") == "true"){
@@ -46,6 +46,8 @@ void mood(string function){
             } else if (to_int(get_property("_heartstonePalsUsed")) >= 4 && ef == $effect[best pals]){
                 continue;
             } else if (ef == $effect[The Ballad of Richie Thingfinder] && get_property("_thingfinderCasts") == 10){
+                continue;
+            } else if (ef == $effect[party soundtrack] && (dayType() == 0 || get_property("_cinchUsed").to_int() > 85)){
                 continue;
             } else if (ef == $effect[sweat equity] && ((my_basestat($stat[submoxie]) - 118881) < BCZcost("SweatEquityCasts"))){
                 continue;
@@ -55,6 +57,8 @@ void mood(string function){
             if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
                 continue;
             if (dayType() == 0 && effectDuration(ef) > (my_adventures() + pvp_attacks_left()))
+                continue;
+            if (dayType() == 1 && effectDuration(ef) > my_adventures() && have_equipped($item[drunkula's wineglass]))  
                 continue;
             if (have_effect(ef) == 0)
                 cli_execute(ef.default);
@@ -117,7 +121,7 @@ void preAdv(){
                     use($item[white candy heart]);
             } else if (get_property("_knuckleboneDrops").to_int() < 100 && item_amount($item[knucklebone]) < 10000 && my_name().to_lower_case() == "fart scauce" && my_location().environment != "underwater")
                 use_familiar($familiar[skeleton of crimbo past]);
-            else if (get_property("_swordOfSWordsKills").to_int() < 100)
+            else if (get_property("_swordOfSWordsKills").to_int() < 12 || have_effect($effect[everything looks red]) == 0 || have_effect($effect[everything looks yellow]) == 0)
                 use_familiar($familiar[sword of s words]);
             else if (maxOvr == "item drop" || get_property("_mapToACandyRichBlockDrops").to_int() < 1)
                 use_familiar($familiar[jill-of-all-trades]);
@@ -158,6 +162,14 @@ void preAdv(){
             if (!contains_text(get_property("_roboDrinks"), "Bloody Nora")){
                 retrieve_item($item[Bloody Nora]);
                 visit_url("inventory.php?action=robooze&which=1&whichitem=9388");
+            }
+            if (!contains_text(get_property("_roboDrinks"), "Newark")){
+                retrieve_item($item[Newark]);
+                visit_url("inventory.php?action=robooze&which=1&whichitem=9391");
+            }
+            if (!contains_text(get_property("_roboDrinks"), "single entendre")){
+                retrieve_item($item[single entendre]);
+                visit_url("inventory.php?action=robooze&which=1&whichitem=9384");
             }
         }
 
@@ -295,7 +307,9 @@ void preAdv(){
                 append(maximize, ", equip roman candelabra");
             else if (get_property("maxOverride") == "combat" || get_property("maxOverride") == "-combat")
                 append(maximize, "");
-            else if (get_property("script") == "farto" && !have_item($item[haiku katana]) && dayType() == 1)
+            else if (get_property("script") == "farto" && !have_item($item[haiku katana]) && my_class() != $class[seal clubber] && dayType() == 1)
+                append(maximize, ", equip Kramco Sausage-o-Matic");
+            else if (get_property("script") == "farto" && sausage_goblin_chance( ) >= 0.1 && dayType() == 1)
                 append(maximize, ", equip Kramco Sausage-o-Matic");
             else if (get_property("script") == "farto")
                 append(maximize, ", equip kol con snowglobe");
@@ -324,9 +338,9 @@ void preAdv(){
                 append(maximize, get_property("pantsOverride"));
             else if (to_int(get_property("_pantsgivingCount")) < 4 && available_amount($item[pantsgiving]) > 0 && !($locations[The Dark Elbow of the Woods,The Dark Heart of the Woods,The Dark Neck of the Woods,Pandamonium Slums,Infernal Rackets Backstage] contains my_location()))
                 append(maximize, ", equip pantsgiving");
-            else if (get_property("sweat").to_int() < 90)
+            else if ((get_property("sweat").to_int() < 90 && dayType() == 0) || (get_property("_sweatOutSomeBoozeUsed").to_int() < 3 && dayType() == 1)){
                 append(maximize, ", equip designer sweatpants");
-            else if (to_int(get_property("_pantsgivingCount")) < 500 && available_amount($item[pantsgiving]) > 0)
+            }else if (to_int(get_property("_pantsgivingCount")) < 500 && available_amount($item[pantsgiving]) > 0)
                 append(maximize, ", equip pantsgiving");
             // Acc1
             if (have_equipped($item[angelbone dice]))
@@ -352,7 +366,7 @@ void preAdv(){
                 append(maximize, ", equip mafia thumb ring");
             else if (avalancheReady)
                 append(maximize, ", equip McHugeLarge left ski");
-            else if (get_property("script") == "farto" && !have_item($item[haiku katana]))
+            else if (get_property("script") == "farto" && my_class() != $class[seal clubber] && !have_item($item[haiku katana]))
                 append(maximize, ", equip spring shoes");
             else
                 append(maximize, ", equip lucky gold ring");

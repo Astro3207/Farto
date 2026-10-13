@@ -147,6 +147,34 @@ void cowo(){
         set_property(to_string(to_slot(banItem)) + "Override", "");
 }
 
+void inko(){
+    setDropWeighting($location[The Marinara Trench]);
+    set_property("famOverride","");
+    if (!everfullReady()) {
+        set_property("acc1Override",", equip everfull dart holster");
+    } else {
+        set_property("acc1Override","");
+    }
+    if ((to_int(get_property("_pantsgivingCount")) >= 500 && dayType() == 1)
+            || (to_int(get_property("_pantsgivingCount")) >= 50 && dayType() == 0))
+        if (available_amount($item[pantsgiving]) > 0)
+            stashreturn($item[pantsgiving]);
+    if (have_effect($effect[driving waterproofly]) == 0)
+        set_property("backOverride",", equip elf guard scuba tank");
+    item banItem = $item[none];
+    if (!contains_text(get_property("banishedMonsters"),"Mer-kin diver")
+        || !contains_text(get_property("banishedMonsters"),"fisherfish")
+        || !contains_text(get_property("banishedMonsters"),"diving belle"))
+            banItem = banishGear($location[The Marinara Trench]);
+    if (banItem != $item[none])
+        equip(banItem);
+    adv1($location[The Marinara Trench],0,"");
+    // banishGear() leaves a slot override behind, and preadventure feeds every override to
+    // the maximizer, so without this the banish item stays forced on in other zones.
+    if (banItem != $item[none])
+        set_property(to_string(to_slot(banItem)) + "Override", "");
+}
+
 //unusued, bunchu free kills, spooky VHS tape (shadow rift is a great target), god lobster,  red zeppelin? debatable tbh
 //since I can only get 1k meat from FK, should save FK and relavant wanderers for cyberzone
 //For the same reason I can see with FK is better to farm spice melange.... Hypothetically pearl farming has higher value???? ~4k
@@ -166,13 +194,15 @@ void main(){
                 else if (available_amount($item[observational glasses]) == 0)
                     azazelUnicornQuest();
                 else if (get_property("questM10Azazel") != "finished" && have_effect($effect[Patent Aggression]) == 0){
-                    if (my_adventures() == 1)
-                        cli_execute("ash import preconsume; timeArrow()");
                     azazelUnicornQuest();
                 }else if (to_int(get_property("blackForestProgress")) < 5)
                     blackForest();
                 else if ((get_property("questG09Muscle") != "finished" && my_class() == $class[seal clubber]) || get_property("questL05Goblin") == "started")
                     outskirts();
+                if (get_property("questM10Azazel") != "finished" && my_adventures() == 0)
+                    eat($item[magical sausage]);
+            } else if ((my_class() == $class[accordion thief] || have_effect($effect[fishy]) > 0)){
+                inko();
             } else if (((my_class() == $class[pastamancer] || have_effect($effect[fishy]) > 0) && numeric_modifier($modifier[meat drop]) > 1700) || dayType() == 0){
                 cowo();
             }else{

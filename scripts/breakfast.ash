@@ -204,6 +204,58 @@ void mayamRings(){
         + " mayam rings eye meat yam clock");
 }
 
+void unlockLocations(){
+    if (available_amount($item[continuum transfunctioner]) == 0){
+        visit_url("place.php?whichplace=forestvillage&action=fv_mystic");
+        run_choice(-1);
+    }
+    if (get_property("questM23Meatsmith") == "unstarted"){
+        visit_url("shop.php?whichshop=meatsmith&action=talk");
+        run_choice(1);
+    }
+    if (get_property("questM25Armorer") == "unstarted"){
+        visit_url("shop.php?whichshop=armory&action=talk");
+        run_choice(1);
+    }
+    if (get_property("questM24Doc") == "unstarted"){
+        visit_url("shop.php?whichshop=doc&action=talk");
+        run_choice(1);
+    }
+    if (get_property("questM19Hippy") == "unstarted"){
+        visit_url("place.php?whichplace=woods&action=woods_smokesignals");
+        run_choice(1);
+        run_choice(2);
+    }
+    if (get_property("questM22Shirt") == "unstarted")
+        use($item[Letter for Melvign the Gnome]);
+    if (get_property("questL08Trapper") == "started")
+        visit_url("place.php?whichplace=mclargehuge&action=trappercabin");
+    if (get_property("questL04Bat") == "started"){
+        use(2, $item[sonar-in-a-biscuit]);
+        equip($slot[acc1],$item[spring shoes]);
+        use($item[enchanted bean]);
+    }
+}
+
+void makeSausage(){
+    if (!have_item($item[Kramco Sausage-o-Matic&trade;]))
+        return;
+    int toMake;
+    if (item_amount($item[sausage casing]) > 100)
+        toMake = 18;
+    else
+        toMake = 8;
+    while (get_property("_sausagesMade").to_int() < toMake){
+        while (get_property("sausageGrinderUnits").to_int() < 3000){
+            retrieve_item(3,$item[dense meat stack]);
+            visit_url("inventory.php?action=grind");
+            visit_url("choice.php?pwd="+ my_hash() +"&whichchoice=1339&option=1&qty=3&iid=258");
+        }
+        visit_url("inventory.php?action=grind");
+        visit_url("choice.php?pwd="+ my_hash() +"&whichchoice=1339&option=2");
+    }
+}
+
 void firstBreakfast(){
     int startClan = get_clan_id();
 
@@ -214,7 +266,10 @@ void firstBreakfast(){
 
     step("phase: clan breakfasts");
     clanBreakfasts();
-
+    step("phase: unlock locations");
+    unlockLocations();
+    step("phase: sausage casing");
+    makeSausage();
     step("phase: daily buttons");
     primeFamiliar();
     cli_execute("garden pick");

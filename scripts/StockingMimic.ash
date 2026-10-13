@@ -124,6 +124,10 @@ void chibiHandling(){
             lowStat = cstat;
     }
 
+    // infinite loop protection: hard cap on iterations, plus bail if chibiBuddy() picks no
+    // move or a use() leaves the stats unchanged
+    int chibiTries = 0;
+    string lastStats = "";
     while (!balanced && chibiStats[highStat] > 5 && chibiStats[lowStat] < 5){
         chibiStats["chibiAlignment"] = to_int(get_property("chibiAlignment"));
         chibiStats["chibiFitness"] = to_int(get_property("chibiFitness"));
@@ -135,7 +139,25 @@ void chibiHandling(){
 
         if (balanced)
             break;
+
+        string curStats = chibiStats["chibiAlignment"] + "," + chibiStats["chibiFitness"] + ","
+            + chibiStats["chibiIntelligence"] + "," + chibiStats["chibiSocialization"];
+        if (curStats == lastStats){
+            print("chibiHandling: stats stuck at " + curStats + ", bailing", "red");
+            break;
+        }
+        lastStats = curStats;
+        chibiTries += 1;
+        if (chibiTries > 10){
+            print("chibiHandling: hit 10 iterations without balancing, bailing", "red");
+            break;
+        }
+
         chibiBuddy();
+        if (get_property("chibiChoice1") == "0" || get_property("chibiChoice1") == ""){
+            print("chibiHandling: chibiBuddy() found no move for " + curStats + ", bailing", "red");
+            break;
+        }
         use($item[ChibiBuddy&trade; (on)]);
         set_property("chibiChoice1","0");
         set_property("chibiChoice2","0");
@@ -216,8 +238,8 @@ void prepBuffs(){
 void doSpleen(){
     foreach spl in $items[medicinal gruel, psilocyber mushroom, gleaming oyster egg,
         Party-in-a-Can&trade;, body spradium, Crimbeau de toilette]{
-        if (my_spleen_use() >= 3)
-            return;
+        if (have_effect(itemEffectNotes(spl).ef) > 0)
+            continue;
         if (spl == $item[body spradium] && item_amount($item[body spradium]) == 0)
             continue;
         if (mall_price(spl) > 10000)
@@ -463,18 +485,13 @@ void dieting(){
 		drink(inebriety_limit() - my_inebriety(), $item[Temps Tempranillo]);
 
 	doSpleen();
+    if (my_spleen_use() == 4 || my_spleen_use() == 6)
+        abort("sweet synthesis");
 	} else {
 		foreach dr in $items[Feliz Navidad]{
 			if (valueOfFamPot(dr) > valueOfOrgan("liver"))
 				drink(dr);
 		}
-        if (get_property("_cupOf13sJewels") == 13){
-            cli_execute("make 4 asbestos meat stack; acquire tombstone-shaped Crimboween cookie; acquire grease gun");
-            visit_url("inventory.php?action=cupof13s");
-            visit_url("choice.php?option=1&whichchoice=1601&"+my_hash()+"&whichitem1=376&whichitem2=2200&whichitem3=1708");
-            visit_url("inventory.php?action=cupof13s");
-            visit_url("choice.php?option=1&whichchoice=1601&"+my_hash()+"&whichitem1=376&whichitem2=376&whichitem3=376");
-        }
 		foreach fo in $effects[In the Depths, Sugar-Frosted Pet Guts, ratabunga\, dude!, Beefy Heart]{
 			if (my_fullness() >= fullness_limit())
 				break;
@@ -576,6 +593,8 @@ void FKPrep(){
     if (my_name().to_lower_case() == "fart scauce"){
         retrieve_item(25, $item[bag of many confections]);
         retrieve_item(25, $item[stomp box]);
+    } else {
+        abort();
     }
 	set_property("script", "FreeKill");
     retrieve_item($item[burning paper crane]);
@@ -662,7 +681,7 @@ void FKPrep(){
 		cli_execute("combo 10");
 	}
     if (my_name().to_lower_case() == "fart scauce"){
-        foreach ef in $effects[familiar.enq, your days are numbed]{
+        foreach ef in $effects[familiar.enq, one coin in a fountain, All Is Forgiven]{
             if (have_effect(ef) > 0)
                 continue;
             if (numeric_modifier(ef,"familiar weight") * 27 * freeKillCount("both") > mall_price($item[pocket wish])){
@@ -698,15 +717,9 @@ void FKPrep(){
 // with the eternity codpiece equipped (so its own familiar-weight bonus
 // doesn't get maximized away). extraMax, if given, is appended to
 // maxOverride as-is (e.g. ",-weapon" in seals()).
-void equipStockingMimic(){
-    if (have_familiar($familiar[stocking mimic]))
-        set_property("famOverride","stocking mimic");
-    else
-        set_property("famOverride","comma chameleon");
-}
 
 void mimicPrep(string extraMax){
-    equipStockingMimic();
+    altFam($familiar[stocking mimic]);
     set_property("maxOverride","familiar weight, equip eternity codpiece" + extraMax);
 }
 void mimicPrep(){
@@ -721,14 +734,15 @@ void shorts(){
 
     foreach i, s in split_string(get_property("cargoPocketsEmptied"), ",")
         emptied[to_int(s)] = true;
-
+    set_property("offOverride",", equip cursed magnifying glass");
     foreach id in $ints[646,191,306,250,30,490,612,317,448,267,47,143,425,402,589,579,136,299,220,428,235,265,363,452,383,666,443,568] {
         if (!emptied[id]) {
             main@preadventure( );
             cli_execute("cargo pick " + id);
-            return;
+            break;
         }
     }
+    set_property("offOverride","");
     main@postadventure( );
 }
 void augustCat(){
@@ -793,23 +807,20 @@ void cyberzone() {
         }
     }}
 void shadowBoss(){
-    if (get_property("rufusQuestTarget") == "shadow scythe")
-        abort("Shadow scythe, kill manually");
-    else if (get_property("rufusQuestTarget") == "shadow orrery"){
+    if (get_property("rufusQuestTarget") == "shadow scythe" || get_property("rufusQuestTarget") == "shadow spire"){
+        if (have_skill($skill[blood bubble])) {
+            if (have_effect($effect[blood bubble]) == 0)
+                use_skill($skill[blood bubble]);
+            set_property("maxOverride","familiar weight, equip petrified wood wizard's pouch, equip wicker slicker");
+        } else
+            set_property("maxOverride","familiar weight, equip petrified wood wizard's pouch, equip Drunkula's ring of haze, equip wicker slicker");
+    }else if (get_property("rufusQuestTarget") == "shadow orrery"){
         set_property("maxOverride","familiar weight");
         set_property("shirtOverride",", equip ultracolor");
-    } else if (get_property("rufusQuestTarget") == "shadow spire"){
-        set_property("hpAutoRecovery",0.36);
-        set_property("hpAutoRecoveryTarget",0.80);
-        cli_execute("recover hp");
-        if (have_item($item[petrified wood wizard's pouch]))
-            set_property("maxOverride","familiar weight, equip petrified wood wizard's pouch");
-        else
-            set_property("maxOverride","familiar weight, equip congressional medal of insanity");
     }
 }
 void shadowRealmFK(){
-    equipStockingMimic();
+    altFam($familiar[stocking mimic]);
     if (get_auto_attack() == 0)
         aa("facsimile");
     if (!contains_text(get_property("maxOverride"),"familiar"))
@@ -821,7 +832,11 @@ void shadowRealmFK(){
     if (get_property("_shadowAffinityToday") == false && get_property("questRufus") != "unstarted"){
         if (get_property("rufusQuestType") == "entity")
             shadowBoss();
-        else if (have_effect($effect[shadow affinity]) < get_property("encountersUntilSRChoice").to_int()){
+        else if (have_effect($effect[shadow affinity]) < get_property("encountersUntilSRChoice").to_int() && get_property("rufusQuestType") == "artifact"){
+            NCforce(false);
+            if (get_property("noncombatForcerActive") == "false")
+                cli_execute("alliedradio misc sniper");
+        } else if (have_effect($effect[shadow affinity]) < get_property("encountersUntilSRChoice").to_int()){
             abort("script out non entity case");
         }
     }
@@ -840,6 +855,10 @@ void shadowRealmFK(){
     if (get_property("questRufus") == "started" && get_property("rufusQuestType") == "items"){
         retrieve_item(3,to_item(get_property("rufusQuestTarget")));
     } else if (have_effect($effect[shadow affinity]) > 0){
+        if (have_effect($effect[fishy]) < 790)
+            set_property("mainOverride",", equip monodent");
+        else
+            set_property("mainOverride","");
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
     } else {
         NCforce(false);
@@ -856,6 +875,11 @@ void shadowRealmFK(){
             if (get_property("noncombatForcerActive") == "true" || get_property("encountersUntilSRChoice").to_int() == 0){
                 set_auto_attack(0);
                 shadowBoss();
+            } else {
+                if (have_effect($effect[fishy]) < 790)
+                    set_property("mainOverride",", equip monodent");
+                else
+                    set_property("mainOverride","");
             }
         }
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
@@ -870,6 +894,8 @@ void shadowRealmFK(){
     set_property("backOverride","");}
 void sandworm(){
     mimicPrep();
+    if (available_amount($item[Apriling band quad tom]) == 0)
+        cli_execute("breakfast.ash");
     if (get_property("_aprilBandTomUses").to_int() < 3){
         while (to_int(get_property("_aprilBandTomUses")) < 3 && available_amount($item[Apriling band quad tom]) > 0){
             main@preadventure( );
@@ -881,16 +907,20 @@ void sandworm(){
 }
 void archaeologist(){
     if (to_int(get_property("_archSpadeDigs")) < 11 && can_adventure($location[A Mob of Zeppelin Protesters])){
+        if (my_location() == $location[none])
+            set_location($location[the red zeppelin]);
         if (my_location() != $location[the red zeppelin]){
             if (get_property("zeppelinProgress").to_int() >= 6)
                 set_property("mainOverride",", equip legendary seal-clubbing club");
             else
                 set_property("mainOverride","");
+            set_property("acc1Override",",bonus mafia pointer");
             if (to_int(get_property("_glarkCableUses")) < 5) {
                 retrieve_item(5,$item[glark cable]);
                 adv1($location[the red zeppelin]);
             } else
                 abort("Ran out of glarks to charge spade");
+            set_property("acc1Override","");
         }
         main@preadventure( );
         use($item[Archaeologist's Spade]);
@@ -921,6 +951,8 @@ void uneffectBuff(){
         }
     }
     foreach ef in my_effects( ){
+        if (ef == $effect[wine-befouled])
+            continue;
         if (numeric_modifier(ef, to_string(st)) > statBuff){
             statBuff = numeric_modifier(ef, to_string(st));
             toRemove = ef;
@@ -961,11 +993,6 @@ boolean looseFK(){
         set_property("maxOverride","familiar weight, equip eternity codpiece, equip jokester's gun");
         return true;
     }
-    if (get_property("_assertYourAuthorityCast").to_int() < 3){
-        print ("FK is assert");
-        set_property("maxOverride","familiar weight, equip sheriff pistol, equip sheriff moustache, equip sheriff badge");
-        return true;
-    }
     if (get_property("_clubEmTimeUsed").to_int() < 5){
         print ("FK is club em back in time");
         set_property("maxOverride","familiar weight, equip eternity codpiece, equip legendary seal-clubbing");
@@ -983,6 +1010,11 @@ boolean looseFK(){
         retrieve_item(n,$item[shadow brick]);
         return true;
     }
+    if (get_property("_assertYourAuthorityCast").to_int() < 3){
+        print ("FK is assert");
+        set_property("maxOverride","familiar weight, equip sheriff pistol, equip sheriff moustache, equip sheriff badge");
+        return true;
+    }
     return false;
 }
 
@@ -998,13 +1030,14 @@ void underwaterBaseball(){
     resCheck("bar");
     if (get_property("_curveballFightsLeft").to_int() == 0 && looseFK()){
         set_property("subscript","looseFK");
+        set_property("acc1Override",", equip mafia pointer");
         adv1($location[The Dive Bar]);
         baseballD();
     } else if (get_property("_curveballFightsLeft").to_int() > 0){
         set_property("acc1Override",", equip congressional medal of insanity");
         adv1($location[The Dive Bar]);
-        set_property("acc1Override","");
     }
+    set_property("acc1Override","");
 }
 
 boolean pearloP1Done(){
@@ -1037,7 +1070,7 @@ void pearloP1(){
         foreach str in $strings[trench,bar]{
             if (get_property(pearls[str].donePref) == "false" || str == "bar"){
                 resCheck(str);
-                equipStockingMimic();
+                altFam($familiar[stocking mimic]);
                 adv1(pearls[str].loc);
                 break;
             }
@@ -1056,8 +1089,7 @@ void pearloP2(){
     foreach str in $strings[deepests,reef]{
         if (have_effect($effect[driving waterproofly]) == 0)
             set_property("pantsOverride", ", equip really nice swim");
-        equipStockingMimic();
-        set_property("offOverride",",equip Kramco Sausage-o-Matic");
+        altFam($familiar[stocking mimic]);
         if (get_property(pearls[str].donePref) == "false" || str == "reef"){
             resCheck(str);
             adv1(pearls[str].loc);
@@ -1091,9 +1123,8 @@ void gingerbread(){
         mimicPrep();
         adv1($location[Gingerbread Upscale Retail District]);
     }
-    if (contains_text(LastAdvTxt(),"almost midnight"))
+    if (contains_text(LastAdvTxt(),"almost midnight") || get_property("_gingerbreadCityTurns").to_int() == 19)
         adv1($location[Gingerbread Civic Center]);
-   //     adv1($location[Gingerbread Civic Centers]);
 }
 
 void habitatRecall(){
@@ -1107,7 +1138,6 @@ void habitatRecall(){
         }
         while (to_int(get_property("_monsterHabitatsFightsLeft")) > 0 || get_property("beGregariousFightsLeft").to_int() > 0){
             mimicPrep();
-            MobiusMaybe();
             if (get_auto_attack() == 0)
                 aa("facsimile");
             if (get_property("beGregariousFightsLeft").to_int() == 1 && get_property("beGregariousCharges").to_int() == 0 && to_int(get_property("_monsterHabitatsRecalled")) == 3 && dayType() == 1){
@@ -1126,11 +1156,10 @@ void backup(){
         if (to_int(get_property("_mimicEggsObtained")) < 11 && $familiar[chest mimic].experience > 100){
             set_property("famOverride","chest mimic");
         } else
-            equipStockingMimic();
+            altFam($familiar[stocking mimic]);
         if (have_effect($effect[everything looks purple]) == 0 && (get_property("famOverride") == "comma chameleon" || get_property("famOverride") == "stocking mimic")){
             set_property("offOverride",", equip roman candel");
-        } else
-            set_property("offOverride",",equip Kramco Sausage-o-Matic");
+        }
         set_property("maxOverride","familiar weight, equip eternity codpiece");
         if (have_effect($effect[driving waterproofly]) == 0)
             set_property("pantsOverride",", equip really nice swim");
@@ -1475,7 +1504,6 @@ void weakMonsters(){
                 else
                     set_property("mainOverride","");
                 mimicPrep();
-                MobiusMaybe();
                 retrieve_item(5,$item[glark cable]);
                 adv1($location[the red zeppelin]);
                 set_property("acc2Override","");
@@ -1490,7 +1518,6 @@ void weakMonsters(){
         } else if (pick == "ghost"){
             step("phase: weakMonsters paranormal ghost (walkie-talkie)");
             mimicPrep();
-            MobiusMaybe();
             location ghostLoc = walkieGhost();
             if (ghostLoc != $location[none])
                 adv1(ghostLoc);
@@ -1526,7 +1553,8 @@ void LBMWPrep(boolean CMOI){
     if (CMOI == true){
         set_property("acc1Override",", equip congressional medal of insanity");
     }
-    aa("facsimile");
+    if (get_auto_attack() == 0)
+        aa("facsimile");
     set_property("acc3Override",", equip time lord badge of honor");
     retrieve_item($item[shard of double-ice]);
     mimicPrep();
@@ -1833,6 +1861,7 @@ void restOfHiddenCity(){
         visit_url("inventory.php?action=parachute");
         visit_url("choice.php?option=1&whichchoice=1543&monid=1426");
     }
+    aa("facsimile");
 }
 
 void miscellaneousFams(){
@@ -1911,6 +1940,58 @@ void miscellaneousFams(){
     }
 }
 
+// Locations already scanned with the Peridot today. _perilLocations is a
+// comma-separated list of location ids; an empty property splits into one
+// blank entry, so skip anything that isn't a real id. Keyed by location so
+// callers can test membership with `contains`.
+boolean [location] periledLocations() {
+    boolean [location] periled;
+    foreach i, id in split_string(get_property("_perilLocations"), ","){
+        if (id.to_int() == 0)
+            continue;
+        periled[id.to_int().to_location()] = true;
+    }
+    return periled;
+}
+
+void peridotFishing(){
+    string perilLocations;
+    repeat {
+        perilLocations = get_property("_perilLocations");
+        foreach loc in $locations[]{
+            set_property("subscript","peridot");
+            if (periledLocations()[loc] == false && can_adventure(loc) == true && loc.wanderers == true){
+                if ($locations[Hobopolis Town Square,Burnbarrel Blvd.,The Copperhead Club,Exposure Esplanade,The Heap,The Ancient Hobo Burial Ground,The Purple Light District,The Slime Tube,The Roulette Tables,The Poker Room,The Limerick Dungeon,The Primordial Soup,Poisoned Spleen,Bloated and Nauseous,Seaside Megalopolis,Mer-kin Colosseum,Cyberzone 1,Cyberzone 2,Cyberzone 3,The Knob Shaft,Itznotyerzitz Mine,The Defiled Alcove,A Mob of Zeppelin Protesters] contains loc)
+                    continue;
+                mimicPrep();
+                set_property("offOverride",", equip Kramco Sausage-o-Matic");
+                if (get_property("_timeCopsFoughtToday").to_int() < 10)
+                    set_property("acc1Override",", equip mobius");
+                if (loc.zone == "The Mer-Kin Deepcity"){
+                    set_property("hatOverride",", equip mer-kin scholar mask");
+                    set_property("pantsOverride",", equip Mer-kin scholar tailpiece");
+                    cli_execute("closet put * mer-kin hallpass");
+                }else if (loc.environment == "underwater"){
+                    set_property("pantsOverride",", equip really nice swim");
+                    if (loc == $location[the caliginous abyss])
+                        set_property("acc1Override",", equip black glass");
+                }else if (loc.zone == "The 8-Bit Realm") {
+                    set_property("acc2Override",", equip continuum");
+                } else {
+                    set_property("hatOverride","");
+                    set_property("pantsOverride","");
+                }
+
+                adv1(loc);
+                set_property("acc2Override","");
+            }
+        }
+    } until (perilLocations == get_property("_perilLocations"));
+    set_property("acc1Override","");
+    set_property("offOverride","");
+    set_property("subscript","");
+}
+
 void bulkFKD2(){
     step("phase: bulkFK start");
     set_property("inSpendAdv","true");
@@ -1961,7 +2042,6 @@ void bulkFKD2(){
         set_property("subscript","looseFK");
         if (baseballPlayers() == 9 && get_property("_curveballFightsLeft").to_int() == 0 && get_property("_baseballInnings").to_int() < 3)
             baseballD();
-        set_property("offOverride",",bonus Kramco Sausage-o-Matic");
         shadowRealmFK();
     }
     set_property("subscript","");
@@ -2011,6 +2091,8 @@ void bulkFKD2(){
         run_choice(1);
         main@postadventure();
     }
+    step("phase: peridot fishing");
+    peridotFishing();
     stashreturn($item[pantsgiving]);
     if (!contains_text(get_property("thoth19_event_list"),"postFKD2"))
         cli_execute("ptrack add postFKD2");
@@ -2023,7 +2105,7 @@ void locationBasedAdventuring(){
     restOfHiddenCity();
     step ("phase: rose garden");
     roseGarden();
-    if (dayType() == 1 && mall_price($item[Homeowner's loam]) < 50000){
+    if (dayType() == 0 && mall_price($item[Homeowner's loam]) < 30000){
         abort("Script in using loams for black rose garden");
     }
     step("phase: bulkFK habitat recall");
@@ -2034,6 +2116,10 @@ void locationBasedAdventuring(){
     while (get_property("_cyberFreeFights").to_int() < 10){
         mimicPrep();
         cyberzone();
+    }
+    if (my_spleen_use() < 15){
+        step("phase: peridot fishing");
+        peridotFishing();
     }
     locationBasedWeakMonsters();
 }
@@ -2051,9 +2137,15 @@ void bulkFKD1(){
         doSpleen();
         if (my_inebriety() <= inebriety_limit()){
             if (my_inebriety() == inebriety_limit()-3)
-                drink($item[amnesiac ale]);
-            if (my_inebriety() == inebriety_limit()-1)
                 drink($item[friendly turkey]);
+            if (get_property("vintnerWineEffect") == "Wine-Befouled") {
+                drink($item[1950 Vampire Vintner wine]);
+                cli_execute("acquire 3 tombstone-shaped Crimboween cookie");
+                visit_url("inventory.php?action=cupof13s");
+                visit_url("choice.php?option=1&whichchoice=1601&"+my_hash()+"&whichitem1=2200&whichitem2=2200&whichitem3=2200");
+            } else if (my_inebriety() == inebriety_limit()-2){
+                abort();
+            }
             if (my_inebriety() == inebriety_limit())
                 drink($item[vintage smart drink]);
         }

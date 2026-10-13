@@ -274,21 +274,40 @@
         int got = numeric_modifier("monster level").to_int();
         print("tuneML: wanted " + targetML + ", got " + got
             + (got == targetML ? "" : " (off by " + (got - targetML) + ")"), got == targetML ? "blue" : "red");
+        if (numeric_modifier("monster level") != targetML)
+            abort();
     }
 
 // ─── 3. BANISH UTILITIES ─────────────────────────────────────────────────────
 
     record ban {
-        string pref;
+        item gear;          // $item[none] for a skill-only banish
+        string pref;        // banisher name prefix as it appears in banishedMonsters
         skill banSkill;
+        boolean canUse;
     };
 
-    ban [item] banMap = {
-        $item[spring shoes]:        new ban("Spring Kick",           $skill[spring kick]),
-        $item[monodent of the sea]: new ban("Sea \\*dent",           $skill[Sea *dent: Throw a Lightning Bolt]),
-        $item[Heartstone]:          new ban("Heartstone %banish",    $skill[Heartstone: %banish]),
-        $item[none]:                new ban("snokebomb",             $skill[snokebomb]),
-    };
+    // Built fresh on every call rather than held in a global: a top-level map
+    // literal is evaluated once at import, so its canUse flags would go stale as
+    // daily counters tick up. Priority order -- gear banishes first so the
+    // limited skill-only ones are saved. Keyed by int because the skill-only
+    // entries all share $item[none].
+    ban [int] banMap() {
+        ban [int] bans = {
+            0: new ban($item[spring shoes],        "Spring Kick",        $skill[spring kick],
+                true),
+            1: new ban($item[monodent of the sea], "Sea *dent",          $skill[Sea *dent: Throw a Lightning Bolt],
+                get_property("_seadentLightningUsed").to_int() < 11),
+            2: new ban($item[adobe adze],          "batter up!",             $skill[batter up!],
+                my_class() == $class[seal clubber] && my_fury() >= 5),
+            3: new ban($item[Heartstone],          "Heartstone %banish", $skill[Heartstone: %banish],
+                get_property("heartstoneBanishUnlocked").to_boolean()
+                    && get_property("_heartstoneBanishUsed").to_int() < 5),
+            4: new ban($item[none],                "snokebomb",          $skill[snokebomb],
+                get_property("_snokebombUsed").to_int() < 3)
+        };
+        return bans;
+    }
 
     // Returns all locations a given monster can appear in
     location [int] monster_found_in(monster m) {
@@ -320,13 +339,14 @@
     // NOTE: has the side effect of setting an Override property — callers should be aware.
     item banishGear(location loc) {
         item it;
-        foreach ite in $items[spring shoes, monodent of the sea, Heartstone] {
-            if (ite == $item[Heartstone] && get_property("heartstoneBanishUnlocked") == "false")
+        foreach i, b in banMap() {
+            if (b.gear == $item[none] || !have_item(b.gear) || !b.canUse)
                 continue;
-            if (appearance_rates(loc)[banished(banMap[ite].pref)] == 0 && have_item(ite)) {
-                it = ite;
+            if (appearance_rates(loc)[banished(b.pref)] >= 0) {
+                it = b.gear;
                 break;
             }
+            print(appearance_rates(loc)[banished(b.pref)]);
         }
         // No candidate leaves it at $item[none]; writing an override for it would
         // create a junk "noneOverride" property.
@@ -337,18 +357,20 @@
         return it;
     }
 
-    // Returns the combat banish skill for the first equipped banish item
-    // whose target is no longer appearing at your location
+    // Returns the first usable banish skill whose current target isn't appearing
+    // at your location. Gear banishes need the item equipped; skill-only ones
+    // ($item[none]) need the skill. Both must have canUse set.
     skill combatBan() {
-        foreach ite in $items[spring shoes, monodent of the sea, Heartstone] {
-            if (ite == $item[Heartstone] && get_property("heartstoneBanishUnlocked") == "false")
+        foreach i, b in banMap() {
+            if (b.gear != $item[none] && !have_equipped(b.gear))
                 continue;
-            if (have_equipped(ite)
-                && appearance_rates(my_location())[banished(banMap[ite].pref)] == 0) {
-                print("Banish item being considered " + ite + " parsed banished monster is " + banished(banMap[ite].pref) + " and the calculated appearance rate at current location is " + appearance_rates(my_location())[banished(banMap[ite].pref)]);
-                cli_execute("get banishedMonsters");
-                return banMap[ite].banSkill;
-            }
+            if (b.gear == $item[none] && !have_skill(b.banSkill))
+                continue;
+            if (!b.canUse || appearance_rates(my_location())[banished(b.pref)] < 0)
+                continue;
+            print("Banish being considered " + b.banSkill + " parsed banished monster is " + banished(b.pref) + " and the calculated appearance rate at current location is " + appearance_rates(my_location())[banished(b.pref)]);
+            cli_execute("get banishedMonsters");
+            return b.banSkill;
         }
         return $skill[none];
     }
@@ -444,11 +466,13 @@
     // ── Everfull Dart Holster ────────────────────────────────────────────────────
     string perks = get_property("everfullDartPerks");
     boolean bullseyeReady() {
+        perks = get_property("everfullDartPerks");
         int n = count_substring(perks, "25% Better bullseye targeting") + count_substring(perks, "25% better chance to hit bullseyes") + count_substring(perks, "25% More Accurate bullseye targeting");
         return (n >= 2);
     }
 
     boolean everfullReady(){
+        perks = get_property("everfullDartPerks");
         if (!bullseyeReady())
             return false;
         return (contains_text(perks, "You are less impressed by bullseyes")
@@ -781,6 +805,7 @@
                 }
                 visit_url("place.php?whichplace=town&action=town_trickortreat");
                 visit_url("choice.php?whichchoice=804&pwd=" + my_hash() + "&option=3&whichhouse=" + houseToVisit);
+                run_choice(-1);
                 if (get_property("_trickOrTreatBlock") == before){
                     print("candy: trick-or-treat block unchanged after treating house " + houseToVisit + " -- stopping", "red");
                     break;
@@ -1293,7 +1318,6 @@
         set_property("betweenBattleScript",   betweenBattleScriptStorage);
         set_property("afterAdventureScript",  afterAdventureScriptStorage);
         set_property("battleAction",          battleActionStorage);
-        set_property("customCombatScript",    ccsStorage);
         set_property("hpAutoRecovery",        hpAutoRecoveryStorage);
         set_property("hpAutoRecoveryTarget",  hpAutoRecoveryTargetStorage);
         set_property("mpAutoRecovery",        mpAutoRecoveryStorage);

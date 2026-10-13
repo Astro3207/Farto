@@ -204,6 +204,7 @@ void main(int whichchoice, string page) {
             break;
 
         case 584:
+        case 1064:
             run_choice(4);
             break;
 
@@ -421,7 +422,7 @@ void main(int whichchoice, string page) {
         case 1497:
             if (dayType() == 0)
                 run_choice(2);
-            else if (have_effect($effect[shadow affinity]) > 0){
+            else if (have_effect($effect[shadow affinity]) > 10){
                 run_choice(2);
             } else if (get_property("rufusDesiredEntity") == "shadow scythe"){
                 run_choice(2);
@@ -442,15 +443,17 @@ void main(int whichchoice, string page) {
             run_choice(bestDartsOption());
             break;
         case 1557:
+            if (get_property("subscript") == "peridot")
+                run_choice(2);
             if (my_location() == $location[the black forest]){
                 if (item_amount($item[broken wings]) == 0){
-                    run_choice(1, "bandersnatch=1374");
+                    run_choice(1, "bandersnatch=416");
                 } else if (item_amount($item[sunken eyes]) == 0){
                     run_choice(1, "bandersnatch=414");
                 }
             }
             if (my_location() == $location[The Caliginous Abyss])
-                run_choice(1, "bandersnatch=1748");
+                run_choice(1, "bandersnatch=1374");
             if (my_location() == $location[Madness Bakery])
                 run_choice(1, "bandersnatch=1748");
             if (my_location() == $location[barf mountain])

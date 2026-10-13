@@ -22,7 +22,7 @@ string [string] adventureAbortMessages = {
 
 // Equip the sword of s words and sniff its target (monster id 307) so the sword drop lines up.
 void swordPrep(){
-    if (item_amount($item[1950 Vampire Vintner wine]) == 0 && get_property("vintnerCharge").to_int() < 13){
+    if (item_amount($item[1950 Vampire Vintner wine]) == 0 && get_property("vintnerCharge").to_int() > 0){
         altFam($familiar[vampire vintner]);
     } else {
         set_property("famOverride","sword of s words");
@@ -206,6 +206,7 @@ void outskirts() {
         adv1($location[The Outskirts of Cobb's Knob]);
     }
     visit_url("guild.php?place=challenge");
+    visit_url("guild.php?place=paco");
     set_property("unconditionalOverride","");
     set_property("famOverride","");
 }
@@ -262,12 +263,11 @@ void lawOfAverages(){
 // Spend built-up sweat: booze first (also clears inebriety), otherwise Sweat-Ade
 // once pantsgiving is maxed and it is worth the turn.
 void sweatpants(){
-    if (get_property("sweat").to_int() <= 75)
-        return;
-    if (get_property("_sweatOutSomeBoozeUsed").to_int() < 3 && my_inebriety() > 3)
+    if (get_property("_sweatOutSomeBoozeUsed").to_int() < 3 && my_inebriety() > 3 && get_property("sweat").to_int() >= 25)
         use_skill($skill[sweat out some booze]);
-    else if (to_int(get_property("_pantsgivingCount")) >= 500 && ((dayType() == 0 && my_adventures() > 100) || dayType() == 1))
+    else if (to_int(get_property("_pantsgivingCount")) >= 500 && ((dayType() == 0 && my_adventures() > 100) || dayType() == 1) && get_property("sweat").to_int() >= 15){
         use_skill($skill[Make Sweat-Ade]);
+    }
 }
 
 // Spend a Book of Facts wish by adventuring a class-specific zone with a peridot
@@ -393,6 +393,7 @@ void unlock_zeppelin(){
 // Banish all three pygmy types out of the Hidden Bowling Alley (11 drunk-pygmy
 // banishes), swapping in the middle-finger ring / spring shoes as each is needed.
 void drunkPygmy(){
+    set_auto_attack(0);
     if (get_property("questL11Spare") == "unstarted")
         adv1($location[An Overgrown Shrine (Southeast)]);
     cli_execute("acquire 11 bowl of scorpions");
@@ -414,6 +415,7 @@ void drunkPygmy(){
         } else {
             set_property("acc2Override","");
         }
+        set_property("offOverride",", equip cursed magnifying glass");
         if (!contains_text(get_property("banishedMonsters"),"pygmy janitor"))
             abort("Banish pygmy janitors with ice house");
         cli_execute("closet put * bowling ball");
@@ -421,6 +423,7 @@ void drunkPygmy(){
     }
     set_property("maxOverride","");
     set_property("famOverride","");
+    set_property("offOverride","");
 }
 
 // Clear the ziggurat lianas with a candy-cane-sword machete, then pop the shrine NC.
@@ -502,6 +505,7 @@ void constructBanish(){
         set_property("maxOverride","ml, -10 familiar weight, -equip drunkula's wineglass,-equip backup camera");
         set_property("acc3Override",",equip spring shoes");
         adv1($location[Madness Bakery],0,"");
+        set_property("acc3Override","");
     }
     set_property("subscript","");
     if (get_property("_cyberFreeFights").to_int() == 10){
@@ -720,7 +724,7 @@ void postAdv(){
         run_choice(2);
         cli_execute("drink doc clock's t");
     }
-    if (my_inebriety() < inebriety_limit() && dayType() != 0 && my_adventures() < 60){
+    if (my_inebriety() < inebriety_limit() && dayType() != 0 && get_property("familiarSweat").to_int() >= 279){
         visit_url("inventory.php?"+my_hash()+"&action=distill");
         run_choice(1);
     }
@@ -806,6 +810,8 @@ void azazelUnicornQuest(){
             }
         }
     }
+    backstage1 = item_amount($item[gin-soaked blotter paper]) + item_amount($item[beer-scented teddy bear]) + item_amount($item[giant marshmallow]);
+    backstage2 = item_amount($item[booze-soaked cherry]) + item_amount($item[comfy pillow]) + item_amount($item[sponge cake]);
     if (backstage1 > 1 && backstage2 > 1 && item_amount($item[observational glasses]) > 0){
         cli_execute("equip acc3 observational glasses; acquire 5 bus pass; acquire 5 imp air");
         visit_url("pandamonium.php?action=moan");
@@ -852,6 +858,8 @@ void chargeFams(){
     equip($item[antique machete]);
     visit_url("inventory.php?action=parachute");
     visit_url("choice.php?option=1&whichchoice=1543&monid=1426");
+    if (my_spleen_use() > 15)
+        equip($item[angelbone totem]);
 }
 
 void level11Sprint(){
@@ -919,7 +927,7 @@ void spendAdv(){
             set_property("mainOverride","");
             set_property("acc3Override","");
         }
-        if (item_amount($item[1950 Vampire Vintner wine]) == 0 && get_property("vintnerCharge").to_int() == 13 && my_adventures() < 9){
+        if (item_amount($item[1950 Vampire Vintner wine]) == 0 && get_property("vintnerCharge").to_int() == 8 && have_effect($effect[fishy]) > 0){
             if (have_effect($effect[stenchform]) == 0)
                 use($item[phial of stench]);
             if (item_amount($item[pufferfish spine]) < 38)
@@ -943,6 +951,18 @@ void spendAdv(){
             set_property("acc1Override","");
             set_property("acc1Override","");
             set_property("famEquipOverride","");
+        }
+        string [location] batWings = {
+            $location[The Bat Hole Entrance]:"batWingsBatHoleEntrance",
+            $location[Guano Junction]:"batWingsGuanoJunction",
+            $location[The Batrat and Ratbat Burrow]:"batWingsBatratBurrow"
+        };
+        foreach loc in batWings{
+            if (get_property(batWings[loc]) == "false"){
+                set_property("backOverride",", equip bat wings");
+                adv1(loc);
+            }
+            set_property("backOverride","");
         }
         if (free_Kill()){
             if (get_property("script") != "6-kiss" && get_property("script") != "TTT" && get_property("script") != "slime" && dayType() == 1)
@@ -975,15 +995,15 @@ void spendAdv(){
         cookbookbat();
     }
     if (free_run() && my_inebriety() <= inebriety_limit()){
-        set_property("maxOverride","combat");
-        set_property("famOverride", "cookbookbat");
+        set_property("maxOverride","combat,-equip drunkula's wineglass");
+        set_property("famOverride", "peace turkey");
         set_property("mainOverride",", equip june cleaver");
-        set_property("pantsOverride", ", equip designer sweatpants");
+        set_property("acc1Override", ", equip spring shoes");
         adv1($location[cobb's knob treasury]);
         set_property("maxOverride","");
         set_property("famOverride", "");
         set_property("mainOverride","");
-        set_property("pantsOverride", "");
+        set_property("acc1Override", "");
     }
     if (my_adventures() < 60 && to_int(get_property("_bookOfFactsWishes")) < 3)
         BoFaWish();

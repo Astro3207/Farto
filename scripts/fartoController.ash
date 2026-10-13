@@ -23,9 +23,11 @@ void firstTimeSetup(){
 void main(){
     firstTimeSetup();
     if (dayType() == 1){
-        cli_execute("breakfast.ash");
-        cli_execute("stockingmimic");
-        cli_execute("preconsume");
+        if (numeric_modifier("Familiar weight") > 300){
+            cli_execute("breakfast.ash");
+            cli_execute("stockingmimic");
+            cli_execute("preconsume");
+        }
         cli_execute("farto");
         cli_execute("preascend");
     }

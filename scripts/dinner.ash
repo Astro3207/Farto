@@ -90,6 +90,8 @@ void dayShorteners(){
 
 // Philter the day's booze, then park anything over 3M meat in the closet.
 void closingMeatChores(){
+    if (get_property("_universalSeasoningsUsed").to_int() == 0)
+        use($item[universal seasoning]);
     cli_execute("philter");
     if (my_meat() - 3000000 > 0){
         int new_meat = my_meat() - 3000000;
@@ -143,8 +145,8 @@ void main(){
    // clockworkMaid();
     step("phase: final outfit");
     finalOutfit();
-    step("phase: day shorteners");
-    dayShorteners();
+  //  step("phase: day shorteners");
+  //  dayShorteners();
     step("phase: closing meat chores");
     closingMeatChores();
     if (!contains_text(get_property("thoth19_event_list"),"postFarmD1"))

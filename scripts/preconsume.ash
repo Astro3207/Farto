@@ -147,6 +147,10 @@ boolean oneMore(){
     return true;
 }
 
+void sausageCasing(){
+    
+}
+
 void main(){
     if (my_inebriety() >= inebriety_limit()-1)
         return;
@@ -160,6 +164,7 @@ void main(){
         cli_execute("uneffect ur-kel");
         astral();
         yeti();
+        sausageCasing();
         if (get_property("_borrowedTimeUsed") == false){
         //    use($item[borrowed time]);
         }
@@ -167,7 +172,7 @@ void main(){
             if (have_effect(ef) > 0)
                 cli_execute("uneffect "+ef);
         }
-        partialConsume(0,1,0);
+        partialConsume(0,2,0);
     } else {
         savedResources();
         if (get_property("_borrowedTimeUsed") == "false")

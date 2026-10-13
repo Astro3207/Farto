@@ -27,6 +27,7 @@ void dailyMoodAndNightcap(){
     equip($item[devilbone rosary]);
     equip($item[angelbone dice]);
     cli_execute("CONSUME NIGHTCAP");
+    equip($item[angelbone chopsticks]);
 }
 
 // One more stench-airport-ticket farming pass, once today's ticket is spent.
@@ -35,6 +36,27 @@ void stenchAirportFarm(){
         return;
     if (get_property("_stenchAirportToday") == "true"){
         cli_execute("garbo ascend -15");
+    }
+}
+
+void drunkInko(){
+    set_property("famOverride","sword of Swords");
+    set_property("script","farto");
+    if (!everfullReady()) {
+        set_property("acc1Override",", equip everfull dart holster");
+    } else {
+        set_property("acc1Override","");
+    }
+    if (have_effect($effect[driving waterproofly]) == 0)
+        set_property("backOverride",", equip elf guard scuba tank");
+    item banItem = $item[none];
+    if (my_inebriety() > inebriety_limit() && get_property("_unblemishedPearlDiveBar").to_boolean() == false){
+        equip($item[drunkula's wineglass]);
+        set_property("maxOverride","sleaze resistance");
+        adv1($location[The Dive Bar]);
+    } else {
+        set_property("maxOverride","item drop");
+        adv1($location[The Marinara Trench],0,"");
     }
 }
 
@@ -49,21 +71,10 @@ void spendGrimacePrimeMaps(){
     equip($item[drunkula's wineglass]);
     int n = item_amount($item[Map to Safety Shelter Grimace Prime]);
     while (my_adventures() > n){
-        if (have_effect($effect[null afternoon]) == 0)
-            use($item[null-day exploit]);
-        if (my_class() == $class[pastamancer]){
-            if (have_effect($effect[driving waterproofly]) == 0)
-                set_property("backOverride",", equip elf guard scuba tank");
-            use_familiar($familiar[comma chameleon]);
-            set_property("script","farto");
-            if (can_adventure($location[barf mountain])){
-                adv1($location[barf mountain]);
-            } else
-                adv1($location[coral corral]);
-            equip ($item[angelbone totem]);
-        } else if (!adv1($location[barf mountain])){
-            print("preascend: can't adventure in the Shadow Rift -- stopping Grimace-map spend-down", "red");
-            break;
+        if (have_effect($effect[fishy]) > 0 && get_property("_swordOfSWordsKills").to_int() < 100){
+            drunkInko();
+        }else{
+            abort("knucklebone farming");
         }
     }
     finisher();
@@ -239,11 +250,13 @@ void ascend(){
 // ─── ENTRY ───────────────────────────────────────────────────────────────────
 
 void main(){
-    step("phase: mood/nightcap");
-    dailyMoodAndNightcap();
     starter();
-    step("phase: finish nightcapping");
+    step("phase: Organ phase 1");
     equipBonesAndConsume();
+    if (my_inebriety() == inebriety_limit())
+        drunkInko();
+    step("phase: nightcap");
+    dailyMoodAndNightcap();
     try {
         step("phase: grimace prime maps");
         spendGrimacePrimeMaps();

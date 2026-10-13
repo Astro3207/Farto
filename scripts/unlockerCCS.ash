@@ -29,6 +29,13 @@ void dart() {
     }
 }
 
+void crit(){
+    if (my_class() == $class[seal clubber]){
+        use_skill($skill[Furious Wallop]);
+    } else
+        attack();
+}
+
 void farmingStuff(){
     dart();
     if (have_skill($skill[extract]))
@@ -83,7 +90,6 @@ void free_run(string ptext) {
         }
     }
     if (my_familiar() == $familiar[pair of stomping boots] || ((my_familiar() == $familiar[comma chameleon] && get_property("commaFamiliar") == "Pair of Stomping Boots"))){
-        print("HELLO WORLD");
         runaway();
     }
 }
@@ -193,7 +199,9 @@ void waffleShadowGuy(){
     int shadowGuyValue = item_drops_array($monster[shadow guy])[0].rate/100 * itDropMult * mall_price(item_drops_array($monster[shadow guy])[0].drop);
     int avgPrice = (mall_price($item[shadow brick]) + mall_price($item[shadow stick]))/2;
     int otherGuyValue = (item_drops_array($monster[shadow slab])[0].rate/100 * itDropMult * avgPrice) - mall_price($item[waffle]);
-    if (shadowGuyValue < otherGuyValue)
+    if (have_effect($effect[fishy]) < 790)
+        use_skill($skill[Sea *dent: Talk to Some Fish]);
+    else if (shadowGuyValue < otherGuyValue)
         throw_item($item[waffle]);
 }
 
@@ -235,8 +243,7 @@ void main(int round, monster mob, string page_text) {
     print ("monster hp is " + last_monster().base_hp);
     print ("monster level is "+ numeric_modifier("monster level"));
     print ("high stat is " + max(my_buffedstat($stat[muscle]),my_buffedstat($stat[mysticality]),my_buffedstat($stat[moxie])));
-    
-    if (get_property("vintnerCharge").to_int() == 13 && my_familiar() == $familiar[vampire vintner]){
+    if (last_monster() == $monster[school of many] && my_familiar() == $familiar[vampire vintner]){
         if (current_round() == 1){
             throw_items($item[grody jug],$item[pufferfish spine]);
         }
@@ -246,11 +253,10 @@ void main(int round, monster mob, string page_text) {
         while (current_round() > 4 && current_round() < 22){
             throw_items($item[pufferfish spine],$item[pufferfish spine]);
         }
-        abort("Throw shard of double ice and send me the results");  
-        while (current_round() > 20 && current_round() < 25)
+        while (current_round() > 21 && current_round() < 27)
             throw_item($item[facsimile dictionary]);
+        throw_item($item[shard of double-ice]);
     }
-
     if (last_monster() == $monster[black crayon mer-kin]){
         if (get_property("_monsterHabitatsFightsLeft") == 0 && to_int(get_property("_monsterHabitatsRecalled")) < 3){
             use_skill($skill[RECALL FACTS: MONSTER HABITATS]);
@@ -314,12 +320,24 @@ void main(int round, monster mob, string page_text) {
         runaway();
     }
 
-    if (last_monster() == $monster[shadow spire]){
+    if (last_monster() == $monster[shadow spire] || last_monster() == $monster[shadow scythe]){
+        if (have_equipped($item[wicker slicker])){
+            while (current_round() > 0 && current_round() < 10)
+                use_skill($skill[shell up]);
+        } else {
+            foreach sk in $skills[Silent Slam,Sauceshell,shell up]{
+                if (have_skill(sk))
+                    use_skill(sk);
+            }
+        }
         if (current_round() > 0)
             use_skill($skill[saucegeyser]);
     }
     if (last_monster() == $monster[shadow orrery]){
         attack(30);
+    } else if (last_monster() == $monster[shadow cauldron] || last_monster() == $monster[shadow matrix] || last_monster() == $monster[shadow tongue]){
+        while (current_round() > 0 && current_round() < 10)
+            throw_item($item[facsimile dictionary]);
     }
 
     // ── Group: comma chameleon / stocking mimic, subscript "weakling", script "FreeKill" ──
@@ -329,7 +347,7 @@ void main(int round, monster mob, string page_text) {
     if (last_monster() != $monster[shadow scythe] && last_monster() != $monster[shadow spire] && last_monster() != $monster[Guard turtle] && !have_equipped($item[backup camera])) {
         if (have_skill($skill[McHugeLarge Avalanche]))         use_skill($skill[McHugeLarge Avalanche]);
         if (have_skill($skill[Launch spikolodon spikes]))      use_skill($skill[Launch spikolodon spikes]);
-        if (have_skill($skill[sing along]) && my_familiar() != $familiar[pair of stomping boots] && chameleon() != $familiar[pair of stomping boots])      use_skill($skill[sing along]);
+        if (have_skill($skill[sing along]) && my_familiar() != $familiar[peace turkey] && my_familiar() != $familiar[pair of stomping boots] && chameleon() != $familiar[pair of stomping boots])      use_skill($skill[sing along]);
         if (have_skill($skill[Prepare to reanimate your Foe])) use_skill($skill[Prepare to reanimate your Foe]);
         if (item_amount($item[cosmic bowling ball]) > 0){
             use_skill($skill[Bowl Straight Up]);
@@ -451,11 +469,12 @@ void main(int round, monster mob, string page_text) {
         }
         if (my_location() == $location[Gingerbread Civic Center])
             throw_item($item[gingerbread cigarette]);
-        if ((my_basestat($stat[submysticality]) - 62500) > BCZcost("GazeCasts") && last_monster() == $monster[shadow guy])
+        if ((my_basestat($stat[submysticality]) - 62500) > BCZcost("RefractedGazeCasts") && last_monster() == $monster[shadow guy]) {
+            use_skill($skill[Sea *dent: Talk to Some Fish]);
             use_skill($skill[BCZ: Refracted Gaze]);
-        else if (last_monster() == $monster[shadow guy])
+        } else if (last_monster() == $monster[shadow guy])
             waffleShadowGuy();
-        if (get_property("subscript") == "looseFK" && have_equipped($item[mafia pointer finger ring]) && current_round() < 28)
+        if (last_monster().max_meat > 0 && have_equipped($item[mafia pointer finger ring]) && current_round() < 28)
             attack();
         if (get_property("subscript") == "looseFK" && (get_property("_curveballMonster").to_monster() != last_monster() || get_property("_curveballFightsLeft").to_int() == 0) && last_monster().boss == false)
             free_kill(page_text);
@@ -765,13 +784,6 @@ void main(int round, monster mob, string page_text) {
         return;
     }
 
-    // The Sea
-    if (my_location() == $location[The Marinara Trench]){
-        if (last_monster() == $monster[giant squid] && my_class() == $class[accordion thief]){
-            sniff($monster[giant squid]);
-        }
-    }
-
     // ── Individual locations / monsters ───────────────────────────────────────
 
     if (last_monster() == $monster[black crayon spiraling shape]){
@@ -864,6 +876,8 @@ void main(int round, monster mob, string page_text) {
         else
             free_run(page_text);
     }
+    if ($locations[The Dungeons of Doom] contains my_location())
+        free_run(page_text);
     if (my_location() == $location[the black forest]){
         free_kill(page_text);
     }
@@ -875,6 +889,20 @@ void main(int round, monster mob, string page_text) {
                 use_skill(combatBan());
         }
         farmingStuff();
+        attack();
+        attack();
+        attack();
+        cleanUp();
+        return;
+    }
+    if (my_location() == $location[the marinara trench]){
+        if (!contains_text(get_property("banishedPhyla"), "fish")){
+            if ($monsters[diving belle,fisherfish,Mer-kin diver] contains last_monster())
+                use_skill(combatBan());
+        }
+        farmingStuff();
+        free_kill(page_text);
+        crit();
         attack();
         attack();
         attack();
