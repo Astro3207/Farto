@@ -28,6 +28,7 @@ void dailyMoodAndNightcap(){
     equip($item[angelbone dice]);
     cli_execute("CONSUME NIGHTCAP");
     equip($item[angelbone chopsticks]);
+    use_familiar($familiar[sword of s words]);
 }
 
 // One more stench-airport-ticket farming pass, once today's ticket is spent.
@@ -74,7 +75,8 @@ void spendGrimacePrimeMaps(){
         if (have_effect($effect[fishy]) > 0 && get_property("_swordOfSWordsKills").to_int() < 100){
             drunkInko();
         }else{
-            abort("knucklebone farming");
+            set_property("famOverride","skeleton of crimbo past");
+            adv1($location[the skeleton store]);
         }
     }
     finisher();
