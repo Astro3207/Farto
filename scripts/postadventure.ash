@@ -404,7 +404,7 @@ void drunkPygmy(){
             if (get_property("screechCombats").to_int() > 0)
                 set_property("famOverride","patriotic eagle");
             else
-                set_property("famOverride","comma chameleon");
+                set_property("famOverride","cooler yeti");
         }
         if (!contains_text(get_property("banishedMonsters"),"pygmy bowler")){
             set_property("acc3Override",", equip mafia middle finger ring");
@@ -440,7 +440,7 @@ void lianas(){
                     if (get_property("screechCombats").to_int() > 0)
                         set_property("famOverride","patriotic eagle");
                     else{
-                        set_property("famOverride","comma chameleon");
+                        set_property("famOverride","cooler yeti");
                         return;
                     }
                 }
