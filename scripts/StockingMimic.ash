@@ -558,8 +558,10 @@ void feedCandy(){
             if (get_property("lastStockingMimicReset").to_int() != my_ascensions( )){
                 set_property("lastStockingMimicReset",my_ascensions( ));
                 set_property("mimicCandiesFed",numFed);
+                user_confirm("continue1?");
             } else {
                 set_property("mimicCandiesFed",get_property("mimicCandiesFed").to_int() + numFed);
+                user_confirm("continue2?");
             }
         } else {
             cli_execute("refresh all");
@@ -669,9 +671,11 @@ void FKPrep(){
 	foreach ef in $effects[Flapper Dancin', Polka Face, Polka of Plenty,
 		The Ballad of Richie Thingfinder, Earning Interest, Bet Your Autumn Dollar,
 		Sweat Equity, Legendary Pasta Eyeball, Heart of Pink, Tingling Feeling,
-		Disco Leer]{
+		Disco Leer,Serendipity]{
 		if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
 			continue;
+        if (ef == $effect[Serendipity] && get_property("_augSkillsCast").to_int() >= 3)
+            continue;
 		if (have_effect(ef) == 0)
 			cli_execute(ef.default);
 	}
