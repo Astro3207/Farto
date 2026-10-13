@@ -591,8 +591,10 @@ void FKPrep(){
 		dieting();
 	}
     if (my_name().to_lower_case() == "fart scauce"){
+        print ("Check if the script is actually buying some confections");
         retrieve_item(25, $item[bag of many confections]);
         retrieve_item(25, $item[stomp box]);
+        user_confirm ("Check if the script is actually buying some confections");
     } else {
         abort();
     }
@@ -681,7 +683,7 @@ void FKPrep(){
 		cli_execute("combo 10");
 	}
     if (my_name().to_lower_case() == "fart scauce"){
-        foreach ef in $effects[familiar.enq, one coin in a fountain, All Is Forgiven]{
+        foreach ef in $effects[familiar.enq, All Is Forgiven, loyal tea]{
             if (have_effect(ef) > 0)
                 continue;
             if (numeric_modifier(ef,"familiar weight") * 27 * freeKillCount("both") > mall_price($item[pocket wish])){
@@ -746,28 +748,19 @@ void shorts(){
     main@postadventure( );
 }
 void augustCat(){
-    if (to_int(get_property("_augSkillsCast")) >= 4)
-        return;
-
-    foreach id in $ints[8] {
-        if (get_property("_aug" + id + "Cast") == false && to_int(get_property("_augSkillsCast")) < 4) {
-            main@preadventure( );
-            cli_execute("cast Aug. " + id);
-            main@postadventure( );
-        }
+    if (get_property("_aug8Cast") == false && to_int(get_property("_augSkillsCast")) < 4) {
+        main@preadventure( );
+        cli_execute("cast Aug. 8");
+        main@postadventure( );
     }
 }
 
 void augustGolem(){
-    if (to_int(get_property("_augSkillsCast")) >= 5)
-        return;
-
-    foreach id in $ints[22] {
-        if (get_property("_aug" + id + "Cast") == false && to_int(get_property("_augSkillsCast")) < 5) {
-            main@preadventure( );
-            cli_execute("cast Aug. " + id);
-            main@postadventure( );
-        }
+    print("attempting to call august golem");
+    if (get_property("_aug22Cast") == false && to_int(get_property("_augSkillsCast")) < 5) {
+        main@preadventure( );
+        cli_execute("cast Aug. 22");
+        main@postadventure( );
     }
 }
 
@@ -1381,7 +1374,7 @@ string pickWeakling(boolean checkHP){
         && (!checkHP || safeToFK($monster[BRICKO ooze])))
         return "BRICKO";
     if (get_property("_aug8Cast") == "false"
-        && to_int(get_property("_augSkillsCast")) < 4
+        && get_property("_augSkillsCast").to_int() < 4
         && (!checkHP || safeToFK($monster[Skeletal cat])))
         return "augustCat";
     if ((get_property("questPAGhost") == "started" || (get_property("questPAGhost") == "unstarted"
@@ -2004,7 +1997,7 @@ void bulkFKD2(){
     if (weakMonstersLeft())
         weakMonsters();
     step("phase: August Golem");
-        augustGolem();
+    augustGolem();
     step("phase: bulkFK spleen (Extrovermectin)");
     if (my_spleen_use() < spleen_limit()){
         int toChew = floor((spleen_limit()-my_spleen_use())/2);
@@ -2163,7 +2156,7 @@ void bulkFKD1(){
     nonlocationBasedWeakMonsters();
     step("phase: August Golem");
     augustGolem();
-        step("phase: bulkFK reminisce");
+    step("phase: bulkFK reminisce");
     reminisce();
     step("phase: bulkFK glitch monster");
     if (get_property("_glitchMonsterFights") == 0 && have_item($item[\[glitch season reward name\]])){

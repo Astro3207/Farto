@@ -921,15 +921,15 @@
     void getLucky() {
         if (have_effect($effect[Lucky!]) > 0)
             return;
+        if (available_amount($item[heartstone]) > 0 && get_property("heartstoneLuckUnlocked") == true && get_property("_heartstoneLuckUsed") == false) {
+            use_skill($skill[Heartstone: %luck]);
+            if (have_effect($effect[Lucky!]) > 0)
+                return;
+        }
         if (have_skill($skill[Aug. 2nd: Find an Eleven-Leaf Clover Day])
             && get_property("_aug2Cast") == "false"
             && to_int(get_property("_augSkillsCast")) < 5) {
             use_skill($skill[Aug. 2nd: Find an Eleven-Leaf Clover Day]);
-            if (have_effect($effect[Lucky!]) > 0)
-                return;
-        }
-        if (available_amount($item[heartstone]) > 0 && get_property("heartstoneLuckUnlocked") == true && get_property("_heartstoneLuckUsed") == false) {
-            use_skill($skill[Heartstone: %luck]);
             if (have_effect($effect[Lucky!]) > 0)
                 return;
         }
