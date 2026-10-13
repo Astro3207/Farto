@@ -537,6 +537,8 @@ float optimalCandy(){
 
 item candyPick(){
     foreach it in $items[]{
+        if (it == $item[bag of many confections])
+            continue;
         if (it.candy == true && mall_price(it) < 200 && item_amount(it) > 0){
             return it;
         }
@@ -591,7 +593,7 @@ void FKPrep(){
 		dieting();
 	}
     if (my_name().to_lower_case() == "fart scauce"){
-        retrieve_item(40, $item[bag of many confections]);
+        retrieve_item(25, $item[bag of many confections]);
         retrieve_item(25, $item[stomp box]);
     } else {
         abort();

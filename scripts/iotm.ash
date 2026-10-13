@@ -776,6 +776,7 @@
         } else {
             use_familiar($familiar[comma chameleon]);
             if (chameleon() != fam){
+                cli_execute("unequip familiar equipment");
                 retrieve_item(familiar_equipment(fam));
                 visit_url("inv_equip.php?which=2&action=equip&whichitem=" + familiar_equipment(fam).to_int());
                 if (chameleon() != fam)
