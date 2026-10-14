@@ -735,7 +735,7 @@ void postAdv(){
         }
     }
     endOfDayHandling();
-    if (have_item($item[cosmic bowling ball]) && get_property("script") == "FreeKill" && have_effect($effect[Cosmic Ball in the Air]) > 0){
+    if (have_item($item[cosmic bowling ball]) && get_property("subscript") == "NonSMFK" && have_effect($effect[Cosmic Ball in the Air]) > 0){
         set_property("maxOverride","combat,-equip drunkula's wineglass");
         set_property("famOverride", "peace turkey");
         set_property("mainOverride",", equip june cleaver");
