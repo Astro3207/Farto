@@ -148,7 +148,10 @@ boolean oneMore(){
 }
 
 void eatSausage(){
-    eat(23,$item[magical sausage]);
+    if (get_property("_sausagesEaten").to_int() < 23){
+        int n = 23- get_property("_sausagesEaten").to_int();
+        eat(n,$item[magical sausage]);
+    }
 }
 
 void main(){
