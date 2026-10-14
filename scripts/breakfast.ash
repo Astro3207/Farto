@@ -96,10 +96,12 @@ void primeFamiliar(){
 
 // Photobooth the Sheriff costume pieces for the day's free equipment.
 void photoBooth(){
+    whitelist("Bonus Adventures from Hell");
     if (get_property("_photoBoothEquipment").to_int() != 0)
         return;
     foreach part in $strings[Sheriff badge, Sheriff pistol, Sheriff moustache]
         cli_execute("photobooth item " + part);
+    whitelist("homeclan");
 }
 
 // Fart Scauce only -- Foresee Peril on a hand-picked set of targets after

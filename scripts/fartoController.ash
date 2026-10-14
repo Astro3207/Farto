@@ -35,6 +35,7 @@ void main(){
         if (numeric_modifier("familiar weight") < 200){
             cli_execute("postloop");
             cli_execute("preconsume");
+            abort("knob king");
             cli_execute("farto");
         }
         cli_execute("stockingmimic");

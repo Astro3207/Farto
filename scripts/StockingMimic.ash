@@ -234,37 +234,6 @@ void prepBuffs(){
 #    }
 }
 
-// ─── FREE-KILL PREP ──────────────────────────────────────────────────────────
-
-void doSpleen(){
-    foreach spl in $items[medicinal gruel, psilocyber mushroom, gleaming oyster egg,
-        Party-in-a-Can&trade;, body spradium, Crimbeau de toilette]{
-        if (have_effect(itemEffectNotes(spl).ef) > 0)
-            continue;
-        if (spl == $item[body spradium] && item_amount($item[body spradium]) == 0)
-            continue;
-        //700 is the estimated fam weight
-        if (((numeric_modifier(itemEffectNotes(spl).ef,"Familiar Weight") * 27 * freeKillCount("both"))-mall_price(spl)) < ((700*27*4/2) - mall_price($item[Extrovermectin&trade;])/2))
-            continue;
-        chew(spl);
-    }
-}
-
-item cheapestPasta(){
-    int [item] pasta_prices;
-    foreach it in $items[Frutti di Scatoletta,Pesto alla Marziano,Arrattabbattabiata,Orzo di Riso,Pasta Grimavera,Linguini Ubriacapa,Gnocci Domani,Formica e Pepe,Tubetto Gelatto]{
-        pasta_prices[it] = mall_price(it);
-    }
-    item cheap_pasta;
-    int lowest_value = 999999999;
-    foreach it, value in pasta_prices {
-        if (value < lowest_value) {
-            lowest_value = value;
-            cheap_pasta = it;
-        }
-    }
-    return cheap_pasta;
-}
 
 // cap - current for a preference that's either a plain daily counter or a "true"/"false"
 // one-shot flag (to_int() chokes on the latter, so those are special-cased to 0/cap).
@@ -401,6 +370,38 @@ int freeKillCount(string leg){
                 n += item_amount($item[mimic egg]);
     }
     return n;
+}
+
+// ─── FREE-KILL PREP ──────────────────────────────────────────────────────────
+
+void doSpleen(){
+    foreach spl in $items[medicinal gruel, psilocyber mushroom, gleaming oyster egg,
+        Party-in-a-Can&trade;, body spradium, Crimbeau de toilette]{
+        if (have_effect(itemEffectNotes(spl).ef) > 0)
+            continue;
+        if (spl == $item[body spradium] && item_amount($item[body spradium]) == 0)
+            continue;
+        //700 is the estimated fam weight
+        if (((numeric_modifier(itemEffectNotes(spl).ef,"Familiar Weight") * 27 * freeKillCount("both"))-mall_price(spl)) < ((700*27*4/2) - mall_price($item[Extrovermectin&trade;])/2))
+            continue;
+        chew(spl);
+    }
+}
+
+item cheapestPasta(){
+    int [item] pasta_prices;
+    foreach it in $items[Frutti di Scatoletta,Pesto alla Marziano,Arrattabbattabiata,Orzo di Riso,Pasta Grimavera,Linguini Ubriacapa,Gnocci Domani,Formica e Pepe,Tubetto Gelatto]{
+        pasta_prices[it] = mall_price(it);
+    }
+    item cheap_pasta;
+    int lowest_value = 999999999;
+    foreach it, value in pasta_prices {
+        if (value < lowest_value) {
+            lowest_value = value;
+            cheap_pasta = it;
+        }
+    }
+    return cheap_pasta;
 }
 
 int valueOfOrgan(string organ){
@@ -760,7 +761,7 @@ void shorts(){
 void augustCat(){
     if (get_property("_aug8Cast") == false && to_int(get_property("_augSkillsCast")) < 4) {
         main@preadventure( );
-        use_skill($skill[Aug. 8th: Cat Day]);
+        use_skill($skill[Aug. 8th: Cat Day!]);
         main@postadventure( );
     }
     if (dayType() == 0)
@@ -770,7 +771,7 @@ void augustCat(){
 void augustGolem(){
     if (get_property("_aug22Cast") == false && to_int(get_property("_augSkillsCast")) < 5) {
         main@preadventure( );
-        use_skill($skill[Aug. 22nd: Tooth Fairy Day]);
+        use_skill($skill[Aug. 22nd: Tooth Fairy Day!]);
         main@postadventure( );
     }
 }
@@ -1972,6 +1973,7 @@ boolean [location] periledLocations() {
 
 void peridotFishing(){
     string perilLocations;
+    whitelist("Temporary");
     repeat {
         perilLocations = get_property("_perilLocations");
         foreach loc in $locations[The Spooky Forest,The Unquiet Garves,The Bat Hole Entrance,
@@ -2032,6 +2034,7 @@ void peridotFishing(){
             }
         }
     } until (perilLocations == get_property("_perilLocations"));
+    whitelist("homeclan");
     set_property("acc1Override","");
     set_property("offOverride","");
     set_property("subscript","");

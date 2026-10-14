@@ -390,13 +390,16 @@
 
     int [string] clan_to_ID {
         "Hyrule" : 72876,
+        "Bonus Adventures from Hell" : 90485,
         "Dread and Final" : 2047010985,
         "Dread Mart" : 2047010683,
         "Dread Outlet Bargain Market" : 2047010572,
         "Dreadleys" : 2047010988,
         "DreadNugget" : 2047010986,
         "Dreadway" : 2047010667,
-        "Fart Sauce Annex" : 2047010939
+        "Fart Sauce Annex" : 2047010939,
+        "Temporary" : 2047011181,
+        "homeclan" : get_property("homeClanID").to_int()
     };
 
     void whitelist(string clan){
