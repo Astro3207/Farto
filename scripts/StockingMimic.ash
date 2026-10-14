@@ -695,7 +695,7 @@ void FKPrep(){
 		cli_execute("beach head 10");
 		cli_execute("combo 10");
 	}
-    foreach ef in $effects[familiar.enq, All Is Forgiven, loyal tea]{
+    foreach ef in $effects[familiar.enq, All Is Forgiven, loyal tea,Schroedinger's Anticipation]{
         if (have_effect(ef) > 0)
             continue;
         if (numeric_modifier(ef,"familiar weight") * 27 * freeKillCount("both") > mall_price($item[pocket wish])){

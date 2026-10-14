@@ -472,12 +472,16 @@ void main(int whichchoice, string page) {
             if (whichchoice == 1562){
                 string [int] choices = available_choice_options();
                 foreach num, choice_text in choices {
+                    if (contains_text(choice_text,"Fix your parents") && get_property("script") == "FreeKill"){
+                        run_choice(num);
+                        exit;
+                    }
                     if (contains_text(choice_text,"investment tips")){
                         run_choice(num);
                         exit;
                     }
                     if (dayType() == 0){
-                        foreach str in $strings[Stop your arch-nemesis as a baby,Take the long odds on the trifecta,Hey, free gun!,Borrow meat from your future,Draw a goatee on yourself,Plant some seeds in the distant past,Peek in on your future,Plant some trees and harvest them in the future,Steal a cupcake from young Susie,Borrow a cup of sugar from yourself,Steal a club from the past,Go back and write a best-seller,Go back and take a 20-year-long nap]{
+                        foreach str in $strings[when they were young,Stop your arch-nemesis as a baby,Take the long odds on the trifecta,Hey, free gun!,Borrow meat from your future,Draw a goatee on yourself,Plant some seeds in the distant past,Peek in on your future,Plant some trees and harvest them in the future,Steal a cupcake from young Susie,Borrow a cup of sugar from yourself,Steal a club from the past,Go back and write a best-seller,Go back and take a 20-year-long nap]{
                             foreach num, choice_text in choices {
                                 if (contains_text(choice_text,str)){
                                     run_choice(num);
