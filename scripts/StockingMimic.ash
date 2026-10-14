@@ -2037,6 +2037,7 @@ void peridotFishing(){
                     continue;
                 mimicPrep();
                 set_property("offOverride",", equip Kramco Sausage-o-Matic");
+                set_property("acc2Override",",bonus mafia pointer");
                 if (get_property("_timeCopsFoughtToday").to_int() < 10)
                     set_property("acc1Override",", equip mobius");
                 if (loc.zone == "The Mer-Kin Deepcity"){
