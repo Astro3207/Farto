@@ -47,6 +47,26 @@ void pvpCombat(){
     }
 }
 
+int get_price( item itm ){
+    if ( historical_age( itm ) < 14 ) return historical_price( itm );
+    return mall_price( itm );
+}
+
+boolean is_pvpable( item thing ){
+    return thing.tradeable && thing.discardable && !thing.gift && !thing.quest;
+}
+
+void pvpCleanup(){
+    int expensiveValue = 1000;
+    batch_open();
+    foreach it in get_inventory(){
+        if ( is_pvpable( it ) && get_price( it ) > expensiveValue ){
+            put_closet( item_amount( it ), it);
+        }
+    }
+    batch_close();
+}
+
 void takerspaceStart(){
     if (get_property("_workshedItemUsed") == "false" && get_workshed( ) != $item[TakerSpace letter of Marque]){
         cli_execute("use takerspace");
@@ -136,6 +156,7 @@ void main(){
     heavyWeightBooze();
     step("phase: pvp");
     pvpCombat();
+    pvpCleanup();
     step("phase: takerspace");
     takerspaceStart();
     step("phase: aug skills");
