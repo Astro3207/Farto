@@ -93,6 +93,11 @@ void mood(string function){
                 cli_execute("gain spooky res 100 maxmeatspent");
             break;
     }}
+
+boolean useChestMimic(){
+    return true;
+}
+
 void preAdv(){
     if (get_property("script") == "FreeKill" && my_fullness() == fullness_limit() && get_property("_pantsgivingFullness").to_int() < 2)
         stashgrab($item[pantsgiving]);
@@ -106,15 +111,15 @@ void preAdv(){
        //         use_familiar($familiar[patriotic eagle]);
             else if (item_amount($item[1950 Vampire Vintner wine]) == 0 && dayType() == 0)
                 use_familiar($familiar[vampire vintner]);
-            else if ($familiar[chest mimic].experience < 900){
+            else if ($familiar[chest mimic].experience < 100){
                 use_familiar($familiar[chest mimic]);
                 if (have_effect($effect[heart of white]) == 0)
                     use($item[white candy heart]);
-            } else if (numeric_modifier("familiar weight") > 49){
+            } else if (numeric_modifier("familiar weight") > 49 || dayType() == 0){
                 if (have_familiar($familiar[robortender]))
                     use_familiar($familiar[robortender]);
                 else
-                    use_familiar($familiar[comma chameleon]);
+                    altFam($familiar[robortender]);
             } else if ($familiar[cooler yeti].experience < 400 && get_property("_coolerYetiAdventures") == "false" && (dayType() == 0 || inebriety_limit() - 4 > my_inebriety())){
                 use_familiar($familiar[cooler yeti]);
                 if (have_effect($effect[heart of white]) == 0)
@@ -148,8 +153,6 @@ void preAdv(){
             return ", equip Li'l Businessman Kit";
         }
         if ((my_familiar() == $familiar[robortender] || (my_familiar() == $familiar[Comma Chameleon]) && (chameleon() == $familiar[none] || chameleon() == $familiar[robortender])) && get_property("script") == "farto"){
-            if (dayType() == 0)
-                abort("not worth the resources D1, script it out");
             if (my_familiar() == $familiar[Comma Chameleon] && chameleon() == $familiar[none]){
                 retrieve_item(item_amount(familiar_equipment($familiar[robortender]))+1,familiar_equipment($familiar[robortender]));
                 visit_url("inv_equip.php?which=2&action=equip&whichitem=" + familiar_equipment($familiar[robortender]).to_int());
