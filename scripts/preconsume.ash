@@ -147,8 +147,8 @@ boolean oneMore(){
     return true;
 }
 
-void sausageCasing(){
-    
+void eatSausage(){
+    eat(23,$item[magical sausage]);
 }
 
 void main(){
@@ -159,12 +159,12 @@ void main(){
  //   legendaryPasta();
     timeArrow();
     clanAdv();
+    eatSausage();
     if (dayType() == 1){
         cupOf13s();
         cli_execute("uneffect ur-kel");
         astral();
         yeti();
-        sausageCasing();
         if (get_property("_borrowedTimeUsed") == false){
         //    use($item[borrowed time]);
         }
