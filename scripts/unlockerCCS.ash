@@ -334,6 +334,9 @@ void main(int round, monster mob, string page_text) {
             use_skill($skill[saucegeyser]);
     }
     if (last_monster() == $monster[shadow orrery]){
+            for i from 1 to 9 {
+                throw_item($item[facsimile dictionary]);
+            }
         attack(30);
     } else if (last_monster() == $monster[shadow cauldron] || last_monster() == $monster[shadow matrix] || last_monster() == $monster[shadow tongue]){
         while (current_round() > 0 && current_round() < 10)
