@@ -456,6 +456,8 @@ void main(int whichchoice, string page) {
                     run_choice(1, "bandersnatch=414");
                 }
             }
+            if (my_location() == $location[Cobb's Knob Laboratory])
+                run_choice(1, "bandersnatch=86");
             if (my_location() == $location[The Caliginous Abyss])
                 run_choice(1, "bandersnatch=1374");
             if (my_location() == $location[Madness Bakery])

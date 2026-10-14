@@ -206,10 +206,22 @@ void main(){
                     blackForest();
                 else if ((get_property("questG09Muscle") != "finished" && my_class() == $class[seal clubber]) || get_property("questL05Goblin") == "started")
                     outskirts();
-                if (get_property("questM10Azazel") != "finished" && my_adventures() == 0)
-                    eat($item[magical sausage]);
-                if (get_property("questL05Goblin") == "started")
-                    abort("knob king");
+                if (get_property("questL05Goblin") != "started" && available_amount($item[mayfly bait necklace]) > 0){
+                    if (get_property("questL05Goblin") == "step1"){
+                        use($item[Knob Goblin perfume]);
+                        set_property("hatOverride",", equip Knob Goblin harem veil");
+                        set_property("pantsOverride",", equip Knob Goblin harem pants");
+                        adv1($location[Throne Room]);
+                        set_property("hatOverride","");
+                        set_property("pantsOverride","");
+                    }
+                    if (item_amount($item[Cobb's Knob Menagerie key]) == 0){
+                        set_property("acc1Override",", equip peridot of peril");
+                        adv1($location[Cobb's Knob Laboratory]);
+                        set_property("acc1Override","");
+                    }
+                    abort("Hunter use heartstone banish and monkeypaw slap and do the mayfly manually, send it to me and Ill script it in fully");
+                }
             } else if ((my_class() == $class[accordion thief] || have_effect($effect[fishy]) > 0) || dayType() == 0){
                 inko();
             } else if (my_class() == $class[pastamancer] && numeric_modifier($modifier[meat drop]) > 1700){
