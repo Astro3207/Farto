@@ -489,6 +489,15 @@
         return true;
     }
 
+    // Turns of Everything Looks Red a bullseye gives: 50, minus 10 for each
+    // cooldown perk ("You are less impressed by bullseyes" / "Bullseyes do not
+    // impress you much"), counting repeats.
+    int bullseyeCooldown(){
+        perks = get_property("everfullDartPerks");
+        int n = count_substring(perks, "You are less impressed by bullseyes") + count_substring(perks, "Bullseyes do not impress you much");
+        return max(0, 50 - 10 * n);
+    }
+
     void darts() {
         while (to_int(get_property("_dartsLeft")) > 0
             && have_equipped($item[everfull dart holster])
@@ -912,7 +921,7 @@
     }
 
     boolean free_Kill(){
-        if (have_effect($effect[everything looks red]) == 0 && bullseyeReady() && my_adventures() > 30)
+        if (have_effect($effect[everything looks red]) == 0 && bullseyeReady() && (my_adventures() > bullseyeCooldown() || dayType() == 1))
             return true;
         if (have_effect($effect[everything looks yellow]) == 0 && my_adventures() > 100)
             return true;
