@@ -1007,15 +1007,29 @@ void spendAdv(){
         cookbookbat();
     }
     if (free_run() && my_inebriety() <= inebriety_limit()){
-        set_property("maxOverride","combat,-equip drunkula's wineglass");
-        set_property("famOverride", "peace turkey");
-        set_property("mainOverride",", equip june cleaver");
-        set_property("acc1Override", ", equip spring shoes");
-        adv1($location[cobb's knob treasury]);
-        set_property("maxOverride","");
-        set_property("famOverride", "");
-        set_property("mainOverride","");
-        set_property("acc1Override", "");
+        if (dayType() == 1 && have_effect($effect[citizen of a zone]) == 0 && numeric_modifier("familiar weight") < 55){
+            set_property("subscript","citizen");
+            set_property("maxOverride","combat,-equip drunkula's wineglass");
+            set_property("famOverride", "patriotic eagle");
+            set_property("mainOverride",", equip june cleaver");
+            set_property("acc1Override", ", equip spring shoes");
+            adv1($location[The Defiled Cranny]);
+            set_property("subscript","");
+            set_property("maxOverride","");
+            set_property("famOverride", "");
+            set_property("mainOverride","");
+            set_property("acc1Override", "");
+        } else {
+            set_property("maxOverride","combat,-equip drunkula's wineglass");
+            set_property("famOverride", "peace turkey");
+            set_property("mainOverride",", equip june cleaver");
+            set_property("acc1Override", ", equip spring shoes");
+            adv1($location[cobb's knob treasury]);
+            set_property("maxOverride","");
+            set_property("famOverride", "");
+            set_property("mainOverride","");
+            set_property("acc1Override", "");
+        }
     }
     if (my_adventures() < 60 && to_int(get_property("_bookOfFactsWishes")) < 3)
         BoFaWish();

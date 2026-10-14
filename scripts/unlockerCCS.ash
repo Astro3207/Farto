@@ -347,6 +347,11 @@ void main(int round, monster mob, string page_text) {
             throw_item($item[facsimile dictionary]);
     }
 
+    if (get_property("subscript") == "citizen"){
+        use_skill($skill[%fn, let's pledge allegiance to a Zone]);
+        free_run(page_text);
+    }
+
     // ── Group: comma chameleon / stocking mimic, subscript "weakling", script "FreeKill" ──
     // The generic pre-combat buffs (avalanche/spikolodon/reanimate/bowling-ball/kill-a-lot)
     // are kept ahead of this whole group so they still apply before every branch in it, same
