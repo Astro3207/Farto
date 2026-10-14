@@ -862,7 +862,7 @@ void shadowRealmFK(){
     if (get_property("questRufus") == "started" && get_property("rufusQuestType") == "items"){
         retrieve_item(3,to_item(get_property("rufusQuestTarget")));
     } else if (have_effect($effect[shadow affinity]) > 0){
-        if (have_effect($effect[fishy]) < 810)
+        if (have_effect($effect[fishy]) < 840)
             set_property("mainOverride",", equip monodent");
         else
             set_property("mainOverride","");
@@ -883,7 +883,7 @@ void shadowRealmFK(){
                 set_auto_attack(0);
                 shadowBoss();
             } else {
-                if (have_effect($effect[fishy]) < 810)
+                if (have_effect($effect[fishy]) < 840)
                     set_property("mainOverride",", equip monodent");
                 else
                     set_property("mainOverride","");

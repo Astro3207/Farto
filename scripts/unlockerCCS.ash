@@ -201,7 +201,7 @@ void waffleShadowGuy(){
     int shadowGuyValue = item_drops_array($monster[shadow guy])[0].rate/100 * itDropMult * mall_price(item_drops_array($monster[shadow guy])[0].drop);
     int avgPrice = (mall_price($item[shadow brick]) + mall_price($item[shadow stick]))/2;
     int otherGuyValue = (item_drops_array($monster[shadow slab])[0].rate/100 * itDropMult * avgPrice) - mall_price($item[waffle]);
-    if (have_effect($effect[fishy]) < 810)
+    if (have_effect($effect[fishy]) < 840)
         use_skill($skill[Sea *dent: Talk to Some Fish]);
     else if (shadowGuyValue < otherGuyValue)
         throw_item($item[waffle]);
