@@ -67,6 +67,23 @@ void pvpCleanup(){
     batch_close();
 }
 
+// Cash in Stock Certificates that have matured (500+ turns old).
+// stockCertificateTurns is the acquisition turn of each held certificate,
+// oldest first; re-read it every pass since using one changes the list.
+void certificates(){
+    while (item_amount($item[Stock Certificate]) > 0){
+        string turns = get_property("stockCertificateTurns");
+        string[int] stocks = split_string(turns, ",");
+        if (stocks[0] == "" || total_turns_played() - stocks[0].to_int() < 500)
+            break;
+        if (!use(1, $item[Stock Certificate]))
+            break;
+        // mafia didn't drop the used certificate's turn -- stop rather than loop
+        if (get_property("stockCertificateTurns") == turns)
+            break;
+    }
+}
+
 void takerspaceStart(){
     if (get_property("_workshedItemUsed") == "false" && get_workshed( ) != $item[TakerSpace letter of Marque]){
         cli_execute("use takerspace");
@@ -161,6 +178,8 @@ void main(){
     takerspaceStart();
     step("phase: aug skills");
     augSkills();
+    step("phase: stock certificates");
+    certificates();
     cli_execute ("maximize adv; av-snapshot.ash");
  //   step("phase: clockwork maid");
    // clockworkMaid();
