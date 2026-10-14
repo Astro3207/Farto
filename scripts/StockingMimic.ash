@@ -1164,6 +1164,7 @@ void habitatRecall(){
         if (copyTarget == $monster[sausage goblin] && to_int(get_property("_monsterHabitatsFightsLeft")) == 0 && to_int(get_property("_monsterHabitatsRecalled")) < 3){
             mimicPrep();
             set_property("offOverride",", equip kramco");
+            set_property("acc1Override",",bonus mafia pointer");
             if (get_property("_fishyPipeUsed") == "false")
                 use ($item[fishy pipe]);
             if (have_effect($effect[Wet Willied]) == 0)
@@ -1172,6 +1173,7 @@ void habitatRecall(){
                 set_property("pantsOverride", ", equip really nice swim");
             adv1($location[The Briniest Deepests]);
             set_property("offOverride","");
+            set_property("acc1Override","");
             set_property("pantsOverride", "");
         } else if (to_int(get_property("_monsterHabitatsFightsLeft")) == 0 && to_int(get_property("_monsterHabitatsRecalled")) < 3){
             mimicPrep();
