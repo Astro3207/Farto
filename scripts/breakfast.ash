@@ -137,15 +137,6 @@ void alliedRadio(){
     }
 }
 
-// Spend the day's 5 free Unaccompanied Miner trips in the Itznotyerzitz Mine.
-// Digs only a Promising Chunk that sits inside its own <a ...which=N> link:
-// that link is exactly what marks a chunk as adjacent to open space, the only
-// kind KoL lets you mine. Object Detection labels every chunk in the wall,
-// linked or not, so matching the bare "(x,y)" text (the old approach) could
-// target an unmineable square -- the use counter would never advance and the
-// loop would spin forever. When nothing reachable is showing, reset the wall
-// (free) and look again; give up after 20 fruitless resets rather than spin
-// indefinitely if the wall genuinely never cooperates.
 void unaccompaniedMiner(){
     if (!have_skill($skill[Unaccompanied Miner]))
         return;

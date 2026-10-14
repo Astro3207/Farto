@@ -8,4 +8,5 @@ github Pantocyclus/PVP_MAB release
 github C2Talon/c2t_megg
 github Prusias-kol/pTrack
 github loathers/combo
+github Ezandora/Bastille
 https://svn.code.sf.net/p/zlib/code

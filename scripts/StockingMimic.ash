@@ -584,6 +584,8 @@ void FKPrep(){
             cli_execute("PVP_MAB; unequip pants");
         }
     }
+    if (item_amount($item[Bastille Battalion control rig]) > 0)
+        cli_execute("bastille muscle gesture");
     if (get_auto_attack() == 0)
         aa("facsimile");
 	if (get_property("_shadowAffinityToday") == "false")
