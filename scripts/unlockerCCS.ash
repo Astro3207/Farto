@@ -441,7 +441,7 @@ void main(int round, monster mob, string page_text) {
         return;
     }
 
-    if ((my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[stocking mimic]) && last_monster() == $monster[black crayon flower]){
+    if ((chameleon() == $familiar[pocket professor]|| my_familiar() == $familiar[pocket professor])){
         use_skill($skill[lecture on relativity]);
         use_skill($skill[Tear Away your Pants!]);
         if (dayType() == 1)
