@@ -560,7 +560,7 @@ item candyPick(){
 
 void feedCandy(){
     while (get_property("mimicCandiesFed").to_int() < optimalCandy() || get_property("lastStockingMimicReset").to_int() != my_ascensions( )){
-        int numFed = min(item_amount(candyPick()),max((optimalCandy() - get_property("mimicCandiesFed").to_int()),0));
+        int numFed = min(item_amount(candyPick()),max((optimalCandy() - get_property("mimicCandiesFed").to_int()),1));
         if (contains_text(visit_url("familiarbinger.php?action=binge&pwd=" + my_hash() + "&qty="+numFed+"&whichitem=" + candyPick().to_int()).to_string(),"quickly consumes")){
             if (get_property("lastStockingMimicReset").to_int() != my_ascensions( )){
                 set_property("lastStockingMimicReset",my_ascensions( ));
