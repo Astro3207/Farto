@@ -585,8 +585,6 @@ void FKPrep(){
             cli_execute("PVP_MAB; unequip pants");
         }
     }
-    if (item_amount($item[Bastille Battalion control rig]) > 0)
-        cli_execute("bastille muscle gesture");
     if (get_auto_attack() == 0)
         aa("facsimile");
 	if (get_property("_shadowAffinityToday") == "false")
@@ -631,6 +629,10 @@ void FKPrep(){
 		adv1($location[The Hidden Temple]);
 		useMayamRings();
 	}
+    if (item_amount($item[Bastille Battalion control rig]) > 0)
+        cli_execute("bastille muscle gesture");
+    if ($ints[7452,7454,7455,7456,7462,7463,7465,7466,7468,7471,7472,7474,7475,7476,7477,7478,7479,7480,7481,7482] contains augToday().to_int())
+        castAugToday();
     if (have_effect($effect[Hammertime]) == 0)
         use($item[too legit potion]);
     effect[int] beretBuffs;

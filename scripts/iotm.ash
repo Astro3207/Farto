@@ -790,6 +790,18 @@
         }
     }
 
+    skill augToday(){
+        return to_skill(7451 + today_to_string().substring(6).to_int());
+    }
+
+    void castAugToday(){
+        if (available_amount($item[august scepter]) == 0)
+            return;
+        if (get_property("_augTodayCast").to_boolean())
+            return;
+        use_skill(1, augToday());
+    }
+
     // ─── TRICK OR TREAT ───────────────────────────────────────────────────────
 
     void candy(string action) {
