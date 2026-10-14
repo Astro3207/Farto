@@ -950,6 +950,8 @@ void spendAdv(){
                 retrieve_item($item[shard of double-ice]);
             set_property("famOverride","vampire vintner");
             set_property("maxOverride","moxie");
+            set_property("shirtOverride"," ");
+            cli_execute("unequip shirt");
             set_property("pantsOverride",", equip really nice swim");
             set_property("acc1Override",", equip black glass");
             set_property("acc2Override",", equip peridot");
@@ -959,9 +961,10 @@ void spendAdv(){
             adv1($location[the caliginous abyss]);
             set_property("famOverride","");
             set_property("maxOverride","");
+            set_property("shirtOverride","");
             set_property("pantsOverride","");
             set_property("acc1Override","");
-            set_property("acc1Override","");
+            set_property("acc2Override","");
             set_property("famEquipOverride","");
         }
         string [location] batWings = {

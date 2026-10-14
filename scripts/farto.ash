@@ -208,6 +208,8 @@ void main(){
                     outskirts();
                 if (get_property("questM10Azazel") != "finished" && my_adventures() == 0)
                     eat($item[magical sausage]);
+                if (get_property("questL05Goblin") == "started")
+                    abort("knob king");
             } else if ((my_class() == $class[accordion thief] || have_effect($effect[fishy]) > 0) || dayType() == 0){
                 inko();
             } else if (my_class() == $class[pastamancer] && numeric_modifier($modifier[meat drop]) > 1700){
