@@ -902,7 +902,7 @@
             return true;
         if (have_effect($effect[everything looks green]) == 0 && my_adventures() > 60)
             return true;
-        if (have_effect($effect[Cosmic Ball in the Air]) > my_adventures() && have_item($item[cosmic bowling ball]))
+        if (have_effect($effect[Cosmic Ball in the Air]) > 10 && have_item($item[cosmic bowling ball]))
             return true;
         return false;
     }

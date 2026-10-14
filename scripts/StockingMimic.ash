@@ -631,7 +631,7 @@ void FKPrep(){
 	}
     if (item_amount($item[Bastille Battalion control rig]) > 0)
         cli_execute("bastille muscle gesture");
-    if ($ints[7452,7454,7455,7456,7462,7463,7465,7466,7468,7471,7472,7474,7475,7476,7477,7478,7479,7480,7481,7482] contains augToday().to_int())
+    if ($ints[7452,7454,7455,7456,7458,7462,7463,7464,7465,7466,7468,7471,7472,7474,7475,7476,7477,7478,7479,7480,7481,7482] contains augToday().to_int())
         castAugToday();
     if (have_effect($effect[Hammertime]) == 0)
         use($item[too legit potion]);
