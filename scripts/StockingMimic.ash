@@ -1157,10 +1157,22 @@ void gingerbread(){
 void habitatRecall(){
     while (to_int(get_property("_monsterHabitatsRecalled")) < 3 || to_int(get_property("_monsterHabitatsFightsLeft")) > 0 || get_property("beGregariousFightsLeft").to_int() > 0){
         banishFish();
-        if (to_int(get_property("_monsterHabitatsFightsLeft")) == 0 && to_int(get_property("_monsterHabitatsRecalled")) < 3){
+        if (copyTarget == $monster[sausage goblin] && to_int(get_property("_monsterHabitatsFightsLeft")) == 0 && to_int(get_property("_monsterHabitatsRecalled")) < 3){
+            mimicPrep();
+            set_property("offOverride",", equip kramco");
+            if (get_property("_fishyPipeUsed") == "false")
+                use ($item[fishy pipe]);
+            if (have_effect($effect[Wet Willied]) == 0)
+                use($item[willyweed]);
+            if (have_effect($effect[driving waterproofly]) == 0)
+                set_property("pantsOverride", ", equip really nice swim");
+            adv1($location[The Briniest Deepests]);
+            set_property("offOverride","");
+            set_property("pantsOverride", "");
+        } else if (to_int(get_property("_monsterHabitatsFightsLeft")) == 0 && to_int(get_property("_monsterHabitatsRecalled")) < 3){
             mimicPrep();
             main@preadventure();
-            cli_execute("reminisce black crayon mer-kin");
+            cli_execute("reminisce " + copyTarget);
             main@postadventure();
         }
         while (to_int(get_property("_monsterHabitatsFightsLeft")) > 0 || get_property("beGregariousFightsLeft").to_int() > 0){
@@ -1179,7 +1191,7 @@ void habitatRecall(){
     }
 }
 void backup(){
-    while (to_int(get_property("_backUpUses")) < 11 && get_property("lastCopyableMonster") == "Black Crayon Mer-kin"){
+    while (to_int(get_property("_backUpUses")) < 11 && to_monster(get_property("lastCopyableMonster")) == copyTarget){
         if (to_int(get_property("_mimicEggsObtained")) < 11 && $familiar[chest mimic].experience > 100){
             set_property("famOverride","chest mimic");
         } else
@@ -1198,10 +1210,10 @@ void backup(){
     set_property("acc3Override","");
 }
 void mimicEgg(){
-    while (item_amount($item[mimic egg]) > 0 && dayType() == 1 && contains_text(get_property("mimicEggMonsters"),"1202")){
+    while (item_amount($item[mimic egg]) > 0 && dayType() == 1 && contains_text(get_property("mimicEggMonsters"),copyTarget.to_int().to_string())){
         mimicPrep();
         main@preadventure( );
-        cli_execute("c2t_megg fight Black Crayon Mer-kin");
+        cli_execute("c2t_megg fight " + copyTarget);
         run_combat();
         cli_execute("postadventure");
     }
@@ -1220,7 +1232,7 @@ void faxing(){
 }
 void reminisce() {
     while (get_property("_locketMonstersFought").split_string(",").count() < 3){
-        foreach mon in $monsters[black crayon golem, black crayon spiraling shape]{
+        foreach mon in $monsters[Frozen Bag of Tortellini,Sausage goblin,black crayon golem, black crayon spiraling shape]{
             if (get_property("_locketMonstersFought").contains_text(mon.to_int()))
                 continue;
             mimicPrep();
@@ -1899,6 +1911,11 @@ void miscellaneousFams(){
         set_property("maxOverride","familiar weight");
     }
     if (get_property("_pocketProfessorLectures").to_int() == 0 && get_property("_locketMonstersFought").split_string(",").count() < 3 && !contains_text(get_property("_locketMonstersFought"),"1199") && dayType() == 1){
+        string profTarget;
+        if (dayType() == 0)
+            profTarget = "witchess bishop";
+        else if (dayType() == 1)
+            profTarget = "Pumpkin spice wraith";
         set_property("maxOverride","familiar weight");
         set_property("pantsOverride",", equip tearaway Pants");
         set_property("offOverride", ", equip kol con snowglobe");
@@ -1908,8 +1925,8 @@ void miscellaneousFams(){
         set_property("subscript","NonSMFK");
         altFam($familiar[Pocket Professor]);
         main@preadventure();
-        cli_execute("reminisce Black Crayon Flower");
-        while (get_property("_chainedRelativityMonster") == "Black Crayon Flower")
+        cli_execute("reminisce " + profTarget);
+        while (get_property("_chainedRelativityMonster") == profTarget)
             run_combat();
         set_property("pantsOverride","");
         set_property("offOverride", "");

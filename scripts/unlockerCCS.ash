@@ -259,7 +259,7 @@ void main(int round, monster mob, string page_text) {
             throw_item($item[facsimile dictionary]);
         throw_item($item[shard of double-ice]);
     }
-    if (last_monster() == $monster[black crayon mer-kin]){
+    if (last_monster() == copyTarget){
         if (get_property("_monsterHabitatsFightsLeft") == 0 && to_int(get_property("_monsterHabitatsRecalled")) < 3){
             use_skill($skill[RECALL FACTS: MONSTER HABITATS]);
         } else if (get_property("_monsterHabitatsFightsLeft") == 0 && get_property("beGregariousFightsLeft").to_int() == 0 && get_property("beGregariousCharges").to_int() > 0 && dayType() == 1){
@@ -370,9 +370,9 @@ void main(int round, monster mob, string page_text) {
         sauce(4);
     }
 
-    if (get_property("script") == "FreeKill" && have_equipped($item[backup camera]) && get_property("lastCopyableMonster") == "Black Crayon Mer-kin"){
+    if (get_property("script") == "FreeKill" && have_equipped($item[backup camera]) && to_monster(get_property("lastCopyableMonster")) == copyTarget){
         use_skill($skill[BACK-UP TO YOUR LAST ENEMY]);
-        if (last_monster() == $monster[black crayon mer-kin]){
+        if (last_monster() == copyTarget){
             while (my_familiar() == $familiar[chest mimic] && to_int(get_property("_mimicEggsObtained")) < 11 && $familiar[chest mimic].experience > 50){
                 use_skill($skill[%FN, LAY AN EGG]);
             }
@@ -466,7 +466,7 @@ void main(int round, monster mob, string page_text) {
             throw_item($item[facsimile dictionary]);
             if (have_effect($effect[everything looks purple]) == 0 && have_equipped($item[roman candelabra]))
                 use_skill($skill[blow the purple candle!]);
-            if (last_monster() == $monster[black crayon mer-kin]){
+            if (last_monster() == copyTarget){
                 if (item_amount($item[pulled green taffy]) > 0 && item_amount($item[envyfish egg]) == 0 && get_property("_envyfishEggUsed") == "false")
                     throw_item($item[pulled green taffy]);
                 if (item_amount($item[4-d camera]) > 0 && item_amount($item[shaking 4-d camera]) == 0 && get_property("_cameraUsed") == "false")

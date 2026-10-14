@@ -1036,7 +1036,7 @@ void spendAdv(){
     }
     if (my_adventures() < 60 && to_int(get_property("_bookOfFactsWishes")) < 3)
         BoFaWish();
-    if (dayType() == 0 &&  my_adventures() < 10){
+    if (dayType() == 0 &&  my_adventures() < 3){
         banishFish();
         set_property("famOverride","");
     }

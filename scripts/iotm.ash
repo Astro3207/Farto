@@ -16,6 +16,10 @@
     string clan = get_clan_name();
     int estimatedTurns;
     boolean [monster] haveLocketMonster = get_locket_monsters();
+    // The monster the free-kill run chain-copies (locket -> habitat recall,
+    // backup camera, mimic eggs). Change it here; StockingMimic and the CCS
+    // both read this.
+    monster copyTarget = $monster[sausage goblin];
 
     // Mafia state snapshot, read once at import so finisher() can hand the account
     // back exactly what it had. starter() repoints the between-battle / after-
