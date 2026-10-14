@@ -473,14 +473,16 @@ void dieting(){
         if (my_fullness() == fullness_limit() && get_property("_pantsgivingFullness").to_int() < 1){
             if (item_amount($item[pantsgiving]) == 0)
                 stashgrab($item[pantsgiving]);
-            equip($item[pantsgiving]);
-            use_familiar($familiar[patriotic eagle]);
-            retrieve_item($item[dish of clarified butter]);
-            visit_url("inv_use.php?which=3&whichitem=9908");
-            run_combat();
-            run_choice(-1);
-            if (my_fullness() < fullness_limit())
-                eat(1,$item[thyme jelly donut]);
+            if (item_amount($item[pantsgiving]) > 0){
+                equip($item[pantsgiving]);
+                use_familiar($familiar[patriotic eagle]);
+                retrieve_item($item[dish of clarified butter]);
+                visit_url("inv_use.php?which=3&whichitem=9908");
+                run_combat();
+                run_choice(-1);
+                if (my_fullness() < fullness_limit())
+                    eat(1,$item[thyme jelly donut]);
+            }
         }
         if (get_property("spiceMelangeUsed") == "false")
             use ($item[spice melange]);
@@ -623,10 +625,12 @@ void FKPrep(){
     step("phase: FKPrep hidden temple");
 	if (my_ascensions() != get_property("lastTempleAdventures").to_int()
 		&& get_property("questM16Temple") == "finished"){
+        set_property("betweenBattleScript","");
 		use($item[stone wool]);
 		set_property("choiceAdventure582", "1");
 		set_property("choiceAdventure579", "3");
 		adv1($location[The Hidden Temple]);
+        set_property("betweenBattleScript","preadventure.ash");
 		useMayamRings();
 	}
     if (item_amount($item[Bastille Battalion control rig]) > 0)
