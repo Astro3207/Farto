@@ -173,7 +173,6 @@ void main(){
     heavyWeightBooze();
     step("phase: pvp");
     pvpCombat();
-    pvpCleanup();
     step("phase: takerspace");
     takerspaceStart();
     step("phase: aug skills");
@@ -189,6 +188,7 @@ void main(){
   //  dayShorteners();
     step("phase: closing meat chores");
     closingMeatChores();
+    pvpCleanup();
     if (!contains_text(get_property("thoth19_event_list"),"postFarmD1"))
         cli_execute("ptrack add postFarmD1");
     step("phase: inbox cleanup");
