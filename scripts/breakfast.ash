@@ -233,12 +233,7 @@ void unlockLocations(){
 void makeSausage(){
     if (!have_item($item[Kramco Sausage-o-Matic&trade;]))
         return;
-    int toMake;
-    if (item_amount($item[sausage casing]) > 100)
-        toMake = 18;
-    else
-        toMake = 8;
-    while (get_property("_sausagesMade").to_int() < toMake){
+    while (get_property("_sausagesMade").to_int() < 23){
         while (get_property("sausageGrinderUnits").to_int() < 3000){
             retrieve_item(3,$item[dense meat stack]);
             visit_url("inventory.php?action=grind");
