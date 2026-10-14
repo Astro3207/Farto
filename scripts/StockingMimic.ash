@@ -243,7 +243,8 @@ void doSpleen(){
             continue;
         if (spl == $item[body spradium] && item_amount($item[body spradium]) == 0)
             continue;
-        if (mall_price(spl) > 10000)
+        //700 is the estimated fam weight
+        if (((numeric_modifier(itemEffectNotes(spl).ef,"Familiar Weight") * 27 * freeKillCount("both"))-mall_price(spl)) < ((700*27*4/2) - mall_price($item[Extrovermectin&trade;])/2))
             continue;
         chew(spl);
     }
