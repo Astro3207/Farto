@@ -82,6 +82,8 @@ void free_kill(string ptext) {
 void free_run(string ptext) {
     if (last_monster() == $monster[Knob Goblin Embezzler])
         abort("Trying to run from an embezzler");
+    if (have_skill($skill[Bowl a Curveball]))
+        use_skill($skill[Bowl a Curveball]);
     foreach sk in $skills[spring away, snokebomb] {
         if (contains_text(ptext, to_string(sk))) {
             if (my_location() == $location[hobopolis town square] && sk == $skill[snokebomb]) continue;
@@ -317,6 +319,8 @@ void main(int round, monster mob, string page_text) {
     if (get_property("subscript") == "stompingBoots"){
         if (last_monster() == $monster[infinite meat bug])
             abort();
+        if (have_skill($skill[Bowl a Curveball]))
+            use_skill($skill[Bowl a Curveball]);
         runaway();
     }
 
