@@ -897,8 +897,14 @@ void main(int round, monster mob, string page_text) {
     }
     if (my_location() == $location[the marinara trench]){
         if (!contains_text(get_property("banishedPhyla"), "fish")){
-            if ($monsters[diving belle,fisherfish,Mer-kin diver] contains last_monster())
+            if ($monsters[diving belle,fisherfish] contains last_monster())
                 use_skill(combatBan());
+            if (last_monster() == $monster[Mer-kin diver]){
+                if (have_effect($effect[fishy]) < my_adventures() && my_class() == $class[seal clubber])   
+                    use_skill($skill[Sea *dent: Talk to Some Fish]);
+                else
+                    use_skill(combatBan());
+            }
         }
         farmingStuff();
         free_kill(page_text);

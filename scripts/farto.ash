@@ -162,10 +162,17 @@ void inko(){
     if (have_effect($effect[driving waterproofly]) == 0)
         set_property("backOverride",", equip elf guard scuba tank");
     item banItem = $item[none];
-    if (!contains_text(get_property("banishedMonsters"),"Mer-kin diver")
-        || !contains_text(get_property("banishedMonsters"),"fisherfish")
+    if (!contains_text(get_property("banishedMonsters"),"fisherfish")
         || !contains_text(get_property("banishedMonsters"),"diving belle"))
             banItem = banishGear($location[The Marinara Trench]);
+    else if (!contains_text(get_property("banishedMonsters"),"Mer-kin diver")){
+        if (have_effect($effect[fishy]) < my_adventures() && my_class() == $class[seal clubber])
+            set_property("mainOverride",", equip monodent of the sea");
+        else {
+            set_property("mainOverride","");
+            banItem = banishGear($location[The Marinara Trench]);
+        }
+    }
     if (banItem != $item[none])
         equip(banItem);
     adv1($location[The Marinara Trench],0,"");
@@ -201,9 +208,9 @@ void main(){
                     outskirts();
                 if (get_property("questM10Azazel") != "finished" && my_adventures() == 0)
                     eat($item[magical sausage]);
-            } else if ((my_class() == $class[accordion thief] || have_effect($effect[fishy]) > 0)){
+            } else if ((my_class() == $class[accordion thief] || have_effect($effect[fishy]) > 0) || dayType() == 0){
                 inko();
-            } else if (((my_class() == $class[pastamancer] || have_effect($effect[fishy]) > 0) && numeric_modifier($modifier[meat drop]) > 1700) || dayType() == 0){
+            } else if (my_class() == $class[pastamancer] && numeric_modifier($modifier[meat drop]) > 1700){
                 cowo();
             }else{
                 if (get_property("_stenchAirportToday") == "false")
