@@ -927,6 +927,14 @@ void MobiusMaybe(){
     if (get_property("_timeCopsFoughtToday").to_int() < 10)
         set_property("acc2Override",", equip mobius ring");
 }
+// Time Lord Badge of Honor and Time Bandit Badge of Courage are mutually
+// exclusive -- an account owns one or the other. Returns whichever this
+// player has, defaulting to the Time Lord badge.
+item timeBadge(){
+    if (available_amount($item[Time Bandit Badge of Courage]) > 0)
+        return $item[Time Bandit Badge of Courage];
+    return $item[Time Lord Badge of Honor];
+}
 // Shrug the effect giving the most of your highest buffed stat. Returns false
 // when there was nothing to shrug or the shrug failed.
 boolean uneffectBuff(){
@@ -1069,7 +1077,7 @@ void pearloP1(){
     if ((baseballPlayers() >= 8 && get_property("_baseballInnings").to_int() < 3) || get_property("_curveballFightsLeft").to_int() > 0) {
         underwaterBaseball();
     } else if (looseFK()){
-        set_property("acc3Override",", equip time lord badge of honor");
+        set_property("acc3Override",", equip " + timeBadge());
         set_property("subscript","looseFK");
         foreach str in $strings[trench,bar]{
             if (get_property(pearls[str].donePref) == "false" || str == "bar"){
@@ -1427,12 +1435,12 @@ void settleStance(){
 
 void weakMonsters(){
     step("phase: weakMonsters start");
-    set_property("acc3Override",", equip time lord badge of honor");
+    set_property("acc3Override",", equip " + timeBadge());
     set_property("subscript","weakling");
     retrieve_item($item[shard of double-ice]);
     if (have_effect($effect[coldform]) == 0)
         use($item[phial of coldness]);
-    equip($slot[acc3],$item[time lord badge of honor]);
+    equip($slot[acc3],timeBadge());
     // fightPicker() returns one key per call, in strict priority order; run that
     // fight, then re-ask. It also sets offOverride and buffs ML as needed.
     // settleStance() before every fightPicker() so the pick is made with the real
@@ -1556,7 +1564,7 @@ void LBMWPrep(boolean CMOI){
     }
     if (get_auto_attack() == 0)
         aa("facsimile");
-    set_property("acc3Override",", equip time lord badge of honor");
+    set_property("acc3Override",", equip " + timeBadge());
     retrieve_item($item[shard of double-ice]);
     mimicPrep();
 }
@@ -1652,7 +1660,7 @@ void locationBasedWeakMonsters(){
     set_property("subscript","weakling");
     if (have_effect($effect[coldform]) == 0)
         use($item[phial of coldness]);
-    equip($slot[acc3],$item[time lord badge of honor]);
+    equip($slot[acc3],timeBadge());
     step("phase: weakMonsters gingerbread");
     while (to_int(get_property("_gingerbreadCityTurns")) < 30){
         LBMWPrep (false);
@@ -2155,7 +2163,7 @@ void locationBasedAdventuring(){
 void bulkFKD1(){
     set_property("inSpendAdv","true");
     set_property("script","FreeKill");
-    equip($slot[acc3],$item[time lord badge of honor]);
+    equip($slot[acc3],timeBadge());
     buffML($monster[Flaming leaflet]);
     locationBasedAdventuring();
     if (my_spleen_use() < 10){
