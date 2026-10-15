@@ -2037,6 +2037,10 @@ void peridotFishing(){
                 mimicPrep();
                 set_property("offOverride",", equip Kramco Sausage-o-Matic");
                 set_property("acc2Override",",bonus mafia pointer");
+                if (loc == $location[The Unquiet Garves]){
+                    put_closet(item_amount($item[grave robbing shovel]),$item[grave robbing shovel]);
+                    put_closet(item_amount($item[rusty grave robbing shovel]),$item[rusty grave robbing shovel]);
+                }
                 if (get_property("_timeCopsFoughtToday").to_int() < 10)
                     set_property("acc1Override",", equip mobius");
                 if (loc.zone == "The Mer-Kin Deepcity"){
