@@ -1243,7 +1243,7 @@ void faxing(){
     }
 }
 void reminisce() {
-    while (get_property("_locketMonstersFought").split_string(",").count() < 3){
+    while ((get_property("_locketMonstersFought").split_string(",").count() < 3 && dayType() == 0) || (get_property("_locketMonstersFought").split_string(",").count() < 2 && dayType() == 1)){
         foreach mon in $monsters[Frozen Bag of Tortellini,Sausage goblin,black crayon golem, black crayon spiraling shape]{
             if (get_property("_locketMonstersFought").contains_text(mon.to_int()))
                 continue;
