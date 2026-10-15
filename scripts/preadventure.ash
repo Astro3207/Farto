@@ -148,6 +148,7 @@ void preAdv(){
             if (my_familiar() == $familiar[cooler yeti] || my_familiar() == $familiar[chest mimic]) return ", equip toy cupid bow";
             if (my_familiar() == $familiar[mini kiwi]) return ", equip aviator goggles";
             if (my_familiar() == $familiar[Hobo in Sheep's Clothing]) return ", equip half-height cigar";
+            if (my_familiar() == $familiar[stocking mimic]) return ", equip bag of many confections";
             if (my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[robortender]) return "";
             if (my_familiar() == $familiar[none] || my_familiar() == $familiar[purse rat] || get_property("maxOverride") == "-combat" || get_property("maxOverride") == "combat") return "";
             return ", equip Li'l Businessman Kit";
