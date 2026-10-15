@@ -825,6 +825,12 @@ void shadowBoss(){
         } else
             set_property("maxOverride","familiar weight, equip petrified wood wizard's pouch, equip Drunkula's ring of haze, equip wicker slicker");
     }else if (get_property("rufusQuestTarget") == "shadow orrery"){
+        if (have_effect($effect[bend hell]) == 0){
+            foreach ef in $effects[Belch the Rainbow&trade;,Song of Sauce]{
+                if (have_effect(ef) == 0)
+                    cli_execute(ef.default);
+            }
+        }
         set_property("maxOverride","familiar weight");
         set_property("shirtOverride",", equip ultracolor");
     }
