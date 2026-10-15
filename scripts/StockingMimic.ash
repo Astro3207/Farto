@@ -2217,8 +2217,8 @@ void bulkFKD1(){
                 visit_url("inventory.php?action=cupof13s");
                 visit_url("choice.php?option=1&whichchoice=1601&"+my_hash()+"&whichitem1=2200&whichitem2=2200&whichitem3=2200");
             } else if (my_inebriety() == inebriety_limit()-2){
-                item 13item = mall_price($item[cuppa Improprie tea]) < mall_price($item[demonic cow's blood]*2) ? $item[cuppa Improprie tea]:$item[demonic cow's blood];
-                int 13num = 13item.to_int();
+                item CupItem = mall_price($item[cuppa Improprie tea]) < mall_price($item[demonic cow's blood])*2 ? $item[cuppa Improprie tea]:$item[demonic cow's blood];
+                int CupNum = 13item.to_int();
                 retrieve_item(3,13item);
                 visit_url("inventory.php?action=cupof13s");
                 visit_url("choice.php?option=1&whichchoice=1601&"+my_hash()+"&whichitem1="+13num+"&whichitem2="+13num+"&whichitem3="+13num);
