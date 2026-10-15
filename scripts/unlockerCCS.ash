@@ -1,5 +1,4 @@
 import iotm.ash;
-import freeMonsterReplacements.ash;
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 
@@ -243,7 +242,15 @@ boolean [monster] hurtMobs = {
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 
 void main(int round, monster mob, string page_text) {
-    replaceFreeMonster();
+    if (get_property("subscript") == "replacementChain" && last_monster() != copyTarget){
+        skill replacer = nextReplacement();
+        if (my_location() != $location[Noob Cave] || last_monster() != $monster[crate]
+            || !replacementSourceReady() || replacer == $skill[none] || !have_skill(replacer))
+            abort("Replacement chain: unexpected encounter or unavailable replacement.");
+        use_skill(replacer);
+        if (last_monster() != copyTarget)
+            abort("Replacement chain: did not produce " + copyTarget + ".");
+    }
     print ("monster hp is " + last_monster().base_hp);
     print ("monster level is "+ numeric_modifier("monster level"));
     print ("high stat is " + max(my_buffedstat($stat[muscle]),my_buffedstat($stat[mysticality]),my_buffedstat($stat[moxie])));

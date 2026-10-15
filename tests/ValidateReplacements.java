@@ -14,8 +14,11 @@ class ValidateReplacements {
   return runtime;
  }
  public static void main(String[] args) throws Exception {
-  String helper=Files.readString(Path.of(args[0],"scripts/freeMonsterReplacements.ash"));
-  helper=helper.substring(helper.indexOf("boolean replacementSourceReady()"));
+  String iotm=Files.readString(Path.of(args[0],"scripts/iotm.ash"));
+  String ccs=Files.readString(Path.of(args[0],"scripts/unlockerCCS.ash"));
+  int branch=ccs.indexOf("    if (get_property(\"subscript\") == \"replacementChain\"");
+  String helper=iotm.substring(iotm.indexOf("    boolean replacementSourceReady()"), iotm.indexOf("    // Mafia state snapshot"))
+      + "void replaceFreeMonster(){\n" + ccs.substring(branch,ccs.indexOf("    print (\"monster hp",branch)) + "}\n";
   for(String fn:new String[]{"get_property","available_amount","have_skill","my_location","last_monster","use_skill","abort"})
    helper=helper.replaceAll("\\b"+fn+"\\(","test_"+fn+"(");
   String mocks="""
@@ -23,13 +26,11 @@ class ValidateReplacements {
     string[string] props;
     boolean glove = true;
     boolean skillKnown = true;
-    boolean advance = true;
     boolean wrongResult;
     int used;
     string failure;
     monster enemy = $monster[crate];
     location place = $location[Noob Cave];
-    int dayType() { return 1; }
     string test_get_property(string key) { return props[key]; }
     int test_available_amount(item it) { return glove ? 1 : 0; }
     boolean test_have_skill(skill sk) { return skillKnown; }
@@ -39,7 +40,7 @@ class ValidateReplacements {
     boolean test_use_skill(skill sk) {
       used += 1;
       string counter = sk == $skill[Macrometeorite] ? "_macrometeoriteUses" : "_powerfulGloveBatteryPowerUsed";
-      if (advance) props[counter] = props[counter].to_int() + (sk == $skill[Macrometeorite] ? 1 : 10);
+      props[counter] = props[counter].to_int() + (sk == $skill[Macrometeorite] ? 1 : 10);
       enemy = wrongResult ? $monster[crate] : copyTarget;
       return true;
     }
@@ -50,13 +51,13 @@ class ValidateReplacements {
       props["beGregariousMonster"]=copyTarget;
       props["beGregariousFightsLeft"]="1";
       props["_monsterHabitatsRecalled"]="3";
-      props["fartoReplacementSkill"]="Macrometeorite";
+
     }
     """;
   String normal="""
     void main() {
       setup();
-      check(reserveReplacementSource(), "reserve final source");
+      check(replacementSourceReady(), "reserve final source");
       props["beGregariousFightsLeft"]="2";
       check(!replacementSourceReady(), "do not reserve earlier copies");
       props["beGregariousFightsLeft"]="1";
@@ -64,17 +65,17 @@ class ValidateReplacements {
       check(!replacementSourceReady(), "wrong source monster");
       props["beGregariousMonster"]=copyTarget;
       props["_macrometeoriteUses"]="10";
-      check(!replacementReady($skill[Macrometeorite]), "meteor cap");
+      check(nextReplacement() != $skill[Macrometeorite], "meteor cap");
       props["_powerfulGloveBatteryPowerUsed"]="90";
-      check(replacementReady($skill[CHEAT CODE: Replace Enemy]), "last glove charge");
+      check(nextReplacement() == $skill[CHEAT CODE: Replace Enemy], "last glove charge");
       props["_powerfulGloveBatteryPowerUsed"]="91";
-      check(!replacementReady($skill[CHEAT CODE: Replace Enemy]), "insufficient glove battery");
+      check(nextReplacement() == $skill[none], "insufficient glove battery");
       glove=false;
       props["_powerfulGloveBatteryPowerUsed"]="0";
-      check(!replacementReady($skill[CHEAT CODE: Replace Enemy]), "missing glove");
+      check(nextReplacement() == $skill[none], "missing glove");
       glove=true;
       skillKnown=false;
-      check(!replacementReady($skill[Macrometeorite]), "missing meteor lore");
+      check(nextReplacement() != $skill[Macrometeorite], "missing meteor lore");
       skillKnown=true;
       props["_macrometeoriteUses"]="0";
       replaceFreeMonster();
@@ -84,7 +85,7 @@ class ValidateReplacements {
       copyTarget=$monster[sausage goblin];
       props["beGregariousMonster"]=copyTarget;
       enemy=$monster[crate];
-      props["fartoReplacementSkill"]="CHEAT CODE: Replace Enemy";
+      props["_macrometeoriteUses"]="10";
       replaceFreeMonster();
       check(used==2 && enemy==copyTarget && props["_powerfulGloveBatteryPowerUsed"]=="10", "glove uses shared changed target");
       props["beGregariousFightsLeft"]="0";
@@ -95,11 +96,10 @@ class ValidateReplacements {
     }
     """;
   run(mocks+helper+normal,"normal");
-  for(String scenario:new String[]{"unexpected","no-source","no-progress","wrong-result"}) {
+  for(String scenario:new String[]{"unexpected","no-source","wrong-result"}) {
    String setup=switch(scenario) {
     case "unexpected" -> "enemy=$monster[spooky vampire];";
     case "no-source" -> "props[\"beGregariousFightsLeft\"]=\"0\";";
-    case "no-progress" -> "advance=false;";
     default -> "wrongResult=true;";
    };
    int expected=scenario.equals("unexpected")||scenario.equals("no-source")?0:1;
@@ -107,6 +107,38 @@ class ValidateReplacements {
    run(mocks+helper+code,scenario);
   }
   String sm=Files.readString(Path.of(args[0],"scripts/StockingMimic.ash"));
+  String driver=sm.substring(sm.indexOf("void monsterReplacements()"),sm.indexOf("void mimicEgg()"))
+      .replace("main@preadventure();","mimicPrep();");
+  for(String fn:new String[]{"get_property","set_property","get_auto_attack","set_auto_attack","total_turns_played","current_round","handling_choice","adv1","abort"})
+   driver=driver.replaceAll("\\b"+fn+"\\(","test_"+fn+"(");
+  String driverMocks="""
+    int autoattack=99;
+    int turns;
+    string scenario;
+    boolean finished;
+    void step(string message) {}
+    void mimicPrep() {}
+    void habitatRecall() { finished=true; }
+    void test_set_property(string key,string value) { props[key]=value; }
+    int test_get_auto_attack() { return autoattack; }
+    void test_set_auto_attack(int value) { autoattack=value; }
+    int test_total_turns_played() { return turns; }
+    int test_current_round() { return 0; }
+    boolean test_handling_choice() { return false; }
+    boolean test_adv1(location loc) {
+      check(autoattack==0 && props["subscript"]=="replacementChain", "Prepare before adventure");
+      if(scenario=="unfinished") return false;
+      if(scenario=="paid") turns+=1;
+      if(scenario=="original") props["beGregariousFightsLeft"]="0";
+      else if(scenario!="stalled") props["_powerfulGloveBatteryPowerUsed"]="100";
+      return true;
+    }
+    """;
+  for(String scenario:new String[]{"exhausted","original","stalled","paid","unfinished"}) {
+   boolean failure=scenario.equals("stalled")||scenario.equals("paid")||scenario.equals("unfinished");
+   String code="void main(){setup(); scenario=\""+scenario+"\"; props[\"_macrometeoriteUses\"]=\"10\"; props[\"_powerfulGloveBatteryPowerUsed\"]=\"90\"; props[\"subscript\"]=\"saved\"; props[\"acc3Override\"]=\"saved accessory\"; try{monsterReplacements();}finally{check(autoattack==99 && props[\"subscript\"]==\"saved\" && props[\"acc3Override\"]==\"saved accessory\",\"Restore state\"); check((failure!=\"\")=="+failure+" && finished=="+!failure+",\"Finish or stop\"); print(\"PASS driver-"+scenario+"\");}}";
+   run(mocks+helper+driverMocks+driver+code,"driver-"+scenario);
+  }
   if(sm.split("backup\\(\\);\\s*monsterReplacements\\(\\);",-1).length!=3)
    throw new AssertionError("Both daily routes must run replacements directly after backups");
   System.out.println("Replacement policy, action guards, counters, target changes, and phase placement passed.");

@@ -1,7 +1,6 @@
 // StockingMimic.ash -- FKPrep + bulkFK and their helper trees, being lifted out of farto.ash.
 
 import iotm.ash;
-import freeMonsterReplacements.ash;
 import preadventure.ash;
 
 string highStat = "";
@@ -1182,7 +1181,9 @@ void habitatRecall(){
             main@postadventure();
         }
         while (to_int(get_property("_monsterHabitatsFightsLeft")) > 0 || get_property("beGregariousFightsLeft").to_int() > 0){
-            if (reserveReplacementSource()){
+            if (replacementSourceReady() && nextReplacement() != $skill[none]
+                && get_property("_monsterHabitatsRecalled").to_int() == 3
+                && (dayType() != 1 || get_property("beGregariousCharges").to_int() == 0)){
                 set_property("offOverride", "");
                 set_property("acc2Override", "");
                 return;
@@ -1220,53 +1221,39 @@ void backup(){
     set_property("pantsOverride","");
     set_property("acc3Override","");
 }
-void monsterReplacementPhase(skill replacer){
-    step("phase: bulkFK " + replacer);
-    while (replacementSourceReady() && replacementReady(replacer)){
-        if (my_adventures() == 0)
-            abort("Replacement chain: at least one adventure is needed to enter Noob Cave.");
-        mimicPrep();
-        set_property("subscript", "replacementChain");
-        set_property("fartoReplacementSkill", replacer);
-        set_property("acc3Override", replacer == $skill[CHEAT CODE: Replace Enemy]
-            ? ", equip Powerful Glove" : "");
-        main@preadventure();
-        // Native round-zero actions must not kill the crate before replacement.
-        set_auto_attack(0);
-        int before = replacementUses(replacer);
-        int turns = total_turns_played();
-        adv1($location[Noob Cave]);
-        if (current_round() > 0 || handling_choice())
-            abort("Replacement chain: encounter did not finish.");
-        if (total_turns_played() != turns)
-            abort("Replacement chain: an adventure was spent.");
-        if (replacementUses(replacer) <= before){
-            if (replacementSourceReady())
-                abort("Replacement chain: replacement counter did not advance.");
-            break; // The original last copy appeared and consumed the source.
-        }
-    }
-}
-
 void monsterReplacements(){
-    if (!replacementSourceReady()) return;
-    int savedAutoAttack = get_auto_attack();
-    string[string] saved;
-    foreach pref in $strings[subscript,fartoReplacementSkill,acc3Override,famOverride,maxOverride]
-        saved[pref] = get_property(pref);
+    if (!replacementSourceReady() || nextReplacement() == $skill[none]) return;
+    int autoattack = get_auto_attack();
+    string subscript = get_property("subscript");
+    string accessory = get_property("acc3Override");
     try {
-        monsterReplacementPhase($skill[Macrometeorite]);
-        monsterReplacementPhase($skill[CHEAT CODE: Replace Enemy]);
+        step("phase: bulkFK monster replacements");
+        set_property("subscript", "replacementChain");
+        while (replacementSourceReady() && nextReplacement() != $skill[none]){
+            mimicPrep();
+            skill replacer = nextReplacement();
+            string counter = replacer == $skill[Macrometeorite]
+                ? "_macrometeoriteUses" : "_powerfulGloveBatteryPowerUsed";
+            set_property("acc3Override", replacer == $skill[CHEAT CODE: Replace Enemy]
+                ? ", equip Powerful Glove" : "");
+            main@preadventure();
+            set_auto_attack(0); // Replace the crate before any damaging autoattack.
+            string before = get_property(counter);
+            int turns = total_turns_played();
+            if (!adv1($location[Noob Cave]) || current_round() > 0 || handling_choice())
+                abort("Replacement chain: encounter did not finish.");
+            if (total_turns_played() != turns)
+                abort("Replacement chain: spent a turn.");
+            if (replacementSourceReady() && get_property(counter) == before)
+                abort("Replacement chain: " + replacer + " made no progress.");
+        }
     } finally {
-        foreach pref, value in saved set_property(pref, value);
-        set_auto_attack(savedAutoAttack);
+        set_property("subscript", subscript);
+        set_property("acc3Override", accessory);
+        set_auto_attack(autoattack);
     }
-    // Consume the reserved original through the existing underwater chain route.
-    if (replacementSourceReady()){
-        habitatRecall();
-    }
+    habitatRecall(); // Finish the reserved original through the usual route.
 }
-
 void mimicEgg(){
     while (item_amount($item[mimic egg]) > 0 && dayType() == 1 && contains_text(get_property("mimicEggMonsters"),copyTarget.to_int().to_string())){
         mimicPrep();
