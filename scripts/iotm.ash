@@ -228,7 +228,64 @@
         return 0;
     }
 
-    
+
+    boolean [item] negMLEquip = $items[Space Trip safety headphones, HOA regulation book,
+        pine cone necklace, red badge, mushroom badge, uncursed bat paw,
+        imposing pilgrim's hat, water wings for babies, white earbuds, Drowsy Sword,
+        pocketwatch on a chain, security flashlight, discarded bowtie, nasty rat mask,
+        shoulder-mounted Trainbot, plush sea serpent, fishbone facemask];
+
+    // A slot's override name as clearOverrides() spells it (<name>Override).
+    // Weapon pins through main, and mafia calls the back slot container.
+    string overrideName(slot sl){
+        switch (sl){
+            case $slot[weapon]: return "main";
+            case $slot[off-hand]: return "off";
+            case $slot[container]: return "back";
+        }
+        return sl.to_string();
+    }
+
+
+    void lowerMLWithGear(int targetML){
+        int loopCount = 0;
+        while (true){
+            if (loopCount++ > 10)
+                abort("lowerMLWithGear: looped over 10 times -- equip() is probably failing");
+            int base = numeric_modifier("monster level").to_int() - current_mcd();
+            int bestMiss = mlMiss(base, targetML, mcd_max());
+            if (bestMiss == 0) return;
+            item best = $item[none];
+            slot bestSlot = $slot[none];
+
+            foreach it in negMLEquip{
+                if (available_amount(it) == 0 || have_equipped(it) || !can_equip(it)) continue;
+                // A two-hander would knock out whatever offOverride is pinning.
+                if (weapon_hands(it) > 1 && get_property("offOverride") != "") continue;
+                slot itSlot = to_slot(it);   // accessories all report acc1
+                foreach sl in $slots[hat, weapon, off-hand, container, shirt, pants, acc1, acc2, acc3]{
+                    boolean fits = sl == itSlot
+                        || (itSlot == $slot[acc1] && (sl == $slot[acc2] || sl == $slot[acc3]));
+                    if (!fits || get_property(overrideName(sl) + "Override") != "") continue;
+                    // Net change: the new item's ML minus whatever it displaces.
+                    int ml = numeric_modifier(it, "Monster Level").to_int()
+                        - numeric_modifier(equipped_item(sl), "Monster Level").to_int();
+                    int miss = mlMiss(base + ml, targetML, mcd_max());
+                    if (miss >= bestMiss) continue;
+                    best = it;
+                    bestSlot = sl;
+                    bestMiss = miss;
+                }
+            }
+            if (best == $item[none]) return;
+
+            equip(bestSlot, best);
+            string name = overrideName(bestSlot);
+            set_property(name + "Override", ", equip " + best);
+            set_property("tuneMLOverrides", get_property("tuneMLOverrides") + "," + name);
+        }
+    }
+
     void tuneML(int targetML){
         int base = numeric_modifier("monster level").to_int() - current_mcd();
         boolean [effect] tried;   // a failed cast/shrug (song cap, no MP) isn't retried
@@ -272,7 +329,13 @@
             base = numeric_modifier("monster level").to_int() - current_mcd();
         }
 
-        int mcd = max(0, min(mcd_max(), targetML - base));
+        // Effects bottomed out above target (MCD can only add), so try gear.
+        if (base > targetML){
+            lowerMLWithGear(targetML);
+            base = numeric_modifier("monster level").to_int() - current_mcd();
+        }
+
+        int mcd =max(0, min(mcd_max(), targetML - base));
         if (mcd != current_mcd())
             change_mcd(mcd);
         int got = numeric_modifier("monster level").to_int();
@@ -1366,4 +1429,25 @@
         }
         stashreturn($item[pantsgiving]);
         set_property("inSpendAdv","false");
+    }
+
+    void clearOverrides(boolean [string] slotNames){
+        foreach slotName in slotNames {
+            set_property(slotName + "Override", "");
+        }
+    }
+
+    // Clears only the slots lowerMLWithGear() pinned, as listed in tuneMLOverrides.
+    void clearMLOverrides(){
+        boolean [string] pinned;
+        foreach i, slotName in split_string(get_property("tuneMLOverrides"), ","){
+            if (slotName != "") pinned[slotName] = true;
+        }
+        clearOverrides(pinned);
+        set_property("tuneMLOverrides", "");
+    }
+
+    void clearOverrides(){
+        clearMLOverrides();
+        clearOverrides($strings[unconditional, max, fam, hat, main, weapon, off, back, shirt, pants, acc1, acc2, acc3, famEquip]);
     }

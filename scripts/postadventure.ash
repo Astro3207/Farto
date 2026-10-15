@@ -959,13 +959,7 @@ void spendAdv(){
             if (numeric_modifier("monster level").to_int() != 10)
                 tuneML(10);
             adv1($location[the caliginous abyss]);
-            set_property("famOverride","");
-            set_property("maxOverride","");
-            set_property("shirtOverride","");
-            set_property("pantsOverride","");
-            set_property("acc1Override","");
-            set_property("acc2Override","");
-            set_property("famEquipOverride","");
+            clearOverrides();
         }
         string [location] batWings = {
             $location[The Bat Hole Entrance]:"batWingsBatHoleEntrance",
