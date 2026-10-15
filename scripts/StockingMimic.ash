@@ -778,6 +778,7 @@ void augustGolem(){
         main@preadventure( );
         use_skill($skill[Aug. 22nd: Tooth Fairy Day!]);
         main@postadventure( );
+        set_property("_aug22Cast","true");
     }
 }
 
@@ -825,7 +826,7 @@ void shadowBoss(){
         } else
             set_property("maxOverride","familiar weight, equip petrified wood wizard's pouch, equip Drunkula's ring of haze, equip wicker slicker");
     }else if (get_property("rufusQuestTarget") == "shadow orrery"){
-        if (have_effect($effect[bend hell]) == 0){
+        if (have_effect($effect[bendin' hell]) == 0){
             foreach ef in $effects[Belch the Rainbow&trade;,Song of Sauce]{
                 if (have_effect(ef) == 0)
                     cli_execute(ef.default);
@@ -994,6 +995,11 @@ boolean uneffectBuff(){
 }
 boolean looseFK(){
     set_property("maxOverride","familiar weight, equip eternity codpiece");
+    if (have_effect($effect[everything looks red]) == 0){
+        set_property("maxOverride","familiar weight, equip everfull dart holster");
+        print ("FK is bullseye");
+        return true;
+    }
     if ((my_basestat($stat[submoxie]) - 62500) > BCZcost("SweatBulletsCasts") && get_property("_bczSweatBulletsCasts").to_int() < 13){
         set_property("maxOverride","familiar weight, equip eternity codpiece");
         print ("FK is sweat");
@@ -1008,11 +1014,6 @@ boolean looseFK(){
     }
     if (get_property("_shatteringPunchUsed").to_int() < 3){
         print ("FK is shattering");
-        return true;
-    }
-    if (have_effect($effect[everything looks red]) == 0){
-        set_property("maxOverride","familiar weight, equip everfull dart holster");
-        print ("FK is bullseye");
         return true;
     }
     if (have_effect($effect[everything looks yellow]) == 0){
@@ -1030,16 +1031,16 @@ boolean looseFK(){
         set_property("maxOverride","familiar weight, equip eternity codpiece, equip legendary seal-clubbing");
         return true;
     }
-    if (item_amount($item[interesting coin]) > 0 && get_property("_interestingCoinHeads") == "false"){
-        print("fk is interesting coin");
-        set_property("maxOverride","familiar weight, equip eternity codpiece");
-        return true;
-    }
     if (get_property("_shadowBricksUsed").to_int() < 13){
         print ("FK is shadow brick");
         set_property("maxOverride","familiar weight, equip eternity codpiece");
         int n = 13 - get_property("_shadowBricksUsed").to_int();
         retrieve_item(n,$item[shadow brick]);
+        return true;
+    }
+    if (item_amount($item[interesting coin]) > 0 && get_property("_interestingCoinHeads") == "false"){
+        print("fk is interesting coin");
+        set_property("maxOverride","familiar weight, equip eternity codpiece");
         return true;
     }
     if (get_property("_assertYourAuthorityCast").to_int() < 3){
@@ -1951,7 +1952,7 @@ void miscellaneousFams(){
         set_auto_attack(0);
         if (have_effect($effect[Apriling Band Battle Cadence]) == 0 && total_turns_played() >= get_property("nextAprilBandTurn").to_int())
             cli_execute("aprilband effect c");
-        while (get_property("_banderRunaways").to_int() < (my_familiar().familiar_weight() + weight_adjustment( ))/5){
+        while (get_property("_banderRunaways").to_int() < floor((my_familiar().familiar_weight() + weight_adjustment( ))/5)){
             if ($location[Cobb's Knob Treasury].combat_percent < 100)
                 cli_execute("gain 15 combat");
             set_property("subscript","stompingBoots");
@@ -2228,10 +2229,10 @@ void bulkFKD1(){
                 visit_url("choice.php?option=1&whichchoice=1601&"+my_hash()+"&whichitem1=2200&whichitem2=2200&whichitem3=2200");
             } else if (my_inebriety() == inebriety_limit()-2){
                 item CupItem = mall_price($item[cuppa Improprie tea]) < mall_price($item[demonic cow's blood])*2 ? $item[cuppa Improprie tea]:$item[demonic cow's blood];
-                int CupNum = 13item.to_int();
-                retrieve_item(3,13item);
+                int CupNum = CupItem.to_int();
+                retrieve_item(3,CupItem);
                 visit_url("inventory.php?action=cupof13s");
-                visit_url("choice.php?option=1&whichchoice=1601&"+my_hash()+"&whichitem1="+13num+"&whichitem2="+13num+"&whichitem3="+13num);
+                visit_url("choice.php?option=1&whichchoice=1601&"+my_hash()+"&whichitem1="+CupNum+"&whichitem2="+CupNum+"&whichitem3="+CupNum);
                 cli_execute("acquire 3 tombstone-shaped Crimboween cookie");
                 visit_url("inventory.php?action=cupof13s");
                 visit_url("choice.php?option=1&whichchoice=1601&"+my_hash()+"&whichitem1=2200&whichitem2=2200&whichitem3=2200");

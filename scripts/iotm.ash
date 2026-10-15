@@ -241,7 +241,7 @@
         switch (sl){
             case $slot[weapon]: return "main";
             case $slot[off-hand]: return "off";
-            case $slot[container]: return "back";
+            case $slot[back]: return "back";
         }
         return sl.to_string();
     }
@@ -263,7 +263,7 @@
                 // A two-hander would knock out whatever offOverride is pinning.
                 if (weapon_hands(it) > 1 && get_property("offOverride") != "") continue;
                 slot itSlot = to_slot(it);   // accessories all report acc1
-                foreach sl in $slots[hat, weapon, off-hand, container, shirt, pants, acc1, acc2, acc3]{
+                foreach sl in $slots[hat, weapon, off-hand, back, shirt, pants, acc1, acc2, acc3]{
                     boolean fits = sl == itSlot
                         || (itSlot == $slot[acc1] && (sl == $slot[acc2] || sl == $slot[acc3]));
                     if (!fits || get_property(overrideName(sl) + "Override") != "") continue;

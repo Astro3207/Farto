@@ -71,7 +71,7 @@ void free_kill(string ptext) {
             use_skill(sk);
         }
     }
-    if (item_amount($item[interesting coin]) > 0 && get_property("_interestingCoinHeads") == "false"){
+    if (item_amount($item[interesting coin]) > 0 && get_property("_interestingCoinHeads") == "false" && !contains_text(get_property("lastCombatActions"),"it11311")){
         while (get_property("_interestingCoinHeads") == "false" && current_round() > 0 && current_round() < 30)
             throw_item($item[interesting coin]);
     }
