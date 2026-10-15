@@ -199,7 +199,6 @@ void finalChores(){
     set_ccs("hobopolis");
     retrieve_item(5, $item[unblemished pearl]);
     codpiece("unblemished pearl,unblemished pearl,unblemished pearl,unblemished pearl,unblemished pearl");
-    cli_execute("philter");
     finisher();
 }
 
