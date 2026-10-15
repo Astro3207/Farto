@@ -35,8 +35,7 @@ void mood(string function){
         foreach ef in $effects[Yes\, Can Haz, ode to booze]
             if (have_effect(ef) > 0)
                 cli_execute("uneffect " + ef);
-        foreach ef in $effects[Only Dogs Love a Drunken Sailor,Best Pals,Sweat equity, Flapper Dancin',Legendary Pasta Eyeball,
-            The Ballad of Richie Thingfinder,material witness,
+        foreach ef in $effects[Only Dogs Love a Drunken Sailor,Best Pals,Sweat equity, Flapper Dancin',Legendary Pasta Eyeball,material witness,
             Singer's Faithful Ocelot, Leash of Linguini, empathy,Thoughtful Empathy,
             Disco Leer,Polka of Plenty,Tubes of Universal Meat,Lubricating Sauce,Strength of the Tortoise, party soundtrack]{
             if (ef == $effect[material witness] && get_property("_jukebox") == "false"){

@@ -856,7 +856,7 @@
             use_familiar($familiar[comma chameleon]);
             if (chameleon() != fam){
                 visit_url("inv_equip.php?which=2&action=unequip&type=familiarequip");
-                retrieve_item(familiar_equipment(fam));
+                retrieve_item(item_amount(familiar_equipment(fam)) + 1,familiar_equipment(fam));
                 visit_url("inv_equip.php?which=2&action=equip&whichitem=" + familiar_equipment(fam).to_int());
                 if (chameleon() != fam)
                     abort();
