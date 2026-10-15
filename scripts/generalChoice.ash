@@ -443,6 +443,12 @@ void main(int whichchoice, string page) {
             visit_url(url);
             break;
         }
+        case 1500:
+            if (get_property("_shadowForestLooted") == false)
+                run_choice(3);
+            else
+                run_choice(2);
+            break;
         case 1525:
             run_choice(bestDartsOption());
             break;
