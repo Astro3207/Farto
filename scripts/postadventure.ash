@@ -901,7 +901,7 @@ void level11Sprint(){
             }
         }
         unlock_zeppelin();
-        if (get_property("questL11Worship") == "step3" && get_property("screechCombats").to_int() > 0 && get_property("questL11Spare") == "unstarted"){
+        if (get_property("questL11Worship") == "step3" && get_property("questL11Spare") == "unstarted"){
             while(get_property("questL11Spare") == "unstarted"){
                 cli_execute("acquire antique machete;equip weapon antique machete");
                 set_property("maxOverride","familiar exp, -weapon");
