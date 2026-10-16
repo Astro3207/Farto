@@ -345,6 +345,52 @@
             abort();
     }
 
+    // Meat value of one item: mafia's saved mall price (no live search, so it's
+    // safe in loops over $items[]), falling back to autosell when the price is 100
+    // or less, which for most items means mall-minimum junk or no listing at all.
+    float item_value(item it){
+        int price = historical_price(it);
+        return price <= 100 ? autosell_price(it) : price;
+    }
+
+    // Average item_value() over a set, each value capped at cap so one thinly
+    // listed outlier can't skew a big drop pool (garbo caps its pools at 100k).
+    float average_value(boolean [item] items, float cap){
+        if (count(items) == 0) return 0;
+        float total;
+        foreach it in items
+            total += min(item_value(it), cap);
+        return total / count(items);
+    }
+
+    float average_value(boolean [item] items){
+        return average_value(items, 999999999);
+    }
+
+    int valueOfOrgan(string organ){
+        if (organ == "stomach"){
+            //based off of baked veggie ricotta casserole
+            return (8*get_property("valueOfAdventure").to_int()) - mall_price($item[St. Sneaky Pete's Whey]) - mall_price($item[St. Sneaky Pete's Whey]) - mall_price($item[Vegetable of Jarlsberg]) - mall_price($item[Vegetable of Jarlsberg]);
+        } else if (organ == "liver"){
+            //based off of  Sacramento wine
+            return (5.5*get_property("valueOfAdventure").to_int()) - mall_price($item[Sacramento wine]);
+        } else if (organ == "spleen"){
+            //based off of synthesis greed
+            return 30*300*3 - (mall_price($item[Crimbo candied pecan])*2);
+        } else {
+            abort("invalid organ");
+        }
+        return 0;
+    }
+
+    int adjusted_meat_drop(monster mon){
+        int meat = (meat_drop(mon) + 25) * (numeric_modifier("meat drop")+100)/100;
+        if (contains_text(mon.attributes,"FREE"))
+            return min(1000,meat);
+        else
+            return meat;
+    }
+
 // ─── 3. BANISH UTILITIES ─────────────────────────────────────────────────────
 
     record ban {
@@ -1449,5 +1495,5 @@
 
     void clearOverrides(){
         clearMLOverrides();
-        clearOverrides($strings[unconditional, max, fam, hat, main, weapon, off, back, shirt, pants, acc1, acc2, acc3, famEquip]);
+        clearOverrides($strings[unconditional, max, fam, hat, main, weapon, off, back, shirt, pants, acc1, acc2, acc3, famEquip, bonus]);
     }

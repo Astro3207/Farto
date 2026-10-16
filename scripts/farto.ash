@@ -12,18 +12,19 @@ import zlib.ash; // for sell_val() -- item valuation for itemDropValueAt()
 //                           `cli_execute("ash import farto;shadowRealmNCForce()")`
 
 // ─── drop-value weighting (garbo's modeValueOfMeat/modeValueOfItem) ─────────
-// Real garbo doesn't maximize a fixed "2.5 Meat Drop, 0.72 Item Drop" -- it
-// recomputes the weight every turn. The meat side is still a per-location
-// constant in garbo too (each tourist/sea cow drops a fixed base Meat before
-// modifiers -- 250 at Barf Mountain, 300 at the Coral Corral -- so 1% Meat
-// Drop is worth base/100 actual meat), which is where the old "2.5" came
-// from -- it was just never adjusted for the Coral Corral's higher base.
-// The item side genuinely drifts as mall prices move, so that one actually
-// needs recomputing live.
+
 float baseMeatAt(location loc){
-    if (loc == $location[the coral corral])
-        return 300.0;
-    return 250.0; // barf mountain
+    float finalAdjust;
+    if (loc == $location[the marinara trench])
+        finalAdjust = 15.05;
+    float [monster] rate = appearance_rates(loc);
+    float average;
+    foreach mon in rate{
+        if (rate[mon] > 0){
+            average += rate[mon]/100 * meat_drop(mon);
+        }
+    } 
+    return average + 25 + finalAdjust;
 }
 
 // Marginal cash value of 1% Item Drop at loc: for every monster there,
@@ -51,7 +52,10 @@ float itemDropValueAt(location loc){
 }
 
 void setDropWeighting(location loc){
-    set_property("maxOverride", to_string(baseMeatAt(loc) / 100.0) + " Meat Drop," + to_string(itemDropValueAt(loc)) + " Item Drop");
+    string mod;
+    if (loc.environment == "underwater")
+        mod = ",sea, -tie";
+    set_property("maxOverride", to_string(baseMeatAt(loc) / 100.0) + " Meat Drop," + to_string(itemDropValueAt(loc)) + " Item Drop" + mod);
 }
 
 void shadowRealmNCForce(){
@@ -132,8 +136,6 @@ void cowo(){
             || (to_int(get_property("_pantsgivingCount")) >= 50 && dayType() == 0))
         if (available_amount($item[pantsgiving]) > 0)
             stashreturn($item[pantsgiving]);
-    if (have_effect($effect[driving waterproofly]) == 0)
-        set_property("backOverride",", equip elf guard scuba tank");
     item banItem = $item[none];
     if (!contains_text(get_property("banishedMonsters"),"Mer-kin rustler")
         || !contains_text(get_property("banishedMonsters"),"sea cowboy"))
@@ -159,8 +161,6 @@ void inko(){
             || (to_int(get_property("_pantsgivingCount")) >= 50 && dayType() == 0))
         if (available_amount($item[pantsgiving]) > 0)
             stashreturn($item[pantsgiving]);
-    if (have_effect($effect[driving waterproofly]) == 0)
-        set_property("backOverride",", equip elf guard scuba tank");
     item banItem = $item[none];
     if (!contains_text(get_property("banishedMonsters"),"fisherfish")
         || !contains_text(get_property("banishedMonsters"),"diving belle"))
@@ -191,7 +191,7 @@ void main(){
         if (to_int(get_property("_pantsgivingCount")) < 500)
             stashgrab($item[pantsgiving]);
         set_property("script","farto");
-        while (my_adventures() > 200){
+        while (my_adventures() > 0){
             if (numeric_modifier("sleaze damage") + numeric_modifier("sleaze spell damage") > 1600)
                 unlock_zeppelin();
             if (dayType() == 0 && (get_property("questM16Temple") != "finished" || get_property("questM10Azazel") != "finished" || to_int(get_property("blackForestProgress")) < 5 || get_property("questL05Goblin") == "started")){

@@ -129,6 +129,7 @@ void dayShorteners(){
 void closingMeatChores(){
     if (get_property("_universalSeasoningsUsed").to_int() == 0)
         use($item[universal seasoning]);
+    take_closet(closet_amount($item[sand dollars]),$item[sand dollars]);
     cli_execute("philter");
     if (my_meat() - 3000000 > 0){
         int new_meat = my_meat() - 3000000;

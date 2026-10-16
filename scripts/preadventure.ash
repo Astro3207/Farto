@@ -36,13 +36,13 @@ void mood(string function){
             if (have_effect(ef) > 0)
                 cli_execute("uneffect " + ef);
         foreach ef in $effects[Only Dogs Love a Drunken Sailor,Best Pals,Sweat equity, Flapper Dancin',Legendary Pasta Eyeball,material witness,
-            Singer's Faithful Ocelot, Leash of Linguini, empathy,Thoughtful Empathy,
+            Singer's Faithful Ocelot, Leash of Linguini, empathy,Thoughtful Empathy,Blood Bond,Bet Your Autumn Dollar,
             Disco Leer,Polka of Plenty,Tubes of Universal Meat,Lubricating Sauce,Strength of the Tortoise, party soundtrack]{
             if (ef == $effect[material witness] && get_property("_jukebox") == "false"){
                 visit_url("showclan.php?whichclan=2046992052&action=joinclan&confirm=on");
             } else if (ef == $effect[material witness] && get_property("_jukebox") == "true"){
                 continue;
-            } else if (to_int(get_property("_heartstonePalsUsed")) >= 4 && ef == $effect[best pals]){
+            } else if (to_int(get_property("_heartstonePalsUsed")) >= (4 + dayType()) && ef == $effect[best pals]){
                 continue;
             } else if (ef == $effect[The Ballad of Richie Thingfinder] && get_property("_thingfinderCasts") == 10){
                 continue;
@@ -95,6 +95,221 @@ void mood(string function){
 
 boolean useChestMimic(){
     return true;
+}
+
+float boozeValue(string q1, string q2){
+    string pref = "_cupBoozeValue" + q1 + q2;
+    if (get_property(pref) != "") return get_property(pref).to_float();
+    boolean [item] pool;
+    foreach it in $items[]{
+        if (item_type(it) != "booze" || !it.tradeable || !it.discardable) continue;
+        string q = it.quality.to_lower_case();   // mafia reports "EPIC" in caps, the rest lowercase
+        if (q == q1 || q == q2) pool[it] = true;
+    }
+    float avg = average_value(pool, 100000);
+    set_property(pref, avg);
+    return avg;
+}
+
+// Tiers follow garbo: 0-1 drops EPIC/awesome, 2-3 awesome/good, 4-5 good/decent,
+// then decent/crappy. First drop of the day needs 6 charges, later ones 10.
+float cupValue(){
+    int drops = get_property("_cupOf13sDrops").to_int();
+    int charges = drops == 0 ? 6 : 10;
+    if (drops <= 1) return boozeValue("epic", "awesome") / charges;
+    if (drops <= 3) return boozeValue("awesome", "good") / charges;
+    if (drops <= 5) return boozeValue("good", "decent") / charges;
+    return boozeValue("decent", "crappy") / charges;
+}
+
+record lgrRealm {
+    string access;      // realm-access pref stem: <access>Always / _<access>Today
+    string capPref;     // daily LGR drops of this currency so far
+    int cap;            // LGR stops dropping it at this count
+    item currency;
+};
+
+lgrRealm [string] lgrRealms = {
+    "sleaze":  new lgrRealm("sleazeAirport", "_luckyGoldRingBeachBuck", 25, $item[Beach Buck]),
+    "spooky":  new lgrRealm("spookyAirport", "_luckyGoldRingCoinspiracy", 25, $item[Coinspiracy]),
+    "stench":  new lgrRealm("stenchAirport", "_luckyGoldRingFunFunds", 15, $item[FunFunds&trade;]),
+    "cold":    new lgrRealm("coldAirport", "_luckyGoldRingWalmart", 15, $item[Wal-Mart gift certificate]),
+    "hot":     new lgrRealm("hotAirport", "_luckyGoldRingVolcoino", 2, $item[Volcoino]),
+    "fantasy": new lgrRealm("fr", "_luckyGoldRingRubee", 10, $item[Rubee&trade;]),
+    "cyber":   new lgrRealm("cr", "_luckyGoldRingBit", 10, $item[0])   // the item named "0"
+};
+
+float currencyValue(item currency){
+    if (currency.tradeable) return item_value(currency);
+    string pref = "_lgrCurrencyValue" + currency.to_int();
+    if (get_property(pref) != "") return get_property(pref).to_float();
+    float best;
+    foreach cm in $coinmasters[]{
+        if (cm.item != currency) continue;
+        foreach it in $items[]{
+            if (!it.tradeable || !sells_item(cm, it)) continue;
+            int cost = sell_price(cm, it);
+            if (cost > 0) best = max(best, item_value(it) / cost);
+        }
+    }
+    set_property(pref, best);
+    return best;
+}
+
+float LGRValue(){
+    float [int] drops;
+    drops[count(drops)] = 100;
+    put_closet(item_amount($item[sand dollar]),$item[sand dollar]);
+    put_closet(item_amount($item[hobo nickle]),$item[hobo nickle]);
+    foreach realm, r in lgrRealms {
+        boolean open = get_property(r.access + "Always").to_boolean()
+            || get_property("_" + r.access + "Today").to_boolean();
+        if (!open || get_property(r.capPref).to_int() >= r.cap) continue;
+        float value = currencyValue(r.currency);
+        if (value > 0) drops[count(drops)] = value;
+    }
+    float total;
+    foreach i, v in drops
+        total += v;
+    return total / count(drops) / 10;
+}
+
+// Mirrors garbo's Mr. Cheeng's spectacles bonus: a drop every ~4 turns, picked
+// evenly from tradeable potions. Scans every item, so cached daily.
+float CheengValue(){
+    if (get_property("_cheengValue") != "") return get_property("_cheengValue").to_float();
+    boolean [item] pool;
+    foreach it in $items[]{
+        if (it.tradeable && it.discardable && item_type(it) == "potion") pool[it] = true;
+    }
+    float value = average_value(pool, 100000) * 0.25;
+    set_property("_cheengValue", value);
+    return value;
+}
+
+float snowglobeValue(){
+    if (get_property("_snowglobeValue") != "") return get_property("_snowglobeValue").to_float();
+    boolean [item] pool;
+    foreach it in $items[]{
+        if (!it.tradeable || !it.discardable) continue;
+        if (it.inebriety > 0 || it.fullness > 0 || item_type(it) == "potion") pool[it] = true;
+    }
+    float value = average_value(pool, 100000) * 0.13;
+    set_property("_snowglobeValue", value);
+    return value;
+}
+
+// Mirrors garbo's Portable Laughing Stock "horizon" value, which garbo uses
+// outside meat-target fights: ~2% of turns drop a fruit, 10% of those a classic
+// fruit and the rest a basic one. Only ~22 items, so no cache needed.
+float laughingValue(){
+    float basic = average_value($items[orange, grapefruit, grapes, lemon, lime, papaya,
+        cranberries, strawberry, cherry, kumquat, tangerine, raspberry, kiwi, blackberry,
+        banana, cactus fruit, plum, pear, peach]);
+    float classic = average_value($items[classic banana, antique watermelon, quince]);
+    return 0.02 * (0.1 * classic + 0.9 * basic);
+}
+
+float pointerRingValue(){
+    float meat;
+    int n;
+    foreach i, m in get_monsters(my_location()){
+        if (m.max_meat == 0) continue;
+        meat += meat_drop(m);
+        n++;
+    }
+    if (n == 0) return 0;
+    meat /= n;
+    return meat >= 500 ? 700 : meat >= 100 ? 500 : 300;
+}
+
+// Ordnance magnet: 25% of fights drop one of these combat items, picked evenly.
+// Only ~100 saved-price lookups, so no cache needed.
+boolean [item] ordnanceDrops = $items[ancient spice, Battlie Light Saver, beer bomb, big boom,
+    big red button, black plastic oyster egg, bottle of alcohol, bottled swamp gas, boulder,
+    brass gear, bus pass, can of Ghuol-B-Gone&trade;, can of sterno, carton of rotten eggs,
+    chunk of hot iron, cigarette lighter, Cloaca grenade, cocktail napkin,
+    communications windchimes, drone self-destruct chip, droopy doll eye, droppable microphone,
+    Duskwalker syringe, Dyspepsi grenade, El Vibrato punchcard (216 holes),
+    El Vibrato punchcard (142 holes), exploding gum, exploding hacky-sack, ferret bait,
+    fetid feather, fire of unknown origin, firebomb, flaming feather, flaregun,
+    flirtatious feather, floorboard cruft, frightful feather, frigid ninja stars, frozen feather,
+    Gnomitronic Hyperspatial Demodulizer, grouchy restless spirit, groupie lipstick,
+    half-rotten brain, handful of napalm, hemp net, illegal firecracker, imitation crab meat,
+    imp air, jagged scrap metal, janitor sponge, jigsaw blade, lavender plastic oyster egg,
+    leftovers of indeterminate origin, little piece of steel, live nautical mine,
+    mariachi G-string, mauve plastic oyster egg, Mer-kin killscroll, Mer-kin sawdust,
+    molotov cocktail cocktail, molten scrap metal, nastygeist, NG, nugget of sodium,
+    onion shurikens, ovoid leather thing, PADL Phone, patchouli oil bomb, pencil stub,
+    photoprotoneutron torpedo, pixel cross, plot hole, puce plastic oyster egg, red button,
+    rocky raccoon, rusty bonesaw, sake bomb, sausage bomb,
+    scroll of ancient forbidden unspeakable evil, shuriken salad, skate skates, slime stack,
+    spangly unitard, spooky lasso, spooky music box mechanism, star throwing star,
+    stick of dynamite, stink-penny, stone frisbee, superamplified boom box, tequila grenade,
+    throwing candy, throwing fork, throwing spoon, underwater slingshot, water pipe bomb,
+    Way More Tears&trade; pepper spray, wood screw];
+
+float ordnanceValue(){
+    return average_value(ordnanceDrops, 100000) * 0.25;
+}
+
+// Dread zones need other pants, so Pantsgiving is never weighed there.
+boolean [location] hotZones = $locations[The Dark Elbow of the Woods, The Dark Heart of the Woods,
+    The Dark Neck of the Woods, Pandamonium Slums, Infernal Rackets Backstage];
+
+float pantsgivingValue(){
+    int fights = get_property("_pantsgivingCount").to_int();
+    if (fights >= 500 && get_property("_pantsgivingFullness").to_int() >= 3) return 0;
+    int [int] thresholds = {5, 50, 500};
+    int target = 5000;
+    foreach i, threshold in thresholds
+        if (fights < threshold){ target = threshold; break; }
+    return valueOfOrgan("stomach").to_float() / (target - fights);
+}
+
+string bonusGear(){
+    float voa = get_property("valueOfAdventure").to_float();
+    float [item] bonus;
+
+    // 4% of turns refund an adventure.
+    bonus[$item[mafia thumb ring]] = (1 / 0.96 - 1) * voa;
+
+    // Flap chance is 1/(2 + flaps used) for the first 5 free flaps.
+    int flaps = get_property("_batWingsFreeFights").to_int();
+    if (flaps < 5)
+        bonus[$item[bat wings]] = voa / (2 + flaps);
+
+    // Average best-choice value (~4,112) spread over the encounter interval.
+    int [int] cleaverIntervals = {1, 6, 10, 12, 15, 20};
+    int encounters = get_property("_juneCleaverEncounters").to_int();
+    int interval = encounters < count(cleaverIntervals) ? cleaverIntervals[encounters] : 30;
+    bonus[$item[June cleaver]] = (voa*5 + mall_price($item[savings bond]) + 2500)/9/ interval;
+
+    bonus[$item[KoL Con 13 snowglobe]] = snowglobeValue();
+    bonus[$item[Cup of 13s]] = cupValue();
+    
+    if (dayType() == 1){
+        float goblinValue = 150 + adjusted_meat_drop($monster[sausage goblin]);
+        bonus[$item[Kramco Sausage-o-Matic&trade;]] = sausage_goblin_chance() * goblinValue;
+    }
+
+    bonus[$item[Pantsgiving]] = pantsgivingValue();
+
+    bonus[$item[mafia pointer finger ring]] = pointerRingValue();
+    bonus[$item[lucky gold ring]] = LGRValue();
+    bonus[$item[Mr. Cheeng's spectacles]] = CheengValue();
+    bonus[$item[can of mixed everything]] = snowglobeValue() / 2;
+    bonus[$item[Portable Laughing Stock]] = laughingValue();
+    bonus[$item[ordnance magnet]] = ordnanceValue();
+
+    buffer out;
+    foreach it, value in bonus {
+        if (available_amount(it) == 0 || value <= 0) continue;
+        // Quoted as garbo does: otherwise the maximizer reads numbers in a name
+        // (KoL Con 13 snowglobe, Cup of 13s) as weights.
+        out.append(", " + to_string(value, "%.2f") + " \"bonus " + it + "\"");
+    }
+    return out.to_string();
 }
 
 void preAdv(){
@@ -297,8 +512,6 @@ void preAdv(){
                 append(maximize, ", equip The Jokester's gun");
             else if (my_basestat($stat[muscle]) >= 200 && get_property("script") == "6-kiss")
                 append(maximize, ", equip dreadful glove");
-            else
-                append(maximize, ", equip june cleaver");
             // Offhand
             if (have_equipped($item[Drunkula's wineglass]))
                 append(maximize, ", equip Drunkula's wineglass");
@@ -310,19 +523,11 @@ void preAdv(){
                 append(maximize, ", equip roman candelabra");
             else if (get_property("maxOverride") == "combat" || get_property("maxOverride") == "-combat")
                 append(maximize, "");
-            else if (get_property("script") == "farto" && !have_item($item[haiku katana]) && my_class() != $class[seal clubber] && dayType() == 1)
-                append(maximize, ", equip Kramco Sausage-o-Matic");
-            else if (get_property("script") == "farto" && sausage_goblin_chance( ) >= 0.1 && dayType() == 1)
-                append(maximize, ", equip Kramco Sausage-o-Matic");
-            else if (get_property("script") == "farto")
-                append(maximize, ", equip kol con snowglobe");
-            else
+            else if (get_property("script") != "farto")
                 append(maximize, ", equip carnivorous potted plant");
             // Back
             if (get_property("backOverride") != "")
                 append(maximize, get_property("backOverride"));
-            else if (batReady)
-                append(maximize, ", equip bat wings");
             // Shirt
             if (have_equipped($item[devilbone corset]))
                 append(maximize, ", equip devilbone corset");
@@ -339,12 +544,12 @@ void preAdv(){
                 append(maximize, ", equip devilbone greaves");
             else if (get_property("pantsOverride") != "")
                 append(maximize, get_property("pantsOverride"));
-            else if (to_int(get_property("_pantsgivingCount")) < 4 && available_amount($item[pantsgiving]) > 0 && !($locations[The Dark Elbow of the Woods,The Dark Heart of the Woods,The Dark Neck of the Woods,Pandamonium Slums,Infernal Rackets Backstage] contains my_location()))
+            else if (get_property("_pantsgivingCount").to_int() < 4 && available_amount($item[pantsgiving]) > 0
+                    && !(hotZones contains my_location()))
                 append(maximize, ", equip pantsgiving");
             else if ((get_property("sweat").to_int() < 90 && dayType() == 0) || (get_property("_sweatOutSomeBoozeUsed").to_int() < 3 && dayType() == 1)){
                 append(maximize, ", equip designer sweatpants");
-            }else if (to_int(get_property("_pantsgivingCount")) < 500 && available_amount($item[pantsgiving]) > 0)
-                append(maximize, ", equip pantsgiving");
+            }
             // Acc1
             if (have_equipped($item[angelbone dice]))
                 append(maximize, ", equip angelbone dice");
@@ -358,8 +563,6 @@ void preAdv(){
                 append(maximize, ", equip blood cubic zirconia");
             else if (vote)
                 append(maximize, ", equip &quot;I Voted!&quot; sticker");
-            else
-                append(maximize, ", equip mafia thumb ring");
             // Acc2
             if (have_equipped($item[angelbone chopsticks]))
                 append(maximize, ", equip angelbone chopsticks");
@@ -369,10 +572,8 @@ void preAdv(){
                 append(maximize, ", equip mafia thumb ring");
             else if (avalancheReady)
                 append(maximize, ", equip McHugeLarge left ski");
-            else if (get_property("script") == "farto" && my_class() != $class[seal clubber] && !have_item($item[haiku katana]))
-                append(maximize, ", equip spring shoes");
-            else
-                append(maximize, ", equip lucky gold ring");
+            else if (MobiusNCReady())
+                append(maximize, ", equip mobius ring");
             // Acc3
             if (have_equipped($item[devilbone rosary]))
                 append(maximize, ", equip devilbone rosary");
@@ -380,16 +581,15 @@ void preAdv(){
                 append(maximize, get_property("acc3Override"));
             else if (get_property("subscript") == "village")
                 append(maximize, ", equip Mesmereyes");
-            else if (MobiusNCReady())
-                append(maximize, ", equip mobius ring");
-            else if (get_property("script") == "farto")
-                append(maximize, ", equip mafia pointer finger ring");
             else if (get_property("script") == "6-kiss")
                 append(maximize, ", equip Dreadsylvania Auditor's badge");
-            else
-                append(maximize, ", equip ordnance magnet");
             // Fam equip
             append(maximize, famEquip());
+            // Bonuses
+            if (get_property("bonusOverride") != "")
+                append(maximize, get_property("bonusOverride"));
+            else
+                append(maximize, bonusGear());
         }
     }
 

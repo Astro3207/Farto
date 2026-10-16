@@ -404,22 +404,6 @@ item cheapestPasta(){
     return cheap_pasta;
 }
 
-int valueOfOrgan(string organ){
-    if (organ == "stomach"){
-        //based off of baked veggie ricotta casserole
-        return (8*get_property("valueOfAdventure").to_int()) - mall_price($item[St. Sneaky Pete's Whey]) - mall_price($item[St. Sneaky Pete's Whey]) - mall_price($item[Vegetable of Jarlsberg]) - mall_price($item[Vegetable of Jarlsberg]);
-    } else if (organ == "liver"){
-        //based off of  Sacramento wine
-        return (5.5*get_property("valueOfAdventure").to_int()) - mall_price($item[Sacramento wine]);
-    } else if (organ == "spleen"){
-        //based off of synthesis greed
-        return 30*300*3 - (mall_price($item[Crimbo candied pecan])*2);
-    } else {
-        abort("invalid organ");
-    }
-    return 0;
-}
-
 int valueOfFamPot(item it) {
     int n;
     if (it == $item[Black and White Apron Meal Kit]){

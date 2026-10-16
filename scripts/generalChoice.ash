@@ -87,16 +87,11 @@ float[string] voteInitPriority = {
     "Familiar Experience: -2":      -2.0
 };
 
-float voteItemValue(item it){
-    int h = historical_price(it);
-    return to_float(h > 0 ? h : autosell_price(it));
-}
-
 float voteMonsterValue(monster m){
     switch (m){
-    case $monster[terrible mutant]:      return voteItemValue($item[glob of undifferentiated tissue]) + 10;
-    case $monster[angry ghost]:          return voteItemValue($item[ghostly ectoplasm]) * 1.11;
-    case $monster[government bureaucrat]: return voteItemValue($item[absentee voter ballot]) * 0.05 + 68.75;
+    case $monster[terrible mutant]:      return item_value($item[glob of undifferentiated tissue]) + 10;
+    case $monster[angry ghost]:          return item_value($item[ghostly ectoplasm]) * 1.11;
+    case $monster[government bureaucrat]: return item_value($item[absentee voter ballot]) * 0.05 + 68.75;
     case $monster[annoyed snake]:        return to_float(gameday_to_int());
     case $monster[slime blob]:           return 95.0 - gameday_to_int();
     }
