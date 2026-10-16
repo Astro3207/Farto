@@ -846,8 +846,6 @@ void shadowRealmFK(){
             set_property("acc3Override",",equip petrified wood wizard's pouch");
         else
             set_property("acc3Override",",equip congressional medal of insanity");
-    } else {
-        set_property("acc3Override","");
     }
     if (to_int(get_property("_batWingsSwoopUsed")) < 11 && dayType() == 0)
         set_property("backOverride",", equip bat wings");
@@ -892,6 +890,7 @@ void shadowRealmFK(){
     if (get_property("_shadowAffinityToday") == false)
         use($item[closed-circuit pay phone]);
     set_property("shirtOverride","");
+    set_property("acc3Override","");
     set_property("backOverride","");}
 void sandworm(){
     mimicPrep();
@@ -2073,11 +2072,14 @@ void peridotFishing(){
               Hero's Field,Vanya's Castle,Megalo-City,Pandamonium Slums]{
             set_property("subscript","peridot");
             if (periledLocations()[loc] == false && can_adventure(loc) == true && loc.wanderers == true){
+                print (turns_until_forced_noncombat(loc) + " at " + loc);
                 if (loc == $location[Pandamonium Slums] && available_amount($item[Hey Deze map]) == 0)
                     continue;
                 if (loc == $location[The Deep Machine Tunnels] && have_effect($effect[Inside The Snowglobe]) == 0)
                     continue;
                 if (loc == $location[The Degrassi Knoll Garage] && get_property("questM01Untinker") == "started")
+                    continue;
+                if (turns_until_forced_noncombat(loc) == 0) 
                     continue;
                 mimicPrep();
                 set_property("offOverride",", equip Kramco Sausage-o-Matic");

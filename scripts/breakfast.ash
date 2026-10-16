@@ -374,6 +374,20 @@ void netiPot(){
         use($item[Pork Elf neti pot]);
 }
 
+void mummeryMeat(){
+    if (!have_item($item[mumming trunk]))
+        return;
+    if (contains_text(get_property("_mummeryMods"), "Meat Drop"))
+        return;
+    if (have_familiar($familiar[robortender]))
+        use_familiar($familiar[robortender]);
+    else if (have_familiar($familiar[comma chameleon]))
+        use_familiar($familiar[comma chameleon]);
+    else
+        return;
+    cli_execute("mummery meat");
+}
+
 void secondBreakfast(){
     step("phase: daily skills");
     dailySkills();
@@ -390,6 +404,7 @@ void secondBreakfast(){
     candyRichBlock();
     zoneOpening();
     aprilBand();
+    mummeryMeat();
     devilCandyEggs();
     netiPot();
 }

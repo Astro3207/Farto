@@ -1035,6 +1035,8 @@ void spendAdv(){
         set_property("famOverride","");
     }
     level11Sprint();
+    if (get_property("script") == "farto" && my_adventures() % 100 == 0 && my_name().to_lower_case() == "fart scauce")
+        cli_execute("ptrack add intermediate");
 }
 
 void main(){
