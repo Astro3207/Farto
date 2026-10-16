@@ -21,20 +21,6 @@
     // both read this.
     monster copyTarget = $monster[sausage goblin];
 
-    skill nextReplacement(){
-        int greg = get_property("beGregariousFightsLeft").to_int();
-        int habitat = get_property("_monsterHabitatsFightsLeft").to_int();
-        if (greg + habitat != 1 || (greg == 1
-            ? to_monster(get_property("beGregariousMonster")) != copyTarget
-            : to_monster(get_property("_monsterHabitatsMonster")) != copyTarget)) return $skill[none];
-        if (have_skill($skill[Meteor Lore]) && get_property("_macrometeoriteUses").to_int() < 10)
-            return $skill[Macrometeorite];
-        if (available_amount($item[Powerful Glove]) > 0
-            && get_property("_powerfulGloveBatteryPowerUsed").to_int() <= 90)
-            return $skill[CHEAT CODE: Replace Enemy];
-        return $skill[none];
-    }
-
     // Mafia state snapshot, read once at import so finisher() can hand the account
     // back exactly what it had. starter() repoints the between-battle / after-
     // adventure / choice hooks, swaps in the CCCS custom combat script, pins the

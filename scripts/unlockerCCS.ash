@@ -242,8 +242,8 @@ boolean [monster] hurtMobs = {
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 
 void main(int round, monster mob, string page_text) {
-    if (get_property("subscript") == "replacementChain" && last_monster() != copyTarget){
-        skill replacer = nextReplacement();
+    if (($skills[Macrometeorite, CHEAT CODE: Replace Enemy] contains to_skill(get_property("subscript"))) && last_monster() != copyTarget){
+        skill replacer = to_skill(get_property("subscript"));
         if (my_location() != $location[Noob Cave] || last_monster() != $monster[crate]
             || replacer == $skill[none] || !have_skill(replacer))
             abort("Replacement chain: unexpected encounter or unavailable replacement.");
