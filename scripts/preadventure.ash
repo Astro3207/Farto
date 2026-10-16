@@ -160,7 +160,7 @@ float LGRValue(){
     float [int] drops;
     drops[count(drops)] = 100;
     put_closet(item_amount($item[sand dollar]),$item[sand dollar]);
-    put_closet(item_amount($item[hobo nickle]),$item[hobo nickle]);
+    put_closet(item_amount($item[hobo nickel]),$item[hobo nickel]);
     foreach realm, r in lgrRealms {
         boolean open = get_property(r.access + "Always").to_boolean()
             || get_property("_" + r.access + "Today").to_boolean();

@@ -1897,7 +1897,7 @@ void miscellaneousFams(){
     if (get_property("_machineTunnelsAdv").to_int() < 5){
         if (have_effect($effect[Inside The Snowglobe]) == 0)
             use($item[Deep Machine Tunnels snowglobe]);
-        while (get_property("_machineTunnelsAdv").to_int() < 5 && mall_price($item[self-dribbling basketball]) <= 5000){
+        while (get_property("_machineTunnelsAdv").to_int() < 5 && mall_price($item[self-dribbling basketball]) <= 10000){
             altFam($familiar[machine elf]);
             set_property("subscript","NonSMFK");
             set_property("maxOverride","item drop");
@@ -2024,6 +2024,10 @@ void peridotFishing(){
             set_property("subscript","peridot");
             if (periledLocations()[loc] == false && can_adventure(loc) == true && loc.wanderers == true){
                 if (loc == $location[Pandamonium Slums] && available_amount($item[Hey Deze map]) == 0)
+                    continue;
+                if (loc == $location[The Deep Machine Tunnels] && have_effect($effect[Inside The Snowglobe]) == 0)
+                    continue;
+                if (loc == $location[The Degrassi Knoll Garage] && get_property("questM01Untinker") == "started")
                     continue;
                 mimicPrep();
                 set_property("offOverride",", equip Kramco Sausage-o-Matic");
