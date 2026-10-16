@@ -21,6 +21,13 @@
     // both read this.
     monster copyTarget = $monster[sausage goblin];
 
+    boolean evokeReady(){
+        return get_property("_eldritchTentaclesFoughtToday").to_int() < 11
+            && have_skill($skill[Evoke Eldritch Horror]) && !get_property("_eldritchHorrorEvoked").to_boolean()
+            && (have_effect($effect[Crappily Disguised as a Waiter]) > 0
+                || item_amount($item[crappy waiter disguise]) > 0
+                || (mall_price($item[crappy waiter disguise]) > 0 && mall_price($item[crappy waiter disguise]) <= 10000));
+    }
     // Mafia state snapshot, read once at import so finisher() can hand the account
     // back exactly what it had. starter() repoints the between-battle / after-
     // adventure / choice hooks, swaps in the CCCS custom combat script, pins the

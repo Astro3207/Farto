@@ -242,6 +242,18 @@ boolean [monster] hurtMobs = {
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 
 void main(int round, monster mob, string page_text) {
+    if (mob == $monster[Sssshhsssblllrrggghsssssggggrrgglsssshhssslblgl]){
+        if (have_effect($effect[Crappily Disguised as a Waiter]) > 0){
+            skill finisher = my_buffedstat($stat[Muscle]) > my_buffedstat($stat[Mysticality])
+                && (current_hit_stat() == $stat[Muscle] || item_type(equipped_item($slot[weapon])) == "knife")
+                ? $skill[Lunging Thrust-Smack] : $skill[Saucegeyser];
+            while (current_round() > 0 && have_skill(finisher) && my_mp() >= mp_cost(finisher)){
+                use_skill(finisher);
+            }
+        }
+        while (current_round() > 0) attack();
+        return;
+    }
     if (($skills[Macrometeorite, CHEAT CODE: Replace Enemy] contains to_skill(get_property("subscript"))) && last_monster() != copyTarget){
         skill replacer = to_skill(get_property("subscript"));
         if (my_location() != $location[Noob Cave] || last_monster() != $monster[crate]
