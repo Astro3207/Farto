@@ -2048,13 +2048,12 @@ void peridotFishing(){
                         set_property("acc1Override",", equip black glass");
                 }else if (loc.zone == "The 8-Bit Realm") {
                     set_property("acc2Override",", equip continuum");
-                } else {
-                    set_property("hatOverride","");
-                    set_property("pantsOverride","");
                 }
 
                 adv1(loc);
                 set_property("acc2Override","");
+                set_property("hatOverride","");
+                set_property("pantsOverride","");
             }
         }
     } until (perilLocations == get_property("_perilLocations"));
