@@ -1172,6 +1172,18 @@ void habitatRecall(){
             main@postadventure();
         }
         while (to_int(get_property("_monsterHabitatsFightsLeft")) > 0 || get_property("beGregariousFightsLeft").to_int() > 0){
+            if ((get_property("beGregariousFightsLeft").to_int()
+                + get_property("_monsterHabitatsFightsLeft").to_int() == 1
+                && (get_property("beGregariousFightsLeft").to_int() == 1
+                    ? to_monster(get_property("beGregariousMonster"))
+                    : to_monster(get_property("_monsterHabitatsMonster"))) == copyTarget)
+                && ((have_skill($skill[Meteor Lore]) && get_property("_macrometeoriteUses").to_int() < 10) || (available_amount($item[Powerful Glove]) > 0 && get_property("_powerfulGloveBatteryPowerUsed").to_int() <= 90))
+                && get_property("_monsterHabitatsRecalled").to_int() == 3
+                && (dayType() != 1 || get_property("beGregariousCharges").to_int() == 0)){
+                set_property("offOverride", "");
+                set_property("acc2Override", "");
+                return;
+            }
             mimicPrep();
             if (get_auto_attack() == 0)
                 aa("facsimile");
@@ -1204,6 +1216,44 @@ void backup(){
     set_property("offOverride","");
     set_property("pantsOverride","");
     set_property("acc3Override","");
+    int autoattack = get_auto_attack();
+    try {
+        step("phase: bulkFK monster replacements");
+
+        foreach replacer in $skills[Macrometeorite, CHEAT CODE: Replace Enemy]{
+            while ((get_property("beGregariousFightsLeft").to_int()
+                + get_property("_monsterHabitatsFightsLeft").to_int() == 1
+                && (get_property("beGregariousFightsLeft").to_int() == 1
+                    ? to_monster(get_property("beGregariousMonster"))
+                    : to_monster(get_property("_monsterHabitatsMonster"))) == copyTarget)
+            && (replacer == $skill[Macrometeorite]
+                ? have_skill($skill[Meteor Lore]) && get_property("_macrometeoriteUses").to_int() < 10
+                : available_amount($item[Powerful Glove]) > 0 && get_property("_powerfulGloveBatteryPowerUsed").to_int() <= 90)){
+            mimicPrep();
+            set_property("subscript", replacer);
+            string counter = replacer == $skill[Macrometeorite]
+                ? "_macrometeoriteUses" : "_powerfulGloveBatteryPowerUsed";
+            set_property("acc3Override", replacer == $skill[CHEAT CODE: Replace Enemy]
+                ? ", equip Powerful Glove" : "");
+            main@preadventure();
+            set_auto_attack(0); // Replace the crate before any damaging autoattack.
+            string before = get_property(counter);
+            int turns = total_turns_played();
+            if (!adv1($location[Noob Cave]) || current_round() > 0 || handling_choice())
+                abort("Replacement chain: encounter did not finish.");
+            if (total_turns_played() != turns)
+                abort("Replacement chain: spent a turn.");
+            if (get_property(counter) == before && (get_property("beGregariousFightsLeft").to_int()
+                + get_property("_monsterHabitatsFightsLeft").to_int() > 0))
+                abort("Replacement chain: " + replacer + " made no progress.");
+        }
+        }
+    } finally {
+        set_property("subscript", "");
+        set_property("acc3Override", "");
+        set_auto_attack(autoattack);
+    }
+    habitatRecall(); // Finish the reserved original through the usual route.
 }
 void mimicEgg(){
     while (item_amount($item[mimic egg]) > 0 && dayType() == 1 && contains_text(get_property("mimicEggMonsters"),copyTarget.to_int().to_string())){
