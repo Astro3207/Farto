@@ -21,15 +21,12 @@
     // both read this.
     monster copyTarget = $monster[sausage goblin];
 
-    boolean replacementSourceReady(){
+    skill nextReplacement(){
         int greg = get_property("beGregariousFightsLeft").to_int();
         int habitat = get_property("_monsterHabitatsFightsLeft").to_int();
-        return greg + habitat == 1 && (greg == 1
-            ? to_monster(get_property("beGregariousMonster")) == copyTarget
-            : to_monster(get_property("_monsterHabitatsMonster")) == copyTarget);
-    }
-
-    skill nextReplacement(){
+        if (greg + habitat != 1 || (greg == 1
+            ? to_monster(get_property("beGregariousMonster")) != copyTarget
+            : to_monster(get_property("_monsterHabitatsMonster")) != copyTarget)) return $skill[none];
         if (have_skill($skill[Meteor Lore]) && get_property("_macrometeoriteUses").to_int() < 10)
             return $skill[Macrometeorite];
         if (available_amount($item[Powerful Glove]) > 0

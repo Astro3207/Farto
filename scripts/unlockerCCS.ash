@@ -245,7 +245,7 @@ void main(int round, monster mob, string page_text) {
     if (get_property("subscript") == "replacementChain" && last_monster() != copyTarget){
         skill replacer = nextReplacement();
         if (my_location() != $location[Noob Cave] || last_monster() != $monster[crate]
-            || !replacementSourceReady() || replacer == $skill[none] || !have_skill(replacer))
+            || replacer == $skill[none] || !have_skill(replacer))
             abort("Replacement chain: unexpected encounter or unavailable replacement.");
         use_skill(replacer);
         if (last_monster() != copyTarget)

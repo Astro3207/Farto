@@ -17,7 +17,7 @@ class ValidateReplacements {
   String iotm=Files.readString(Path.of(args[0],"scripts/iotm.ash"));
   String ccs=Files.readString(Path.of(args[0],"scripts/unlockerCCS.ash"));
   int branch=ccs.indexOf("    if (get_property(\"subscript\") == \"replacementChain\"");
-  String helper=iotm.substring(iotm.indexOf("    boolean replacementSourceReady()"), iotm.indexOf("    // Mafia state snapshot"))
+  String helper=iotm.substring(iotm.indexOf("    skill nextReplacement()"), iotm.indexOf("    // Mafia state snapshot"))
       + "void replaceFreeMonster(){\n" + ccs.substring(branch,ccs.indexOf("    print (\"monster hp",branch)) + "}\n";
   for(String fn:new String[]{"get_property","available_amount","have_skill","my_location","last_monster","use_skill","abort"})
    helper=helper.replaceAll("\\b"+fn+"\\(","test_"+fn+"(");
@@ -57,12 +57,12 @@ class ValidateReplacements {
   String normal="""
     void main() {
       setup();
-      check(replacementSourceReady(), "reserve final source");
+      check(nextReplacement() != $skill[none], "reserve final source");
       props["beGregariousFightsLeft"]="2";
-      check(!replacementSourceReady(), "do not reserve earlier copies");
+      check(nextReplacement() == $skill[none], "do not reserve earlier copies");
       props["beGregariousFightsLeft"]="1";
       props["beGregariousMonster"]="crate";
-      check(!replacementSourceReady(), "wrong source monster");
+      check(nextReplacement() == $skill[none], "wrong source monster");
       props["beGregariousMonster"]=copyTarget;
       props["_macrometeoriteUses"]="10";
       check(nextReplacement() != $skill[Macrometeorite], "meteor cap");
@@ -91,7 +91,7 @@ class ValidateReplacements {
       props["beGregariousFightsLeft"]="0";
       props["_monsterHabitatsMonster"]=copyTarget;
       props["_monsterHabitatsFightsLeft"]="1";
-      check(replacementSourceReady(), "last habitat copy");
+      check(nextReplacement() != $skill[none], "last habitat copy");
       print("PASS normal");
     }
     """;
@@ -107,7 +107,7 @@ class ValidateReplacements {
    run(mocks+helper+code,scenario);
   }
   String sm=Files.readString(Path.of(args[0],"scripts/StockingMimic.ash"));
-  String driver=sm.substring(sm.indexOf("void monsterReplacements()"),sm.indexOf("void mimicEgg()"))
+  String driver=("void testReplacementLoop(){" + sm.substring(sm.indexOf("    if (nextReplacement() == $skill[none]) return;"),sm.indexOf("void mimicEgg()")))
       .replace("main@preadventure();","mimicPrep();");
   for(String fn:new String[]{"get_property","set_property","get_auto_attack","set_auto_attack","total_turns_played","current_round","handling_choice","adv1","abort"})
    driver=driver.replaceAll("\\b"+fn+"\\(","test_"+fn+"(");
@@ -136,11 +136,14 @@ class ValidateReplacements {
     """;
   for(String scenario:new String[]{"exhausted","original","stalled","paid","unfinished"}) {
    boolean failure=scenario.equals("stalled")||scenario.equals("paid")||scenario.equals("unfinished");
-   String code="void main(){setup(); scenario=\""+scenario+"\"; props[\"_macrometeoriteUses\"]=\"10\"; props[\"_powerfulGloveBatteryPowerUsed\"]=\"90\"; props[\"subscript\"]=\"saved\"; props[\"acc3Override\"]=\"saved accessory\"; try{monsterReplacements();}finally{check(autoattack==99 && props[\"subscript\"]==\"saved\" && props[\"acc3Override\"]==\"saved accessory\",\"Restore state\"); check((failure!=\"\")=="+failure+" && finished=="+!failure+",\"Finish or stop\"); print(\"PASS driver-"+scenario+"\");}}";
+   String code="void main(){setup(); scenario=\""+scenario+"\"; props[\"_macrometeoriteUses\"]=\"10\"; props[\"_powerfulGloveBatteryPowerUsed\"]=\"90\"; props[\"subscript\"]=\"saved\"; props[\"acc3Override\"]=\"saved accessory\"; try{testReplacementLoop();}finally{check(autoattack==99 && props[\"subscript\"]==\"\" && props[\"acc3Override\"]==\"\",\"Restore state\"); check((failure!=\"\")=="+failure+" && finished=="+!failure+",\"Finish or stop\"); print(\"PASS driver-"+scenario+"\");}}";
    run(mocks+helper+driverMocks+driver+code,"driver-"+scenario);
   }
-  if(sm.split("backup\\(\\);\\s*monsterReplacements\\(\\);",-1).length!=3)
-   throw new AssertionError("Both daily routes must run replacements directly after backups");
+  if(sm.split("backup\\(\\);",-1).length!=3 || sm.contains("void monsterReplacements"))
+   throw new AssertionError("Both daily routes must use the existing backup phase");
+  if(sm.indexOf("phase: bulkFK monster replacements") < sm.indexOf("void backup()")
+      || sm.indexOf("phase: bulkFK monster replacements") > sm.indexOf("void mimicEgg()"))
+   throw new AssertionError("Replacements must be inside the backup phase");
   System.out.println("Replacement policy, action guards, counters, target changes, and phase placement passed.");
  }
  static void run(String source,String label) {

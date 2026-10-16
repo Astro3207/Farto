@@ -1181,7 +1181,7 @@ void habitatRecall(){
             main@postadventure();
         }
         while (to_int(get_property("_monsterHabitatsFightsLeft")) > 0 || get_property("beGregariousFightsLeft").to_int() > 0){
-            if (replacementSourceReady() && nextReplacement() != $skill[none]
+            if (nextReplacement() != $skill[none]
                 && get_property("_monsterHabitatsRecalled").to_int() == 3
                 && (dayType() != 1 || get_property("beGregariousCharges").to_int() == 0)){
                 set_property("offOverride", "");
@@ -1220,16 +1220,12 @@ void backup(){
     set_property("offOverride","");
     set_property("pantsOverride","");
     set_property("acc3Override","");
-}
-void monsterReplacements(){
-    if (!replacementSourceReady() || nextReplacement() == $skill[none]) return;
+    if (nextReplacement() == $skill[none]) return;
     int autoattack = get_auto_attack();
-    string subscript = get_property("subscript");
-    string accessory = get_property("acc3Override");
     try {
         step("phase: bulkFK monster replacements");
         set_property("subscript", "replacementChain");
-        while (replacementSourceReady() && nextReplacement() != $skill[none]){
+        while (nextReplacement() != $skill[none]){
             mimicPrep();
             skill replacer = nextReplacement();
             string counter = replacer == $skill[Macrometeorite]
@@ -1244,12 +1240,12 @@ void monsterReplacements(){
                 abort("Replacement chain: encounter did not finish.");
             if (total_turns_played() != turns)
                 abort("Replacement chain: spent a turn.");
-            if (replacementSourceReady() && get_property(counter) == before)
+            if (nextReplacement() != $skill[none] && get_property(counter) == before)
                 abort("Replacement chain: " + replacer + " made no progress.");
         }
     } finally {
-        set_property("subscript", subscript);
-        set_property("acc3Override", accessory);
+        set_property("subscript", "");
+        set_property("acc3Override", "");
         set_auto_attack(autoattack);
     }
     habitatRecall(); // Finish the reserved original through the usual route.
@@ -2137,7 +2133,6 @@ void bulkFKD2(){
     habitatRecall();
     step("phase: bulkFK backup camera");
     backup();
-    monsterReplacements();
     step("phase: bulkFK cyberzone");
     while (get_property("_cyberFreeFights").to_int() < 10){
         constructBanish();
@@ -2226,7 +2221,6 @@ void locationBasedAdventuring(){
     habitatRecall();
     step("phase: bulkFK backup camera");
     backup();
-    monsterReplacements();
     step("phase: bulkFK cyberzone");
     while (get_property("_cyberFreeFights").to_int() < 10){
         mimicPrep();
