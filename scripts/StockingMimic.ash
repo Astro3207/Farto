@@ -1932,7 +1932,7 @@ void miscellaneousFams(){
         set_property("offOverride", "");
         set_property("subscript","");
     }
-    if (get_property("_banderRunaways").to_int() < 20){
+    if (get_property("_banderRunaways").to_int() < 30){
         set_auto_attack(0);
         if (have_effect($effect[Apriling Band Battle Cadence]) == 0 && total_turns_played() >= get_property("nextAprilBandTurn").to_int())
             cli_execute("aprilband effect c");

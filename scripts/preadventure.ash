@@ -32,6 +32,8 @@ void mood(string function){
             if (have_effect(ef) > 0)
                 cli_execute("uneffect " + ef);
     } else if (get_property("script") == "farto"){
+        if (my_adventures() % 100 == 0)
+            cli_execute("ptrack add intermediate");
         foreach ef in $effects[Yes\, Can Haz, ode to booze]
             if (have_effect(ef) > 0)
                 cli_execute("uneffect " + ef);
