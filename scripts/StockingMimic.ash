@@ -581,6 +581,11 @@ void FKPrep(){
 	if (my_inebriety() < inebriety_limit()){
 		dieting();
 	}
+    if (dayType() == 0 && can_adventure($location[The SMOOCH Army HQ])){
+        cli_execute("maximize disco style");
+        visit_url("place.php?whichplace=airport_hot&action=airport4_zone1");
+        run_choice(-1);
+    }
     if (my_name().to_lower_case() == "fart scauce"){
         retrieve_item(25, $item[bag of many confections]);
         retrieve_item(25, $item[stomp box]);
@@ -599,7 +604,7 @@ void FKPrep(){
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
-    if (can_adventure($location[The SMOOCH Army HQ])){
+    if (dayType() != 0 && can_adventure($location[The SMOOCH Army HQ])){
         cli_execute("maximize disco style");
         visit_url("place.php?whichplace=airport_hot&action=airport4_zone1");
         run_choice(-1);
