@@ -1512,11 +1512,12 @@ void snowman(){
     if (my_inebriety() > inebriety_limit())
         abort("Finish snowman free fights before overdrinking.");
     string [string] saved;
-    foreach pref in $strings[subscript,maxOverride,famOverride]
+    foreach pref in $strings[subscript,maxOverride,famOverride,acc1Override]
         saved[pref] = get_property(pref);
     try {
         step("phase: weakMonsters snowman");
         set_property("subscript","weakling");
+        set_property("acc1Override",", equip congressional medal of insanity");
         if (get_property("snojoSetting") == "NONE"){
             int mode = 1;
             if (mall_price($item[ice rice]) >= max(mall_price($item[ancient medicinal herbs]),mall_price($item[iced plum wine])))
