@@ -475,7 +475,7 @@ void dieting(){
 
 	doSpleen();
     if (my_spleen_use() == 4 || my_spleen_use() == 6)
-        abort("sweet synthesis");
+        cli_execute("synthesize greed");
 	} else {
 		foreach dr in $items[Feliz Navidad]{
 			if (valueOfFamPot(dr) > valueOfOrgan("liver"))
@@ -1894,10 +1894,10 @@ void restOfHiddenCity(){
 
 void miscellaneousFams(){
     step("phase: miscellaneous fams");
-    if (get_property("_machineTunnelsAdv").to_int() < 5){
+    if (get_property("_machineTunnelsAdv").to_int() < 5 && mall_price($item[self-dribbling basketball]) + mall_price($item[Deep Machine Tunnels snowglobe]) <= 10000){
         if (have_effect($effect[Inside The Snowglobe]) == 0)
             use($item[Deep Machine Tunnels snowglobe]);
-        while (get_property("_machineTunnelsAdv").to_int() < 5 && mall_price($item[self-dribbling basketball]) <= 10000){
+        while (get_property("_machineTunnelsAdv").to_int() < 5){
             altFam($familiar[machine elf]);
             set_property("subscript","NonSMFK");
             set_property("maxOverride","item drop");

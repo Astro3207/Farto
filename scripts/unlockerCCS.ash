@@ -361,7 +361,7 @@ void main(int round, monster mob, string page_text) {
         if (have_skill($skill[Launch spikolodon spikes]))      use_skill($skill[Launch spikolodon spikes]);
         if (have_skill($skill[sing along]) && my_familiar() != $familiar[peace turkey] && my_familiar() != $familiar[pair of stomping boots] && chameleon() != $familiar[pair of stomping boots])      use_skill($skill[sing along]);
         if (have_skill($skill[Prepare to reanimate your Foe])) use_skill($skill[Prepare to reanimate your Foe]);
-        if (item_amount($item[cosmic bowling ball]) > 0 && (have_effect($effect[Cosmic Ball in the Air]) < 10 || (dayType() == 0 && get_property("subscript") != "NonSMFK"))){
+        if (item_amount($item[cosmic bowling ball]) > 0 && (have_effect($effect[Cosmic Ball in the Air]) < 10 || dayType() == 0)){
             use_skill($skill[Bowl Straight Up]);
         }
         if (to_int(last_monster()) == to_int(get_property("killThisGuy")) && get_property("swordSniff") == true)

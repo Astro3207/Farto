@@ -32,7 +32,7 @@ void main(){
         cli_execute("preascend");
     }
     if (dayType() == 0){
-        if (numeric_modifier("familiar weight") < 200){
+        if (numeric_modifier("familiar weight") < 200 || have_effect($effect[shadow affinity]) > 0){
             cli_execute("postloop");
             cli_execute("preconsume");
             cli_execute("farto");
