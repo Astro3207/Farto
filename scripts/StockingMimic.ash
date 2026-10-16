@@ -581,7 +581,8 @@ void FKPrep(){
 	if (my_inebriety() < inebriety_limit()){
 		dieting();
 	}
-    if (dayType() == 0 && can_adventure($location[The SMOOCH Army HQ])){
+    if (dayType() == 0 && !get_property("_infernoDiscoVisited").to_boolean()
+        && can_adventure($location[The SMOOCH Army HQ])){
         cli_execute("maximize disco style");
         visit_url("place.php?whichplace=airport_hot&action=airport4_zone1");
         run_choice(-1);
@@ -604,7 +605,8 @@ void FKPrep(){
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
-    if (dayType() != 0 && can_adventure($location[The SMOOCH Army HQ])){
+    if (dayType() != 0 && !get_property("_infernoDiscoVisited").to_boolean()
+        && can_adventure($location[The SMOOCH Army HQ])){
         cli_execute("maximize disco style");
         visit_url("place.php?whichplace=airport_hot&action=airport4_zone1");
         run_choice(-1);
