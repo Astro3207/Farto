@@ -2186,6 +2186,36 @@ void peridotFishing(){
     set_property("subscript","");
 }
 
+void eldritchFights(){
+    if (evokeReady()){
+        main@preadventure();
+        if (have_effect($effect[Crappily Disguised as a Waiter]) == 0
+            && (item_amount($item[crappy waiter disguise]) > 0 || buy(1, $item[crappy waiter disguise], 10000) == 1))
+            use($item[crappy waiter disguise]);
+        if (have_effect($effect[Crappily Disguised as a Waiter]) > 0){
+            int autoattack = get_auto_attack();
+            try {
+                set_auto_attack(0);
+                if (!use_skill(1, $skill[Evoke Eldritch Horror]))
+                    abort("Evoke Eldritch Horror failed to cast.");
+                run_combat();
+                if (!get_property("_eldritchHorrorEvoked").to_boolean() || current_round() > 0)
+                    abort("Evoke Eldritch Horror did not finish.");
+            } finally {
+                set_auto_attack(autoattack);
+            }
+            main@postadventure();
+        } else
+            print("Skipping Evoke Eldritch Horror: waiter disguise unavailable within 10,000 Meat.", "blue");
+    }
+    if (get_property("_eldritchTentaclesFoughtToday").to_int() < 11 && get_property("_eldritchTentacleFought") == "false"){
+        main@preadventure();
+        visit_url("place.php?whichplace=forestvillage&action=fv_scientist");
+        run_choice(1);
+        main@postadventure();
+    }
+}
+
 void bulkFKD2(){
     step("phase: bulkFK start");
     set_property("inSpendAdv","true");
@@ -2280,12 +2310,7 @@ void bulkFKD2(){
         step("phase: bulkFK seals");
         seals();
     }
-    if (get_property("eldritchTentaclesFought").to_int() < 11 && get_property("_eldritchTentacleFought") == "false"){
-        main@preadventure();
-        visit_url("place.php?whichplace=forestvillage&action=fv_scientist");
-        run_choice(1);
-        main@postadventure();
-    }
+    eldritchFights();
     step("phase: peridot fishing");
     peridotFishing();
     stashreturn($item[pantsgiving]);
@@ -2408,12 +2433,7 @@ void bulkFKD1(){
         step("phase: bulkFK seals");
         seals();
     }
-    if (get_property("eldritchTentaclesFought").to_int() < 11 && get_property("_eldritchTentacleFought") == "false"){
-        main@preadventure();
-        visit_url("place.php?whichplace=forestvillage&action=fv_scientist");
-        run_choice(1);
-        main@postadventure();
-    }
+    eldritchFights();
     stashreturn($item[pantsgiving]);
     if (!contains_text(get_property("thoth19_event_list"),"postFKD1"))
         cli_execute("ptrack add postFKD1");

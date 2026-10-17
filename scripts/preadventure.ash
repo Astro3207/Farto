@@ -313,6 +313,10 @@ string bonusGear(){
 }
 
 void preAdv(){
+    if (get_property("script") == "FreeKill" && dayType() == 1
+        && have_effect($effect[eldritch attunement]) > 0
+        && get_property("_eldritchTentaclesFoughtToday").to_int() >= (evokeReady() ? 10 : 11))
+        cli_execute("uneffect eldritch attunement");
     if (get_property("script") == "FreeKill" && my_fullness() == fullness_limit() && get_property("_pantsgivingFullness").to_int() < 2)
         stashgrab($item[pantsgiving]);
     // ── Familiar selection ────────────────────────────────────────────────────

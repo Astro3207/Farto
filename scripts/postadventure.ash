@@ -686,7 +686,8 @@ void postAdv(){
     }
     if (get_property("script") == "FreeKill"){
         if (dayType() == 1){
-            if (get_property("_eldritchTentaclesFoughtToday").to_int() == 11 && have_effect($effect[eldritch attunement]) > 0)
+            if (have_effect($effect[eldritch attunement]) > 0
+                && get_property("_eldritchTentaclesFoughtToday").to_int() >= (evokeReady() ? 10 : 11))
                 cli_execute("uneffect eldritch attunement");
         }
         if (get_property("freeMeat").to_int() != my_meat( )){
