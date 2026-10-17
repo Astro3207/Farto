@@ -283,13 +283,13 @@ void main(int round, monster mob, string page_text) {
         if (current_round() == 1){
             throw_items($item[grody jug],$item[pufferfish spine]);
         }
-        while (current_round() > 1 && current_round() < 5){
+        while (current_round() > 1 && current_round() < 4){
             throw_items($item[crayon shavings],$item[pufferfish spine]);
         }
-        while (current_round() > 4 && current_round() < 22){
+        while (current_round() > 3 && current_round() < 20){
             throw_items($item[pufferfish spine],$item[pufferfish spine]);
         }
-        while (current_round() > 21 && current_round() < 27)
+        while (current_round() > 19 && current_round() < 30)
             throw_item($item[facsimile dictionary]);
         throw_item($item[shard of double-ice]);
     }
