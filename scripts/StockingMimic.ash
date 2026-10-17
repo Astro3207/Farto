@@ -553,6 +553,15 @@ void feedCandy(){
     }
 }
 
+void volcanoBuff(){
+    if (dayType() == 0 && !get_property("_infernoDiscoVisited").to_boolean()
+        && can_adventure($location[The SMOOCH Army HQ])){
+        cli_execute("maximize disco style");
+        visit_url("place.php?whichplace=airport_hot&action=airport4_zone1");
+        run_choice(-1);
+    }
+}
+
 void FKPrep(){
 	step("phase: FKPrep start");
 	starter();
@@ -589,15 +598,12 @@ void FKPrep(){
         if (buffCount() == 5 && !get_property("_bagOTricksUsed").to_boolean()
             && available_amount($item[Bag o' Tricks]) > 0)
             use(1, $item[Bag o' Tricks]);
+        if (buffCount() == 5)
+            volcanoBuff();
         if (buffCount() >= 10)
             break;
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
-    }
-    if (can_adventure($location[The SMOOCH Army HQ])){
-        cli_execute("maximize disco style");
-        visit_url("place.php?whichplace=airport_hot&action=airport4_zone1");
-        run_choice(-1);
     }
     step("phase: FKPrep buffs");
 	useMayamRings();
