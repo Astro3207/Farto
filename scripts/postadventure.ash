@@ -709,7 +709,7 @@ void postAdv(){
         run_choice(2);
         cli_execute("drink doc clock's t");
     }
-    if (my_inebriety() < inebriety_limit() && dayType() != 0 && get_property("familiarSweat").to_int() >= 279){
+    if (my_inebriety() < inebriety_limit() && dayType() != 0 && get_property("familiarSweat").to_int() >= 358){
         visit_url("inventory.php?"+my_hash()+"&action=distill");
         run_choice(1);
     }
