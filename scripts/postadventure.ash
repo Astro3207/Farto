@@ -921,6 +921,8 @@ void spendAdv(){
             set_property("mainOverride","");
             set_property("acc3Override","");
         }
+        if (item_amount($item[1950 Vampire Vintner wine]) == 0 && get_property("vintnerCharge").to_int() == 0 && have_effect($effect[fishy]) == 0 && my_class() == $class[accordion thief])
+            use($item[fishy pipe]);
         if (item_amount($item[1950 Vampire Vintner wine]) == 0 && get_property("vintnerCharge").to_int() == 0 && have_effect($effect[fishy]) > 0){
             if (have_effect($effect[stenchform]) == 0)
                 use($item[phial of stench]);
