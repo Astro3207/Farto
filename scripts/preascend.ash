@@ -255,10 +255,14 @@ void main(){
     starter();
     step("phase: Organ phase 1");
     equipBonesAndConsume();
+    if (!contains_text(get_property("thoth19_event_list"),"overstomach"))
+        cli_execute("ptrack add overstomach");
     if (my_inebriety() == inebriety_limit())
         drunkInko();
     step("phase: nightcap");
     dailyMoodAndNightcap();
+    if (!contains_text(get_property("thoth19_event_list"),"overdrunk"))
+        cli_execute("ptrack add overdrunk");
     try {
         step("phase: grimace prime maps");
         spendGrimacePrimeMaps();

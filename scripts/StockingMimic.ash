@@ -709,10 +709,10 @@ void FKPrep(){
 	step("phase: FKPrep stash pops");
 	// Stash-borrowed one-a-day item pops.
 	foreach it in $items[defective Game Grid token, BittyCar MeatCar, Platinum Yendorian Express Card]{
-		stashgrab(it);
+		stashgrab2(it);
 		if (have_item(it))
 			use(it);
-		stashreturn(it);
+		stashreturn2(it);
 	}
 
     if (get_property("questPAGhost") == "unstarted" && !have_item($item[protonic accelerator pack])
@@ -2013,7 +2013,7 @@ familiar famXpTarget(){
     int mimic = mimicXpNeeded();
     int yeti = yetiXpNeeded();
     boolean eggsLayable = to_int(get_property("_backUpUses")) < 11;
-    familiar fam = $familiar[none];
+    familiar fam = $familiar[mini kiwi];
     if (mimic > 0 && (eggsLayable || yeti == 0))
         fam = $familiar[chest mimic];
     else if (yeti > 0)
@@ -2044,11 +2044,11 @@ void restOfHiddenCity(){
         return;
     set_property("maxOverride","familiar experience");
     while (to_int(get_property("_drunkPygmyBanishes")) < 11){
-        set_property("famOverride",famXpTargetOrMimic().to_string().to_lower_case());
+        set_property("famOverride",famXpTarget().to_string().to_lower_case());
         drunkPygmy();
     }
     while (get_property("zigguratLianas") == 0 && dayType() == 1){
-        set_property("famOverride",famXpTargetOrMimic().to_string().to_lower_case());
+        set_property("famOverride",famXpTarget().to_string().to_lower_case());
         lianas();
     }
     if (have_effect($effect[Everything looks Beige]) == 0 && have_item($item[crepe paper parachute cape])){

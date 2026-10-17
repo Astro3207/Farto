@@ -552,6 +552,21 @@
             put_stash(it, 1 );
         visit_url("showclan.php?whichclan=" + get_property("homeClanID").to_int() + "&action=joinclan&confirm=on");}
 
+    void stashgrab2(item it){
+        whitelist("Temporary");
+        if (stash_amount(it) > 0)
+            take_stash(it, 1 );
+        whitelist("homeclan");
+        }
+
+    void stashreturn2(item it){
+        whitelist("Temporary");
+        cli_execute("unequip "+ it);
+        if (available_amount(it) > 0)
+            put_stash(it, 1 );
+        whitelist("homeclan");
+        }
+
     // Returns the number of chamois available in the clan slime tube
     int chamoixAmount() {
         matcher m = create_matcher("There are (\\d+) chamoi", visit_url("clan_slimetube.php?action=bucket"));
