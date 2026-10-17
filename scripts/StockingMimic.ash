@@ -926,6 +926,7 @@ void archaeologist(){
                 set_property("backOverride",", equip retrocape (heck kill)");
             } else {
                 set_property("mainOverride","");
+                set_property("backOverride","");
             }
             set_property("acc1Override",",bonus mafia pointer");
             if (to_int(get_property("_glarkCableUses")) < 5) {
@@ -1445,7 +1446,7 @@ string pickWeakling(boolean checkHP){
         && (!checkHP || safeToFK(to_monster("vandal kid"))))
         return "trickortreat";
     if (get_property("_cargoPocketEmptied") != "true"
-        && (!checkHP || safeToFK($monster[1335 HaXx0r])))
+        && (!checkHP || safeToFK($monster[batrat])))
         return "shorts";
     if (to_int(get_property("_speakeasyFreeFights")) < 3
         && (!checkHP || safeToFK(to_monster("traveling hobo"))))

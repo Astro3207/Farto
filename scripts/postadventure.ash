@@ -867,6 +867,7 @@ void azazelUnicornQuest(){
 void chargeFams(){
     if (!can_adventure($location[An Overgrown Shrine (Southeast)]))
         return;
+    set_property("maxOverride","familiar weight");
     adv1($location[An Overgrown Shrine (Southeast)]);
     use_familiar($familiar[mini kiwi]);
     equip($item[antique machete]);
