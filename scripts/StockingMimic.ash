@@ -1986,21 +1986,63 @@ void embezzler(){
     }
 }
 
+// ─── familiar XP budget ──────────────────────────────────────────────────────
+int mimicXpNeeded(){
+    if (!have_familiar($familiar[chest mimic]))
+        return 0;
+    int eggsLeft = max(0, 11 - to_int(get_property("_mimicEggsObtained")));
+    int expForTmr = dayType() == 0 ? 550 : 0;
+    return max(0, eggsLeft * 50 - $familiar[chest mimic].experience) + dayType();
+}
+
+// XP the cooler yeti still needs: 400 for today's boon if unclaimed, plus 400 more on D1.
+int yetiXpNeeded(){
+    if (!have_familiar($familiar[cooler yeti]))
+        return 0;
+    int boons = (get_property("_coolerYetiAdventures").to_boolean() ? 0 : 1) + (dayType() == 0 ? 1 : 0);
+    return max(0, boons * 400 - $familiar[cooler yeti].experience);
+}
+
+familiar famXpTarget(){
+    int mimic = mimicXpNeeded();
+    int yeti = yetiXpNeeded();
+    boolean eggsLayable = to_int(get_property("_backUpUses")) < 11;
+    familiar fam = $familiar[none];
+    if (mimic > 0 && (eggsLayable || yeti == 0))
+        fam = $familiar[chest mimic];
+    else if (yeti > 0)
+        fam = $familiar[cooler yeti];
+    print("fam XP: mimic needs " + mimic + ", yeti needs " + yeti + " -> " + fam, "blue");
+    return fam;
+}
+
+// The day's 3 God Lobster fights (via dish of clarified butter). Each goes to
+// whichever familiar still needs XP; once both targets are met the fights run
+// in whatever stance the caller left, as before.
+void godLobster(){
+    while (get_property("_godLobsterFights").to_int() < 3){
+        familiar fam = famXpTarget();
+        if (fam != $familiar[none]){
+            set_property("famOverride",fam.to_string().to_lower_case());
+            set_property("maxOverride","familiar experience");
+            main@preadventure( );
+        }
+        use($item[dish of clarified butter]);
+    }
+    set_property("famOverride","");
+    set_property("maxOverride","");
+}
+
 void restOfHiddenCity(){
     if (!can_adventure($location[An Overgrown Shrine (Southeast)]) || (get_property("zigguratLianas") > 0 && to_int(get_property("_drunkPygmyBanishes")) >= 11))
         return;
     set_property("maxOverride","familiar experience");
     while (to_int(get_property("_drunkPygmyBanishes")) < 11){
-        if (!contains_text(get_property("banishedMonsters"),"pygmy bowler") && contains_text(get_property("banishedMonsters"),"pygmy orderlies"))
-            set_property("famOverride","patriotic eagle");
-        else if (contains_text(get_property("banishedMonsters"),"pygmy orderlies") && dayType() == 1 && get_property("screechCombats").to_int() > 0)
-            set_property("famOverride","patriotic eagle");
-        else
-            set_property("famOverride","chest mimic");
+        set_property("famOverride",famXpTargetOrMimic().to_string().to_lower_case());
         drunkPygmy();
     }
     while (get_property("zigguratLianas") == 0 && dayType() == 1){
-        set_property("famOverride","chest mimic");
+        set_property("famOverride",famXpTargetOrMimic().to_string().to_lower_case());
         lianas();
     }
     if (have_effect($effect[Everything looks Beige]) == 0 && have_item($item[crepe paper parachute cape])){
@@ -2289,9 +2331,7 @@ void bulkFKD2(){
     }
     set_property("hatOverride","");
     step("phase: bulkFK god lobster");
-    while (get_property("_godLobsterFights").to_int() < 3){
-        use($item[dish of clarified butter]);
-    }
+    godLobster();
     if (get_property("_molehillMountainUsed") == false)
         use($item[molehill mountain]);
     step("phase: bulkFK mimic egg");
@@ -2403,9 +2443,7 @@ void bulkFKD1(){
     }
     set_property("hatOverride","");
     step("phase: bulkFK god lobster");
-    while (get_property("_godLobsterFights").to_int() < 3){
-        use($item[dish of clarified butter]);
-    }
+    godLobster();
     if (get_property("_molehillMountainUsed") == false)
         use($item[molehill mountain]);
     step("phase: bulkFK mimic egg");

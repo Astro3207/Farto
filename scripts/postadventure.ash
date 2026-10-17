@@ -401,7 +401,7 @@ void drunkPygmy(){
     cli_execute("acquire 11 bowl of scorpions");
     if (to_int(get_property("_drunkPygmyBanishes")) < 11){
         set_property("maxOverride","familiar exp");
-        if (get_property("famOverride") != "chest mimic"){
+        if (!($strings[chest mimic, cooler yeti] contains get_property("famOverride"))){
             if (get_property("screechCombats").to_int() > 0)
                 set_property("famOverride","patriotic eagle");
             else
@@ -437,7 +437,7 @@ void lianas(){
             while (loc.turns_spent < 3 && n < 3) {
                 set_property("maxOverride","familiar exp, -weapon");
                 set_property("mainOverride"," ");
-                if (get_property("famOverride") != "chest mimic"){
+                if (!($strings[chest mimic, cooler yeti] contains get_property("famOverride"))){
                     if (get_property("screechCombats").to_int() > 0)
                         set_property("famOverride","patriotic eagle");
                     else{
