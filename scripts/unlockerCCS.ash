@@ -444,7 +444,7 @@ void main(int round, monster mob, string page_text) {
                     use_skill($skill[shieldbutt]);
             }
         }
-        if (have_equipped($item[congressional medal of insanity]))
+        if (have_equipped($item[unwrapped knock-off retro superhero cape]))
             use_skill($skill[saucegeyser]);
         while (current_round() > 0 && current_round() < 30 && monster_hp() > 9){
             if (have_equipped($item[april shower thoughts shield]))

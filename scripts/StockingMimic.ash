@@ -846,8 +846,6 @@ void shadowRealmFK(){
     if ($monster[shadow slab].elemental_resistance > 85){
         if (have_item($item[petrified wood wizard's pouch]))
             set_property("acc3Override",",equip petrified wood wizard's pouch");
-        else
-            set_property("acc3Override",",equip congressional medal of insanity");
     }
     if (to_int(get_property("_batWingsSwoopUsed")) < 11 && dayType() == 0)
         set_property("backOverride",", equip bat wings");
@@ -912,10 +910,12 @@ void archaeologist(){
         if (my_location() == $location[none])
             set_location($location[the red zeppelin]);
         if (my_location() != $location[the red zeppelin]){
-            if (get_property("zeppelinProgress").to_int() >= 6)
+            if (get_property("zeppelinProgress").to_int() >= 6){
                 set_property("mainOverride",", equip legendary seal-clubbing club");
-            else
+                set_property("backOverride",", equip retrocape (heck kill)");
+            } else {
                 set_property("mainOverride","");
+            }
             set_property("acc1Override",",bonus mafia pointer");
             if (to_int(get_property("_glarkCableUses")) < 5) {
                 retrieve_item(5,$item[glark cable]);
@@ -1052,10 +1052,11 @@ void underwaterBaseball(){
         adv1($location[The Dive Bar]);
         baseballD();
     } else if (get_property("_curveballFightsLeft").to_int() > 0){
-        set_property("acc1Override",", equip congressional medal of insanity");
+        set_property("backOverride",", equip retrocape (heck kill)");
         adv1($location[The Dive Bar]);
     }
     set_property("acc1Override","");
+    set_property("backOverride","");
 }
 
 boolean pearloP1Done(){
@@ -1610,9 +1611,9 @@ void weakMonsters(){
     set_property("subscript","");
 }
 
-void LBMWPrep(boolean CMOI){
-    if (CMOI == true){
-        set_property("acc1Override",", equip congressional medal of insanity");
+void LBMWPrep(boolean lantern){
+    if (lantern == true){
+        set_property("backOverride",", equip retrocape (heck kill)");
     }
     if (get_auto_attack() == 0)
         aa("facsimile");
@@ -1753,6 +1754,7 @@ void locationBasedWeakMonsters(){
         set_property("mainOverride","");
         set_property("acc2Override","");
         set_property("offOverride","");
+        set_property("backOverride","");
     }
 }
 

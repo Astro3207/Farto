@@ -488,7 +488,7 @@ void preAdv(){
         else if (get_property("acc3Override") != "")
             append(maximize, get_property("acc3Override"));
         // Fam equip
-        if (get_property("backOverride") != "")
+        if (get_property("famEquipOverride") != "")
             append(maximize, get_property("famEquipOverride"));
     } else {
         if (get_property("unconditionalOverride") == ""){
