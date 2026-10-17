@@ -1066,7 +1066,7 @@
     boolean free_Kill(){
         if (have_effect($effect[everything looks red]) == 0 && bullseyeReady() && (my_adventures() > bullseyeCooldown() || dayType() == 1))
             return true;
-        if (have_effect($effect[everything looks yellow]) == 0 && my_adventures() > 100)
+        if (have_effect($effect[everything looks yellow]) == 0 && (my_adventures() > 100 || dayType() == 1))
             return true;
         return false;
     }

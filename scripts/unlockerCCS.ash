@@ -216,7 +216,7 @@ boolean free_monster() {
         return true;
     if (contains_text(last_monster().name,"hacker"))
         return true;
-    if (my_location().zone == "Shadow Rift")
+    if (my_location().zone == "Shadow Rift" && have_effect($effect[shadow affinity]) > 0)
         return true;
     if (free_location())
         return true;
@@ -1001,21 +1001,20 @@ void main(int round, monster mob, string page_text) {
         if (last_monster().boss == true){
             cleanUp();
         }
-        if (last_monster() == $monster[shadow guy]){
-            if (have_equipped($item[blood cubic zirconia])){
-                use_skill($skill[BCZ: Refracted Gaze]);
-                use_skill($skill[swoop like a bat]);
-            }
-            while (to_int(get_property("_douseFoeUses")) < 3
-                && get_property("_douseFoeSuccess") == "false"
-                && current_round() < 25 && have_equipped($item[Flash Liquidizer Ultra Dousing Accessory]))
-                use_skill($skill[douse foe]);
-        } else if (have_equipped($item[bat wings])){
+        if (last_monster() == $monster[shadow guy])
+            throw_item($item[waffle]);
+        throw_item($item[septapus summoning charm]);
+        while (to_int(get_property("_douseFoeUses")) < 3
+            && get_property("_douseFoeSuccess") == "false"
+            && current_round() < 25 && have_equipped($item[Flash Liquidizer Ultra Dousing Accessory])){
+            if (my_hp() < 500)
+                throw_item($item[new age healing crystal]);
+            use_skill($skill[douse foe]);
+        }
+        if (have_equipped($item[bat wings]))
             use_skill($skill[swoop like a bat]);
-        }
-        if (get_property("script") == "FreeKill"){
-            cleanUp();
-        }
+        if (have_equipped($item[moss mace]))
+            use_skill($skill[moss mugging]);
         free_run(page_text);
         free_kill(page_text);
         cleanUp();

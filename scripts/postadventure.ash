@@ -71,43 +71,22 @@ void uneffectDebuffs(){
 // Run one Rufus / Shadow Rift turn, equipping the gaze / bat-wings / entity gear the quest needs.
 void shadowRealm(){
     set_property("maxOverride","item drop");
-    if (to_int(get_property("_bczRefractedGazeCasts")) < 9)
-        set_property("acc2Override",", equip blood cubic zirconia");
     if (to_int(get_property("_batWingsSwoopUsed")) < 11)
         set_property("backOverride",", equip bat wings");
     else
         set_property("backOverride","");
-    if (get_property("questRufus") == "unstarted" && get_property("_shadowAffinityToday") == "true" && dayType() == 1)
-        use($item[closed-circuit pay phone]);
-    if (get_property("rufusQuestType") == "items"){
-        retrieve_item(3,to_item(get_property("rufusQuestTarget")));
-    } else if (get_property("questRufus") == "started"){
-        if(get_property("_seadentWaveZone") == "Shadow Rift")
-            set_property("mainOverride",", equip monodent");
-        if (get_property("encountersUntilSRChoice").to_int() == 0 && get_property("rufusQuestTarget") == "shadow scythe")
-            abort();
-        if (get_property("encountersUntilSRChoice").to_int() == 0 && get_property("rufusQuestTarget") == "shadow spire")
-            set_property("maxOverride","spell damage percent");
-        if (have_item($item[petrified wood wizard's pouch]))
-            set_property("acc3Override",",equip petrified wood wizard's pouch");
-        else
-            set_property("acc3Override",",equip congressional medal of insanity");
-        if ($monster[shadow slab].elemental_resistance > 85){
-            if (have_item($item[petrified wood wizard's pouch]))
-                set_property("acc3Override",",equip petrified wood wizard's pouch");
-            else
-                set_property("acc3Override",",equip congressional medal of insanity");
+    if (get_property("questRufus") == "started"){
+        if (get_property("encountersUntilSRChoice").to_int() == 0){
+            if (get_property("rufusQuestTarget") == "shadow scythe" || get_property("rufusQuestTarget") == "shadow spire")
+                set_property("acc2Override",", equip Drunkula's ring of haze");
+            set_property("backOverride",", equip retrocape (heck kill)");
         }
-        adv1($location[Shadow Rift (The Nearby Plains)]);
-        set_property("acc3Override","");
+        adv1($location[Shadow Rift (The Misspelled Cemetary)]);
     }
     if (get_property("questRufus") == "step1" && get_property("_shadowAffinityToday") == "true") {
         use($item[closed-circuit pay phone]);
         adv1($location[Shadow Rift (The Nearby Plains)]);
     }
-    set_property("maxOverride","");
-    set_property("mainOverride","");
-    set_property("acc3Override","");
 }
 
 // Fight the cookbookbat quest monster. Route depends on which free banish is up
@@ -976,25 +955,46 @@ void spendAdv(){
             }
             set_property("backOverride","");
         }
-        if (free_Kill()){
-            if (get_property("script") == "6-kiss" || get_property("script") == "TTT" || get_property("script") == "slime")
-                return;
-            ELKPrep();
-
-            if (to_int(get_property("blackForestProgress")) < 5)
-                blackForest();
-            else if ((get_property("questG09Muscle") != "finished" && my_class() == $class[seal clubber]) || get_property("questL05Goblin") == "started")
-                outskirts();
-            else if (get_property("questM16Temple") != "finished")
-                findHiddenTemple();
-            else if (get_property("questM10Azazel") != "finished")
-                azazelUnicornQuest();
-            if (dayType() == 1)
-                abort("write in pickpockets");
-            set_property("shirtOverride","");
-            set_property("acc1Override","");
-        }
         forceNoncombats();
+    }
+    if (free_Kill()){
+        if (get_property("script") == "6-kiss" || get_property("script") == "TTT" || get_property("script") == "slime")
+            return;
+        ELKPrep();
+
+        if (to_int(get_property("blackForestProgress")) < 5)
+            blackForest();
+        else if ((get_property("questG09Muscle") != "finished" && my_class() == $class[seal clubber]) || get_property("questL05Goblin") == "started")
+            outskirts();
+        else if (get_property("questM16Temple") != "finished")
+            findHiddenTemple();
+        else if (get_property("questM10Azazel") != "finished")
+            azazelUnicornQuest();
+        if (dayType() == 1 && get_property("_batWingsSwoopUsed").to_int() < 11){
+            set_property("maxOverride","item drop");
+            if (available_amount($item[Flash Liquidizer Ultra Dousing Accessory]) == 0)
+                retrieve_item($item[Flash Liquidizer Ultra Dousing Accessory]);
+            if (get_property("_douseFoeUses").to_int() < 3)
+                set_property("acc3Override",", equip Flash Liquidizer Ultra Dousing Accessory");
+            if (have_item($item[moss mace]) && my_class() == $class[seal clubber] && my_fury( ) >= 3)
+                set_property("mainOverride",", equip moss mace");
+            retrieve_item($item[waffle]);
+            retrieve_item($item[Septapus summoning charm]);
+            set_property("famOverride","sword of s words");
+            shadowRealm();
+            set_property("mainOverride","");
+            set_property("famOverride","");
+            set_property("backOverride","");
+            set_property("acc2Override","");
+            set_property("acc3Override","");
+        } else if (dayType() == 1){
+            set_property("maxOverride","item drop");
+            set_property("famOverride","sword of s words");
+            adv1($location[the marinara trench]);
+            set_property("famOverride","");
+        }
+        set_property("shirtOverride","");
+        set_property("acc1Override","");
     }
     if (get_property("questL05Goblin") != "started" && to_int(get_property("blackForestProgress")) >= 5 && item_amount($item[observational glasses]) > 0 && have_effect($effect[Patent Aggression]) > 0)
         cli_execute("uneffect Patent Aggression");
