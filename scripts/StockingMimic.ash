@@ -1797,6 +1797,12 @@ void locationBasedWeakMonsters(){
     if (have_effect($effect[coldform]) == 0)
         use($item[phial of coldness]);
     equip($slot[acc3],timeBadge());
+    step ("phase: rose garden");
+    roseGarden();
+    if (dayType() == 0 && mall_price($item[Homeowner's loam]) < 30000){
+        abort("Script in using loams for black rose garden");
+    }
+    neverendingParty();
     snowman();
     step("phase: weakMonsters gingerbread");
     while (to_int(get_property("_gingerbreadCityTurns")) < 30){
@@ -2309,11 +2315,13 @@ void bulkFKD2(){
     restOfHiddenCity();
     step ("phase: rose garden");
     roseGarden();
+    neverendingParty();
+    if (have_effect($effect[coldform]) > 0)
+        cli_execute("uneffect coldform");
     step("phase: bulkFK habitat recall");
     habitatRecall();
     step("phase: bulkFK backup camera");
     backup();
-    neverendingParty();
     step("phase: bulkFK cyberzone");
     while (get_property("_cyberFreeFights").to_int() < 10){
         constructBanish();
@@ -2324,7 +2332,6 @@ void bulkFKD2(){
     if (get_property("_shadowAffinityToday") == "false")
         shadowRealmFK();
     while (have_effect($effect[shadow affinity]) > 0){
-        cli_execute("uneffect coldform");
         shadowRealmFK();
     }
     step("phase: bulkFK loose FK");
@@ -2386,16 +2393,10 @@ void locationBasedAdventuring(){
     miscellaneousFams();
     step ("phase: use up hidden city");
     restOfHiddenCity();
-    step ("phase: rose garden");
-    roseGarden();
-    if (dayType() == 0 && mall_price($item[Homeowner's loam]) < 30000){
-        abort("Script in using loams for black rose garden");
-    }
     step("phase: bulkFK habitat recall");
     habitatRecall();
     step("phase: bulkFK backup camera");
     backup();
-    neverendingParty();
     step("phase: bulkFK cyberzone");
     while (get_property("_cyberFreeFights").to_int() < 10){
         mimicPrep();
