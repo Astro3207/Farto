@@ -682,7 +682,7 @@ void FKPrep(){
 	foreach ef in $effects[Flapper Dancin', Polka Face, Polka of Plenty,
 		The Ballad of Richie Thingfinder, Earning Interest, Bet Your Autumn Dollar,
 		Sweat Equity, Legendary Pasta Eyeball, Heart of Pink, Tingling Feeling,
-		Disco Leer,Serendipity]{
+		Disco Leer,Serendipity,Heart of White,Curiosity of Br'er Tarrypin]{
 		if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
 			continue;
         if (ef == $effect[Serendipity] && get_property("_augSkillsCast").to_int() >= 3)
