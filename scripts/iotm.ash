@@ -16,10 +16,9 @@
     string clan = get_clan_name();
     int estimatedTurns;
     boolean [monster] haveLocketMonster = get_locket_monsters();
-    // The monster the free-kill run chain-copies (locket -> habitat recall,
-    // backup camera, mimic eggs). Change it here; StockingMimic and the CCS
-    // both read this.
+    // The monster the free-kill run chain-copies (locket -> habitat recall, mimic eggs).
     monster copyTarget = $monster[sausage goblin];
+    monster copyTarget2 = $monster[Frozen Bag of Tortellini];
 
     // Mafia state snapshot, read once at import so finisher() can hand the account
     // back exactly what it had. starter() repoints the between-battle / after-
@@ -981,6 +980,14 @@
         foreach it in redTaffyWeights
             value += redTaffyWeights[it] * mall_price(it);
         return value;
+    }
+
+    int gregsToSave(){
+        if ((have_skill($skill[Macrometeorite]) && get_property("_macrometeoriteUses").to_int() < 10) || 
+            (available_amount($item[Powerful Glove]) > 0 && get_property("_powerfulGloveBatteryPowerUsed").to_int() <= 90))
+            return 1;
+        else
+            return 0;
     }
 
 // ─── 6. ADVENTURING-STATE CHECKS ─────────────────────────────────────────────

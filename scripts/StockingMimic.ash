@@ -602,7 +602,7 @@ void FKPrep(){
     step("phase: FKPrep buffs");
 	useMayamRings();
     step("phase: FKPrep hidden temple");
-    whitelist("bonus adevntures from hell");
+    whitelist("Bonus Adventures from Hell");
 	if (my_ascensions() != get_property("lastTempleAdventures").to_int()
 		&& get_property("questM16Temple") == "finished"){
         set_property("betweenBattleScript","");
@@ -616,6 +616,8 @@ void FKPrep(){
     doSpleen();
     if (my_spleen_use() == 4 || my_spleen_use() == 6)
         cli_execute("synthesize greed");
+    if (get_property("beGregariousCharges").to_int() == 0)
+        chew (1,$item[Extrovermectin&trade;]);
     if (item_amount($item[Bastille Battalion control rig]) > 0)
         cli_execute("bastille muscle gesture");
     if ($ints[7452,7454,7455,7456,7458,7462,7463,7464,7465,7466,7468,7471,7472,7474,7475,7476,7477,7478,7479,7480,7481,7482] contains augToday().to_int())
@@ -723,6 +725,8 @@ void FKPrep(){
 void mimicPrep(string extraMax){
     altFam($familiar[stocking mimic]);
     set_property("maxOverride","familiar weight, equip eternity codpiece" + extraMax);
+    if (get_auto_attack() == 0)
+        aa("facsimile");
 }
 void mimicPrep(){
     mimicPrep("");
@@ -1119,8 +1123,8 @@ void pearloP3(){
         use($item[willyweed]);
     }
     banishFish();
-    foreach str in $strings[anemone,bar,trench]{
-        if (get_property(pearls[str].donePref) == "false" || str == "trench"){
+    foreach str in $strings[bar,anemone,trench]{
+        if (get_property(pearls[str].donePref) == "false" || str == "trench" || (str == "bar" && get_property("acc3Override") != ", equip backup camera")){
             resCheck(str);
             adv1(pearls[str].loc);
             break;
@@ -1169,25 +1173,12 @@ void habitatRecall(){
             main@postadventure();
         }
         while (to_int(get_property("_monsterHabitatsFightsLeft")) > 0 || get_property("beGregariousFightsLeft").to_int() > 0){
-            if ((get_property("beGregariousFightsLeft").to_int()
-                + get_property("_monsterHabitatsFightsLeft").to_int() == 1
-                && (get_property("beGregariousFightsLeft").to_int() == 1
-                    ? to_monster(get_property("beGregariousMonster"))
-                    : to_monster(get_property("_monsterHabitatsMonster"))) == copyTarget)
-                && ((have_skill($skill[Meteor Lore]) && get_property("_macrometeoriteUses").to_int() < 10) || (available_amount($item[Powerful Glove]) > 0 && get_property("_powerfulGloveBatteryPowerUsed").to_int() <= 90))
-                && get_property("_monsterHabitatsRecalled").to_int() == 3
-                && (dayType() != 1 || get_property("beGregariousCharges").to_int() == 0)){
-                set_property("offOverride", "");
-                set_property("acc2Override", "");
-                return;
-            }
             mimicPrep();
             if (get_auto_attack() == 0)
                 aa("facsimile");
-            if (get_property("beGregariousFightsLeft").to_int() == 1 && get_property("beGregariousCharges").to_int() == 0 && to_int(get_property("_monsterHabitatsRecalled")) == 3 && dayType() == 1){
-                if (mall_price($item[flask of embalming fluid]) > 1000)
-                    abort("reanimated reanimator is too expensive rn");
-                altFam($familiar[reanimated reanimator]);
+            if (get_property("beGregariousFightsLeft").to_int() == 1 && get_property("beGregariousCharges").to_int() == gregsToSave() && to_int(get_property("_monsterHabitatsRecalled")) == 3 && dayType() == 1){
+                if (mall_price($item[flask of embalming fluid]) < 1000)
+                    altFam($familiar[reanimated reanimator]);
             }
             pearloP2();
         }
@@ -1196,61 +1187,56 @@ void habitatRecall(){
     }
 }
 void backup(){
-    while (to_int(get_property("_backUpUses")) < 11 && to_monster(get_property("lastCopyableMonster")) == copyTarget){
-        if (to_int(get_property("_mimicEggsObtained")) < 11 && $familiar[chest mimic].experience > 100){
-            set_property("famOverride","chest mimic");
-        } else
-            altFam($familiar[stocking mimic]);
-        if (have_effect($effect[everything looks purple]) == 0 && (get_property("famOverride") == "comma chameleon" || get_property("famOverride") == "stocking mimic")){
-            set_property("offOverride",", equip roman candel");
-        }
+    if (to_int(get_property("_mimicEggsObtained")) < 11 && $familiar[chest mimic].experience > 100 && to_monster(get_property("lastCopyableMonster")) == copyTarget){
+        set_property("famOverride","chest mimic");
         set_property("maxOverride","familiar weight, equip eternity codpiece");
         if (have_effect($effect[driving waterproofly]) == 0)
             set_property("pantsOverride",", equip really nice swim");
         set_property("acc3Override",", equip backup camera");
         pearloP3();
     }
-    set_property("offOverride","");
-    set_property("pantsOverride","");
-    set_property("acc3Override","");
-    int autoattack = get_auto_attack();
-    try {
-        step("phase: bulkFK monster replacements");
-
-        foreach replacer in $skills[Macrometeorite, CHEAT CODE: Replace Enemy]{
-            while ((get_property("beGregariousFightsLeft").to_int()
-                + get_property("_monsterHabitatsFightsLeft").to_int() == 1
-                && (get_property("beGregariousFightsLeft").to_int() == 1
-                    ? to_monster(get_property("beGregariousMonster"))
-                    : to_monster(get_property("_monsterHabitatsMonster"))) == copyTarget)
-            && (replacer == $skill[Macrometeorite]
-                ? have_skill($skill[Meteor Lore]) && get_property("_macrometeoriteUses").to_int() < 10
-                : available_amount($item[Powerful Glove]) > 0 && get_property("_powerfulGloveBatteryPowerUsed").to_int() <= 90)){
-            mimicPrep();
-            set_property("subscript", replacer);
-            string counter = replacer == $skill[Macrometeorite]
-                ? "_macrometeoriteUses" : "_powerfulGloveBatteryPowerUsed";
-            set_property("acc3Override", replacer == $skill[CHEAT CODE: Replace Enemy]
-                ? ", equip Powerful Glove" : "");
-            main@preadventure();
-            set_auto_attack(0); // Replace the crate before any damaging autoattack.
-            string before = get_property(counter);
-            int turns = total_turns_played();
-            if (!adv1($location[Noob Cave]) || current_round() > 0 || handling_choice())
-                abort("Replacement chain: encounter did not finish.");
-            if (total_turns_played() != turns)
-                abort("Replacement chain: spent a turn.");
-            if (get_property(counter) == before && (get_property("beGregariousFightsLeft").to_int()
-                + get_property("_monsterHabitatsFightsLeft").to_int() > 0))
-                abort("Replacement chain: " + replacer + " made no progress.");
+    while (to_int(get_property("_backUpUses")) < 11){
+        if (to_monster(get_property("lastCopyableMonster")) != copyTarget2){
+            if (get_property("_photocopyUsed") == false){
+                whitelist("Temporary");
+            set_property("acc2Override",", equip spring shoes");
+            visit_url("clan_viplounge.php?action=faxmachine&whichfloor=2");
+            visit_url("clan_viplounge.php?preaction=receivefax&whichfloor=2");
+            if (item_amount($item[photocopied monster]) > 0){
+                mimicPrep();
+                main@preadventure( );
+                use($item[photocopied monster]);
+                }
+            } else {
+                abort("trying to backup to not " + copyTarget2);
+            }
+            set_property("acc2Override","");
         }
+        mimicPrep();
+        if (get_property("beGregariousFightsLeft").to_int() > 0){
+            if (have_skill($skill[Meteor Lore]) && get_property("_macrometeoriteUses").to_int() < 10){
+                set_auto_attack(7290);
+                set_property("acc3Override","");
+            } else if (available_amount($item[Powerful Glove]) > 0 && get_property("_powerfulGloveBatteryPowerUsed").to_int() <= 90){
+                set_auto_attack(7326);
+                set_property("acc3Override",", equip Powerful Glove");
+            }else{
+                aa("facsimile");
+                set_property("acc3Override",", equip backup camera");
+            }
+        } else {
+            aa("facsimile");
+            set_property("acc3Override",", equip backup camera");
+            if (is_banished(copyTarget2))
+                set_property("acc2Override",", equip spring shoes");
+            if (have_effect($effect[everything looks purple]) == 0)
+                set_property("offOverride",", equip roman candel");
         }
-    } finally {
-        set_property("subscript", "");
-        set_property("acc3Override", "");
-        set_auto_attack(autoattack);
+        pearloP3();
+        set_property("offOverride","");
+        set_property("acc2Override","");
     }
-    habitatRecall(); // Finish the reserved original through the usual route.
+    set_property("acc3Override","");
 }
 void mimicEgg(){
     while (item_amount($item[mimic egg]) > 0 && dayType() == 1 && contains_text(get_property("mimicEggMonsters"),copyTarget.to_int().to_string())){
