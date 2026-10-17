@@ -634,6 +634,8 @@ void preAdv(){
                 use_skill($skill[Sea *dent: Summon a Wave]);
             } else if (dayType() == 1 && contains_text(get_property("lastEncounter"),"shadow")){
                 use_skill($skill[Sea *dent: Summon a Wave]);
+                if (get_property("_seadentWaveZone") == "Shadow Rift")
+                    set_property("_seadentWaveZone",my_location());
             }
         }
     if (my_familiar() == $familiar[comma chameleon] && chameleon() != $familiar[stocking mimic] && get_property("script") == "FreeKill" && get_property("subscript") != "NonSMFK" && get_property("subscript") != "stompingBoots"){
