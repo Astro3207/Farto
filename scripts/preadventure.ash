@@ -290,7 +290,8 @@ string bonusGear(){
     
     if (dayType() == 1){
         float goblinValue = 150 + adjusted_meat_drop($monster[sausage goblin]);
-        bonus[$item[Kramco Sausage-o-Matic&trade;]] = sausage_goblin_chance() * goblinValue;
+        goblinValue = round((sausage_goblin_chance() * goblinValue)/10) * 10;
+        bonus[$item[Kramco Sausage-o-Matic&trade;]] = goblinValue;
     }
 
     bonus[$item[Pantsgiving]] = pantsgivingValue();
@@ -597,8 +598,14 @@ void preAdv(){
         }
     }
 
-    if (!maximize(maximize.to_string(), false))
-        abort();
+    if (get_property("savedMaximizer") == maximize.to_string()){
+        outfit("farming");
+    } else {
+        if (!maximize(maximize.to_string(), false))
+            abort();
+        set_property("savedMaximizer",maximize.to_string());
+        cli_execute("outfit save farming");
+    }
     // Sheriff override — only in non-slime non-angelbone-totem context
  //   if (get_property("script") != "slime" && sheriff && !have_equipped($item[angelbone totem]) && get_property("script") != "coat" && get_property("script") != "stick" && get_property("script") != "FreeKill" && get_property("script") != "farto")
    //     cli_execute("equip sheriff pistol; equip acc2 sheriff moustache; equip acc3 sheriff badge");

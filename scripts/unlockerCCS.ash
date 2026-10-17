@@ -904,7 +904,7 @@ void main(int round, monster mob, string page_text) {
         else {
             if (to_int(get_property("_mildEvilPerpetrated")) < 3) use_skill($skill[perpetrate mild evil]);
             if (to_int(get_property("_batWingsSwoopUsed")) < 11)  use_skill($skill[swoop like a bat]);
-            while (to_int(get_property("_douseFoeUses")) < 3 && get_property("_douseFoeSuccess") == "false")
+            while (to_int(get_property("_douseFoeUses")) < 3 && get_property("_douseFoeSuccess") == "false" && current_round() > 0 && !contains_text(get_property("_lastCombatActions"),"it11311"))
                 use_skill($skill[douse foe]);
         }
         sauce(5); return;

@@ -75,6 +75,9 @@ void shadowRealm(){
         set_property("backOverride",", equip bat wings");
     else
         set_property("backOverride","");
+    if (get_property("questRufus") == "unstarted"){
+        use($item[closed-circuit pay phone]);
+    }
     if (get_property("questRufus") == "started"){
         if (get_property("encountersUntilSRChoice").to_int() == 0){
             if (get_property("rufusQuestTarget") == "shadow scythe" || get_property("rufusQuestTarget") == "shadow spire")
@@ -972,6 +975,7 @@ void spendAdv(){
             findHiddenTemple();
         else if (get_property("questM10Azazel") != "finished")
             azazelUnicornQuest();
+        
         if (dayType() == 1 && get_property("_batWingsSwoopUsed").to_int() < 11){
             set_property("maxOverride","item drop");
             if (available_amount($item[Flash Liquidizer Ultra Dousing Accessory]) == 0)
