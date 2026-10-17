@@ -36,7 +36,7 @@ void mood(string function){
             if (have_effect(ef) > 0)
                 cli_execute("uneffect " + ef);
         foreach ef in $effects[Only Dogs Love a Drunken Sailor,Best Pals,Sweat equity, Flapper Dancin',Legendary Pasta Eyeball,material witness,
-            Singer's Faithful Ocelot, Leash of Linguini, empathy,Thoughtful Empathy,Blood Bond,Bet Your Autumn Dollar,
+            Singer's Faithful Ocelot, Leash of Linguini, empathy,Thoughtful Empathy,Blood Bond,Bet Your Autumn Dollar,Incredibly Well Lit,
             Disco Leer,Polka of Plenty,Tubes of Universal Meat,Lubricating Sauce,Strength of the Tortoise, party soundtrack]{
             if (ef == $effect[material witness] && get_property("_jukebox") == "false"){
                 visit_url("showclan.php?whichclan=2046992052&action=joinclan&confirm=on");
@@ -51,6 +51,8 @@ void mood(string function){
             } else if (ef == $effect[sweat equity] && ((my_basestat($stat[submoxie]) - 118881) < BCZcost("SweatEquityCasts"))){
                 continue;
             } else if (ef == $effect[Legendary Pasta Eyeball] && my_class() == $class[pastamancer]){
+                continue;
+            } else if (ef == $effect[Incredibly Well Lit] && (get_property("_aug7Cast").to_boolean == "true" || get_property("_augSkillsCast").to_int() == 5)) {
                 continue;
             }
             if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))

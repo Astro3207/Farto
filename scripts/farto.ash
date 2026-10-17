@@ -226,8 +226,8 @@ void main(){
                     abort("Hunter use heartstone banish and monkeypaw slap and do the mayfly manually, send it to me and Ill script it in fully");
                 }
             } else if ((my_class() == $class[accordion thief] || have_effect($effect[fishy]) > 0) || dayType() == 0){
-                if (!contains_text(get_property("thoth19_event_list"),"D1Inkotracking"))
-                    cli_execute("ptrack add D1Inkotracking");
+                if (!contains_text(get_property("thoth19_event_list"),"D0Inkotracking") && dayType() == 1)
+                    cli_execute("ptrack add D0Inkotracking");
                 inko();
             } else if (my_class() == $class[pastamancer] && numeric_modifier($modifier[meat drop]) > 1700){
                 cowo();
