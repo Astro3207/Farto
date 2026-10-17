@@ -986,7 +986,7 @@ void spendAdv(){
                 set_property("mainOverride",", equip moss mace");
             retrieve_item($item[waffle]);
             retrieve_item($item[Septapus summoning charm]);
-            set_property("famOverride","sword of s words");
+            set_property("famOverride","mini kiwi");
             shadowRealm();
             set_property("mainOverride","");
             set_property("famOverride","");
