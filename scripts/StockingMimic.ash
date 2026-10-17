@@ -1207,8 +1207,11 @@ void backup(){
             set_property("pantsOverride",", equip really nice swim");
         set_property("acc3Override",", equip backup camera");
         pearloP3();
+        set_property("acc3Override","");
     }
     while (to_int(get_property("_backUpUses")) < 11){
+        if (have_effect($effect[driving waterproofly]) == 0)
+            set_property("pantsOverride",", equip really nice swim");
         if (to_monster(get_property("lastCopyableMonster")) != copyTarget2){
             if (get_property("_photocopyUsed") == false){
                 whitelist("Temporary");
