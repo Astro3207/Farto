@@ -71,12 +71,14 @@ void equipBonesAndConsume(){
 // still covers an adventure), then hand off to mapgrim() for the rest.
 void spendGrimacePrimeMaps(){
     equip($item[drunkula's wineglass]);
+    equip($item[angelbone totem]);
     int n = item_amount($item[Map to Safety Shelter Grimace Prime]);
     while (my_adventures() > n){
         if (have_effect($effect[fishy]) > 0 && get_property("_swordOfSWordsKills").to_int() < 100){
             drunkInko();
         }else{
             set_property("famOverride","skeleton of crimbo past");
+            set_property("maxOverride","meat drop");
             adv1($location[the skeleton store]);
         }
     }
@@ -195,7 +197,6 @@ void finalChores(){
     cli_execute("garden pick");
     if (have_skill($skill[That's not a knife]))
         use_skill($skill[That's not a knife]);
-    cli_execute("acquire 1 one-day ticket to Dinseylandfill; acquire 1 Calzone of Legend; acquire 1 Deep Dish of Legend; acquire 1 Pizza of Legend; acquire 1 borrowed time; acquire 1 abstraction: category");
     cli_execute("av-snapshot.ash");
     set_ccs("hobopolis");
     retrieve_item(5, $item[unblemished pearl]);
@@ -211,6 +212,7 @@ void finalChores(){
 void ascend(){
     set_property("postAscensionScript","postascend.ash");
     if (get_property("looping") == "true"){
+        cli_execute("acquire 1 one-day ticket to Dinseylandfill; acquire 1 Calzone of Legend; acquire 1 Deep Dish of Legend; acquire 1 Pizza of Legend; acquire 1 borrowed time; acquire 1 abstraction: category");
         set_property("looping","false");
         visit_url("showclan.php?whichclan=2047009940&action=joinclan&confirm=on");
         take_stash(1,$item[Platinum Yendorian Express Card]);
@@ -257,7 +259,7 @@ void main(){
     equipBonesAndConsume();
     if (!contains_text(get_property("thoth19_event_list"),"overstomach"))
         cli_execute("ptrack add overstomach");
-    if (my_inebriety() == inebriety_limit())
+    while (my_inebriety() == inebriety_limit() && my_adventures() > 0)
         drunkInko();
     step("phase: nightcap");
     dailyMoodAndNightcap();
@@ -269,6 +271,8 @@ void main(){
     } finally {
         finisher();
     }
+    if (!contains_text(get_property("thoth19_event_list"),"postOverdrunk"))
+        cli_execute("ptrack add [postOverdrunk");
     step("phase: pvp");
     pvpCleanup();
     step("phase: other iotm todos");

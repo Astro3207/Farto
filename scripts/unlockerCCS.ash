@@ -364,27 +364,29 @@ void main(int round, monster mob, string page_text) {
         runaway();
     }
 
-    if (last_monster() == $monster[shadow spire] || last_monster() == $monster[shadow scythe]){
-        if (have_equipped($item[wicker slicker])){
-            while (current_round() > 0 && current_round() < 10)
-                use_skill($skill[shell up]);
-        } else {
-            foreach sk in $skills[Silent Slam,Sauceshell,shell up]{
-                if (have_skill(sk))
-                    use_skill(sk);
+    if (get_property("script") == "FreeKill"){
+        if (last_monster() == $monster[shadow spire] || last_monster() == $monster[shadow scythe]){
+            if (have_equipped($item[wicker slicker])){
+                while (current_round() > 0 && current_round() < 10)
+                    use_skill($skill[shell up]);
+            } else {
+                foreach sk in $skills[Silent Slam,Sauceshell,shell up]{
+                    if (have_skill(sk))
+                        use_skill(sk);
+                }
             }
+            if (current_round() > 0)
+                use_skill($skill[saucegeyser]);
         }
-        if (current_round() > 0)
-            use_skill($skill[saucegeyser]);
-    }
-    if (last_monster() == $monster[shadow orrery]){
-            for i from 1 to 9 {
+        if (last_monster() == $monster[shadow orrery]){
+                for i from 1 to 9 {
+                    throw_item($item[facsimile dictionary]);
+                }
+            attack(30);
+        } else if (last_monster() == $monster[shadow cauldron] || last_monster() == $monster[shadow matrix] || last_monster() == $monster[shadow tongue]){
+            while (current_round() > 0 && current_round() < 10)
                 throw_item($item[facsimile dictionary]);
-            }
-        attack(30);
-    } else if (last_monster() == $monster[shadow cauldron] || last_monster() == $monster[shadow matrix] || last_monster() == $monster[shadow tongue]){
-        while (current_round() > 0 && current_round() < 10)
-            throw_item($item[facsimile dictionary]);
+        }
     }
 
     if (get_property("subscript") == "citizen"){
@@ -1013,6 +1015,8 @@ void main(int round, monster mob, string page_text) {
         }
         if (have_equipped($item[bat wings]))
             use_skill($skill[swoop like a bat]);
+        if (my_hp() < 500)
+            throw_item($item[new age healing crystal]);
         if (have_equipped($item[moss mace]))
             use_skill($skill[moss mugging]);
         free_run(page_text);

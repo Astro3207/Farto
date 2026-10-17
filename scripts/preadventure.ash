@@ -1,6 +1,38 @@
 import iotm.ash;
 import postadventure.ash;
 
+// Meat a buff earns over the turns it will run: its Meat Drop and Item Drop %
+// times the per-1% weights setDropWeighting() wrote into maxOverride, capped
+// at the adventures left today. Returns -1 when maxOverride carries no weights.
+float buffValue(effect ef){
+    float meatWeight = -1;
+    float itemWeight = 0;
+    matcher m = create_matcher("([0-9.]+) Meat Drop", get_property("maxOverride"));
+    if (m.find())
+        meatWeight = m.group(1).to_float();
+    m = create_matcher("([0-9.]+) Item Drop", get_property("maxOverride"));
+    if (m.find())
+        itemWeight = m.group(1).to_float();
+    if (meatWeight < 0)
+        return -1;
+    float perTurn = numeric_modifier(ef, "Meat Drop") * meatWeight + numeric_modifier(ef, "Item Drop") * itemWeight;
+    return perTurn * min(effectDuration(ef), my_adventures());
+}
+
+// True when ef's source item is already on hand, isn't an item, or costs less
+// in the mall than the buff earns. Without drop weights, keeps buying as before.
+boolean buffWorthBuying(effect ef){
+    item it = effect_to_item(ef);
+    if (it == $item[none] || item_amount(it) > 0)
+        return true;
+    float value = buffValue(ef);
+    int price = mall_price(it);
+    if (value < 0 || price <= value)
+        return true;
+    print("Skipping " + ef + ": " + it + " costs " + price + ", buff worth ~" + round(value), "orange");
+    return false;
+}
+
 void mood(string function){
     if (get_property("script") == "6-kiss"){
         foreach ef in $effects[Troubled Waters, Pride of the Puffin, Ur-Kel's Aria of Annoyance, Drescher's Annoying Noise, ode to booze, Let's Go Shopping!]
@@ -59,7 +91,9 @@ void mood(string function){
                 continue;
             if (dayType() == 0 && effectDuration(ef) > (my_adventures() + pvp_attacks_left()))
                 continue;
-            if (dayType() == 1 && effectDuration(ef) > my_adventures() && have_equipped($item[drunkula's wineglass]))  
+            if (dayType() == 1 && effectDuration(ef) > my_adventures() && have_equipped($item[drunkula's wineglass]))
+                continue;
+            if (have_effect(ef) == 0 && !buffWorthBuying(ef))
                 continue;
             if (have_effect(ef) == 0)
                 cli_execute(ef.default);

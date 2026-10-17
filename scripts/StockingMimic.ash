@@ -767,6 +767,7 @@ void augustCat(){
         main@preadventure( );
         use_skill($skill[Aug. 8th: Cat Day!]);
         main@postadventure( );
+        set_property("_aug8Cast","true");
     }
 }
 

@@ -14,9 +14,6 @@ import zlib.ash; // for sell_val() -- item valuation for itemDropValueAt()
 // ─── drop-value weighting (garbo's modeValueOfMeat/modeValueOfItem) ─────────
 
 float baseMeatAt(location loc){
-    float finalAdjust;
-    if (loc == $location[the marinara trench])
-        finalAdjust = 15.05;
     float [monster] rate = appearance_rates(loc);
     float average;
     foreach mon in rate{
@@ -24,7 +21,7 @@ float baseMeatAt(location loc){
             average += rate[mon]/100 * meat_drop(mon);
         }
     } 
-    return average + 25 + finalAdjust;
+    return average + 25;
 }
 
 // Marginal cash value of 1% Item Drop at loc: for every monster there,
@@ -226,8 +223,8 @@ void main(){
                     abort("Hunter use heartstone banish and monkeypaw slap and do the mayfly manually, send it to me and Ill script it in fully");
                 }
             } else if ((my_class() == $class[accordion thief] || have_effect($effect[fishy]) > 0) || dayType() == 0){
-                if (!contains_text(get_property("thoth19_event_list"),"D0Inkotracking") && dayType() == 1)
-                    cli_execute("ptrack add D0Inkotracking");
+                if (!contains_text(get_property("thoth19_event_list"),"D00Inkotracking") && dayType() == 0)
+                    cli_execute("ptrack add D00Inkotracking");
                 inko();
             } else if (my_class() == $class[pastamancer] && numeric_modifier($modifier[meat drop]) > 1700){
                 cowo();

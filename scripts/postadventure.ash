@@ -994,7 +994,7 @@ void spendAdv(){
             set_property("acc2Override","");
             set_property("acc3Override","");
         } else if (dayType() == 1){
-            set_property("maxOverride","item drop");
+            set_property("maxOverride","item drop,sea");
             set_property("famOverride","sword of s words");
             adv1($location[the marinara trench]);
             set_property("famOverride","");
@@ -1013,8 +1013,8 @@ void spendAdv(){
         && have_effect($effect[everything looks beige]) > 30 && my_adventures() > 50){
         cookbookbat();
     }
-    if (free_run() && my_inebriety() <= inebriety_limit()){
-        if (dayType() == 1 && have_effect($effect[citizen of a zone]) == 0 && numeric_modifier("familiar weight") < 55){
+    if (free_run() && my_inebriety() <= inebriety_limit() && dayType() == 1){
+        if (have_effect($effect[citizen of a zone]) == 0 && numeric_modifier("familiar weight") < 55){
             set_property("subscript","citizen");
             set_property("maxOverride","combat,-equip drunkula's wineglass");
             set_property("famOverride", "patriotic eagle");
