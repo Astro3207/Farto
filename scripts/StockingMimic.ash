@@ -602,6 +602,7 @@ void FKPrep(){
     step("phase: FKPrep buffs");
 	useMayamRings();
     step("phase: FKPrep hidden temple");
+    whitelist("bonus adevntures from hell");
 	if (my_ascensions() != get_property("lastTempleAdventures").to_int()
 		&& get_property("questM16Temple") == "finished"){
         set_property("betweenBattleScript","");
@@ -708,7 +709,7 @@ void FKPrep(){
 	step("phase: FKPrep codpiece");
 	codpiece("none");
     retrieve_item(2, $item[tuesday's ruby]);
-	codpiece("peridot of peril,blood cubic zirconia,baseball diamond,tuesday's ruby,tuesday's ruby");
+	codpiece("heartstone,blood cubic zirconia,baseball diamond,tuesday's ruby,tuesday's ruby");
 }
 
 // ─── bulkFK and helpers (verbatim from farto.ash, not yet refactored) ────────
