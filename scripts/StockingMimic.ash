@@ -1991,7 +1991,7 @@ int mimicXpNeeded(){
     if (!have_familiar($familiar[chest mimic]))
         return 0;
     int eggsLeft = max(0, 11 - to_int(get_property("_mimicEggsObtained")));
-    int expForTmr = dayType() == 0 ? 550 : 0;
+    int expForTmr = dayType() == 0 ? 450 : 0;
     return max(0, eggsLeft * 50 - $familiar[chest mimic].experience) + dayType();
 }
 
