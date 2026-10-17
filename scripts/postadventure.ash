@@ -892,6 +892,7 @@ void level11Sprint(){
                 cli_execute("acquire antique machete;equip weapon antique machete");
                 set_property("maxOverride","familiar exp, -weapon");
                 set_property("mainOverride"," ");
+                set_property("famOverride","chest mimic");
                 adv1($location[An Overgrown Shrine (Southeast)]);
             }
             set_property("maxOverride","");
