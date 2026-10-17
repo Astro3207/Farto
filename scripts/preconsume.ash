@@ -194,6 +194,8 @@ void main(){
             if (have_effect(ef) > 0)
                 cli_execute("uneffect "+ef);
         }
+        if (isFartScauce())
+            set_property("valueOfAdventure","5400");
         if (get_property("_milkOfMagnesiumUsed") == "false")
             cli_execute("CONSUME ORGANS 0 0 0");
     //    partialConsume(10,10,15);
