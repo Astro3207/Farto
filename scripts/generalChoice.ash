@@ -420,8 +420,8 @@ void main(int whichchoice, string page) {
                 run_choice(2);
             else if (have_effect($effect[shadow affinity]) > 10){
                 run_choice(2);
-            } else if (get_property("rufusDesiredEntity") == "shadow scythe"){
-                if (available_amount($item[wicker slicker]) == 0)
+            } else if (get_property("rufusDesiredEntity") == "shadow scythe" || get_property("rufusDesiredEntity") == "shadow spire"){
+                if (available_amount($item[wicker slicker]) == 0 || !have_skill($skill[shell up]))
                     run_choice(2);
                 else
                     run_choice(1);
