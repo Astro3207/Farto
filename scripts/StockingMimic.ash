@@ -251,6 +251,8 @@ int prefFreeKillsLeft(string pref, int cap){
 int [string] freeKillCap = {
     "_backUpUses": 11,
     "_cyberFreeFights": 10,
+    "_snojoFreeFights": 10,
+    "_neverendingPartyFreeTurns": 10,
     "_sealsSummoned": 10,
     "_bczSweatBulletsCasts": 13,
     "_gingerbreadMobHitUsed": 1,
@@ -278,6 +280,9 @@ int [string] freeKillCap = {
 boolean [string] freeKillGate = {
     "_backUpUses": have_item($item[backup camera]),
     "_cyberFreeFights": have_item($item[server room key]),
+    "_snojoFreeFights": get_property("snojoAvailable").to_boolean(),
+    "_neverendingPartyFreeTurns": (get_property("neverendingPartyAlways").to_boolean()
+        || get_property("_neverendingPartyToday").to_boolean()) && get_property("_questPartyFair") != "finished",
     "_sealsSummoned": my_class() == $class[seal clubber],
     "_bczSweatBulletsCasts": have_skill($skill[BCZ: Sweat Bullets]),
     "_gingerbreadMobHitUsed": have_skill($skill[Gingerbread Mob Hit]),
@@ -1492,6 +1497,77 @@ void settleStance(){
     main@preadventure( );
 }
 
+void snowman(){
+    if (get_property("snojoAvailable") != "true" || to_int(get_property("_snojoFreeFights")) >= 10)
+        return;
+    if (my_inebriety() > inebriety_limit())
+        abort("Finish snowman free fights before overdrinking.");
+    string [string] saved;
+    foreach pref in $strings[subscript,maxOverride,famOverride,acc1Override]
+        saved[pref] = get_property(pref);
+    try {
+        step("phase: weakMonsters snowman");
+        set_property("subscript","weakling");
+        set_property("acc1Override",", equip congressional medal of insanity");
+        if (get_property("snojoSetting") == "NONE"){
+            int mode = 1;
+            if (mall_price($item[ice rice]) >= max(mall_price($item[ancient medicinal herbs]),mall_price($item[iced plum wine])))
+                mode = 2;
+            else if (mall_price($item[iced plum wine]) > mall_price($item[ancient medicinal herbs]))
+                mode = 3;
+            visit_url("place.php?whichplace=snojo&action=snojo_controller");
+            run_choice(mode);
+        }
+        int attempts = 0;
+        while (to_int(get_property("_snojoFreeFights")) < 10){
+            if (attempts++ >= 30)
+                abort("Snowman free-fight attempt limit reached.");
+            mimicPrep(", -equip June cleaver, -equip Kramco Sausage-o-Matic");
+            int turns = total_turns_played();
+            if (!adv1($location[The X-32-F Combat Training Snowman]) || current_round() > 0 || handling_choice())
+                abort("Unfinished snowman encounter.");
+            if (total_turns_played() != turns)
+                abort("A turn was spent in the snowman; stopping.");
+        }
+    } finally {
+        foreach pref, value in saved
+            set_property(pref,value);
+    }
+}
+
+void neverendingParty(){
+    if ((get_property("neverendingPartyAlways") != "true" && get_property("_neverendingPartyToday") != "true")
+        || get_property("_questPartyFair") == "finished" || to_int(get_property("_neverendingPartyFreeTurns")) >= 10)
+        return;
+    if (my_inebriety() > inebriety_limit())
+        abort("Finish NEP free fights before overdrinking.");
+    string [string] saved;
+    foreach pref in $strings[subscript,maxOverride,famOverride,choiceAdventure1322,choiceAdventure1324]
+        saved[pref] = get_property(pref);
+    try {
+        step("phase: bulkFK NEP");
+        set_property("subscript","");
+        set_property("choiceAdventure1322","2");
+        set_property("choiceAdventure1324","5");
+        string extraMax = ", -equip June cleaver, -equip Kramco Sausage-o-Matic, "
+            + (get_property("_partyHard") == "true" ? "equip " : "-equip ") + "PARTY HARD T-shirt";
+        int attempts = 0;
+        while (to_int(get_property("_neverendingPartyFreeTurns")) < 10 && get_property("_questPartyFair") != "finished"){
+            if (attempts++ >= 30)
+                abort("NEP free-fight attempt limit reached.");
+            mimicPrep(extraMax);
+            int turns = total_turns_played();
+            if (!adv1($location[The Neverending Party]) || current_round() > 0 || handling_choice())
+                abort("Unfinished NEP encounter.");
+            if (total_turns_played() != turns)
+                abort("A turn was spent in NEP; stopping.");
+        }
+    } finally {
+        foreach pref, value in saved
+            set_property(pref,value);
+    }
+}
+
 void weakMonsters(){
     step("phase: weakMonsters start");
     set_property("acc3Override",", equip " + timeBadge());
@@ -1500,6 +1576,7 @@ void weakMonsters(){
     if (have_effect($effect[coldform]) == 0)
         use($item[phial of coldness]);
     equip($slot[acc3],timeBadge());
+    snowman();
     // fightPicker() returns one key per call, in strict priority order; run that
     // fight, then re-ask. It also sets offOverride and buffs ML as needed.
     // settleStance() before every fightPicker() so the pick is made with the real
@@ -1720,6 +1797,7 @@ void locationBasedWeakMonsters(){
     if (have_effect($effect[coldform]) == 0)
         use($item[phial of coldness]);
     equip($slot[acc3],timeBadge());
+    snowman();
     step("phase: weakMonsters gingerbread");
     while (to_int(get_property("_gingerbreadCityTurns")) < 30){
         LBMWPrep (false);
@@ -1855,6 +1933,7 @@ void nonlocationBasedWeakMonsters(){
 // True while weakMonsters() still has something to do -- gates the call in
 // bulkFK(). Mirrors fightPicker()'s availability checks (minus the HP math).
 boolean weakMonstersLeft(){
+    if (get_property("snojoAvailable") == "true" && to_int(get_property("_snojoFreeFights")) < 10) return true;
     if (to_int(get_property("_gingerbreadCityTurns")) < 30) return true;
     if (to_int(get_property("_leafMonstersFought")) < 5) return true;
     if (get_property("_tiedUpFlamingLeafletFought") == "false") return true;
@@ -2139,6 +2218,7 @@ void bulkFKD2(){
     habitatRecall();
     step("phase: bulkFK backup camera");
     backup();
+    neverendingParty();
     step("phase: bulkFK cyberzone");
     while (get_property("_cyberFreeFights").to_int() < 10){
         constructBanish();
@@ -2227,6 +2307,7 @@ void locationBasedAdventuring(){
     habitatRecall();
     step("phase: bulkFK backup camera");
     backup();
+    neverendingParty();
     step("phase: bulkFK cyberzone");
     while (get_property("_cyberFreeFights").to_int() < 10){
         mimicPrep();
