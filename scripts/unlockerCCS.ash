@@ -451,9 +451,10 @@ void main(int round, monster mob, string page_text) {
             throw_items($item[lit leaf lasso],$item[lit leaf lasso]);
         if (last_monster() == $monster[Ron "The Weasel" Copperhead]){
             use_skill($skill[Club 'Em Back in Time]);
-            while (current_round() > 0 && current_round() < 30){
+            while (current_round() > 0 && current_round() < 20){
                 attack();
             }
+            use_skill($skill[saucegeyser]);
         }
         if (my_location() == $location[the red zeppelin] && get_property("_glarkCableUses").to_int() < 5 && get_property("NCtoC") == "false")
             throw_item($item[glark cable]);
