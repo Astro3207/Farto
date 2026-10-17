@@ -52,7 +52,7 @@ void mood(string function){
                 continue;
             } else if (ef == $effect[Legendary Pasta Eyeball] && my_class() == $class[pastamancer]){
                 continue;
-            } else if (ef == $effect[Incredibly Well Lit] && (get_property("_aug7Cast").to_boolean() == "true" || get_property("_augSkillsCast").to_int() == 5)) {
+            } else if (ef == $effect[Incredibly Well Lit] && (get_property("_aug7Cast").to_boolean() == true || get_property("_augSkillsCast").to_int() == 5)) {
                 continue;
             }
             if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
