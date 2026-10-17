@@ -819,9 +819,12 @@ void shadowBoss(){
         if (have_skill($skill[blood bubble])) {
             if (have_effect($effect[blood bubble]) == 0)
                 use_skill($skill[blood bubble]);
-            set_property("maxOverride","familiar weight, equip petrified wood wizard's pouch, equip wicker slicker");
-        } else
-            set_property("maxOverride","familiar weight, equip petrified wood wizard's pouch, equip Drunkula's ring of haze, equip wicker slicker");
+            set_property("maxOverride","familiar weight, equip petrified wood wizard's pouch");
+            set_property("backOverride",", equip wicker slicker");
+        } else{
+            set_property("maxOverride","familiar weight, equip petrified wood wizard's pouch, equip Drunkula's ring of haze");
+            set_property("backOverride",", equip wicker slicker");
+        }
     }else if (get_property("rufusQuestTarget") == "shadow orrery"){
         if (have_effect($effect[bendin' hell]) == 0){
             foreach ef in $effects[Belch the Rainbow&trade;,Song of Sauce]{
@@ -893,6 +896,7 @@ void shadowRealmFK(){
             }
         }
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
+        set_property("backOverride","");
     }
     if (get_property("questRufus") == "step1") {
         use($item[closed-circuit pay phone]);
