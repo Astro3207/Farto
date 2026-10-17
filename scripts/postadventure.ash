@@ -488,6 +488,7 @@ void constructBanish(){
         set_property("famOverride","patriotic eagle");
         set_property("maxOverride","ml, -10 familiar weight, -equip drunkula's wineglass,-equip backup camera");
         set_property("acc3Override",",equip spring shoes");
+        set_property("famEquipOverride",", equip little bitty bathysphere");
         adv1($location[Madness Bakery],0,"");
         set_property("acc3Override","");
     }
