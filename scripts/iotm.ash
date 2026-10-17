@@ -127,6 +127,11 @@
             use_skill(sk);
     }
 
+    // True only for the script's author; gates the hand-tuned personal chores.
+    boolean isFartScauce(){
+        return my_name().to_lower_case() == "fart scauce";
+    }
+
     // Returns true if the item exists anywhere accessible (inventory, equipped, storage, closet)
     boolean have_item(item it) {
         return item_amount(it) > 0
@@ -523,7 +528,7 @@
     // back. Only Fart Scauce is whitelisted there and wants this side effect, so
     // they are no-ops on any other account.
     void stashgrab(item it){
-        if (my_name().to_lower_case() != "fart scauce") return;
+        if (!isFartScauce()) return;
         visit_url("showclan.php?whichclan=2047009940&action=joinclan&confirm=on");
         if (stash_amount(it) > 0)
             take_stash(it, 1 );
@@ -534,7 +539,7 @@
         }}
 
     void stashreturn(item it){
-        if (my_name().to_lower_case() != "fart scauce") return;
+        if (!isFartScauce()) return;
         visit_url("showclan.php?whichclan=2047009940&action=joinclan&confirm=on");
         cli_execute("unequip "+ it);
         if (available_amount(it) > 0)
@@ -1022,7 +1027,7 @@
     boolean free_Run() {
         if (to_int(get_property("_snokebombUsed")) < 3)
             return true;
-        if (have_effect($effect[everything looks green]) == 0 && my_adventures() > 60)
+        if (have_effect($effect[everything looks green]) == 0 && (my_adventures() > 60 || dayType() == 1))
             return true;
         if (have_effect($effect[Cosmic Ball in the Air]) > 10 && have_item($item[cosmic bowling ball]))
             return true;

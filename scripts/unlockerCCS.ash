@@ -18,7 +18,7 @@ skill butts(){
 }
 void dart() {
     while (to_int(get_property("_dartsLeft")) > 0 && current_round() > 0 && have_equipped($item[everfull dart holster])) {
-        if (have_effect($effect[everything looks red]) == 0 && my_adventures() > bullseyeCooldown())
+        if (have_effect($effect[everything looks red]) == 0 && (my_adventures() > bullseyeCooldown() || dayType() == 1))
             use_skill($skill[Darts: Aim for the Bullseye]);
         else if (have_skill(butts()))
             use_skill(butts());
@@ -49,9 +49,9 @@ void farmingStuff(){
 void free_kill(string ptext) {
     foreach sk in $skills[Spit jurassic acid, Darts: Aim for the Bullseye] {
         if (contains_text(ptext, to_string(sk))) {
-            if (sk == $skill[Darts: Aim for the Bullseye] && my_adventures() < 40)
+            if (sk == $skill[Darts: Aim for the Bullseye] && my_adventures() <= bullseyeCooldown() && dayType() == 0)
                 continue;
-            if (sk == $skill[Spit jurassic acid] && my_adventures() < 10)
+            if (sk == $skill[Spit jurassic acid] && my_adventures() < 100 && dayType() == 0)
                 continue;
             use_skill(sk);
             if (sk == $skill[Darts: Aim for the Bullseye])
@@ -87,7 +87,7 @@ void free_run(string ptext) {
     foreach sk in $skills[spring away, snokebomb] {
         if (contains_text(ptext, to_string(sk))) {
             if (my_location() == $location[hobopolis town square] && sk == $skill[snokebomb]) continue;
-            if (sk == $skill[spring away] && my_adventures() < 30) continue;
+            if (sk == $skill[spring away] && dayType() == 0 && my_adventures() < 30) continue;
             use_skill(sk);
         }
     }

@@ -175,6 +175,8 @@ void main(){
             if (have_effect(ef) > 0)
                 cli_execute("uneffect "+ef);
         }
+        if (isFartScauce())
+            set_property("valueOfAdventure","9000");
         partialConsume(0,2,0);
     } else {
         savedResources();

@@ -473,14 +473,7 @@ void dieting(){
 		eat(fullness_limit() - my_fullness(), $item[thyme jelly donut]);
 		drink(inebriety_limit() - my_inebriety(), $item[Temps Tempranillo]);
 
-	doSpleen();
-    if (my_spleen_use() == 4 || my_spleen_use() == 6)
-        cli_execute("synthesize greed");
 	} else {
-		foreach dr in $items[Feliz Navidad]{
-			if (valueOfFamPot(dr) > valueOfOrgan("liver"))
-				drink(dr);
-		}
 		foreach fo in $effects[In the Depths, Sugar-Frosted Pet Guts, ratabunga\, dude!, Beefy Heart]{
 			if (my_fullness() >= fullness_limit())
 				break;
@@ -581,7 +574,7 @@ void FKPrep(){
 	if (my_inebriety() < inebriety_limit()){
 		dieting();
 	}
-    if (my_name().to_lower_case() == "fart scauce"){
+    if (isFartScauce()){
         retrieve_item(25, $item[bag of many confections]);
         retrieve_item(25, $item[stomp box]);
     }
@@ -618,6 +611,8 @@ void FKPrep(){
 		useMayamRings();
 	}
     doSpleen();
+    if (my_spleen_use() == 4 || my_spleen_use() == 6)
+        cli_execute("synthesize greed");
     if (item_amount($item[Bastille Battalion control rig]) > 0)
         cli_execute("bastille muscle gesture");
     if ($ints[7452,7454,7455,7456,7458,7462,7463,7464,7465,7466,7468,7471,7472,7474,7475,7476,7477,7478,7479,7480,7481,7482] contains augToday().to_int())
@@ -1990,7 +1985,7 @@ void miscellaneousFams(){
                 cli_execute("gain 15 combat");
             set_property("subscript","stompingBoots");
             set_property("maxOverride","familiar weight");
-            if (get_property("_banderRunaways").to_int() < ((my_familiar().familiar_weight() + weight_adjustment( ))/5 - 3)){
+            if (get_property("_banderRunaways").to_int() < ((my_familiar().familiar_weight() + weight_adjustment( ))/5 - 6)){
                 set_property("offOverride",", equip rake");
                 set_property("mainOverride",", equip june cleaver");
                 set_property("acc1Override",", equip spring shoes");

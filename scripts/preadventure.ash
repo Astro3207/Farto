@@ -338,7 +338,7 @@ void preAdv(){
                 use_familiar($familiar[cooler yeti]);
                 if (have_effect($effect[heart of white]) == 0)
                     use($item[white candy heart]);
-            } else if (get_property("_knuckleboneDrops").to_int() < 100 && item_amount($item[knucklebone]) < 10000 && my_name().to_lower_case() == "fart scauce" && my_location().environment != "underwater")
+            } else if (get_property("_knuckleboneDrops").to_int() < 100 && item_amount($item[knucklebone]) < 10000 && isFartScauce() && my_location().environment != "underwater")
                 use_familiar($familiar[skeleton of crimbo past]);
             else if (get_property("_swordOfSWordsKills").to_int() < 12 || have_effect($effect[everything looks red]) == 0 || have_effect($effect[everything looks yellow]) == 0)
                 use_familiar($familiar[sword of s words]);
