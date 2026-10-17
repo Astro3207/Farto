@@ -208,9 +208,12 @@ void main(){
                     outskirts();
                 if (get_property("questL05Goblin") != "started" && available_amount($item[mayfly bait necklace]) > 0){
                     if (get_property("questL05Goblin") == "step1"){
-                        use($item[Knob Goblin perfume]);
                         set_property("hatOverride",", equip Knob Goblin harem veil");
                         set_property("pantsOverride",", equip Knob Goblin harem pants");
+                        if (!outfit("Knob Goblin Harem Girl Disguise"))
+                            abort("I'm not dressed provocatively enough!");
+                        if (have_effect($effect[Knob Goblin Perfume]) == 0)
+                            use($item[Knob Goblin perfume]);
                         adv1($location[Throne Room]);
                         set_property("hatOverride","");
                         set_property("pantsOverride","");

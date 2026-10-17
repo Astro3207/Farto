@@ -203,7 +203,8 @@ void outskirts() {
     else if (get_property("questL05Goblin") == "started"){
         if (available_amount($item[Knob Goblin Encryption Key]) > 0)
             use ($item[Cobb's Knob map]);
-        adv1($location[The Outskirts of Cobb's Knob]);
+        else
+            adv1($location[The Outskirts of Cobb's Knob]);
     }
     visit_url("guild.php?place=challenge");
     visit_url("guild.php?place=paco");
