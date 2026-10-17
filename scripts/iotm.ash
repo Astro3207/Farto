@@ -1058,7 +1058,7 @@
             return true;
         if (have_effect($effect[everything looks green]) == 0 && (my_adventures() > 60 || dayType() == 1))
             return true;
-        if (have_effect($effect[Cosmic Ball in the Air]) > 10 && have_item($item[cosmic bowling ball]))
+        if (have_effect($effect[Cosmic Ball in the Air]) > 10 && have_item($item[cosmic bowling ball]) && dayType() == 1)
             return true;
         return false;
     }
