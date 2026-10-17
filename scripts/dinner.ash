@@ -1,3 +1,5 @@
+import iotm.ash;
+
 // ═══ Dinner.ash ══════════════════════════════════════════════════════════════
 // End-of-day wind-down chores. This pass is a pure reshape of the old flat
 // top-to-bottom script into named phases -- every condition and cli_execute
@@ -148,7 +150,7 @@ string messages(){
 // (it would eat gift packages, IOTM deliveries, etc.), so it only runs for this
 // character. Every other account skips the whole block.
 void fartScauceInboxCleanup(){
-    if (my_name().to_lower_case() != "fart scauce")
+    if (!isFartScauce())
         return;
     int deleted = 0;
     foreach str in $strings[3690803,1053259,1699424,1533476,3877087]{

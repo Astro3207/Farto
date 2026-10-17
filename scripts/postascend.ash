@@ -1,3 +1,5 @@
+import iotm.ash;
+
 void closetShinies(){
     foreach it in $items[prismatic beret, unbreakable umbrella,cincho de mayo, 2002 mr. store catalog, august scepter,candy cane sword cane,spring shoes, everfull dart holster,mayam calendar,  roman candelabra, tearaway pants, bat wings, takerspace letter of marque,mchugelarge duffel bag, toy cupid bow,shrunken head,Allied Radio Backpack , jurassic parka,june cleaver, kolcon 13 snowglobe,backup camera, cursed monkey's paw, tiny stillsuit, designer sweatpants, black and white apron meal kit,, model train set,server room key,S.I.T. Course Completion Certificate,Unwrapped knock-off retro superhero cape ]{
         if (item_amount(it) > 0)
@@ -6,7 +8,7 @@ void closetShinies(){
 }
 
 void main(){
-    if (my_name().to_lower_case() == "fart scauce")
+    if (isFartScauce())
         visit_url("peevpee.php?action=smashstone&pwd&confirm=on&shatter=Smash+that+Hippy+Crap%21");
     visit_url("showclan.php?whichclan=" + get_property("homeClanID").to_int() + "&action=joinclan&confirm=on");
     int [int] clanIds = {2047010985,2047010683,2047010572,2047010988,2047010986,2047010667,2047010939};

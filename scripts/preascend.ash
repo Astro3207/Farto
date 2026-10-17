@@ -24,9 +24,10 @@ void dailyMoodAndNightcap(){
     if (get_property("lawOfAveragesAvailable") == true)
         use($item[law of averages]);
     use_familiar($familiar[Stooper]);
-    equip($item[devilbone rosary]);
-    equip($item[angelbone dice]);
+    equip($slot[acc3],$item[devilbone rosary]);
+    equip($slot[acc2],$item[angelbone dice]);
     cli_execute("CONSUME NIGHTCAP");
+    cli_execute("unequip devilbone rosary; unequip angelbone dice");
     equip($item[angelbone chopsticks]);
     use_familiar($familiar[sword of s words]);
 }
@@ -222,7 +223,7 @@ void ascend(){
         visit_url("afterlife.php?action=ascend&confirmascend=1&whichsign=8&gender=1&whichclass=6&whichpath=55&asctype=2&lamesignok=1&nopetok=1");
         visit_url("main.php");
         run_choice(-1);
-    } else if (my_name().to_lower_case() == "fart scauce" && get_property("runType") == "world event" && user_confirm("Grab PYEC?")){
+    } else if (isFartScauce() && get_property("runType") == "world event" && user_confirm("Grab PYEC?")){
         visit_url("showclan.php?whichclan=2047009940&action=joinclan&confirm=on");
         take_stash(1,$item[Platinum Yendorian Express Card]);
         set_property("garbo_valueOfFreeFight","1000");

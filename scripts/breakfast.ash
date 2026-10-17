@@ -26,11 +26,6 @@ void step(string msg){
     print("BF: " + msg, "blue");
 }
 
-// True only for the script's author; gates the hand-tuned personal chores.
-boolean isFartScauce(){
-    return my_name().to_lower_case() == "fart scauce";
-}
-
 // Forest Village zone-opening chores (crackpot mystic, etc). Not written yet.
 void zoneOpening(){
 }

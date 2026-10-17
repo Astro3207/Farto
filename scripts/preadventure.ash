@@ -338,7 +338,7 @@ void preAdv(){
                 use_familiar($familiar[cooler yeti]);
                 if (have_effect($effect[heart of white]) == 0)
                     use($item[white candy heart]);
-            } else if (get_property("_knuckleboneDrops").to_int() < 100 && item_amount($item[knucklebone]) < 10000 && my_name().to_lower_case() == "fart scauce" && my_location().environment != "underwater")
+            } else if (get_property("_knuckleboneDrops").to_int() < 100 && item_amount($item[knucklebone]) < 10000 && isFartScauce() && my_location().environment != "underwater")
                 use_familiar($familiar[skeleton of crimbo past]);
             else if (get_property("_swordOfSWordsKills").to_int() < 12 || have_effect($effect[everything looks red]) == 0 || have_effect($effect[everything looks yellow]) == 0)
                 use_familiar($familiar[sword of s words]);
@@ -488,7 +488,7 @@ void preAdv(){
         else if (get_property("acc3Override") != "")
             append(maximize, get_property("acc3Override"));
         // Fam equip
-        if (get_property("backOverride") != "")
+        if (get_property("famEquipOverride") != "")
             append(maximize, get_property("famEquipOverride"));
     } else {
         if (get_property("unconditionalOverride") == ""){
@@ -628,12 +628,14 @@ void preAdv(){
         set_property("mpAutoRecovery",       mpAutoRecovery);
         set_property("mpAutoRecoveryTarget", mpAutoRecoveryTarget);
         if (equipped_item($slot[codpiece5]) != $item[Tuesday's ruby])
-            codpiece("peridot of peril,blood cubic zirconia,baseball diamond,tuesday's ruby,tuesday's ruby");
+            codpiece("heartstone,blood cubic zirconia,baseball diamond,tuesday's ruby,tuesday's ruby");
         if (get_property("_seadentWaveUsed") == "false"){
             if (dayType() == 0 && contains_text(get_property("lastEncounter"),"gingerbread")){
                 use_skill($skill[Sea *dent: Summon a Wave]);
             } else if (dayType() == 1 && contains_text(get_property("lastEncounter"),"shadow")){
                 use_skill($skill[Sea *dent: Summon a Wave]);
+                if (get_property("_seadentWaveZone") == "Shadow Rift")
+                    set_property("_seadentWaveZone",my_location());
             }
         }
     if (my_familiar() == $familiar[comma chameleon] && chameleon() != $familiar[stocking mimic] && get_property("script") == "FreeKill" && get_property("subscript") != "NonSMFK" && get_property("subscript") != "stompingBoots"){

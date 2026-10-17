@@ -16,10 +16,9 @@
     string clan = get_clan_name();
     int estimatedTurns;
     boolean [monster] haveLocketMonster = get_locket_monsters();
-    // The monster the free-kill run chain-copies (locket -> habitat recall,
-    // backup camera, mimic eggs). Change it here; StockingMimic and the CCS
-    // both read this.
+    // The monster the free-kill run chain-copies (locket -> habitat recall, mimic eggs).
     monster copyTarget = $monster[sausage goblin];
+    monster copyTarget2 = $monster[Frozen Bag of Tortellini];
 
     // Mafia state snapshot, read once at import so finisher() can hand the account
     // back exactly what it had. starter() repoints the between-battle / after-
@@ -125,6 +124,11 @@
     void use_if_have_skill(string page_text, skill sk) {
         if (contains_text(page_text, to_string(sk)))
             use_skill(sk);
+    }
+
+    // True only for the script's author; gates the hand-tuned personal chores.
+    boolean isFartScauce(){
+        return my_name().to_lower_case() == "fart scauce";
     }
 
     // Returns true if the item exists anywhere accessible (inventory, equipped, storage, closet)
@@ -523,7 +527,7 @@
     // back. Only Fart Scauce is whitelisted there and wants this side effect, so
     // they are no-ops on any other account.
     void stashgrab(item it){
-        if (my_name().to_lower_case() != "fart scauce") return;
+        if (!isFartScauce()) return;
         visit_url("showclan.php?whichclan=2047009940&action=joinclan&confirm=on");
         if (stash_amount(it) > 0)
             take_stash(it, 1 );
@@ -534,7 +538,7 @@
         }}
 
     void stashreturn(item it){
-        if (my_name().to_lower_case() != "fart scauce") return;
+        if (!isFartScauce()) return;
         visit_url("showclan.php?whichclan=2047009940&action=joinclan&confirm=on");
         cli_execute("unequip "+ it);
         if (available_amount(it) > 0)
@@ -978,6 +982,14 @@
         return value;
     }
 
+    int gregsToSave(){
+        if ((have_skill($skill[Macrometeorite]) && get_property("_macrometeoriteUses").to_int() < 10) || 
+            (available_amount($item[Powerful Glove]) > 0 && get_property("_powerfulGloveBatteryPowerUsed").to_int() <= 90))
+            return 1;
+        else
+            return 0;
+    }
+
 // ─── 6. ADVENTURING-STATE CHECKS ─────────────────────────────────────────────
 
     // stack == false: pre-charge NC-forcing resources before a forcer is active (the
@@ -1022,7 +1034,7 @@
     boolean free_Run() {
         if (to_int(get_property("_snokebombUsed")) < 3)
             return true;
-        if (have_effect($effect[everything looks green]) == 0 && my_adventures() > 60)
+        if (have_effect($effect[everything looks green]) == 0 && (my_adventures() > 60 || dayType() == 1))
             return true;
         if (have_effect($effect[Cosmic Ball in the Air]) > 10 && have_item($item[cosmic bowling ball]))
             return true;

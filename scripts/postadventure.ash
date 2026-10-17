@@ -203,7 +203,8 @@ void outskirts() {
     else if (get_property("questL05Goblin") == "started"){
         if (available_amount($item[Knob Goblin Encryption Key]) > 0)
             use ($item[Cobb's Knob map]);
-        adv1($location[The Outskirts of Cobb's Knob]);
+        else
+            adv1($location[The Outskirts of Cobb's Knob]);
     }
     visit_url("guild.php?place=challenge");
     visit_url("guild.php?place=paco");
@@ -257,7 +258,7 @@ void friars(){
 // Burn the day's Law of Averages while under 100 adventures: unconditional on day
 // 1, day 2 only once Steely-Eyed Squint is up so the copy is worthwhile.
 void lawOfAverages(){
-    if (my_adventures() < 100 && get_property("_lawOfAveragesUsed") == "0" && dayType() == 1 && have_item($item[law of averages]))
+    if (my_adventures() < 98 && get_property("_lawOfAveragesUsed") == "0" && dayType() == 1 && have_item($item[law of averages]))
         use($item[law of averages]);
 }
 
@@ -1035,8 +1036,8 @@ void spendAdv(){
         set_property("famOverride","");
     }
     level11Sprint();
-    if (get_property("script") == "farto" && my_adventures() % 100 == 0 && my_name().to_lower_case() == "fart scauce")
-        cli_execute("ptrack add intermediate");
+    //if (get_property("script") == "farto" && my_adventures() % 100 == 0 && isFartScauce())
+        //cli_execute("ptrack add intermediate");
 }
 
 void main(){
