@@ -2109,6 +2109,7 @@ boolean [location] periledLocations() {
 void peridotFishing(){
     string perilLocations;
     whitelist("Temporary");
+    	codpiece("heartstone,blood cubic zirconia,baseball diamond,peridot of peril,tuesday's ruby");
     repeat {
         perilLocations = get_property("_perilLocations");
         foreach loc in $locations[The Spooky Forest,The Unquiet Garves,The Bat Hole Entrance,
@@ -2181,6 +2182,7 @@ void peridotFishing(){
         }
     } until (perilLocations == get_property("_perilLocations"));
     whitelist("homeclan");
+    codpiece("heartstone,blood cubic zirconia,baseball diamond,tuesday's ruby,tuesday's ruby");
     set_property("acc1Override","");
     set_property("offOverride","");
     set_property("subscript","");
