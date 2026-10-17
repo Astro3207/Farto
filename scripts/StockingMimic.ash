@@ -2054,6 +2054,27 @@ void restOfHiddenCity(){
     aa("facsimile");
 }
 
+// The Witchess piece (bishop / rook / knight) whose drop is worth the most in the
+// mall right now, among those in the locket. Each drops one item at 100%, so the
+// value is just the mall price. Defaults to the bishop.
+monster bestWitchessPiece(){
+    monster best = $monster[Witchess Bishop];
+    int bestValue = -1;
+    foreach mon in $monsters[Witchess Bishop, Witchess Rook, Witchess Knight]{
+        if (!haveLocketMonster[mon])
+            continue;
+        int value;
+        foreach idx, rec in item_drops_array(mon)
+            value += max(0, mall_price(rec.drop)) * rec.rate / 100;
+        print(mon + " drop worth " + value, "blue");
+        if (value > bestValue){
+            best = mon;
+            bestValue = value;
+        }
+    }
+    return best;
+}
+
 void miscellaneousFams(){
     step("phase: miscellaneous fams");
     if (get_property("_machineTunnelsAdv").to_int() < 5 && mall_price($item[self-dribbling basketball]) + mall_price($item[Deep Machine Tunnels snowglobe]) <= 10000){
@@ -2071,7 +2092,7 @@ void miscellaneousFams(){
     if (get_property("_pocketProfessorLectures").to_int() == 0 && get_property("_locketMonstersFought").split_string(",").count() < 3 && !contains_text(get_property("_locketMonstersFought"),"1199") && dayType() == 0){
         string profTarget;
         if (dayType() == 0)
-            profTarget = "witchess bishop";
+            profTarget = bestWitchessPiece().to_string();
         else if (dayType() == 1)
             profTarget = "Pumpkin spice wraith";
         set_property("maxOverride","familiar weight");
@@ -2084,7 +2105,7 @@ void miscellaneousFams(){
         altFam($familiar[Pocket Professor]);
         main@preadventure();
         cli_execute("reminisce " + profTarget);
-        while (get_property("_chainedRelativityMonster") == profTarget)
+        while (get_property("_chainedRelativityMonster").to_monster() == profTarget.to_monster())
             run_combat();
         set_property("pantsOverride","");
         set_property("offOverride", "");

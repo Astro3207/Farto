@@ -976,7 +976,7 @@ void spendAdv(){
             set_property("backOverride","");
         }
         if (free_Kill()){
-            if (get_property("script") != "6-kiss" && get_property("script") != "TTT" && get_property("script") != "slime" && dayType() == 1)
+            if (get_property("script") == "6-kiss" || get_property("script") == "TTT" || get_property("script") == "slime")
                 return;
             ELKPrep();
 
@@ -988,7 +988,8 @@ void spendAdv(){
                 findHiddenTemple();
             else if (get_property("questM10Azazel") != "finished")
                 azazelUnicornQuest();
-
+            if (dayType() == 1)
+                abort("write in pickpockets");
             set_property("shirtOverride","");
             set_property("acc1Override","");
         }
