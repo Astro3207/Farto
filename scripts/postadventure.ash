@@ -993,7 +993,7 @@ void spendAdv(){
             set_property("famEquipOverride",", equip little bitty bathy");
             if (numeric_modifier("monster level").to_int() != 10)
                 tuneML(10);
-            adv1($location[the caliginous abyss]);
+            adventure($location[the caliginous abyss],1);
             clearOverrides();
         }
         string [location] batWings = {
