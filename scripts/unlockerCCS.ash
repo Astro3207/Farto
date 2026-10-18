@@ -566,7 +566,7 @@ void main(int round, monster mob, string page_text) {
 
     // ── Category: pure sauce locations ────────────────────────────────────────
     if (sauceLocs[my_location()] || sauceMobs[last_monster()]) {
-        if (!free_monster() && !free_location()){
+        if (!free_monster() && !free_location() && (my_location() != $location[The Laugh Floor] || last_monster().boss == false)){
             free_run(page_text);
         }
         sauce(7);
