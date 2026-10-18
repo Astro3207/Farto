@@ -735,7 +735,7 @@ void postAdv(){
         altFam($familiar[stocking mimic]);
         adv1($location[cobb's knob treasury]);
     }
-    if (have_item($item[cosmic bowling ball]) && dayType() == 1 && have_effect($effect[Cosmic Ball in the Air]) > 0){
+    if (have_item($item[cosmic bowling ball]) && dayType() == 1 && have_effect($effect[Cosmic Ball in the Air]) > 0 && my_inebriety() <= inebriety_limit()){
         set_property("maxOverride","combat,-equip drunkula's wineglass");
         set_property("famOverride", "peace turkey");
         set_property("mainOverride",", equip june cleaver");

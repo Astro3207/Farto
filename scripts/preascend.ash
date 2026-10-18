@@ -256,23 +256,29 @@ void ascend(){
 void main(){
     starter();
     step("phase: Organ phase 1");
+    if (isFartScauce())
+        set_property("valueOfAdventure","6300");
     equipBonesAndConsume();
-    if (!contains_text(get_property("thoth19_event_list"),"overstomach"))
-        cli_execute("ptrack add overstomach");
+    if (!contains_text(get_property("thoth19_event_list"),"overfull1"))
+        cli_execute("ptrack add overfull1");
     while (my_inebriety() == inebriety_limit() && my_adventures() > 0)
         drunkInko();
+    if (!contains_text(get_property("thoth19_event_list"),"overfull2"))
+        cli_execute("ptrack add overfull2");
     step("phase: nightcap");
     dailyMoodAndNightcap();
-    if (!contains_text(get_property("thoth19_event_list"),"overdrunk"))
-        cli_execute("ptrack add overdrunk");
+    if (!contains_text(get_property("thoth19_event_list"),"overdrunk1"))
+        cli_execute("ptrack add overdrunk1");
+    if (isFartScauce())
+        set_property("valueOfAdventure","5000");
     try {
         step("phase: grimace prime maps");
         spendGrimacePrimeMaps();
     } finally {
         finisher();
     }
-    if (!contains_text(get_property("thoth19_event_list"),"postOverdrunk"))
-        cli_execute("ptrack add [postOverdrunk");
+    if (!contains_text(get_property("thoth19_event_list"),"overdrunk2"))
+        cli_execute("ptrack add overdrunk2");
     step("phase: pvp");
     pvpCleanup();
     step("phase: other iotm todos");

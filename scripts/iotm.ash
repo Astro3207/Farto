@@ -1062,6 +1062,8 @@
 
     // Returns true if there are free-run resources available to burn for delay.
     boolean free_Run() {
+        if (my_inebriety() > inebriety_limit())
+            return false;
         if (to_int(get_property("_snokebombUsed")) < 3)
             return true;
         if (have_effect($effect[everything looks green]) == 0 && (my_adventures() > 60 || dayType() == 1))
