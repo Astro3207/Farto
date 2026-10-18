@@ -191,7 +191,7 @@ void prepBuffs(){
         use($item[Prunets]);
     }
     //meat drop
-    foreach ef in $effects[Incredibly Well Lit,Loded,Meet the Meat,Tubes of Universal Meat,Holiday Bliss,So You Can Work More...,Legendary Pasta Eyeball,Polka of Plenty]{
+    foreach ef in $effects[Incredibly Well Lit,Loded,Meet the Meat,Tubes of Universal Meat,Holiday Bliss,So You Can Work More...,Legendary Pasta Eyeball,Polka of Plenty,Swimming with Sharks]{
         if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
             continue;
         if (ef == $effect[Incredibly Well Lit] && dayType() == 0)
@@ -2059,8 +2059,7 @@ void restOfHiddenCity(){
         set_property("famOverride",famXpTarget().to_string().to_lower_case());
         drunkPygmy();
     }
-    abort("Make sure yeti ends with 400 exp");
-    while (get_property("zigguratLianas") == 0 && dayType() == 1){
+    while (get_property("zigguratLianas") == 0 && $familiar[cooler yeti].experience < 360){
         set_property("famOverride",famXpTarget().to_string().to_lower_case());
         lianas();
     }
@@ -2109,10 +2108,9 @@ void miscellaneousFams(){
         set_property("subscript","");
         set_property("maxOverride","familiar weight");
     }
-    if (get_property("_pocketProfessorLectures").to_int() == 0 && get_property("_locketMonstersFought").split_string(",").count() < 3 && !contains_text(get_property("_locketMonstersFought"),"1199") && dayType() == 0){
+    if (get_property("_pocketProfessorLectures").to_int() == 0 && get_property("_locketMonstersFought").split_string(",").count() < 3){
         string profTarget;
-        if (dayType() == 0)
-            profTarget = bestWitchessPiece().to_string();
+        profTarget = bestWitchessPiece().to_string();
         set_property("maxOverride","familiar weight");
         set_property("offOverride", ", equip kol con snowglobe");
         set_property("acc1Override", ", equip Mr. Cheeng's spectacles");

@@ -91,7 +91,7 @@ void mood(string function){
                 continue;
             if (dayType() == 0 && effectDuration(ef) > (my_adventures() + pvp_attacks_left()))
                 continue;
-            if (dayType() == 1 && effectDuration(ef) > my_adventures() && have_equipped($item[drunkula's wineglass]))
+            if (dayType() == 1 && effectDuration(ef) > my_adventures() && have_equipped($item[devilbone corset]))
                 continue;
             if (have_effect(ef) == 0 && !buffWorthBuying(ef))
                 continue;
@@ -103,6 +103,12 @@ void mood(string function){
         cli_execute("gain meat drop 3 eff");
         if (my_location().environment == "underwater")
             cli_execute("gain better diver 3 eff");
+        float mpTar = min(1, 500 / to_float(my_maxmp()));
+        float hpTar = min(1, 1000 / to_float(my_maxhp()));
+        string hpAutoRecovery = to_float(round(hpTar * 0.75 * 10000))/10000;
+        string hpAutoRecoveryTarget = to_float(round(hpTar * 10000))/10000;
+        string mpAutoRecovery = to_float(round(mpTar * 0.5 * 10000))/10000;
+        string mpAutoRecoveryTarget = to_float(round(mpTar * 10000))/10000;
     }
     if (function == "")
         function = get_property("maxOverride");

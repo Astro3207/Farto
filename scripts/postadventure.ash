@@ -425,6 +425,8 @@ void lianas(){
         foreach loc in $locations[An Overgrown Shrine (Northeast),An Overgrown Shrine (Southwest),An Overgrown Shrine (Southeast),An Overgrown Shrine (Northwest),A Massive Ziggurat]{
             int n;
             while (loc.turns_spent < 3 && n < 3) {
+                if ($familiar[cooler yeti].experience >= 360)
+                    return;
                 set_property("maxOverride","familiar exp, -weapon");
                 set_property("mainOverride"," ");
                 if (!($strings[chest mimic, cooler yeti] contains get_property("famOverride"))){
@@ -735,7 +737,7 @@ void postAdv(){
         altFam($familiar[stocking mimic]);
         adv1($location[cobb's knob treasury]);
     }
-    if (have_item($item[cosmic bowling ball]) && dayType() == 1 && have_effect($effect[Cosmic Ball in the Air]) > 0 && my_inebriety() <= inebriety_limit()){
+    if (have_item($item[cosmic bowling ball]) && dayType() == 1 && have_effect($effect[Cosmic Ball in the Air]) >= 22 && my_inebriety() <= inebriety_limit()){
         set_property("maxOverride","combat,-equip drunkula's wineglass");
         set_property("famOverride", "peace turkey");
         set_property("mainOverride",", equip june cleaver");
