@@ -1014,6 +1014,12 @@
             return 0;
     }
 
+    item timeBadge(){
+        if (available_amount($item[Time Bandit Badge of Courage]) > 0)
+            return $item[Time Bandit Badge of Courage];
+        return $item[Time Lord Badge of Honor];
+    }
+
 // ─── 6. ADVENTURING-STATE CHECKS ─────────────────────────────────────────────
 
     // stack == false: pre-charge NC-forcing resources before a forcer is active (the

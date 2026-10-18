@@ -727,8 +727,13 @@ void postAdv(){
         }
     }
     endOfDayHandling();
-    if (get_property("script") == "FreeKill" && get_property("cursedMagnifyingGlassCount").to_int() == 13)
-        abort("do cursed magnifying glass");
+    if (get_property("script") == "FreeKill" && get_property("cursedMagnifyingGlassCount").to_int() == 13){
+        set_property("maxOverride","familiar weight");
+        set_property("offOverride",", equip cursed magnifying glass");
+        set_property("acc3Override",", equip " + timeBadge().to_string());
+        altFam($familiar[stocking mimic]);
+        adv1($location[cobb's knob treasury]);
+    }
     if (have_item($item[cosmic bowling ball]) && get_property("subscript") == "NonSMFK" && have_effect($effect[Cosmic Ball in the Air]) > 0){
         set_property("maxOverride","combat,-equip drunkula's wineglass");
         set_property("famOverride", "peace turkey");

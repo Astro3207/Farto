@@ -490,7 +490,7 @@ void main(int round, monster mob, string page_text) {
         use_skill($skill[lecture on relativity]);
         if (dayType() == 1)
             use_skill($skill[deliver your thesis!]);
-        if (have_effect($effect[everything looks purple]) == 0 && have_equipped($item[roman candelbra]))
+        if (have_effect($effect[everything looks purple]) == 0 && have_equipped($item[roman candelabra]))
             use_skill($skill[blow the purple candle!]);
         if (my_hp() < 500)
             throw_items($item[new age healing crystal],$item[new age healing crystal]);
@@ -539,7 +539,7 @@ void main(int round, monster mob, string page_text) {
         if (last_monster().max_meat > 0 && have_equipped($item[mafia pointer finger ring]) && current_round() < 28)
             attack();
         if (last_monster() == $monster[sausage goblin])
-            if (have_equipped($item[legendary seal clubbing club]))
+            if (have_equipped($item[legendary seal-clubbing club]))
                 use_skill($skill[Club 'Em Into Next Week]); 
         if (get_property("subscript") == "looseFK" && (get_property("_curveballMonster").to_monster() != last_monster() || get_property("_curveballFightsLeft").to_int() == 0) && last_monster().boss == false)
             free_kill(page_text);
@@ -558,13 +558,13 @@ void main(int round, monster mob, string page_text) {
     }
     if (last_monster() == $monster[witchess bishop] || last_monster() == $monster[sausage goblin] || last_monster() == $monster[witchess rook] || last_monster() == $monster[witchess pawn] || last_monster() == $monster[witchess knight]) {
         if (have_effect($effect[everything looks purple]) == 0 && have_equipped($item[roman candelabra])) use_skill($skill[Blow the Purple Candle!]);
-        if (have_equipped($item[legendary seal clubbing club]))
+        if (have_equipped($item[legendary seal-clubbing club]))
             use_skill($skill[Club 'Em Into Next Week]); 
         sauce(2); attack(5); return;
     }
 
     if (last_monster() == $monster[void guy] || last_monster() == $monster[void slab] || last_monster() == $monster[void spider]) {
-        if (have_equipped($item[legendary seal clubbing club]) && get_property("_voidFreeFights").to_int() < 4 && dayType() == 0)
+        if (have_equipped($item[legendary seal-clubbing club]) && get_property("_voidFreeFights").to_int() < 4 && dayType() == 0)
             use_skill($skill[Club 'Em Into Next Week]); 
         sauce(2); attack(5); return;
     }

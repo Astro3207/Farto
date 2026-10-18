@@ -563,6 +563,7 @@ void preAdv(){
             else if (clubEmExact && have_effect($effect[everything looks purple]) == 0)
                 append(maximize, ", equip roman candelabra");
             else if ((get_property("cursedMagnifyingGlassCount").to_int() < 13 && get_property("_voidFreeFights").to_int() < 5 && dayType() == 1) || (get_property("cursedMagnifyingGlassCount").to_int() < 4 && dayType() == 0))
+                append(maximize, ", equip cursed magnifying glass");
             else if (get_property("maxOverride") == "combat" || get_property("maxOverride") == "-combat")
                 append(maximize, "");
             else if (get_property("script") != "farto")

@@ -952,14 +952,7 @@ void MobiusMaybe(){
     if (get_property("_timeCopsFoughtToday").to_int() < 10)
         set_property("acc2Override",", equip mobius ring");
 }
-// Time Lord Badge of Honor and Time Bandit Badge of Courage are mutually
-// exclusive -- an account owns one or the other. Returns whichever this
-// player has, defaulting to the Time Lord badge.
-item timeBadge(){
-    if (available_amount($item[Time Bandit Badge of Courage]) > 0)
-        return $item[Time Bandit Badge of Courage];
-    return $item[Time Lord Badge of Honor];
-}
+
 // Shrug the effect giving the most of your highest buffed stat. Returns false
 // when there was nothing to shrug or the shrug failed.
 boolean uneffectBuff(){
