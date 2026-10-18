@@ -2059,7 +2059,7 @@ void restOfHiddenCity(){
         set_property("famOverride",famXpTarget().to_string().to_lower_case());
         drunkPygmy();
     }
-    while (get_property("zigguratLianas") == 0 && $familiar[cooler yeti].experience < 360){
+    while (get_property("zigguratLianas") == 0 && ($familiar[cooler yeti].experience < 360 || dayType() == 1)){
         set_property("famOverride",famXpTarget().to_string().to_lower_case());
         lianas();
     }

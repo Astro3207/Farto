@@ -143,6 +143,14 @@ string messages(){
     return visit_url("messages.php");
 }
 
+void YetiRO(){
+    if ($familiar[cooler yeti].experience > 400 && get_property("_coolerYetiAdventures") == "false"){
+        use_familiar($familiar[cooler yeti]);
+        visit_url("main.php?talktoyeti=1", false);    
+        run_choice(2);
+    }
+}
+
 // ── Fart Scauce only ────────────────────────────────────────────────────────
 // Personal inbox housekeeping: deletes kmails from a handful of trade bots and
 // every "Loathing Postal Service" package notice on each run. The sender ids are
@@ -183,6 +191,7 @@ void main(){
     step("phase: stock certificates");
     certificates();
     cli_execute ("maximize adv; av-snapshot.ash");
+    YetiRO();
  //   step("phase: clockwork maid");
    // clockworkMaid();
     step("phase: final outfit");

@@ -425,7 +425,7 @@ void lianas(){
         foreach loc in $locations[An Overgrown Shrine (Northeast),An Overgrown Shrine (Southwest),An Overgrown Shrine (Southeast),An Overgrown Shrine (Northwest),A Massive Ziggurat]{
             int n;
             while (loc.turns_spent < 3 && n < 3) {
-                if ($familiar[cooler yeti].experience >= 360)
+                if ($familiar[cooler yeti].experience >= 360 && dayType() == 0)
                     return;
                 set_property("maxOverride","familiar exp, -weapon");
                 set_property("mainOverride"," ");
