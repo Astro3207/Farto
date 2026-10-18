@@ -310,7 +310,7 @@ void votingBooth(){
 // April Shower for the day's buff.
 void aprilShower(){
     if (!get_property("_aprilShower").to_boolean())
-        cli_execute("shower hot");
+        cli_execute("shower cold");
 }
 
 // Craft the 3 daily lit leaf lassos and the free day shortener from burning

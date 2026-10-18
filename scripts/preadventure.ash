@@ -300,7 +300,9 @@ float pantsgivingValue(){
     int target = 5000;
     foreach i, threshold in thresholds
         if (fights < threshold){ target = threshold; break; }
-    return valueOfOrgan("stomach").to_float() / (target - fights);
+    float pantsValue = valueOfOrgan("stomach").to_float() / (target - fights);
+        pantsValue = round(pantsValue/10) * 10;
+    return pantsValue;
 }
 
 string bonusGear(){

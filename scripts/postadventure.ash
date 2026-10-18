@@ -90,7 +90,7 @@ void shadowRealm(){
         if (get_property("encountersUntilSRChoice").to_int() == 0){
             if (get_property("rufusQuestTarget") == "shadow scythe" || get_property("rufusQuestTarget") == "shadow spire")
                 set_property("acc2Override",", equip Drunkula's ring of haze");
-            set_property("backOverride",", equip retrocape (heck kill)");
+            set_property("acc3Override",", equip congressional medal");
         }
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
     }
@@ -1025,6 +1025,9 @@ void spendAdv(){
             set_property("backOverride","");
         }
         forceNoncombats();
+    }
+    if (my_familiar() == $familiar[comma chameleon] && chameleon() != $familiar[Robortender]){
+        set_property("commaFamiliar","");
     }
     if (dayType() == 1 && get_property("commaFamiliar") != "Robortender"){
         if (get_property("_pocketProfessorLectures").to_int() == 0 && get_property("_locketMonstersFought").split_string(",").count() < 3 && have_effect($effect[everything looks purple]) == 0){
