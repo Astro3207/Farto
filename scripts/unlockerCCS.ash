@@ -534,10 +534,13 @@ void main(int round, monster mob, string page_text) {
             use_skill($skill[BCZ: Refracted Gaze]);
         } else if (last_monster() == $monster[shadow guy])
             waffleShadowGuy();
-        if ((my_basestat($stat[submysticality]) - 62500) > BCZcost("RefractedGazeCasts") && last_monster() == $monster[sausage goblin] && have_equipped($item[peridot of peril])) {
+        if ((my_basestat($stat[submysticality]) - 62500) > BCZcost("RefractedGazeCasts") && last_monster() == $monster[sausage goblin] && have_equipped($item[peridot of peril]))
             use_skill($skill[BCZ: Refracted Gaze]);
         if (last_monster().max_meat > 0 && have_equipped($item[mafia pointer finger ring]) && current_round() < 28)
             attack();
+        if (last_monster() == $monster[sausage goblin])
+            if (have_equipped($item[legendary seal clubbing club]))
+                use_skill($skill[Club 'Em Into Next Week]); 
         if (get_property("subscript") == "looseFK" && (get_property("_curveballMonster").to_monster() != last_monster() || get_property("_curveballFightsLeft").to_int() == 0) && last_monster().boss == false)
             free_kill(page_text);
         if (get_property("_curveballMonster").to_monster() == last_monster() && get_property("_curveballFightsLeft").to_int() > 0){
@@ -554,8 +557,16 @@ void main(int round, monster mob, string page_text) {
         return;
     }
     if (last_monster() == $monster[witchess bishop] || last_monster() == $monster[sausage goblin] || last_monster() == $monster[witchess rook] || last_monster() == $monster[witchess pawn] || last_monster() == $monster[witchess knight]) {
-        if (have_effect($effect[everything looks purple]) == 0) use_skill($skill[Blow the Purple Candle!]);
-        use_skill($skill[Club 'Em Into Next Week]); sauce(2); attack(5); return;
+        if (have_effect($effect[everything looks purple]) == 0 && have_equipped($item[roman candelabra])) use_skill($skill[Blow the Purple Candle!]);
+        if (have_equipped($item[legendary seal clubbing club]))
+            use_skill($skill[Club 'Em Into Next Week]); 
+        sauce(2); attack(5); return;
+    }
+
+    if (last_monster() == $monster[void guy] || last_monster() == $monster[void slab] || last_monster() == $monster[void spider]) {
+        if (have_equipped($item[legendary seal clubbing club]) && get_property("_voidFreeFights").to_int() < 4 && dayType() == 0)
+            use_skill($skill[Club 'Em Into Next Week]); 
+        sauce(2); attack(5); return;
     }
 
     if (my_location() == $location[The Laugh Floor] || my_location() == $location[Infernal Rackets Backstage] || my_location() == $location[The Dark Elbow of the Woods]){

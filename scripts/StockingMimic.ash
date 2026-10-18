@@ -2236,6 +2236,10 @@ void peridotFishing(){
                 if (turns_until_forced_noncombat(loc) == 0) 
                     continue;
                 mimicPrep();
+                if (get_property("clubEmNextWeekMonster") == "")
+                    set_property("mainOverride",", equip legendary seal clubbing club");
+                else
+                    set_property("mainOverride","");
                 set_property("offOverride",", equip Kramco Sausage-o-Matic");
                 set_property("acc2Override",",bonus mafia pointer");
                 if (loc == $location[The Unquiet Garves]){

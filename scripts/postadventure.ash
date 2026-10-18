@@ -52,12 +52,19 @@ void swordPrep(){
 
 // Pick the accessory to burn a delay turn on: club-em wanderer > "I Voted!" > spring shoes.
 void delayPrep(){
-    if (get_property("clubEmNextWeekMonster") != "" && total_turns_played() >= get_property("clubEmNextWeekMonsterTurn").to_int() + 8)
+    if (get_property("clubEmNextWeekMonster") != "" && total_turns_played() >= get_property("clubEmNextWeekMonsterTurn").to_int() + 8){
         set_property("mainOverride",", equip legendary seal-clubbing club");
-    else if (item_amount($item[&quot;I Voted!&quot; sticker]) > 0 && total_turns_played()%11 == 1 && get_property("_voteFreeFights").to_int() < 3)
+        set_property("famOverride","sword of s words");
+    } else if (item_amount($item[&quot;I Voted!&quot; sticker]) > 0 && total_turns_played()%11 == 1 && get_property("_voteFreeFights").to_int() < 3)
         set_property("acc3Override",", equip I voted");
-    else if (have_effect($effect[everything looks green]) == 0)
+    else if (have_effect($effect[everything looks green]) == 0 && dayType() == 0)
         set_property("acc3Override",", equip spring shoes");
+    else if (get_property("cursedMagnifyingGlassCount").to_int() == 13 && get_property("_voidFreeFights").to_int() < 5){
+        set_property("offOverride",", equip cursed magnifying glass");
+        if (dayType() == 0)
+            set_property("mainOverride",", equip legendary seal clubbing club");
+        set_property("famOverride","sword of s words");
+    }
 }
 
 // Clear whichever of the two common non-combat debuffs are currently up.
@@ -720,6 +727,8 @@ void postAdv(){
         }
     }
     endOfDayHandling();
+    if (get_property("script") == "FreeKill" && get_property("cursedMagnifyingGlassCount").to_int() == 13)
+        abort("do cursed magnifying glass");
     if (have_item($item[cosmic bowling ball]) && get_property("subscript") == "NonSMFK" && have_effect($effect[Cosmic Ball in the Air]) > 0){
         set_property("maxOverride","combat,-equip drunkula's wineglass");
         set_property("famOverride", "peace turkey");
@@ -968,7 +977,9 @@ void spendAdv(){
                 outskirts();
 
             set_property("mainOverride","");
+            set_property("offOverride","");
             set_property("acc3Override","");
+            set_property("famOverride","");
         }
         if (item_amount($item[1950 Vampire Vintner wine]) == 0 && get_property("vintnerCharge").to_int() == 0 && have_effect($effect[fishy]) == 0 && my_class() == $class[accordion thief])
             use($item[fishy pipe]);
@@ -1020,6 +1031,15 @@ void spendAdv(){
                 run_combat();
             set_property("unconditionalOverride","");
             altFam($familiar[robortender]);
+        }
+        if (delay() && get_property("seaAftercore") == "true"){
+            delayPrep();
+            adv1($location[cobb's knob treasury]);
+
+            set_property("mainOverride","");
+            set_property("offOverride","");
+            set_property("acc3Override","");
+            set_property("famOverride","");
         }
     }
     if (free_Kill()){
