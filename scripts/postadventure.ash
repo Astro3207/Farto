@@ -925,8 +925,6 @@ monster lowDrop(){
     foreach mon in $monsters[Gurgle the Turgle, nutmeg anemone, kelpie (lady form),
             kelpie (horse form), Yuleviathan, peppermint eel, Crimbylow, Tin of Submardines,
             gingerbread maw, icingfish, giant potato, moai, messenger RNA, Section 11, Norwhal]{
-        if (!haveLocketMonster[mon])
-            continue;
         lowDropTarget best = new lowDropTarget(mon, $item[none], -1);
         foreach idx, rec in item_drops_array(mon){
             // rec.rate is a float; 0 means mafia doesn't know the rate, not a rare drop.
@@ -1010,16 +1008,13 @@ void spendAdv(){
         }
         forceNoncombats();
     }
-    if (dayType() == 1){
+    if (dayType() == 1 && get_property("commaFamiliar") != "Robortender"){
         if (get_property("_pocketProfessorLectures").to_int() == 0 && get_property("_locketMonstersFought").split_string(",").count() < 3 && have_effect($effect[everything looks purple]) == 0){
-            if (isFartScauce() && chameleon() == $familiar[robortender])
-                continue;
-            altFam($familiar[pocket professor]);
             string profTarget;
             profTarget = lowDrop().to_string();
             set_property("unconditionalOverride","familiar weight, equip roman candelabra, equip Mr. Cheeng's spectacles");
             altFam($familiar[Pocket Professor]);
-            main@preadventure();
+            cli_execute("postadventure.ash");
             cli_execute("reminisce " + profTarget);
             while (get_property("_chainedRelativityMonster").to_monster() == profTarget.to_monster())
                 run_combat();

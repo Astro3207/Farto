@@ -486,11 +486,12 @@ void main(int round, monster mob, string page_text) {
         return;
     }
 
-    if ((chameleon() == $familiar[pocket professor]|| my_familiar() == $familiar[pocket professor])){
+    if ((chameleon() == $familiar[pocket professor] || my_familiar() == $familiar[pocket professor])){
         use_skill($skill[lecture on relativity]);
-        use_skill($skill[Tear Away your Pants!]);
         if (dayType() == 1)
             use_skill($skill[deliver your thesis!]);
+        if (have_effect($effect[everything looks purple]) == 0 && have_equipped($item[roman candelbra]))
+            use_skill($skill[blow the purple candle!]);
         if (my_hp() < 500)
             throw_items($item[new age healing crystal],$item[new age healing crystal]);
         sauce(4);
