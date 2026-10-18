@@ -1987,11 +1987,11 @@ void embezzler(){
             visit_url("inventory.php?action=robooze&which=1&whichitem=9396");
         }
         set_property("script","embezzler");
-        if (get_property("_batWingsFreeFights").to_int() < 5){
-            set_property("unconditionalOverride","meat drop, equip mafia pointer finger, equip bat wings");
-        } else {
-            set_property("unconditionalOverride","meat drop, equip mafia pointer finger");
-        }
+        set_property("unconditionalOverride","meat drop, equip mafia pointer finger");
+        if (get_property("_batWingsFreeFights").to_int() < 5)
+            set_property("unconditionalOverride",get_property("unconditionalOverride") +", equip bat wings");
+        if (get_property("clubEmNextWeekMonster") != "" && total_turns_played() >= get_property("clubEmNextWeekMonsterTurn").to_int() + 8)
+            set_property("unconditionalOverride",get_property("unconditionalOverride") +", equip legendary seal club");
         if (have_effect($effect[Lucky!]) == 0){
             getLucky();
         }
