@@ -764,12 +764,12 @@ void shorts(){
 }
 void augustCat(){
     if (get_property("_aug8Cast") == false && to_int(get_property("_augSkillsCast")) < 4) {
-        set_property("bacKOverride",", equip retrocape (heck kill)");
+        set_property("backOverride",", equip retrocape (heck kill)");
         main@preadventure( );
         use_skill($skill[Aug. 8th: Cat Day!]);
         main@postadventure( );
         set_property("_aug8Cast","true");
-        set_property("bacKOverride","");
+        set_property("backOverride","");
     }
 }
 
@@ -931,10 +931,8 @@ void archaeologist(){
             if (get_property("zeppelinProgress").to_int() >= 6){
                 set_property("mainOverride",", equip legendary seal-clubbing club");
                 set_property("backOverride",", equip retrocape (heck kill)");
-            } else {
+            } else 
                 set_property("mainOverride","");
-                set_property("backOverride","");
-            }
             set_property("acc1Override",",bonus mafia pointer");
             if (to_int(get_property("_glarkCableUses")) < 5) {
                 retrieve_item(5,$item[glark cable]);
@@ -942,6 +940,7 @@ void archaeologist(){
             } else
                 abort("Ran out of glarks to charge spade");
             set_property("acc1Override","");
+            set_property("backOverride","");
         }
         main@preadventure( );
         use($item[Archaeologist's Spade]);
@@ -2326,9 +2325,12 @@ void bulkFKD2(){
     step ("phase: rose garden");
     roseGarden();
     neverendingParty();
-    if (have_effect($effect[coldform]) > 0)
+    if (have_effect($effect[coldform]) > 0){
         cli_execute("uneffect coldform");
-    abort("buff up mus to 4500");
+        if (my_buffedstat($stat[muscle]) < 4500){
+            cli_execute("gain 4500 muscle 100 maxmeatspent");
+        }
+    }
     step("phase: bulkFK habitat recall");
     habitatRecall();
     step("phase: bulkFK backup camera");
