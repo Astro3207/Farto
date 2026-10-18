@@ -177,6 +177,7 @@ void main(){
         }
         if (isFartScauce())
             set_property("valueOfAdventure","9000");
+        abort();
         partialConsume(0,2,0);
     } else {
         savedResources();

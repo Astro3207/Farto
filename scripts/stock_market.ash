@@ -26,7 +26,7 @@ int [item] special = {
 
 void main() {
     int itNum;
-    foreach current in $items[glass of goat's milk,potion of temporary gr8ness,Penultimate Fantasy chest,handheld allied radio,milk of magnesium,philosopher's scone,groose grease,peppermint sprout,Rad Lib,home robotics kit,Tallowcreme Halloween Pumpkin,Flaskfull of Hollow,handful of Smithereens,grim fairy tale,lynyrd snare,black label,delicious candy,powdered gold,porcelain candy dish,pixel banana,perfect negroni,perfect dark and stormy,perfect mimosa,perfect old-fashioned ,perfect paloma ,Doc Clock's thyme cocktail,Mr. Burnsger]{
+    foreach current in $items[glass of goat's milk,potion of temporary gr8ness,spooky hi mein,Penultimate Fantasy chest,handheld allied radio,milk of magnesium,delicious candy,perfect negroni,perfect dark and stormy,perfect mimosa,perfect old-fashioned ,perfect paloma,Mmm-brr! brand mouthwash]{
         if (special[current] > 0){
             buy(14,current,special[current]);
         } else {

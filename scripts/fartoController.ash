@@ -23,11 +23,11 @@ void firstTimeSetup(){
 void main(){
     firstTimeSetup();
     if (dayType() == 1){
-        if (!contains_text(get_property("banishedPhyla"),"fish")){
-            if (user_confirm("double check if banishedPhyla fish was wiped. Seems to be a bug where mafia loses the preference. Press yes to abort and set pref manually"))
-                abort();
-        }
         if (numeric_modifier("Familiar weight") > 300){
+            if (!contains_text(get_property("banishedPhyla"),"fish") && !contains_text(get_property("banishedPhyla"),"construct")){
+                if (user_confirm("double check if banishedPhyla fish was wiped. Seems to be a bug where mafia loses the preference. Press yes to abort and set pref manually"))
+                    abort();
+            }
             cli_execute("breakfast.ash");
             cli_execute("stockingmimic");
             cli_execute("preconsume");
