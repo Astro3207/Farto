@@ -764,10 +764,12 @@ void shorts(){
 }
 void augustCat(){
     if (get_property("_aug8Cast") == false && to_int(get_property("_augSkillsCast")) < 4) {
+        set_property("bacKOverride",", equip retrocape (heck kill)");
         main@preadventure( );
         use_skill($skill[Aug. 8th: Cat Day!]);
         main@postadventure( );
         set_property("_aug8Cast","true");
+        set_property("bacKOverride","");
     }
 }
 
@@ -1195,10 +1197,14 @@ void habitatRecall(){
             if (get_auto_attack() == 0)
                 aa("facsimile");
             if (get_property("beGregariousFightsLeft").to_int() == 1 && get_property("beGregariousCharges").to_int() == gregsToSave() && to_int(get_property("_monsterHabitatsRecalled")) == 3 && dayType() == 1){
-                if (mall_price($item[flask of embalming fluid]) < 1000)
+                if (mall_price($item[flask of embalming fluid]) < 1000){
                     altFam($familiar[reanimated reanimator]);
-            }
-            pearloP2();
+                    if (have_effect($effect[driving waterproofly]) == 0)
+                        set_property("pantsOverride", ", equip really nice swim");
+                    adv1($location[madness reef]);
+                }
+            } else 
+                pearloP2();
         }
         set_property("offOverride","");
         set_property("acc2Override","");
@@ -1456,16 +1462,16 @@ string pickWeakling(boolean checkHP){
     if (get_property("_cargoPocketEmptied") != "true"
         && (!checkHP || safeToFK($monster[batrat])))
         return "shorts";
+    if (get_property("_aug8Cast") == "false"
+        && get_property("_augSkillsCast").to_int() < 4
+        && (!checkHP || safeToFK($monster[black cat])))
+        return "augustCat";
     if (to_int(get_property("_speakeasyFreeFights")) < 3
         && (!checkHP || safeToFK(to_monster("traveling hobo"))))
         return "speakeasy";
     if (to_int(get_property("_brickoFights")) < 10
         && (!checkHP || safeToFK($monster[BRICKO ooze])))
         return "BRICKO";
-    if (get_property("_aug8Cast") == "false"
-        && get_property("_augSkillsCast").to_int() < 4
-        && (!checkHP || safeToFK($monster[Skeletal cat])))
-        return "augustCat";
     if ((get_property("questPAGhost") == "started" || (get_property("questPAGhost") == "unstarted"
         && total_turns_played() >= to_int(get_property("nextParanormalActivity")) && get_property("ghostLocation") != ""))
         && (!checkHP || safeToFK(ghostFor(walkieGhost()))))
@@ -2061,6 +2067,7 @@ void restOfHiddenCity(){
         lianas();
     }
     if (have_effect($effect[Everything looks Beige]) == 0 && have_item($item[crepe paper parachute cape])){
+        set_property("famOverride",famXpTarget().to_string().to_lower_case());
         adv1($location[An Overgrown Shrine (Southeast)]);
         cli_execute("equip weapon antique machete");
         visit_url("inventory.php?action=parachute");
@@ -2108,10 +2115,7 @@ void miscellaneousFams(){
         string profTarget;
         if (dayType() == 0)
             profTarget = bestWitchessPiece().to_string();
-        else if (dayType() == 1)
-            profTarget = "Pumpkin spice wraith";
         set_property("maxOverride","familiar weight");
-        set_property("pantsOverride",", equip tearaway Pants");
         set_property("offOverride", ", equip kol con snowglobe");
         set_property("acc1Override", ", equip Mr. Cheeng's spectacles");
         set_property("acc2Override", ", equip Lucky gold ring");
@@ -2327,6 +2331,7 @@ void bulkFKD2(){
     neverendingParty();
     if (have_effect($effect[coldform]) > 0)
         cli_execute("uneffect coldform");
+    abort("buff up mus to 4500");
     step("phase: bulkFK habitat recall");
     habitatRecall();
     step("phase: bulkFK backup camera");

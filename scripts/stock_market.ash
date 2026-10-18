@@ -1,7 +1,7 @@
 int [item] special = {
     $item[pocket wish]:47000,
     $item[waffle]:1000,
-    $item[rotten tomato]:1000,
+    $item[handheld allied radio]:11000,
     $item[battery (9-Volt)]:14000,
     $item[battery (D)]:10500,
     $item[battery (AA)]:7000,
@@ -26,12 +26,16 @@ int [item] special = {
 
 void main() {
     int itNum;
-    foreach current in $items[glass of goat's milk,potion of temporary gr8ness,Penultimate Fantasy chest,wreath-shaped Crimbo cookie,bell-shaped Crimbo cookie,red snowcone,hot hi mein,spooky hi mein,stinky hi mein,sleazy hi mein,milk of magnesium,philosopher's scone,groose grease,peppermint sprout,Rad Lib,home robotics kit,Tallowcreme Halloween Pumpkin,Flaskfull of Hollow,handful of Smithereens,grim fairy tale,lynyrd snare,black label,delicious candy,powdered gold,porcelain candy dish,pixel banana,perfect negroni,perfect dark and stormy,perfect mimosa,perfect old-fashioned ,perfect paloma ,Doc Clock's thyme cocktail,Mr. Burnsger]{
+    foreach current in $items[glass of goat's milk,potion of temporary gr8ness,Penultimate Fantasy chest,handheld allied radio,milk of magnesium,philosopher's scone,groose grease,peppermint sprout,Rad Lib,home robotics kit,Tallowcreme Halloween Pumpkin,Flaskfull of Hollow,handful of Smithereens,grim fairy tale,lynyrd snare,black label,delicious candy,powdered gold,porcelain candy dish,pixel banana,perfect negroni,perfect dark and stormy,perfect mimosa,perfect old-fashioned ,perfect paloma ,Doc Clock's thyme cocktail,Mr. Burnsger]{
         if (special[current] > 0){
-            buy(10,current,special[current]);
+            buy(14,current,special[current]);
         } else {
             buy(10,current,mall_price(current)/5);
         }
+    }
+    foreach it in $items[cocoa of youth]{
+        if (mall_price(it) < 60000)
+        buy(1,it);
     }
     if (item_amount($item[phial of coldness]) == 0){
         int minPrice = 1000000;

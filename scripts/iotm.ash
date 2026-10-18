@@ -895,6 +895,8 @@
     };
 
     boolean MobiusNCReady(){
+        if (((get_property("_lastMobiusStripTurn").to_int() + mobiusEncounters[get_property("_mobiusStripEncounters").to_int() + 1]) - total_turns_played( )) > my_adventures() && dayType() == 0)
+            return false;
         if (total_turns_played( ) > get_property("_lastMobiusStripTurn").to_int() + mobiusEncounters[get_property("_mobiusStripEncounters").to_int()])
             return true;
         return false;

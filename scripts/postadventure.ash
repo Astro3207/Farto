@@ -908,6 +908,52 @@ void ELKPrep(){
         set_property("acc1Override",", equip everfull dart holster");
 }
 
+// Pocket Professor target for the reminisce chain: the locket monster whose rare drop
+// (under 1%, e.g. the f0.1 / f0.33 Crimbo and holiday gear) has the best expected
+// value per fight. Rates are fixed, so +item% doesn't change the order, but 0.33% vs 0.1%
+// does, so rank by rate * price rather than price alone. A monster is skipped while
+// its rare drop is already listed in the store (shop_amount > 0); if every one is
+// stocked, fall back to the overall best so the lecture still has a target.
+record lowDropTarget {
+    monster mon;
+    item drop;
+    float value;
+};
+
+monster lowDrop(){
+    lowDropTarget[int] targets;
+    foreach mon in $monsters[Gurgle the Turgle, nutmeg anemone, kelpie (lady form),
+            kelpie (horse form), Yuleviathan, peppermint eel, Crimbylow, Tin of Submardines,
+            gingerbread maw, icingfish, giant potato, moai, messenger RNA, Section 11, Norwhal]{
+        if (!haveLocketMonster[mon])
+            continue;
+        lowDropTarget best = new lowDropTarget(mon, $item[none], -1);
+        foreach idx, rec in item_drops_array(mon){
+            // rec.rate is a float; 0 means mafia doesn't know the rate, not a rare drop.
+            if (rec.rate <= 0 || rec.rate >= 1 || !rec.drop.tradeable)
+                continue;
+            float value = max(0, mall_price(rec.drop)) * rec.rate / 100.0;
+            if (value > best.value)
+                best = new lowDropTarget(mon, rec.drop, value);
+        }
+        if (best.drop != $item[none])
+            targets[count(targets)] = best;
+    }
+    if (count(targets) == 0)
+        abort("lowDrop(): none of the target monsters are in the locket");
+    sort targets by -value.value;
+    foreach idx, t in targets{
+        print("lowDrop: " + t.mon + " -> " + t.drop + " (" + t.value.to_int()
+            + " per fight, " + shop_amount(t.drop) + " in store)", "blue");
+    }
+    foreach idx, t in targets{
+        if (shop_amount(t.drop) > 0)
+            continue;
+        return t.mon;
+    }
+    return targets[0].mon;
+}
+
 // Burn the turn on the next task in priority order: forced NCs, spooky-forest
 // delay, the Azazel push, Black Forest / Guild loops, spikolodon temple, in-run
 // free kills, Shadow Rift, cookbookbat, Book of Facts wishes, then level 11.
@@ -963,6 +1009,23 @@ void spendAdv(){
             set_property("backOverride","");
         }
         forceNoncombats();
+    }
+    if (dayType() == 1){
+        if (get_property("_pocketProfessorLectures").to_int() == 0 && get_property("_locketMonstersFought").split_string(",").count() < 3 && have_effect($effect[everything looks purple]) == 0){
+            if (isFartScauce() && chameleon() == $familiar[robortender])
+                continue;
+            altFam($familiar[pocket professor]);
+            string profTarget;
+            profTarget = lowDrop().to_string();
+            set_property("unconditionalOverride","familiar weight, equip roman candelabra, equip Mr. Cheeng's spectacles");
+            altFam($familiar[Pocket Professor]);
+            main@preadventure();
+            cli_execute("reminisce " + profTarget);
+            while (get_property("_chainedRelativityMonster").to_monster() == profTarget.to_monster())
+                run_combat();
+            set_property("unconditionalOverride","");
+            altFam($familiar[robortender]);
+        }
     }
     if (free_Kill()){
         if (get_property("script") == "6-kiss" || get_property("script") == "TTT" || get_property("script") == "slime")
