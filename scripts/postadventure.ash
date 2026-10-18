@@ -61,6 +61,7 @@ void delayPrep(){
         set_property("acc3Override",", equip spring shoes");
     else if (get_property("cursedMagnifyingGlassCount").to_int() == 13 && get_property("_voidFreeFights").to_int() < 5){
         set_property("offOverride",", equip cursed magnifying glass");
+        set_property("maxOverride","item drop");
         if (dayType() == 0)
             set_property("mainOverride",", equip legendary seal clubbing club");
         set_property("famOverride","sword of s words");
@@ -734,11 +735,12 @@ void postAdv(){
         altFam($familiar[stocking mimic]);
         adv1($location[cobb's knob treasury]);
     }
-    if (have_item($item[cosmic bowling ball]) && get_property("subscript") == "NonSMFK" && have_effect($effect[Cosmic Ball in the Air]) > 0){
+    if (have_item($item[cosmic bowling ball]) && dayType() == 1 && have_effect($effect[Cosmic Ball in the Air]) > 0){
         set_property("maxOverride","combat,-equip drunkula's wineglass");
         set_property("famOverride", "peace turkey");
         set_property("mainOverride",", equip june cleaver");
         set_property("acc1Override", ", equip spring shoes");
+        set_auto_attack(0);
         adv1($location[cobb's knob treasury]);
         set_property("maxOverride","");
         set_property("famOverride", "");
@@ -1037,15 +1039,15 @@ void spendAdv(){
             set_property("unconditionalOverride","");
             altFam($familiar[robortender]);
         }
-        if (delay() && get_property("seaAftercore") == "true"){
-            delayPrep();
-            adv1($location[cobb's knob treasury]);
+    }
+    if (dayType() == 1 && delay() && get_property("seaAftercore") == "true"){
+        delayPrep();
+        adv1($location[cobb's knob treasury]);
 
-            set_property("mainOverride","");
-            set_property("offOverride","");
-            set_property("acc3Override","");
-            set_property("famOverride","");
-        }
+        set_property("mainOverride","");
+        set_property("offOverride","");
+        set_property("acc3Override","");
+        set_property("famOverride","");
     }
     if (free_Kill()){
         if (get_property("script") == "6-kiss" || get_property("script") == "TTT" || get_property("script") == "slime")

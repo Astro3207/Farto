@@ -2004,16 +2004,14 @@ int mimicXpNeeded(){
     if (!have_familiar($familiar[chest mimic]))
         return 0;
     int eggsLeft = max(0, 11 - to_int(get_property("_mimicEggsObtained")));
-    int expForTmr = dayType() == 0 ? 450 : 0;
-    return max(0, eggsLeft * 50 - $familiar[chest mimic].experience) + dayType();
+    return max(0, eggsLeft * 50 - $familiar[chest mimic].experience);
 }
 
-// XP the cooler yeti still needs: 400 for today's boon if unclaimed, plus 400 more on D1.
+// XP the cooler yeti still needs: 400 for today's boon, or 0 once it's claimed.
 int yetiXpNeeded(){
-    if (!have_familiar($familiar[cooler yeti]))
+    if (!have_familiar($familiar[cooler yeti]) || get_property("_coolerYetiAdventures").to_boolean())
         return 0;
-    int boons = (get_property("_coolerYetiAdventures").to_boolean() ? 0 : 1) + (dayType() == 0 ? 1 : 0);
-    return max(0, boons * 400 - $familiar[cooler yeti].experience);
+    return max(0, 400 - $familiar[cooler yeti].experience);
 }
 
 familiar famXpTarget(){
