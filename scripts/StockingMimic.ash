@@ -1538,7 +1538,10 @@ void snowman(){
                 abort("Snowman free-fight attempt limit reached.");
             mimicPrep(", -equip June cleaver, -equip Kramco Sausage-o-Matic");
             int turns = total_turns_played();
-            if (!adv1($location[The X-32-F Combat Training Snowman]) || current_round() > 0 || handling_choice())
+            int fights = to_int(get_property("_snojoFreeFights"));
+            if ((!adv1($location[The X-32-F Combat Training Snowman])
+                    && to_int(get_property("_snojoFreeFights")) <= fights)
+                || current_round() > 0 || handling_choice())
                 abort("Unfinished snowman encounter.");
             if (total_turns_played() != turns)
                 abort("A turn was spent in the snowman; stopping.");
