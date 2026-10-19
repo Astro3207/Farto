@@ -253,7 +253,7 @@ void main(){
     starter();
     step("phase: Organ phase 1");
     if (isFartScauce())
-        set_property("valueOfAdventure","6300");
+        set_property("valueOfAdventure","5400");
     equipBonesAndConsume();
     if (!contains_text(get_property("thoth19_event_list"),"overfull1"))
         cli_execute("ptrack add overfull1");

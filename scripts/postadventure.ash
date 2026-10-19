@@ -720,7 +720,7 @@ void postAdv(){
     }
     if (have_equipped($item[drunkula's wineglass]) && dayType() == 0)
         abort("Done for the day");
-    if (my_inebriety() < inebriety_limit() && dayType() != 0 && (get_property("familiarSweat").to_int() == 358 || get_property("familiarSweat").to_int() == 449)){
+    if (my_inebriety() < inebriety_limit() && dayType() != 0 && get_property("familiarSweat").to_int() >= (my_inebriety() < 10 ? 358 : 449)){
         visit_url("inventory.php?"+my_hash()+"&action=distill");
         run_choice(1);
     }

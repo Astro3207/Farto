@@ -231,32 +231,61 @@
         Singer's Faithful Ocelot, Leash of Linguini, Empathy, Thoughtful Empathy, Disco Leer,
         Polka of Plenty, Tubes of Universal Meat, Lubricating Sauce, Strength of the Tortoise,Musk of the Moose,Attracting Snakes];
 
+    boolean [effect] manaBurnEffectsD1 = $effects[Only Dogs Love a Drunken Sailor, Legendary Pasta Eyeball,
+        Singer's Faithful Ocelot, Leash of Linguini, Empathy, Thoughtful Empathy,
+        Polka of Plenty, Tubes of Universal Meat, Lubricating Sauce, Strength of the Tortoise,Musk of the Moose,Attracting Snakes,Quiet Desperation,Song of Bravado,Ur-Kel's Aria of Annoyance,Stevedave's Shanty of Superiority,
+    Disco Fever,Legendary Penne Fedora,The Moxious Madrigal,Pride of the Puffin,Slippery as a Seal,Blubbered Up,Mariachi Mood];
+
     void manaBurn(int reserve){
-        if (dayType() == 0 && periledLocations() contains $location[The Caliginous Abyss])
-            abort("add more effects here");
-        while (my_mp() > 800){
-            int turnEst = my_fullness() < fullness_limit() ? 1000 : my_adventures();
-            effect best = $effect[none];
-            foreach ef in manaBurnEffects {
-                skill sk = to_skill(ef);
-                int turns = have_effect(ef);
-                if (!have_skill(sk))
-                    continue;
-                if (turns >= turnEst || my_mp() - mp_cost(sk) < reserve)
-                    continue;
-                if (best == $effect[none] || turns < have_effect(best))
-                    best = ef;
+        if (dayType() == 0 && periledLocations() contains $location[The Caliginous Abyss]){
+            while (my_mp() > 800){
+                effect best = $effect[none];
+                foreach ef in manaBurnEffectsD1 {
+                    skill sk = to_skill(ef);
+                    int turns = have_effect(ef);
+                    if (!have_skill(sk))
+                        continue;
+                    if (turns >= my_adventures() || my_mp() - mp_cost(sk) < reserve)
+                        continue;
+                    if (best == $effect[none] || turns < have_effect(best))
+                        best = ef;
+                }
+                if (best == $effect[none])
+                    return;
+                skill burnSkill = to_skill(best);
+                int perCast = max(1, turns_per_cast(burnSkill));
+                int needed = ceil((my_adventures() - have_effect(best)) / to_float(perCast));
+                int casts = max(1, min(needed, (my_mp() - reserve) / mp_cost(burnSkill)));
+                int before = have_effect(best);
+                cli_execute(best.default.replace_string("cast 1 ", "cast " + casts + " "));
+                if (have_effect(best) <= before)
+                    return;
             }
-            if (best == $effect[none])
-                return;
-            skill burnSkill = to_skill(best);
-            int perCast = max(1, turns_per_cast(burnSkill));
-            int needed = ceil((turnEst - have_effect(best)) / to_float(perCast));
-            int casts = max(1, min(needed, (my_mp() - reserve) / mp_cost(burnSkill)));
-            int before = have_effect(best);
-            cli_execute(best.default.replace_string("cast 1 ", "cast " + casts + " "));
-            if (have_effect(best) <= before)
-                return;
+        } else if (dayType() == 1){
+            while (my_mp() > 800){
+                int turnEst = my_fullness() < fullness_limit() ? 1000 : my_adventures();
+                effect best = $effect[none];
+                foreach ef in manaBurnEffects {
+                    skill sk = to_skill(ef);
+                    int turns = have_effect(ef);
+                    if (!have_skill(sk))
+                        continue;
+                    if (turns >= turnEst || my_mp() - mp_cost(sk) < reserve)
+                        continue;
+                    if (best == $effect[none] || turns < have_effect(best))
+                        best = ef;
+                }
+                if (best == $effect[none])
+                    return;
+                skill burnSkill = to_skill(best);
+                int perCast = max(1, turns_per_cast(burnSkill));
+                int needed = ceil((turnEst - have_effect(best)) / to_float(perCast));
+                int casts = max(1, min(needed, (my_mp() - reserve) / mp_cost(burnSkill)));
+                int before = have_effect(best);
+                cli_execute(best.default.replace_string("cast 1 ", "cast " + casts + " "));
+                if (have_effect(best) <= before)
+                    return;
+            }
         }
     }
 
@@ -1149,6 +1178,8 @@
     }
 
     boolean free_Kill(){
+        if (my_inebriety() > inebriety_limit())
+            return false;
         if (have_effect($effect[everything looks red]) == 0 && bullseyeReady() && (my_adventures() > bullseyeCooldown() || dayType() == 1))
             return true;
         if (have_effect($effect[everything looks yellow]) == 0 && (my_adventures() > 100 || dayType() == 1))
