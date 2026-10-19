@@ -720,7 +720,7 @@ void postAdv(){
     }
     if (have_equipped($item[drunkula's wineglass]) && dayType() == 0)
         abort("Done for the day");
-    if (my_inebriety() < inebriety_limit() && dayType() != 0 && get_property("familiarSweat").to_int() >= 358){
+    if (my_inebriety() < inebriety_limit() && dayType() != 0 && (get_property("familiarSweat").to_int() == 358 || get_property("familiarSweat").to_int() == 449)){
         visit_url("inventory.php?"+my_hash()+"&action=distill");
         run_choice(1);
     }
@@ -868,12 +868,18 @@ void azazelUnicornQuest(){
     }
 }
 
+familiar bonusFam(){ //add CBB
+    if (get_property("_mapToACandyRichBlockDrops").to_int() < 1)
+        return $familiar[jill-of-all-trades];
+    return $familiar[mini kiwi];
+}
+
 void chargeFams(){
     if (!can_adventure($location[An Overgrown Shrine (Southeast)]))
         return;
     set_property("maxOverride","familiar weight");
     adv1($location[An Overgrown Shrine (Southeast)]);
-    use_familiar($familiar[mini kiwi]);
+    use_familiar(bonusFam());
     equip($item[antique machete]);
     visit_url("inventory.php?action=parachute");
     visit_url("choice.php?option=1&whichchoice=1543&monid=1426");
@@ -1088,7 +1094,7 @@ void spendAdv(){
                 set_property("mainOverride",", equip moss mace");
             retrieve_item($item[waffle]);
             retrieve_item($item[Septapus summoning charm]);
-            set_property("famOverride","mini kiwi");
+            set_property("famOverride",bonusFam().to_string());
             shadowRealm();
             set_property("mainOverride","");
             set_property("famOverride","");
@@ -1099,9 +1105,9 @@ void spendAdv(){
             foreach str in $strings[anemone,bar,reef,deepests,trench]{
                 if (get_property(pearls[str].donePref) == "false"){
                     set_property("famOverride","sword of s words");
-                    set_property("unconditionalOverride",pearls[str].ele_res + ", sea");
+                    set_property("maxOverride",pearls[str].ele_res + ", sea");
                     adv1(pearls[str].loc);
-                    set_property("unconditionalOverride","");
+                    set_property("maxOverride","");
                     break;
                 }
             }
@@ -1126,7 +1132,7 @@ void spendAdv(){
         cookbookbat();
     }
     if (free_run() && my_inebriety() <= inebriety_limit() && dayType() == 1){
-        if (have_effect($effect[citizen of a zone]) == 0 && numeric_modifier("familiar weight") < 55){
+        if (have_effect($effect[citizen of a zone]) == 0 && numeric_modifier("familiar weight") < 100){
             set_property("subscript","citizen");
             set_property("maxOverride","combat,-equip drunkula's wineglass");
             set_property("famOverride", "patriotic eagle");
