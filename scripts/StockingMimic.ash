@@ -163,6 +163,26 @@ void chibiHandling(){
         set_property("chibiChoice2","0");
     }
 }
+void campawayBuffs(){
+    if (!get_property("getawayCampsiteUnlocked").to_boolean())
+        return;
+    if (get_property("_campAwayCloudBuffs").to_int() == 0){
+        if (!cli_execute("campaway cloud") || get_property("_campAwayCloudBuffs").to_int() == 0)
+            abort("Your head's not in the clouds, man.");
+    }
+    for (int i = get_property("_campAwaySmileBuffs").to_int(); i < 3; i++){
+        if (!cli_execute("campaway smile") || get_property("_campAwaySmileBuffs").to_int() <= i)
+            abort("We are not yet smiley.");
+    }
+}
+
+void momBuff(){
+    if (get_property("questS02Monkees") != "finished" || get_property("_momFoodReceived").to_boolean())
+        return;
+    if (!cli_execute("mom stats") || have_effect($effect[Cereal Killer]) == 0)
+        abort("Mother Murder Training Incomplete");
+}
+
 void prepBuffs(){
     foreach ef in $effects[benetton's medley of diversity, inigo's incantation of inspiration]{
         if (have_effect(ef) > 0)
@@ -663,6 +683,12 @@ void FKPrep(){
             beretBusking("meat drop","Candied Teeth,Cool Catlike,Takin' It Greasy,Pharmaceutically Cool,Earthen Fist,Delayed Gratification,Work For Hours a Week,Stinking Cloud,Uncaged Power,Infernal Thirst");
         else
             beretBusking("15 familiar weight,meat drop",beretBuffs[get_property("_beretBuskingUses").to_int()].to_string());
+    }
+    if (dayType() == 0){
+        momBuff();
+        if (get_campground() contains $item[Witchess Set] && !get_property("_witchessBuff").to_boolean())
+            cli_execute("witchess buff");
+        campawayBuffs();
     }
 	prepBuffs();
 	monkeypaw("familiar weight");
@@ -2309,6 +2335,12 @@ void bulkFKD2(){
     starter();
     if (get_auto_attack() == 0)
         aa("facsimile");
+    if (get_campground() contains $item[Source Terminal])
+        cli_execute("terminal educate digitize.edu; terminal educate extract.edu");
+    momBuff();
+    if (get_campground() contains $item[Witchess Set] && !get_property("_witchessBuff").to_boolean())
+        cli_execute("witchess buff");
+    campawayBuffs();
     if (weakMonstersLeft())
         weakMonsters();
     step("phase: August Golem");
