@@ -710,12 +710,6 @@ void postAdv(){
     }
     if (have_equipped($item[drunkula's wineglass]) && dayType() == 0)
         abort("Done for the day");
-    if ($familiar[cooler yeti].experience >= 400 && get_property("_coolerYetiAdventures") == "false" && my_inebriety() <= (inebriety_limit() - 4) && my_fullness() >= 2 && get_property("script") != "FreeKill"){
-        cli_execute ("familiar cooler yeti");
-        visit_url("main.php?talktoyeti=1", false);
-        run_choice(2);
-        cli_execute("drink doc clock's t");
-    }
     if (my_inebriety() < inebriety_limit() && dayType() != 0 && get_property("familiarSweat").to_int() >= 358){
         visit_url("inventory.php?"+my_hash()+"&action=distill");
         run_choice(1);

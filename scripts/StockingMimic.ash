@@ -1295,9 +1295,8 @@ int locketFought(){
 // Reminisce copy targets until the day's cap: all 3 on dayType 0, 2 on dayType 1
 // so one is left for the Pocket Professor lecture in postadventure's spendAdv().
 void reminisce() {
-    int cap = dayType() == 1 ? 2 : 3;
     foreach mon in $monsters[Frozen Bag of Tortellini,Sausage goblin,black crayon golem, black crayon spiraling shape]{
-        if (locketFought() >= cap || locketAvailable() == 0)
+        if (locketFought() >= 3 || locketAvailable() == 0)
             break;
         if (get_property("_locketMonstersFought").contains_text(mon.to_int()))
             continue;
