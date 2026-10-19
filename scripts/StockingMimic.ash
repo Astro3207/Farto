@@ -222,6 +222,8 @@ void prepBuffs(){
     }
     //submoxie
     foreach ef in $effects[Wild and Westy!,Look At That Drunken Sailor Dance,Carol of the Thrills,Knowing Smile]{
+        if (ef == $effect[wild and westy!] && get_property("_photoBoothEquipment").to_int() == 3)
+            continue;
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
             continue;
         if (have_effect(ef) == 0)
