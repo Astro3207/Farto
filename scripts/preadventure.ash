@@ -362,6 +362,8 @@ void preAdv(){
         && have_effect($effect[eldritch attunement]) > 0
         && get_property("_eldritchTentaclesFoughtToday").to_int() >= (evokeReady() ? 10 : 11))
         cli_execute("uneffect eldritch attunement");
+    if (my_mp() > 1000)
+        manaburn(700);
     if (get_property("script") == "FreeKill" && my_fullness() == fullness_limit() && get_property("_pantsgivingFullness").to_int() < 2)
         stashgrab($item[pantsgiving]);
     // ── Familiar selection ────────────────────────────────────────────────────

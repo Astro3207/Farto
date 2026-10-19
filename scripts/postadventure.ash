@@ -742,12 +742,15 @@ void postAdv(){
         set_property("famOverride", "peace turkey");
         set_property("mainOverride",", equip june cleaver");
         set_property("acc1Override", ", equip spring shoes");
+        if (have_item($item[mime army infiltration glove]))
+            set_property("acc2Override", ", equip mime army infiltration glove");
         set_auto_attack(0);
         adv1($location[cobb's knob treasury]);
         set_property("maxOverride","");
         set_property("famOverride", "");
         set_property("mainOverride","");
         set_property("acc1Override", "");
+        set_property("acc2Override", "");
     }
 }
 
@@ -1122,12 +1125,17 @@ void spendAdv(){
             set_property("maxOverride","combat,-equip drunkula's wineglass");
             set_property("famOverride", "peace turkey");
             set_property("mainOverride",", equip june cleaver");
+            set_property("offOverride",", equip kramco");
             set_property("acc1Override", ", equip spring shoes");
+            if (have_item($item[mime army infiltration glove]))
+                set_property("acc2Override", ", equip mime army infiltration glove");
             adv1($location[cobb's knob treasury]);
             set_property("maxOverride","");
             set_property("famOverride", "");
             set_property("mainOverride","");
+            set_property("offOverride","");
             set_property("acc1Override", "");
+            set_property("acc2Override", "");
         }
     }
     if (my_adventures() < 60 && to_int(get_property("_bookOfFactsWishes")) < 3)

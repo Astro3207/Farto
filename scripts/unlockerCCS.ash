@@ -401,6 +401,7 @@ void main(int round, monster mob, string page_text) {
     if (last_monster() != $monster[shadow scythe] && last_monster() != $monster[shadow spire] && last_monster() != $monster[Guard turtle] && !have_equipped($item[backup camera])) {
         if (have_skill($skill[McHugeLarge Avalanche]))         use_skill($skill[McHugeLarge Avalanche]);
         if (have_skill($skill[Launch spikolodon spikes]))      use_skill($skill[Launch spikolodon spikes]);
+        if (my_primestat( ) == $stat[moxie] || have_equipped($item[mime army infiltration glove])) steal( );
         if (have_skill($skill[sing along]) && my_familiar() != $familiar[peace turkey] && my_familiar() != $familiar[pair of stomping boots] && chameleon() != $familiar[pair of stomping boots])      use_skill($skill[sing along]);
         if (have_skill($skill[Prepare to reanimate your Foe])) use_skill($skill[Prepare to reanimate your Foe]);
         if (item_amount($item[cosmic bowling ball]) > 0 && (have_effect($effect[Cosmic Ball in the Air]) < 22 || dayType() == 0)){

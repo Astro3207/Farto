@@ -2178,20 +2178,6 @@ void miscellaneousFams(){
     }
 }
 
-// Locations already scanned with the Peridot today. _perilLocations is a
-// comma-separated list of location ids; an empty property splits into one
-// blank entry, so skip anything that isn't a real id. Keyed by location so
-// callers can test membership with `contains`.
-boolean [location] periledLocations() {
-    boolean [location] periled;
-    foreach i, id in split_string(get_property("_perilLocations"), ","){
-        if (id.to_int() == 0)
-            continue;
-        periled[id.to_int().to_location()] = true;
-    }
-    return periled;
-}
-
 void peridotFishing(){
     string perilLocations;
     whitelist("Temporary");

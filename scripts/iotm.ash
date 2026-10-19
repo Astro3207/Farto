@@ -217,6 +217,48 @@
         return get_property("dayType").to_int();
     }
 
+    boolean [location] periledLocations() {
+        boolean [location] periled;
+        foreach i, id in split_string(get_property("_perilLocations"), ","){
+            if (id.to_int() == 0)
+                continue;
+            periled[id.to_int().to_location()] = true;
+        }
+        return periled;
+    }
+
+    boolean [effect] manaBurnEffects = $effects[Only Dogs Love a Drunken Sailor, Legendary Pasta Eyeball,
+        Singer's Faithful Ocelot, Leash of Linguini, Empathy, Thoughtful Empathy, Disco Leer,
+        Polka of Plenty, Tubes of Universal Meat, Lubricating Sauce, Strength of the Tortoise];
+
+    void manaBurn(int reserve){
+        if (dayType() == 0 && periledLocations() contains $location[The Caliginous Abyss])
+            abort("add more effects here");
+        while (my_mp() > 800){
+            effect best = $effect[none];
+            foreach ef in manaBurnEffects {
+                skill sk = to_skill(ef);
+                int turns = have_effect(ef);
+                if (!have_skill(sk))
+                    continue;
+                if (turns >= my_adventures() || my_mp() - mp_cost(sk) < reserve)
+                    continue;
+                if (best == $effect[none] || turns < have_effect(best))
+                    best = ef;
+            }
+            if (best == $effect[none])
+                return;
+            skill burnSkill = to_skill(best);
+            int perCast = max(1, turns_per_cast(burnSkill));
+            int needed = ceil((my_adventures() - have_effect(best)) / to_float(perCast));
+            int casts = max(1, min(needed, (my_mp() - reserve) / mp_cost(burnSkill)));
+            int before = have_effect(best);
+            cli_execute(best.default.replace_string("cast 1 ", "cast " + casts + " "));
+            if (have_effect(best) <= before)
+                return;
+        }
+    }
+
     
     boolean [effect] mlEffects = $effects[Ur-Kel's Aria of Annoyance, Pride of the Puffin,
         Bloodbathed, Misplaced Rage, Manbait, Sweetbreads Flamb&eacute;, Red Lettered,
