@@ -42,13 +42,13 @@ void stenchAirportFarm(){
 }
 
 void drunkInko(){
-    set_property("famOverride","sword of Swords");
+    if ((!have_familiar($familiar[robortender]) && get_property("commaFamiliar") == "Robortender") && my_inebriety() <= inebriety_limit())
+        set_property("famOverride","comma chameleon");
+    else if (have_familiar($familiar[Robortender]) && my_inebriety() <= inebriety_limit())
+        set_property("famOverride","robortender");
+    else
+        set_property("famOverride","sword of Swords");
     set_property("script","farto");
-    if (!everfullReady()) {
-        set_property("acc1Override",", equip everfull dart holster");
-    } else {
-        set_property("acc1Override","");
-    }
     if (have_effect($effect[driving waterproofly]) == 0)
         set_property("backOverride",", equip elf guard scuba tank");
     item banItem = $item[none];

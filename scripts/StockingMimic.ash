@@ -1105,7 +1105,7 @@ void pearloP1(){
     } else if (looseFK()){
         set_property("acc3Override",", equip " + timeBadge());
         set_property("subscript","looseFK");
-        foreach str in $strings[trench,bar]{
+        foreach str in $strings[anemone,trench,bar]{
             if (get_property(pearls[str].donePref) == "false" || str == "bar"){
                 resCheck(str);
                 altFam($familiar[stocking mimic]);
@@ -1143,7 +1143,7 @@ void pearloP3(){
         use($item[willyweed]);
     }
     banishFish();
-    foreach str in $strings[bar,anemone,trench]{
+    foreach str in $strings[reef,bar,anemone,trench]{
         if (get_property(pearls[str].donePref) == "false" || str == "trench" || (str == "bar" && get_property("acc3Override") != ", equip backup camera")){
             resCheck(str);
             adv1(pearls[str].loc);
@@ -1606,7 +1606,6 @@ void weakMonsters(){
     settleStance();
     string pick = fightPicker();
     while (pick != "done"){
-        // pearloP1() leaves subscript on "looseFK" -- re-assert it each pass.
         set_property("subscript","weakling");
 
         if (pick == "gingerbread"){

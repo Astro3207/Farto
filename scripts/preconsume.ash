@@ -166,8 +166,9 @@ void main(){
     if (dayType() == 1){
         cupOf13s();
         cli_execute("uneffect ur-kel");
-        astral();
+        abort("yeti handling");
         yeti();
+        astral();
         if (get_property("_borrowedTimeUsed") == false){
         //    use($item[borrowed time]);
         }
