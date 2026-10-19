@@ -179,7 +179,9 @@ void campawayBuffs(){
 void momBuff(){
     if (get_property("questS02Monkees") != "finished" || get_property("_momFoodReceived").to_boolean())
         return;
-    if (!cli_execute("mom stats") || have_effect($effect[Cereal Killer]) == 0)
+    string food = dayType() == 0 ? "critical" : "stats";
+    effect buff = dayType() == 0 ? $effect[Mark of Candy Cain] : $effect[Cereal Killer];
+    if (!cli_execute("mom " + food) || have_effect(buff) == 0)
         abort("Mother Murder Training Incomplete");
 }
 
