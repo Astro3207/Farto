@@ -149,6 +149,8 @@ void cowo(){
 void inko(){
     setDropWeighting($location[The Marinara Trench]);
     set_property("famOverride","");
+    if (!have_familiar($familiar[robortender]))
+        altFam($familiar[robortender]);
     if (!everfullReady()) {
         set_property("acc1Override",", equip everfull dart holster");
     } else {

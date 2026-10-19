@@ -408,7 +408,7 @@ void preAdv(){
     // ── Familiar equip helper ─────────────────────────────────────────────────
         string famEquip(){
             if (get_property("famEquipOverride") != "") return get_property("famEquipOverride");
-            if (have_effect($effect[driving waterproofly]) == 0 && my_location().environment == "underwater" && my_familiar() != $familiar[comma chameleon]) return ", equip little bitty bathysphere";
+            if (contains_text(get_property("maxOverride"), "sea")) return "";
             if (my_familiar() == $familiar[skeleton of crimbo past]) return ", equip small peppermint-flavored sugar walking crook";
             if (my_familiar() == $familiar[cooler yeti] || my_familiar() == $familiar[chest mimic]) return ", equip toy cupid bow";
             if (my_familiar() == $familiar[mini kiwi]) return ", equip aviator goggles";
