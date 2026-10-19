@@ -432,10 +432,6 @@ void lianas(){
                 if (!($strings[chest mimic, cooler yeti] contains get_property("famOverride"))){
                     if (get_property("screechCombats").to_int() > 0)
                         set_property("famOverride","patriotic eagle");
-                    else{
-                        set_property("famOverride","cooler yeti");
-                        return;
-                    }
                 }
                 n += 1;
                 adv1(loc);

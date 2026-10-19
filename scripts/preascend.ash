@@ -74,13 +74,9 @@ void spendGrimacePrimeMaps(){
     equip($item[angelbone totem]);
     int n = item_amount($item[Map to Safety Shelter Grimace Prime]);
     while (my_adventures() > n){
-        if (have_effect($effect[fishy]) > 0 && get_property("_swordOfSWordsKills").to_int() < 100){
-            drunkInko();
-        }else{
-            set_property("famOverride","skeleton of crimbo past");
-            set_property("maxOverride","meat drop");
-            adv1($location[the skeleton store]);
-        }
+        set_property("famOverride","skeleton of crimbo past");
+        set_property("maxOverride","drops items");
+        adv1($location[the skeleton store]);
     }
     finisher();
     if (item_amount($item[Map to Safety Shelter Grimace Prime]) > 0){
