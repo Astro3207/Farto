@@ -1574,7 +1574,10 @@ void neverendingParty(){
                 abort("NEP free-fight attempt limit reached.");
             mimicPrep(extraMax);
             int turns = total_turns_played();
-            if (!adv1($location[The Neverending Party]) || current_round() > 0 || handling_choice())
+            int fights = to_int(get_property("_neverendingPartyFreeTurns"));
+            if ((!adv1($location[The Neverending Party])
+                    && to_int(get_property("_neverendingPartyFreeTurns")) <= fights)
+                || current_round() > 0 || handling_choice())
                 abort("Unfinished NEP encounter.");
             if (total_turns_played() != turns)
                 abort("A turn was spent in NEP; stopping.");
