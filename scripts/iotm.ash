@@ -1167,7 +1167,7 @@
     }
 
     boolean delay(){
-        if (wanderer() || free_Run())
+        if (wanderer() || (free_Run() && dayType() == 0))
             return true;
         return false;
     }

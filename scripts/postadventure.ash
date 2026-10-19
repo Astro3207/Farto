@@ -90,8 +90,18 @@ void shadowRealm(){
         if (get_property("encountersUntilSRChoice").to_int() == 0){
             if (get_property("rufusQuestTarget") == "shadow scythe" || get_property("rufusQuestTarget") == "shadow spire")
                 set_property("acc2Override",", equip Drunkula's ring of haze");
+            else if (get_property("rufusQuestTarget") == "shadow orrery")
+                use($item[null-day]);
             set_property("acc3Override",", equip congressional medal");
         }
+        adv1($location[Shadow Rift (The Misspelled Cemetary)]);
+    }
+    if (get_property("encountersUntilSRChoice").to_int() == 0){
+        if (get_property("rufusQuestTarget") == "shadow scythe" || get_property("rufusQuestTarget") == "shadow spire")
+            set_property("acc2Override",", equip Drunkula's ring of haze");
+        else if (get_property("rufusQuestTarget") == "shadow orrery")
+            use($item[null-day]);
+        set_property("acc3Override",", equip congressional medal");
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
     }
     if (get_property("questRufus") == "step1" && get_property("_shadowAffinityToday") == "true") {
@@ -727,7 +737,7 @@ void postAdv(){
         altFam($familiar[stocking mimic]);
         adv1($location[cobb's knob treasury]);
     }
-    if (have_item($item[cosmic bowling ball]) && dayType() == 1 && have_effect($effect[Cosmic Ball in the Air]) >= 22 && my_inebriety() <= inebriety_limit()){
+    if (have_item($item[cosmic bowling ball]) && dayType() == 1 && get_property("script") == "FreeKill" && my_inebriety() <= inebriety_limit()){
         set_property("maxOverride","combat,-equip drunkula's wineglass");
         set_property("famOverride", "peace turkey");
         set_property("mainOverride",", equip june cleaver");
@@ -1049,7 +1059,6 @@ void spendAdv(){
     if (dayType() == 1 && delay() && get_property("seaAftercore") == "true"){
         delayPrep();
         adv1($location[cobb's knob treasury]);
-
         set_property("mainOverride","");
         set_property("offOverride","");
         set_property("acc3Override","");
