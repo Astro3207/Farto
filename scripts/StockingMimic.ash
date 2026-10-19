@@ -220,6 +220,13 @@ void prepBuffs(){
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
+    //submoxie
+    foreach ef in $effects[Wild and Westy!,Look At That Drunken Sailor Dance,Carol of the Thrills,Knowing Smile]{
+        if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
+            continue;
+        if (have_effect(ef) == 0)
+            cli_execute(ef.default);
+    }
     foreach ef in $effects[Bow-Legged Swagger,null afternoon]{
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)) && to_skill(ef) != $skill[Bow-Legged Swagger])
             continue;
