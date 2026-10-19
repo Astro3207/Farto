@@ -18,5 +18,5 @@ if (my_basestat($stat[moxie]) < 200 || my_basestat($stat[mysticality]) < 200) {
 }
 cli_execute("breakfast; breakfast.ash");
 if (item_amount($item[Platinum Yendorian Express Card]) > 0){
-    stashreturn();
+    stashreturn($item[Platinum Yendorian Express Card]);
 }

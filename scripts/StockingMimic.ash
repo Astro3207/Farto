@@ -467,9 +467,9 @@ void dieting(){
             drink($item[Temps Tempranillo]);
         drink(inebriety_limit() - my_inebriety(), $item[Temps Tempranillo]);
         if (my_fullness() == fullness_limit() && get_property("_pantsgivingFullness").to_int() < 1){
-            if (item_amount($item[pantsgiving]) == 0)
+            if (available_amount($item[pantsgiving]) == 0)
                 stashgrab($item[pantsgiving]);
-            if (item_amount($item[pantsgiving]) > 0){
+            if (available_amount($item[pantsgiving]) > 0){
                 equip($item[pantsgiving]);
                 use_familiar($familiar[patriotic eagle]);
                 retrieve_item($item[dish of clarified butter]);
@@ -2158,9 +2158,9 @@ void miscellaneousFams(){
             }
             altFam($familiar[Pair of Stomping Boots]);
             if (get_property("_pantsgivingCount").to_int() < 50){
-                if (item_amount($item[pantsgiving]) == 0)
+                if (available_amount($item[pantsgiving]) == 0)
                     stashgrab($item[pantsgiving]);
-                if (item_amount($item[pantsgiving]) > 0)
+                if (available_amount($item[pantsgiving]) > 0)
                     set_property("pantsOverride",", equip pantsgiving");
             } else if (get_property("sweat").to_int() < 90)
                 set_property("pantsOverride",", equip designer sweatpants");
