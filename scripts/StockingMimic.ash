@@ -900,11 +900,6 @@ void shadowRealmFK(){
             if (get_property("noncombatForcerActive") == "true" || get_property("encountersUntilSRChoice").to_int() == 0){
                 set_auto_attack(0);
                 shadowBoss();
-            } else {
-                if (have_effect($effect[fishy]) < 840)
-                    set_property("mainOverride",", equip monodent");
-                else
-                    set_property("mainOverride","");
             }
         }
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
@@ -1000,6 +995,9 @@ boolean uneffectBuff(){
     return have_effect(toRemove) == 0;
 }
 boolean looseFK(){
+    if (get_property("mainOverride") == ", equip legendary seal-clubbing club"
+        || get_property("mainOverride") == ", equip The Jokester's gun")
+        set_property("mainOverride", "");
     set_property("maxOverride","familiar weight, equip eternity codpiece");
     if (have_effect($effect[everything looks red]) == 0){
         set_property("maxOverride","familiar weight, equip everfull dart holster");
@@ -1029,12 +1027,12 @@ boolean looseFK(){
     }
     if (get_property("_firedJokestersGun") == false){
         print ("FK is jokester's gun");
-        set_property("maxOverride","familiar weight, equip eternity codpiece, equip jokester's gun");
+        set_property("mainOverride", ", equip The Jokester's gun");
         return true;
     }
     if (get_property("_clubEmTimeUsed").to_int() < 5){
         print ("FK is club em back in time");
-        set_property("maxOverride","familiar weight, equip eternity codpiece, equip legendary seal-clubbing");
+        set_property("mainOverride", ", equip legendary seal-clubbing club");
         return true;
     }
     if (get_property("_shadowBricksUsed").to_int() < 13){
