@@ -504,8 +504,13 @@ void constructBanish(){
         set_property("famOverride","patriotic eagle");
         set_property("maxOverride","ml, -10 familiar weight, -equip drunkula's wineglass,-equip backup camera");
         set_property("acc3Override",",equip spring shoes");
+        string famEquip = get_property("famEquipOverride");
         set_property("famEquipOverride",", equip little bitty bathysphere");
-        adv1($location[Madness Bakery],0,"");
+        try {
+            adv1($location[Madness Bakery],0,"");
+        } finally {
+            set_property("famEquipOverride",famEquip);
+        }
         set_property("acc3Override","");
     }
     set_property("subscript","");
@@ -1025,7 +1030,7 @@ void spendAdv(){
             set_property("pantsOverride",", equip really nice swim");
             set_property("acc1Override",", equip black glass");
             set_property("acc2Override",", equip peridot");
-            set_property("famEquipOverride",", equip little bitty bathy");
+            set_property("famEquipOverride", available_amount($item[das boot]) > 0 ? ", equip das boot" : ", equip little bitty bathysphere");
             if (numeric_modifier("monster level").to_int() != 10)
                 tuneML(10);
             adventure($location[the caliginous abyss],1);
