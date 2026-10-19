@@ -162,9 +162,9 @@ boolean oneMore(){
 }
 
 void eatSausage(){
-    if (get_property("_sausagesEaten").to_int() < 23){
-        int n = 23- get_property("_sausagesEaten").to_int();
-        eat(n,$item[magical sausage]);
+    while (get_property("_sausagesEaten").to_int() < 23){
+        eat(1,$item[magical sausage]);
+        manaBurn(700);
     }
 }
 

@@ -231,16 +231,18 @@
         Singer's Faithful Ocelot, Leash of Linguini, Empathy, Thoughtful Empathy, Disco Leer,
         Polka of Plenty, Tubes of Universal Meat, Lubricating Sauce, Strength of the Tortoise,Musk of the Moose,Attracting Snakes];
 
-    boolean [effect] manaBurnEffectsD1 = $effects[Only Dogs Love a Drunken Sailor, Legendary Pasta Eyeball,
+    boolean [effect] manaBurnEffectsD1 = $effects[Only Dogs Love a Drunken Sailor,
         Singer's Faithful Ocelot, Leash of Linguini, Empathy, Thoughtful Empathy,
         Polka of Plenty, Tubes of Universal Meat, Lubricating Sauce, Strength of the Tortoise,Musk of the Moose,Attracting Snakes,Quiet Desperation,Song of Bravado,Ur-Kel's Aria of Annoyance,Stevedave's Shanty of Superiority,
-    Disco Fever,Legendary Penne Fedora,The Moxious Madrigal,Pride of the Puffin,Slippery as a Seal,Blubbered Up,Mariachi Mood];
+        Drescher's Annoying Noise,Legendary Penne Fedora,Pride of the Puffin,Slippery as a Seal,Blubbered Up,Mariachi Mood,Big,Blubbered Up,Disco State of Mind];
 
     void manaBurn(int reserve){
-        if (dayType() == 0 && periledLocations() contains $location[The Caliginous Abyss]){
+        if (dayType() == 0){
             while (my_mp() > 800){
                 effect best = $effect[none];
                 foreach ef in manaBurnEffectsD1 {
+                    if (!(periledLocations() contains $location[The Caliginous Abyss]) && (ef == $effect[Ur-Kel's Aria of Annoyance]|| ef ==$effect[Drescher's Annoying Noise]))
+                        continue;
                     skill sk = to_skill(ef);
                     int turns = have_effect(ef);
                     if (!have_skill(sk))
@@ -1155,6 +1157,7 @@
                     if (cinchRestLoopCount++ > 50)
                         abort("NCforce: cincho rest-down looped over 50 times with no progress -- camp rest free is probably failing");
                     cli_execute("familiar Skeleton of Crimbo Past; unequip hat; equip apriling band helmet; camp rest free");
+                    manaBurn(700);
                 }
                 if (to_int(get_property("_cinchUsed")) <= 40) {
                     equip($slot[acc3], $item[cincho de mayo]);
