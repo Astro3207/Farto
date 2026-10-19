@@ -969,6 +969,14 @@ monster lowDrop(){
     return targets[0].mon;
 }
 
+boolean pearlsDone(){
+    foreach str in $strings[anemone,bar,reef,deepests,trench]{
+        if (get_property(pearls[str].donePref) == "false")
+            return false;
+    }
+    return true;
+}
+
 // Burn the turn on the next task in priority order: forced NCs, spooky-forest
 // delay, the Azazel push, Black Forest / Guild loops, spikolodon temple, in-run
 // free kills, Shadow Rift, cookbookbat, Book of Facts wishes, then level 11.
@@ -1084,6 +1092,16 @@ void spendAdv(){
             set_property("backOverride","");
             set_property("acc2Override","");
             set_property("acc3Override","");
+        } else if (!pearlsDone()){
+            foreach str in $strings[anemone,bar,reef,deepests,trench]{
+                if (get_property(pearls[str].donePref) == "false"){
+                    set_property("famOverride","sword of s words");
+                    set_property("unconditionalOverride",pearls[str].ele_res + ", sea");
+                    adv1(pearls[str].loc);
+                    set_property("unconditionalOverride","");
+                    break;
+                }
+            }
         } else if (dayType() == 1){
             set_property("maxOverride","item drop,sea");
             set_property("famOverride","sword of s words");

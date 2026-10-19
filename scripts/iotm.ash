@@ -229,19 +229,20 @@
 
     boolean [effect] manaBurnEffects = $effects[Only Dogs Love a Drunken Sailor, Legendary Pasta Eyeball,
         Singer's Faithful Ocelot, Leash of Linguini, Empathy, Thoughtful Empathy, Disco Leer,
-        Polka of Plenty, Tubes of Universal Meat, Lubricating Sauce, Strength of the Tortoise];
+        Polka of Plenty, Tubes of Universal Meat, Lubricating Sauce, Strength of the Tortoise,Musk of the Moose,Attracting Snakes];
 
     void manaBurn(int reserve){
         if (dayType() == 0 && periledLocations() contains $location[The Caliginous Abyss])
             abort("add more effects here");
         while (my_mp() > 800){
+            int turnEst = my_fullness() < fullness_limit() ? 1000 : my_adventures();
             effect best = $effect[none];
             foreach ef in manaBurnEffects {
                 skill sk = to_skill(ef);
                 int turns = have_effect(ef);
                 if (!have_skill(sk))
                     continue;
-                if (turns >= my_adventures() || my_mp() - mp_cost(sk) < reserve)
+                if (turns >= turnEst || my_mp() - mp_cost(sk) < reserve)
                     continue;
                 if (best == $effect[none] || turns < have_effect(best))
                     best = ef;
@@ -250,7 +251,7 @@
                 return;
             skill burnSkill = to_skill(best);
             int perCast = max(1, turns_per_cast(burnSkill));
-            int needed = ceil((my_adventures() - have_effect(best)) / to_float(perCast));
+            int needed = ceil((turnEst - have_effect(best)) / to_float(perCast));
             int casts = max(1, min(needed, (my_mp() - reserve) / mp_cost(burnSkill)));
             int before = have_effect(best);
             cli_execute(best.default.replace_string("cast 1 ", "cast " + casts + " "));
