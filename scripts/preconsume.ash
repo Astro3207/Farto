@@ -93,13 +93,27 @@ void partialConsume(int leaveStomach, int leaveLiver, int leaveSpleen){
 }
 
 void yeti(){
-    if ($familiar[cooler yeti].experience > 400 && get_property("_coolerYetiAdventures") == "false"){
+    if (get_property("coolerYetiMode") == "adventures"){
         if (my_fullness() < 2)
             cli_execute("CONSUME ORGANS 2 3 0");
-        use_familiar($familiar[cooler yeti]);
-        visit_url("main.php?talktoyeti=1", false);    
-        run_choice(2);
-        cli_execute("drink doc clock's t");
+        retrieve_item($item[doc clock's thyme cocktail]);
+        drink($item[doc clock's thyme cocktail]);
+    }
+    if ($familiar[cooler yeti].experience > 400 && get_property("_coolerYetiAdventures") == "false"){
+        if (get_property("_docClocksThymeCocktailDrunk") == "false"){
+            if (my_fullness() < 2)
+                cli_execute("CONSUME ORGANS 2 3 0");
+            use_familiar($familiar[cooler yeti]);
+            visit_url("main.php?talktoyeti=1", false);    
+            run_choice(2);
+            cli_execute("drink doc clock's t");
+        } else {
+            use_familiar($familiar[cooler yeti]);
+            visit_url("main.php?talktoyeti=1", false);    
+            run_choice(2);
+            retrieve_item($item[Hodgman's blanket]);
+            drink($item[Hodgman's blanket]);
+        }
     }
 }
 
@@ -166,7 +180,6 @@ void main(){
     if (dayType() == 1){
         cupOf13s();
         cli_execute("uneffect ur-kel");
-        abort("yeti handling");
         yeti();
         astral();
         if (get_property("_borrowedTimeUsed") == false){
