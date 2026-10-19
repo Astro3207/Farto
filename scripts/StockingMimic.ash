@@ -910,6 +910,7 @@ void shadowRealmFK(){
     }
     if (get_property("questRufus") == "step1") {
         use($item[closed-circuit pay phone]);
+        altFam($familiar[stocking mimic]);
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
     }
     if (get_property("_shadowAffinityToday") == false)

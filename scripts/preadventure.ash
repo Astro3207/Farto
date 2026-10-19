@@ -381,7 +381,7 @@ void preAdv(){
             } else if (numeric_modifier("familiar weight") > 49 || dayType() == 0){
                 if (have_familiar($familiar[robortender]))
                     use_familiar($familiar[robortender]);
-                else
+                else if (get_property("commaFamiliar") == "" || (my_familiar() == $familiar[comma chameleon] && chameleon() == $familiar[none]))
                     altFam($familiar[robortender]);
             } else if ($familiar[cooler yeti].experience < 400 && get_property("_coolerYetiAdventures") == "false" && (dayType() == 0 || inebriety_limit() - 4 > my_inebriety())){
                 use_familiar($familiar[cooler yeti]);
