@@ -882,6 +882,13 @@
             + "&slot%5B7%5D=" + slots[7]);
     }
 
+    string nextTrainStation(){
+        string [int] stations = split_string(get_property("trainsetConfiguration"), ",");
+        if (stations.count() != 8)
+            return "";
+        return stations[get_property("trainsetPosition").to_int() % 8];
+    }
+
     // Locket
 
     int locketAvailable(){

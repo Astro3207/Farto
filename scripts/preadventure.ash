@@ -408,13 +408,13 @@ void preAdv(){
     // ── Familiar equip helper ─────────────────────────────────────────────────
         string famEquip(){
             if (get_property("famEquipOverride") != "") return get_property("famEquipOverride");
-            if (contains_text(get_property("maxOverride"), "sea")) return "";
+            if (my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[robortender]) return "";
+            if (contains_text(get_property("maxOverride"), "sea")) return ", equip das boot";
             if (my_familiar() == $familiar[skeleton of crimbo past]) return ", equip small peppermint-flavored sugar walking crook";
             if (my_familiar() == $familiar[cooler yeti] || my_familiar() == $familiar[chest mimic]) return ", equip toy cupid bow";
             if (my_familiar() == $familiar[mini kiwi]) return ", equip aviator goggles";
             if (my_familiar() == $familiar[Hobo in Sheep's Clothing]) return ", equip half-height cigar";
             if (my_familiar() == $familiar[stocking mimic]) return ", equip bag of many confections";
-            if (my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[robortender]) return "";
             if (my_familiar() == $familiar[none] || my_familiar() == $familiar[purse rat] || get_property("maxOverride") == "-combat" || get_property("maxOverride") == "combat") return "";
             return ", equip Li'l Businessman Kit";
         }
@@ -650,7 +650,8 @@ void preAdv(){
         outfit("farming");
     } else {
         if (!maximize(maximize.to_string(), false))
-            abort();
+            if (!maximize(maximize.to_string(), false))
+                abort();
         set_property("savedMaximizer",maximize.to_string());
         cli_execute("outfit save farming");
     }

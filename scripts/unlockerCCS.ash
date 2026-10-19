@@ -2,7 +2,7 @@ import iotm.ash;
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 
-void sauce(int n) { print("ccs sauce(" + n + ")"); for i from 1 to n { use_skill($skill[saucegeyser]); } }
+void sauce(int n) { for i from 1 to n { use_skill($skill[saucegeyser]); } }
 void attack(int n)   { for i from 1 to n { attack(); } }
 void hurt(int n)  { for i from 1 to n { throw_items($item[new age hurting crystal],$item[new age hurting crystal]); } }
 void heal_hurt()  { throw_items($item[new age healing crystal],$item[new age hurting crystal]); }
@@ -258,7 +258,6 @@ void replace(){
 
 void main(int round, monster mob, string page_text) {
     if (mob == $monster[Sssshhsssblllrrggghsssssggggrrgglsssshhssslblgl]){
-        print("ccs 1");
         if (have_effect($effect[Crappily Disguised as a Waiter]) > 0){
             skill finisher = my_buffedstat($stat[Muscle]) > my_buffedstat($stat[Mysticality])
                 && (current_hit_stat() == $stat[Muscle] || item_type(equipped_item($slot[weapon])) == "knife")
@@ -271,7 +270,6 @@ void main(int round, monster mob, string page_text) {
         return;
     }
     if (($skills[Macrometeorite, CHEAT CODE: Replace Enemy] contains to_skill(get_property("subscript"))) && last_monster() != copyTarget){
-        print("ccs 2");
         skill replacer = to_skill(get_property("subscript"));
         if (my_location() != $location[Noob Cave] || last_monster() != $monster[crate]
             || replacer == $skill[none] || !have_skill(replacer))
@@ -284,7 +282,6 @@ void main(int round, monster mob, string page_text) {
     print ("monster level is "+ numeric_modifier("monster level"));
     print ("high stat is " + max(my_buffedstat($stat[muscle]),my_buffedstat($stat[mysticality]),my_buffedstat($stat[moxie])));
     if (last_monster() == $monster[school of many] && my_familiar() == $familiar[vampire vintner]){
-        print("ccs 3");
         if (current_round() == 1){
             throw_items($item[grody jug],$item[pufferfish spine]);
         }
@@ -299,7 +296,6 @@ void main(int round, monster mob, string page_text) {
         throw_item($item[shard of double-ice]);
     }
     if (last_monster() == copyTarget){
-        print("ccs 4");
         if (get_property("_monsterHabitatsFightsLeft") == 0 && to_int(get_property("_monsterHabitatsRecalled")) < 3){
             use_skill($skill[RECALL FACTS: MONSTER HABITATS]);
         } else if (get_property("_monsterHabitatsFightsLeft") == 0 && get_property("beGregariousFightsLeft").to_int() == 0 && get_property("beGregariousCharges").to_int() > gregsToSave() && dayType() == 1){
@@ -315,12 +311,10 @@ void main(int round, monster mob, string page_text) {
     if (to_monster(get_property("lastCopyableMonster")) == copyTarget2 && get_property("beGregariousFightsLeft").to_int() > 0)
         replace();
     if (last_monster() == copyTarget2){
-        print("ccs 5");
         if (gregsToSave().to_boolean() == true && get_property("beGregariousMonster").to_monster() != copyTarget2 && get_property("beGregariousCharges").to_int() > 0)
             use_skill($skill[Be Gregarious]);
     }
     if ($locations[cyberzone 1,cyberzone 2,cyberzone 3] contains my_location()){
-        print("ccs 6");
         if (last_monster().phylum == $phylum[construct]){
             while (current_round() > 0 && current_round() < 10 && my_hp( ) > my_maxhp()/10)
                 use_skill($skill[throw cyber rock]);
@@ -330,7 +324,6 @@ void main(int round, monster mob, string page_text) {
         }
     }
     if ($location[The Hidden Bowling Alley] == my_location()){
-        print("ccs 7");
         if (last_monster() == $monster[pygmy bowler]){
             use_skill($skill[Show them your ring]);
         }
@@ -346,7 +339,6 @@ void main(int round, monster mob, string page_text) {
     };
 
     if (get_property("subscript") == "screech" && last_monster().phylum == ScreechCheck[my_location()]){
-        print("ccs 8");
         if (contains_text(last_monster().attributes,"WANDERER"))
             abort("wanderer");
         use_skill($skill[%fn, Release the Patriotic Screech!]);
@@ -367,7 +359,6 @@ void main(int round, monster mob, string page_text) {
         }
     }
     if (get_property("subscript") == "stompingBoots"){
-        print("ccs 9");
         if (last_monster() == $monster[infinite meat bug])
             abort();
         if (have_skill($skill[Bowl a Curveball]))
@@ -376,7 +367,6 @@ void main(int round, monster mob, string page_text) {
     }
 
     if (get_property("script") == "FreeKill"){
-        print("ccs 10");
         if (last_monster() == $monster[shadow spire] || last_monster() == $monster[shadow scythe]){
             if (have_equipped($item[wicker slicker])){
                 while (current_round() > 0 && current_round() < 10)
@@ -402,7 +392,6 @@ void main(int round, monster mob, string page_text) {
     }
 
     if (get_property("subscript") == "citizen"){
-        print("ccs 11");
         use_skill($skill[%fn, let's pledge allegiance to a Zone]);
         free_run(page_text);
     }
@@ -412,7 +401,6 @@ void main(int round, monster mob, string page_text) {
     // are kept ahead of this whole group so they still apply before every branch in it, same
     // as they did before this section existed as its own block.
     if (last_monster() != $monster[shadow scythe] && last_monster() != $monster[shadow spire] && last_monster() != $monster[Guard turtle] && !have_equipped($item[backup camera])) {
-        print("ccs 12");
         if (have_skill($skill[McHugeLarge Avalanche]))         use_skill($skill[McHugeLarge Avalanche]);
         if (have_skill($skill[Launch spikolodon spikes]))      use_skill($skill[Launch spikolodon spikes]);
         if (my_primestat( ) == $stat[moxie] || have_equipped($item[mime army infiltration glove])) steal( );
@@ -424,12 +412,10 @@ void main(int round, monster mob, string page_text) {
         if (to_int(last_monster()) == to_int(get_property("killThisGuy")) && get_property("swordSniff") == true)
             use_skill($skill[%fn, kill a lot of these guys]);
     } else if (last_monster() == $monster[shadow spire]){
-        print("ccs 13");
         sauce(4);
     }
 
     if (get_property("script") == "FreeKill" && have_equipped($item[backup camera]) && last_monster() != copyTarget2 && (to_monster(get_property("lastCopyableMonster")) == copyTarget || to_monster(get_property("lastCopyableMonster")) == copyTarget2)){
-        print("ccs 14");
         if (is_banished(copyTarget2))
             use_skill($skill[spring kick]);
         use_skill($skill[BACK-UP TO YOUR LAST ENEMY]);
@@ -444,7 +430,6 @@ void main(int round, monster mob, string page_text) {
         use_skill($skill[Steal Monster's Heart]);
 
     if ((my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[stocking mimic]) && (last_monster() == $monster[flaming monstera] || last_monster() == $monster[leaviathan])){
-        print("ccs 15");
         while (current_round() > 0 && current_round() < 10 && monster_hp() > 9)
             throw_item($item[facsimile dictionary]);
         throw_items($item[lit leaf lasso],$item[lit leaf lasso]);
@@ -453,7 +438,6 @@ void main(int round, monster mob, string page_text) {
     }
 
     if ((my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[stocking mimic]) && get_property("subscript") == "weakling"){
-        print("ccs 16");
         if (have_skill($skill[Prepare to reanimate your Foe])) use_skill($skill[Prepare to reanimate your Foe]);
         while (current_round() > 0 && current_round() < 30 && monster_hp() > 9){
             if (have_equipped($item[april shower thoughts shield]))
@@ -506,7 +490,6 @@ void main(int round, monster mob, string page_text) {
     }
 
     if ((chameleon() == $familiar[pocket professor] || my_familiar() == $familiar[pocket professor])){
-        print("ccs 17");
         use_skill($skill[lecture on relativity]);
         if (dayType() == 1)
             use_skill($skill[deliver your thesis!]);
@@ -519,7 +502,6 @@ void main(int round, monster mob, string page_text) {
     }
 
     if ((my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[stocking mimic]) && get_property("script") == "FreeKill"){
-        print("ccs 18");
         if (my_location().zone == "Shadow Rift" && last_monster().boss == false)
             use_skill($skill[swoop like a bat]);
         while (current_round() > 0 && current_round() < 30 && monster_hp() > 9 && have_equipped($item[april shower thoughts shield])){
@@ -578,7 +560,6 @@ void main(int round, monster mob, string page_text) {
         return;
     }
     if (last_monster() == $monster[witchess bishop] || last_monster() == $monster[sausage goblin] || last_monster() == $monster[witchess rook] || last_monster() == $monster[witchess pawn] || last_monster() == $monster[witchess knight]) {
-        print("ccs 19");
         if (have_effect($effect[everything looks purple]) == 0 && have_equipped($item[roman candelabra])) use_skill($skill[Blow the Purple Candle!]);
         if (have_equipped($item[legendary seal-clubbing club]))
             use_skill($skill[Club 'Em Into Next Week]); 
@@ -586,14 +567,12 @@ void main(int round, monster mob, string page_text) {
     }
 
     if (last_monster() == $monster[void guy] || last_monster() == $monster[void slab] || last_monster() == $monster[void spider]) {
-        print("ccs 20");
         if (have_equipped($item[legendary seal-clubbing club]) && get_property("_voidFreeFights").to_int() < 4 && dayType() == 0)
             use_skill($skill[Club 'Em Into Next Week]); 
         sauce(2); attack(5); return;
     }
 
     if (my_location() == $location[The Laugh Floor] || my_location() == $location[Infernal Rackets Backstage] || my_location() == $location[The Dark Elbow of the Woods]){
-        print("ccs 21");
         if (dayType() == 0 && my_class() == $class[seal clubber]){
             use_skill($skill[Sea *dent: Talk to Some Fish]);
         }
@@ -601,7 +580,6 @@ void main(int round, monster mob, string page_text) {
 
     // ── Category: pure sauce locations ────────────────────────────────────────
     if (sauceLocs[my_location()] || sauceMobs[last_monster()]) {
-        print("ccs 22");
         if (!free_monster() && !free_location() && (my_location() != $location[The Laugh Floor] || last_monster().boss == false)){
             free_run(page_text);
         }
@@ -613,26 +591,22 @@ void main(int round, monster mob, string page_text) {
     }
 
     if (get_property("BoFaWishRWB") == "true"){
-        print("ccs 23");
         use_skill($skill[%fn, fire a Red, White and Blue Blast]);
     }
 
     if (last_monster() == $monster[%monster%] && last_monster() == $monster[God Lobster]){
-        print("ccs 24");
         sauce(5);
         return;
     }
 
     // ── Category: pure hurt locations/monsters ────────────────────────────────
     if (hurtLocs[my_location()] || hurtMobs[last_monster()]) {
-        print("ccs 25");
         while (current_round() > 0) hurt(1);
         return;
     }
 
     // Garbo
     if (my_location() == $location[barf mountain]){
-        print("ccs 26");
         if (have_skill($skill[pocket crumbs]) && to_int(get_property("_pantsgivingCrumbs")) < 9)
             use_skill($skill[pocket crumbs]);
         if (my_familiar() == $familiar[patriotic eagle])
@@ -650,7 +624,6 @@ void main(int round, monster mob, string page_text) {
     }
 
     if ($locations[cyberzone 1, cyberzone 2,cyberzone 3] contains my_location()){
-        print("ccs 27");
         if (have_equipped($item[heartstone]) && (last_monster() == $monster[greyhat hacker] || last_monster() == $monster[bluehat hacker]))
             use_skill($skill[Steal Monster's Heart]);
         if (get_property("_cyberFreeFights").to_int() == 9)
@@ -660,7 +633,6 @@ void main(int round, monster mob, string page_text) {
     }
 
     if (my_location() == $location[the red zeppelin]){
-        print("ccs 28");
         if (to_int(get_property("_glarkCableUses")) < 5)
             throw_item($item[glark cable]);
         if (last_monster() == $monster[red skeleton]){
@@ -674,7 +646,6 @@ void main(int round, monster mob, string page_text) {
     // ── Category: Dread (Woods, Village, Castle share opener) ─────────────────
     if ($locations[Dreadsylvanian Woods, Dreadsylvanian Village,
         Dreadsylvanian Castle] contains my_location()) {
-        print("ccs 29");
         free_run(page_text);
         free_kill(page_text);
         if (last_monster() != $monster[hot werewolf])
@@ -723,7 +694,6 @@ void main(int round, monster mob, string page_text) {
 
     // ── Category: Hobopolis ───────────────────────────────────────────────────
     if (my_location().zone == "Hobopolis") {
-        print("ccs 30");
         if (last_monster() == $monster[Frosty]) {
             throw_items($item[cinnamon troll doll],       $item[grape troll doll]);
             throw_items($item[blue raspberry troll doll], $item[bag of gross foreign snacks]);
@@ -795,7 +765,6 @@ void main(int round, monster mob, string page_text) {
 
     // Spacegate
     if (my_location() == $location[Through the Spacegate]){
-        print("ccs 31");
         if (last_monster() == $monster[spant soldier])
             abort();
         sauce(6);
@@ -804,7 +773,6 @@ void main(int round, monster mob, string page_text) {
 
     // ── Category: FantasyRealm ────────────────────────────────────────────────
     if (my_location().zone == "FantasyRealm") {
-        print("ccs 32");
         if (my_location() == $location[The Barrow Mounds])  { runaway(); return; }
         if (my_location() == $location[The Troll Fortress]) { for i from 1 to 4 { use_skill($skill[Awesome Balls of Fire]); } return; }
         if (last_monster() == $monster[Flock of every birds])          { for i from 1 to 9 { use_skill($skill[garbage nova]); } return; }
@@ -817,7 +785,6 @@ void main(int round, monster mob, string page_text) {
 
     // ── Category: Gingerbread City ────────────────────────────────────────────
     if (my_location().zone == "Gingerbread City") {
-        print("ccs 33");
         if ($monsters[gingerbread convict, gingerbread finance bro,
             gingerbread gentrifier, gingerbread lawyer,
             gingerbread tech bro, judge fudge] contains last_monster()
@@ -829,7 +796,6 @@ void main(int round, monster mob, string page_text) {
 
     // ── Category: Glaciest ────────────────────────────────────────────────────
     if (my_location().zone == "The Glaciest") {
-        print("ccs 34");
         free_run(page_text);
         free_kill(page_text);
         if (my_location() == $location[the ice hotel]) {
@@ -849,7 +815,6 @@ void main(int round, monster mob, string page_text) {
 
     // ── Category: Spring Break Beach ────────────────────────────────────────────────────
     if (my_location().zone == "Spring Break Beach") {
-        print("ccs 35");
         if (my_location() == $location[The Fun-Guy Mansion]) {
                 float minHP = to_float(my_maxhp())*0.8872;
                 if (my_hp() < minHP){
@@ -898,7 +863,6 @@ void main(int round, monster mob, string page_text) {
     // ── Individual locations / monsters ───────────────────────────────────────
 
     if (last_monster() == $monster[black crayon spiraling shape]){
-        print("ccs 36");
         while (my_familiar() == $familiar[chest mimic] && to_int(get_property("_mimicEggsObtained")) < 11 && $familiar[chest mimic].experience > 100){
             use_skill($skill[%fn, lay an egg]);
         }
@@ -907,12 +871,10 @@ void main(int round, monster mob, string page_text) {
     }
 
     if (last_monster() == $monster[giant sandworm]){
-        print("ccs 37");
         sauce(6);
         return;
     }
     if (my_location()== $location[Convention Hall Lobby]){
-        print("ccs 38");
         while (current_round() > 0){
             throw_item($item[bottle of G&uuml;-Gone]);
         }
@@ -920,7 +882,6 @@ void main(int round, monster mob, string page_text) {
     }
 
     if (my_location()== $location[The Outer Compound]){
-        print("ccs 39");
         while (current_round() > 0){
             use_skill($skill[Apprivoisez la tortue]);
         }
@@ -928,7 +889,6 @@ void main(int round, monster mob, string page_text) {
     }
 
     if (my_location() == $location[The Slime Tube]) {
-        print("ccs 40");
         // After a uvula is tickled we carry the rusty grave robbing shovel to
         // squeeze a gall bladder; doing so spends the shovel and empties the
         // weapon slot. Once it's gone, advance <clanId>Tickled to "done" so
@@ -958,7 +918,6 @@ void main(int round, monster mob, string page_text) {
     }
 
     if (my_location() == $location[Domed City of Grimacia]) {
-        print("ccs 41");
         if (last_monster().phylum == $phylum[horror])
             use_skill($skill[%fn, Release the Patriotic Screech!]);
         else {
@@ -971,7 +930,6 @@ void main(int round, monster mob, string page_text) {
     }
 
     if (my_location() == $location[The Broodling Grounds]) {
-        print("ccs 42");
         if (last_monster() == $monster[hellseal pup]) {
             throw_item($item[seal tooth]);
             throw_item($item[seal tooth]);
@@ -981,17 +939,14 @@ void main(int round, monster mob, string page_text) {
     }
 
     if (my_location() == $location[The Brinier Deepers]) {
-        print("ccs 43");
         if (last_monster() == $monster[trophyfish]) abort();
         return;
     }
     if (my_location() == $location[Mer-kin Elementary School]) {
-        print("ccs 44");
         if (contains_text(get_property("banishedMonsters"),"hacker"))
             use_skill($skill[Sea *dent: Throw a Lightning Bolt]);
     }
     if (my_location() == $location[cobb's knob treasury]){
-        print("ccs 45");
         if (last_monster() == $monster[Knob Goblin Embezzler])
             attack(5);
         else
@@ -1000,11 +955,9 @@ void main(int round, monster mob, string page_text) {
     if ($locations[The Dungeons of Doom] contains my_location())
         free_run(page_text);
     if (my_location() == $location[the black forest]){
-        print("ccs 46");
         free_kill(page_text);
     }
     if (my_location() == $location[the coral corral]){
-        print("ccs 47");
         if (!contains_text(get_property("banishedPhyla"), "fish")){
             if (last_monster() == $monster[mer-kin rustler])
                 use_skill(combatBan());
@@ -1019,7 +972,6 @@ void main(int round, monster mob, string page_text) {
         return;
     }
     if (my_location() == $location[the marinara trench]){
-        print("ccs 48");
         if (!contains_text(get_property("banishedPhyla"), "fish")){
             if ($monsters[diving belle,fisherfish] contains last_monster())
                 use_skill(combatBan());
@@ -1040,12 +992,10 @@ void main(int round, monster mob, string page_text) {
         return;
     }
     if (my_location() == $location[Anemone Mine]){
-        print("ccs anemone");
         free_kill(page_text);
     }
 
     if (my_location() == $location[Shadow Rift (The Nearby Plains)]) {
-        print("ccs 49");
         if (last_monster() == $monster[shadow scythe]) sauce(2);
         if (last_monster() == $monster[shadow orrery])
             attack(20);
@@ -1062,7 +1012,6 @@ void main(int round, monster mob, string page_text) {
         return;
     }
     if (my_location() == $location[Shadow Rift (The Misspelled Cemetary)]) {
-        print("ccs 50");
         steal();
         if (last_monster() == $monster[shadow scythe]) abort();
         if (last_monster() == $monster[shadow orrery]) {
@@ -1096,11 +1045,10 @@ void main(int round, monster mob, string page_text) {
         return;
     }
 
-    if (my_location() == $location[The Spooky Forest]) { print("ccs 51"); free_run(page_text); return; }
-    if (my_location() == $location[The Outskirts of Cobb's Knob]) { print("ccs 52"); free_run(page_text);}
+    if (my_location() == $location[The Spooky Forest]) { free_run(page_text); return; }
+    if (my_location() == $location[The Outskirts of Cobb's Knob]) { free_run(page_text);}
 
     if (my_location() == $location[Investigating a Plaintive Telegram]) {
-        print("ccs 53");
         if (last_monster() == $monster[Former Sheriff Dan Driscoll])  attack(18);
         if (last_monster() == $monster[Snake-Eyes Glenn])             for i from 1 to 6 { use_skill($skill[grease lightning]); }
         if (last_monster() == $monster[Clara])                        for i from 1 to 6 { use_skill($skill[eggsplosion]); }
@@ -1112,7 +1060,6 @@ void main(int round, monster mob, string page_text) {
     }
 
     if (my_location() == $location[The Primordial Soup]) {
-        print("ccs 54");
         if (last_monster() == $monster[Cyrus the Virus]) {
             foreach it in $items[memory of a CT base pair, memory of a CG base pair,
                 memory of a CA base pair, memory of a GT base pair,
@@ -1126,7 +1073,6 @@ void main(int round, monster mob, string page_text) {
     }
 
     if (my_location() == $location[the deep dark jungle]) {
-        print("ccs 55");
         if (get_property("_questESp") == "questESpSmokes") {
             if (last_monster() != $monster[smoke monster] && last_monster() != $monster[Mercenary of Fortune])
                 use_skill(combatBan());
@@ -1140,14 +1086,12 @@ void main(int round, monster mob, string page_text) {
     }
 
     if (my_location() == $location[The Mansion of Dr. Weirdeaux]) {
-        print("ccs 56");
         if (get_property("_questESp") == "questESpClipper")
             for i from 1 to 3 { throw_item($item[military-grade fingernail clippers]); }
         sauce(3); return;
     }
 
     if (my_location() == $location[The Tower of Procedurally-Generated Skeletons]) {
-        print("ccs 57");
         if (contains_text(get_property("lastEncounter"),"shiny")
             || contains_text(get_property("lastEncounter"),"disorienting")) {
             if (contains_text(get_property("lastEncounter"),"dancing")) abort();
@@ -1161,17 +1105,14 @@ void main(int round, monster mob, string page_text) {
     }
 
     if (my_location() == $location[the nightmare meatrealm]) {
-        print("ccs 58");
         use_skill($skill[spring away]); runaway(); return;
     }
 
     if ($strings[Le Marais D&egrave;gueulasse] contains my_location().zone) {
-        print("ccs 59");
         sauce(3); return;
     }
 
     // ── Fallback ──────────────────────────────────────────────────────────────
-    print("ccs fallback");
     insta_kill(page_text);
     sauce(30);
     attack();

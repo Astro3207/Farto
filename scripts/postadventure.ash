@@ -1112,7 +1112,7 @@ void spendAdv(){
                 }
             }
         } else if (dayType() == 1){
-            set_property("maxOverride","item drop,sea");
+            set_property("maxOverride","item drop,sea,-tie");
             set_property("famOverride","sword of s words");
             adv1($location[the marinara trench]);
             set_property("famOverride","");
@@ -1144,7 +1144,7 @@ void spendAdv(){
             set_property("famOverride", "");
             set_property("mainOverride","");
             set_property("acc1Override", "");
-        } else {
+        } else if (nextTrainStation() != "meat_mine"){
             set_property("maxOverride","combat,-equip drunkula's wineglass");
             set_property("famOverride", "peace turkey");
             set_property("mainOverride",", equip june cleaver");
