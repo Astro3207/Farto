@@ -564,6 +564,7 @@
         "DreadNugget" : 2047010986,
         "Dreadway" : 2047010667,
         "Fart Sauce Annex" : 2047010939,
+        "Best Friends Club" : 2047009940,
         "Temporary" : 2047011181,
         "homeclan" : get_property("homeClanID").to_int()
     };
@@ -572,42 +573,66 @@
         visit_url("showclan.php?whichclan="+clan_to_ID[clan]+"&action=joinclan&confirm=on");
     }
 
-    // stashgrab / stashreturn hop to a specific shared-stash clan (2047009940) and
-    // back. Only Fart Scauce is whitelisted there and wants this side effect, so
-    // they are no-ops on any other account.
+    // Items stashgrab() took and still owes back, as comma-separated item ids in
+    // stashReturnTemporary / stashReturnBFC. Properties instead of globals because
+    // the grab (preadventure) and the return (farto, finisher) run as separate scripts.
+    int [item] stashOwed(string prop){
+        int [item] owed;
+        foreach i, id in split_string(get_property(prop), ","){
+            if (id.to_int() != 0)
+                owed[id.to_int().to_item()] += 1;
+        }
+        return owed;
+    }
+
+    void stashOwedAdd(string prop, item it){
+        string current = get_property(prop);
+        set_property(prop, (current == "" ? "" : current + ",") + it.to_int());
+    }
+
     void stashgrab(item it){
-        if (!isFartScauce()) return;
-        visit_url("showclan.php?whichclan=2047009940&action=joinclan&confirm=on");
-        if (stash_amount(it) > 0)
-            take_stash(it, 1 );
-        visit_url("showclan.php?whichclan=" + get_property("homeClanID").to_int() + "&action=joinclan&confirm=on");
-        if (get_property("_clanFortuneConsultUses") == 0){
-            cli_execute("/whitelist Bonus Adventures from Hell");
-            visit_url("showclan.php?whichclan=" + get_property("homeClanID").to_int() + "&action=joinclan&confirm=on");
-        }}
+        whitelist("Temporary");
+        if (stash_amount(it) > 0) {
+            if (take_stash(it, 1))
+                stashOwedAdd("stashReturnTemporary", it);
+        } else if (isFartScauce()){
+            whitelist("Best Friends Club");
+            if (stash_amount(it) > 0 && take_stash(it, 1))
+                stashOwedAdd("stashReturnBFC", it);
+        }
+        whitelist("homeclan");
+    }
 
+    // Puts back what one ledger owes -- only `only`, or everything when it is
+    // $item[none] -- keeping in the ledger whatever wasn't returned.
+    void stashReturnTo(string clan, string prop, item only){
+        string unreturned;
+        foreach it, n in stashOwed(prop){
+            boolean returning = only == $item[none] || it == only;
+            if (returning){
+                whitelist(clan);
+                cli_execute("unequip "+ it);
+            }
+            for i from 1 to n {
+                if (returning && available_amount(it) > 0 && put_stash(it, 1))
+                    continue;
+                unreturned += (unreturned == "" ? "" : ",") + it.to_int();
+            }
+        }
+        set_property(prop, unreturned);
+    }
+
+    // Returns only `it` to whichever stash it came from; other borrowed items stay.
     void stashreturn(item it){
-        if (!isFartScauce()) return;
-        visit_url("showclan.php?whichclan=2047009940&action=joinclan&confirm=on");
-        cli_execute("unequip "+ it);
-        if (available_amount(it) > 0)
-            put_stash(it, 1 );
-        visit_url("showclan.php?whichclan=" + get_property("homeClanID").to_int() + "&action=joinclan&confirm=on");}
-
-    void stashgrab2(item it){
-        whitelist("Temporary");
-        if (stash_amount(it) > 0)
-            take_stash(it, 1 );
+        stashReturnTo("Temporary", "stashReturnTemporary", it);
+        stashReturnTo("Best Friends Club", "stashReturnBFC", it);
         whitelist("homeclan");
-        }
+    }
 
-    void stashreturn2(item it){
-        whitelist("Temporary");
-        cli_execute("unequip "+ it);
-        if (available_amount(it) > 0)
-            put_stash(it, 1 );
-        whitelist("homeclan");
-        }
+    // Returns everything stashgrab() borrowed.
+    void stashreturn(){
+        stashreturn($item[none]);
+    }
 
     // Returns the number of chamois available in the clan slime tube
     int chamoixAmount() {
@@ -1561,7 +1586,7 @@
         foreach slotName in $strings[unconditional, max, fam, hat, main, weapon, off, back, shirt, pants, acc1, acc2, acc3, famEquip] {
             set_property(slotName + "Override", "");
         }
-        stashreturn($item[pantsgiving]);
+        stashreturn();
         set_property("inSpendAdv","false");
     }
 

@@ -116,7 +116,7 @@ void garbo(){
     }
     if ((to_int(get_property("_pantsgivingCount")) >= 500) || (to_int(get_property("_pantsgivingCount")) >= 50 && dayType() == 0)){
         if (available_amount($item[pantsgiving]) > 0)
-            stashreturn($item[pantsgiving]);
+            stashreturn();
     }
     adv1($location[barf mountain],0,"");
 }
@@ -132,7 +132,7 @@ void cowo(){
     if ((to_int(get_property("_pantsgivingCount")) >= 500 && dayType() == 1)
             || (to_int(get_property("_pantsgivingCount")) >= 50 && dayType() == 0))
         if (available_amount($item[pantsgiving]) > 0)
-            stashreturn($item[pantsgiving]);
+            stashreturn();
     item banItem = $item[none];
     if (!contains_text(get_property("banishedMonsters"),"Mer-kin rustler")
         || !contains_text(get_property("banishedMonsters"),"sea cowboy"))
@@ -157,7 +157,7 @@ void inko(){
     if ((to_int(get_property("_pantsgivingCount")) >= 500 && dayType() == 1)
             || (to_int(get_property("_pantsgivingCount")) >= 50 && dayType() == 0))
         if (available_amount($item[pantsgiving]) > 0)
-            stashreturn($item[pantsgiving]);
+            stashreturn();
     item banItem = $item[none];
     if (!contains_text(get_property("banishedMonsters"),"fisherfish")
         || !contains_text(get_property("banishedMonsters"),"diving belle"))
@@ -234,6 +234,5 @@ void main(){
         }
     } finally {
         finisher();
-        stashreturn($item[pantsgiving]);
     }
 }

@@ -364,7 +364,7 @@ void preAdv(){
         cli_execute("uneffect eldritch attunement");
     if (my_mp() > 1000)
         manaburn(700);
-    if (get_property("script") == "FreeKill" && my_fullness() == fullness_limit() && get_property("_pantsgivingFullness").to_int() < 2)
+    if (get_property("script") == "FreeKill" && my_fullness() == fullness_limit() && get_property("_pantsgivingFullness").to_int() < 2 && available_amount($item[pantsgiving]) == 0)
         stashgrab($item[pantsgiving]);
     // ── Familiar selection ────────────────────────────────────────────────────
         if (my_familiar() != $familiar[stooper]){

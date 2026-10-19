@@ -716,10 +716,10 @@ void FKPrep(){
 	step("phase: FKPrep stash pops");
 	// Stash-borrowed one-a-day item pops.
 	foreach it in $items[defective Game Grid token, BittyCar MeatCar, Platinum Yendorian Express Card]{
-		stashgrab2(it);
+		stashgrab(it);
 		if (have_item(it))
 			use(it);
-		stashreturn2(it);
+		stashreturn(it);
 	}
 
     if (get_property("questPAGhost") == "unstarted" && !have_item($item[protonic accelerator pack])
@@ -2394,7 +2394,6 @@ void bulkFKD2(){
     eldritchFights();
     step("phase: peridot fishing");
     peridotFishing();
-    stashreturn($item[pantsgiving]);
     if (!contains_text(get_property("thoth19_event_list"),"postFKD2"))
         cli_execute("ptrack add postFKD2");
     codpiece("none");
@@ -2507,7 +2506,6 @@ void bulkFKD1(){
         seals();
     }
     eldritchFights();
-    stashreturn($item[pantsgiving]);
     if (!contains_text(get_property("thoth19_event_list"),"postFKD1"))
         cli_execute("ptrack add postFKD1");
     codpiece("none");
@@ -2533,7 +2531,6 @@ void main(){
             set_property("script","FreeKill");
             FKPrep();
             if (!contains_text(get_property("thoth19_event_list"),"postprepD2")){
-                stashreturn($item[pantsgiving]);
                 cli_execute("ptrack add postprepD2");
             }else if (!contains_text(get_property("thoth19_event_list"),"postprepD1") && dayType() == 0)
                 cli_execute("ptrack add postprepD1");
