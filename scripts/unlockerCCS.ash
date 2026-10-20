@@ -973,6 +973,11 @@ void main(int round, monster mob, string page_text) {
         cleanUp();
         return;
     }
+    if (my_location() == $location[guano junction]){
+        if (have_equipped($item[shrunken head]))
+            use_skill($skill[Prepare to reanimate your Foe]);
+        free_kill(page_text);
+    }
     if (my_location() == $location[the marinara trench]){
         if (!contains_text(get_property("banishedPhyla"), "fish")){
             if ($monsters[diving belle,fisherfish] contains last_monster())

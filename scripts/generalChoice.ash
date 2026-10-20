@@ -465,6 +465,8 @@ void main(int whichchoice, string page) {
                 run_choice(1, "bandersnatch=1748");
             if (my_location() == $location[barf mountain])
                 run_choice(1, "bandersnatch=1760");
+            if (my_location() == $location[guano junction])
+                run_choice(1, "bandersnatch="+ to_int($monster[doughbat]));
             if (my_location() == $location[the marinara trench] && my_class() == $class[accordion thief])
                 run_choice(1, "bandersnatch=763");
             else {

@@ -741,6 +741,10 @@ void preAdv(){
         visit_url("inv_equip.php?pwd="+my_hash()+"&which=2&action=equip&whichitem=4329");
     }
 
+        if (get_property("shrunkenHeadZombieMonster") == "doughbat" && have_effect($effect[Juiced]) == 0){
+            use($item[mer-kin cooljuice]);
+        }
+
         //monster level
         foreach ef in $effects[Ur-Kel's Aria of Annoyance,Pride of the Puffin,Bloodbathed,Misplaced Rage,Manbait,Sweetbreads Flamb&eacute;,Red Lettered,Spangled Star,Tortious,Litterbug,Not Sharing,Para-lyzed Jaw,Contemptible Emanations,Lapdog,Ashen Burps,The Cupcake of Wrath,Gelded,Mysteriously Handsome]{
             if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))

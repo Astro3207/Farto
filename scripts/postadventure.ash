@@ -90,11 +90,16 @@ void shadowRealm(){
         if (get_property("encountersUntilSRChoice").to_int() == 0){
             if (get_property("rufusQuestTarget") == "shadow scythe" || get_property("rufusQuestTarget") == "shadow spire")
                 set_property("acc2Override",", equip Drunkula's ring of haze");
-            else if (get_property("rufusQuestTarget") == "shadow orrery")
+            else if (get_property("rufusQuestTarget") == "shadow orrery"){
                 use($item[null-day exploit]);
+                set_property("unconditionalOverride","prismatic damage, elemental damage");
+            }
+
             set_property("acc3Override",", equip congressional medal");
         }
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
+        set_property("unconditionalOverride","");
+        set_property("acc3Override","");
     }
     if (get_property("encountersUntilSRChoice").to_int() == 0){
         if (get_property("rufusQuestTarget") == "shadow scythe" || get_property("rufusQuestTarget") == "shadow spire")
@@ -316,6 +321,34 @@ void BoFaWish(){
             return;
         }
     }
+}
+
+void shrunkenDoughbat(){
+    if (get_property("shrunkenHeadZombieMonster") != "" || !have_item($item[shrunken head]))
+        return;
+    if (periledLocations() contains $location[Guano Junction])
+        abort("Guano Junction peridot already used today.");
+    if (!can_adventure($location[Guano Junction]))
+        abort("Can't adventure in Guano Junction.");
+    set_property("maxOverride","item drop");
+    set_property("offOverride",", equip shrunken head");
+    set_property("acc1Override",", equip peridot of peril");
+    set_property("famOverride","sword of s words");
+    set_property("choiceAdventure1557","1&bandersnatch=" + to_int($monster[doughbat]));
+    adv1($location[Guano Junction]);
+    clearOverrides();
+    if (get_property("shrunkenHeadZombieMonster") != "doughbat")
+        abort("Shrunken head zombie is " + get_property("shrunkenHeadZombieMonster") + ", not doughbat.");
+}
+
+boolean setupVykea(){
+    if (get_property("_VYKEACompanionLevel").to_int() > 0)
+        return true;
+
+    if (!retrieve_item(1,$item[VYKEA hex key]))
+        return false;
+
+    return cli_execute("create level 5 couch");
 }
 
 // Send the autumn-aton to the next zone that still grants an upgrade (parsing the
@@ -1096,7 +1129,9 @@ void spendAdv(){
             azazelUnicornQuest();
         
         if (dayType() == 1 && get_property("shrunkenHeadZombieMonster") == ""){
-            abort("Do shrunken head and VYKEA");
+            shrunkenDoughbat();
+            if (get_property("_VYKEACompanionName") == "")
+                setupVykea();
         } else if (dayType() == 1 && get_property("_batWingsSwoopUsed").to_int() < 11){
             set_property("maxOverride","item drop");
             if (available_amount($item[Flash Liquidizer Ultra Dousing Accessory]) == 0)
