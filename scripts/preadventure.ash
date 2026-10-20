@@ -252,7 +252,8 @@ float laughingValue(){
     return 0.02 * (0.1 * classic + 0.9 * basic);
 }
 
-float pointerRingValue(){
+// Average base meat of the meat-dropping monsters at the current location.
+float locationBaseMeat(){
     float meat;
     int n;
     foreach i, m in get_monsters(my_location()){
@@ -260,9 +261,26 @@ float pointerRingValue(){
         meat += meat_drop(m);
         n++;
     }
-    if (n == 0) return 0;
-    meat /= n;
+    return n == 0 ? 0 : meat / n;
+}
+
+float pointerRingValue(){
+    float meat = locationBaseMeat();
+    if (meat == 0) return 0;
     return meat >= 500 ? 700 : meat >= 100 ? 500 : 300;
+}
+
+// Pantogram pants: the pants' own meat plus whatever their familiar weight adds
+// to the current familiar's meat drop, as a share of this location's base meat.
+// Both are read off the pants, since the pantogram roll can change.
+float pantogramValue(){
+    item pants = $item[pantogram pants];
+    int weight = familiar_weight(my_familiar()) + weight_adjustment();
+    int extra = numeric_modifier(pants, "familiar weight").to_int();
+    if (have_equipped(pants)) weight -= extra;
+    float famMeat = numeric_modifier(my_familiar(), "meat drop", weight + extra, equipped_item($slot[familiar]))
+        - numeric_modifier(my_familiar(), "meat drop", weight, equipped_item($slot[familiar]));
+    return (numeric_modifier(pants, "meat drop") + famMeat) / 100 * locationBaseMeat();
 }
 
 // Ordnance magnet: 25% of fights drop one of these combat items, picked evenly.
@@ -339,6 +357,7 @@ string bonusGear(){
     }
 
     bonus[$item[Pantsgiving]] = pantsgivingValue();
+    bonus[$item[pantogram pants]] = pantogramValue();
 
     bonus[$item[mafia pointer finger ring]] = pointerRingValue();
     bonus[$item[lucky gold ring]] = LGRValue();
@@ -355,6 +374,17 @@ string bonusGear(){
         out.append(", " + to_string(value, "%.2f") + " \"bonus " + it + "\"");
     }
     return out.to_string();
+}
+
+// acc2Override as the maximizer should see it. mimicPrep() parks the eternity
+// codpiece there and its callers don't clear it, so it only counts while the
+// fight is still a mimic setup (maxOverride starts with "familiar weight");
+// otherwise acc2 falls through to its normal choices.
+string acc2Override(){
+    string acc2 = get_property("acc2Override");
+    if (contains_text(acc2, "eternity codpiece") && !get_property("maxOverride").starts_with("familiar weight"))
+        return "";
+    return acc2;
 }
 
 void preAdv(){
@@ -412,8 +442,7 @@ void preAdv(){
                 && !my_familiar().underwater
                 && have_effect($effect[Wet Willied]) == 0
                 && have_effect($effect[Driving Waterproofly]) == 0
-                && !(boolean_modifier("Underwater Familiar")
-                    && !boolean_modifier(equipped_item($slot[familiar]),"Underwater Familiar")))
+                && !(boolean_modifier("Underwater Familiar")))
                 return available_amount($item[das boot]) > 0 ? ", equip das boot" : ", equip little bitty bathysphere";
             if (my_familiar() == $familiar[skeleton of crimbo past]) return ", equip small peppermint-flavored sugar walking crook";
             if (my_familiar() == $familiar[cooler yeti] || my_familiar() == $familiar[chest mimic]) return ", equip toy cupid bow";
@@ -537,8 +566,8 @@ void preAdv(){
         // Acc2
         if (have_equipped($item[angelbone chopsticks]))
             append(maximize, ", equip angelbone chopsticks");
-        else if (get_property("acc2Override") != "")
-            append(maximize, get_property("acc2Override"));
+        else if (acc2Override() != "")
+            append(maximize, acc2Override());
         // Acc3
         if (have_equipped($item[devilbone rosary]))
             append(maximize, ", equip devilbone rosary");
@@ -573,8 +602,6 @@ void preAdv(){
                 append(maximize, ", equip Drunkula's wineglass");
             else if (get_property("offOverride") != "")
                 append(maximize, get_property("offOverride"));
-            else if (get_property("shrunkenHeadZombieMonster") == "" && get_property("script") != "6-kiss" && item_amount($item[shrunken head]) > 0 && my_adventures() > 50)
-                append(maximize, ", equip shrunken head");
             else if (clubEmExact && have_effect($effect[everything looks purple]) == 0)
                 append(maximize, ", equip roman candelabra");
             else if ((get_property("cursedMagnifyingGlassCount").to_int() < 13 && get_property("_voidFreeFights").to_int() < 5 && dayType() == 1) || (get_property("cursedMagnifyingGlassCount").to_int() < 4 && dayType() == 0))
@@ -624,8 +651,8 @@ void preAdv(){
             // Acc2
             if (have_equipped($item[angelbone chopsticks]))
                 append(maximize, ", equip angelbone chopsticks");
-            else if (get_property("acc2Override") != "")
-                append(maximize, get_property("acc2Override"));
+            else if (acc2Override() != "")
+                append(maximize, acc2Override());
             else if (have_equipped($item[angelbone dice]))
                 append(maximize, ", equip mafia thumb ring");
             else if (avalancheReady)
@@ -714,6 +741,10 @@ void preAdv(){
         visit_url("inv_equip.php?pwd="+my_hash()+"&which=2&action=equip&whichitem=4329");
     }
 
+        if (get_property("shrunkenHeadZombieMonster") == "doughbat" && have_effect($effect[Juiced]) == 0){
+            use($item[mer-kin cooljuice]);
+        }
+
         //monster level
         foreach ef in $effects[Ur-Kel's Aria of Annoyance,Pride of the Puffin,Bloodbathed,Misplaced Rage,Manbait,Sweetbreads Flamb&eacute;,Red Lettered,Spangled Star,Tortious,Litterbug,Not Sharing,Para-lyzed Jaw,Contemptible Emanations,Lapdog,Ashen Burps,The Cupcake of Wrath,Gelded,Mysteriously Handsome]{
             if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
@@ -774,8 +805,11 @@ void preAdv(){
     if (item_amount($item[Arr\, M80]) < 60)
         retrieve_item(70,$item[Arr\, M80]);
 
-    if (get_property("maxOverride") == "-mus,-mys,-mox"){
-        set_property("maxOverride","");
+    if (contains_text(get_property("maxOverride"),"combat") && !contains_text(get_property("maxOverride"),"-combat")){
+        if (have_effect($effect[Carlweather's Cantata of Confrontation]) == 0)
+            use_skill($skill[Carlweather's Cantata of Confrontation]);
+        if (numeric_modifier("combat rate") < 15)
+            abort("combat rate too low, see what you can do to buff");
     }
 }
 

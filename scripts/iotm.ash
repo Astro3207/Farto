@@ -227,8 +227,8 @@
         return periled;
     }
 
-    boolean [effect] manaBurnEffects = $effects[Only Dogs Love a Drunken Sailor, Legendary Pasta Eyeball,
-        Singer's Faithful Ocelot, Leash of Linguini, Empathy, Thoughtful Empathy, Disco Leer,
+    boolean [effect] manaBurnEffects = $effects[Only Dogs Love a Drunken Sailor, Legendary Pasta Eyeball,disco fever,Mariachi Mood,Blubbered Up,
+        Singer's Faithful Ocelot, Leash of Linguini, Empathy, Thoughtful Empathy, Disco Leer,Song of Bravado,Slippery as a Seal,Big,
         Polka of Plenty, Tubes of Universal Meat, Lubricating Sauce, Strength of the Tortoise,Musk of the Moose,Attracting Snakes];
 
     boolean [effect] manaBurnEffectsD1 = $effects[Only Dogs Love a Drunken Sailor,
@@ -1230,7 +1230,8 @@
         }
         if (item_amount($item[apriling band saxophone]) > 0 && get_property("_aprilBandSaxophoneUses").to_int() < 3)
             cli_execute("aprilband play saxophone");
-        if (numeric_modifier("Meat drop") > 4400){
+        int n = mall_price($item[11-leaf clover])/700;
+        if (n < (numeric_modifier($modifier[meat drop])/100 + 1)){
             use($item[11-leaf clover]);
             return;
         }

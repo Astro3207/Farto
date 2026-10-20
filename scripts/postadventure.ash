@@ -90,17 +90,22 @@ void shadowRealm(){
         if (get_property("encountersUntilSRChoice").to_int() == 0){
             if (get_property("rufusQuestTarget") == "shadow scythe" || get_property("rufusQuestTarget") == "shadow spire")
                 set_property("acc2Override",", equip Drunkula's ring of haze");
-            else if (get_property("rufusQuestTarget") == "shadow orrery")
-                use($item[null-day]);
+            else if (get_property("rufusQuestTarget") == "shadow orrery"){
+                use($item[null-day exploit]);
+                set_property("unconditionalOverride","prismatic damage, elemental damage");
+            }
+
             set_property("acc3Override",", equip congressional medal");
         }
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
+        set_property("unconditionalOverride","");
+        set_property("acc3Override","");
     }
     if (get_property("encountersUntilSRChoice").to_int() == 0){
         if (get_property("rufusQuestTarget") == "shadow scythe" || get_property("rufusQuestTarget") == "shadow spire")
             set_property("acc2Override",", equip Drunkula's ring of haze");
         else if (get_property("rufusQuestTarget") == "shadow orrery")
-            use($item[null-day]);
+            use($item[null-day exploit]);
         set_property("acc3Override",", equip congressional medal");
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
     }
@@ -318,6 +323,34 @@ void BoFaWish(){
     }
 }
 
+void shrunkenDoughbat(){
+    if (get_property("shrunkenHeadZombieMonster") != "" || !have_item($item[shrunken head]))
+        return;
+    if (periledLocations() contains $location[Guano Junction])
+        abort("Guano Junction peridot already used today.");
+    if (!can_adventure($location[Guano Junction]))
+        abort("Can't adventure in Guano Junction.");
+    set_property("maxOverride","item drop");
+    set_property("offOverride",", equip shrunken head");
+    set_property("acc1Override",", equip peridot of peril");
+    set_property("famOverride","sword of s words");
+    set_property("choiceAdventure1557","1&bandersnatch=" + to_int($monster[doughbat]));
+    adv1($location[Guano Junction]);
+    clearOverrides();
+    if (get_property("shrunkenHeadZombieMonster") != "doughbat")
+        abort("Shrunken head zombie is " + get_property("shrunkenHeadZombieMonster") + ", not doughbat.");
+}
+
+boolean setupVykea(){
+    if (get_property("_VYKEACompanionLevel").to_int() > 0)
+        return true;
+
+    if (!retrieve_item(1,$item[VYKEA hex key]))
+        return false;
+
+    return cli_execute("create level 5 couch");
+}
+
 // Send the autumn-aton to the next zone that still grants an upgrade (parsing the
 // use page for the option ids), preferring anything but the Shadow Rift, then the
 // Shadow Rift, then noob cave as a fallback.
@@ -431,12 +464,13 @@ void drunkPygmy(){
 // Clear the ziggurat lianas with a candy-cane-sword machete, then pop the shrine NC.
 void lianas(){
     if (get_property("zigguratLianas") == 0){
-        cli_execute("acquire antique machete;equip weapon antique machete");
         foreach loc in $locations[An Overgrown Shrine (Northeast),An Overgrown Shrine (Southwest),An Overgrown Shrine (Southeast),An Overgrown Shrine (Northwest),A Massive Ziggurat]{
             int n;
             while (loc.turns_spent < 3 && n < 3) {
                 if ($familiar[cooler yeti].experience >= 360 && dayType() == 0)
                     return;
+                if (!have_equipped($item[antique machete]))
+                    cli_execute("acquire antique machete;equip weapon antique machete");
                 set_property("maxOverride","familiar exp, -weapon");
                 set_property("mainOverride"," ");
                 if (!($strings[chest mimic, cooler yeti] contains get_property("famOverride"))){
@@ -734,6 +768,11 @@ void postAdv(){
             cli_execute("CONSUME ORGANS 1 0 0");
         }
     }
+    if (get_property("_RubberSpiderUsedToday") != "true" && dayType() == 0 && my_adventures() == 11){
+        retrieve_item($item[rubber spider]);
+        cli_execute("csend rubber spider to torturebot");
+        set_property("_RubberSpiderUsedToday","true");
+    }
     endOfDayHandling();
     if (get_property("script") == "FreeKill" && get_property("cursedMagnifyingGlassCount").to_int() == 13){
         set_property("maxOverride","familiar weight");
@@ -747,8 +786,6 @@ void postAdv(){
         set_property("famOverride", "peace turkey");
         set_property("mainOverride",", equip june cleaver");
         set_property("acc1Override", ", equip spring shoes");
-        if (have_item($item[mime army infiltration glove]))
-            set_property("acc2Override", ", equip mime army infiltration glove");
         set_auto_attack(0);
         adv1($location[cobb's knob treasury]);
         set_property("maxOverride","");
@@ -1069,7 +1106,9 @@ void spendAdv(){
     }
     if (dayType() == 1 && delay() && get_property("seaAftercore") == "true"){
         delayPrep();
+        set_property("maxOverride","item drop");
         adv1($location[cobb's knob treasury]);
+        set_property("maxOverride","");
         set_property("mainOverride","");
         set_property("offOverride","");
         set_property("acc3Override","");
@@ -1089,17 +1128,23 @@ void spendAdv(){
         else if (get_property("questM10Azazel") != "finished")
             azazelUnicornQuest();
         
-        if (dayType() == 1 && get_property("_batWingsSwoopUsed").to_int() < 11){
+        if (dayType() == 1 && get_property("shrunkenHeadZombieMonster") == ""){
+            shrunkenDoughbat();
+            if (get_property("_VYKEACompanionName") == "")
+                setupVykea();
+        } else if (dayType() == 1 && get_property("_batWingsSwoopUsed").to_int() < 11){
             set_property("maxOverride","item drop");
             if (available_amount($item[Flash Liquidizer Ultra Dousing Accessory]) == 0)
                 retrieve_item($item[Flash Liquidizer Ultra Dousing Accessory]);
+            if (have_item($item[mime army infiltration glove]))
+                set_property("acc2Override", ", equip mime army infiltration glove");
             if (get_property("_douseFoeUses").to_int() < 3)
                 set_property("acc3Override",", equip Flash Liquidizer Ultra Dousing Accessory");
             if (have_item($item[moss mace]) && my_class() == $class[seal clubber] && my_fury( ) >= 3)
                 set_property("mainOverride",", equip moss mace");
             retrieve_item($item[waffle]);
             retrieve_item($item[Septapus summoning charm]);
-            set_property("famOverride",bonusFam().to_string());
+            set_property("famOverride","mini kiwi");
             shadowRealm();
             set_property("mainOverride","");
             set_property("famOverride","");
@@ -1155,8 +1200,7 @@ void spendAdv(){
             set_property("mainOverride",", equip june cleaver");
             set_property("offOverride",", equip kramco");
             set_property("acc1Override", ", equip spring shoes");
-            if (have_item($item[mime army infiltration glove]))
-                set_property("acc2Override", ", equip mime army infiltration glove");
+            set_property("acc2Override",",equip Ass-Stompers of Violence");
             adv1($location[cobb's knob treasury]);
             set_property("maxOverride","");
             set_property("famOverride", "");
