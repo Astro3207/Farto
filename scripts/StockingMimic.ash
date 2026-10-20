@@ -1146,6 +1146,8 @@ void pearloP3(){
     }
     banishFish();
     foreach str in $strings[reef,bar,anemone,trench]{
+        if (str != "bar" && get_property("acc3Override") != ", equip backup camera")
+            continue;
         if (get_property(pearls[str].donePref) == "false" || str == "trench" || (str == "bar" && get_property("acc3Override") != ", equip backup camera")){
             resCheck(str);
             adv1(pearls[str].loc);
@@ -1213,28 +1215,18 @@ void habitatRecall(){
     }
 }
 void backup(){
-    if (to_int(get_property("_mimicEggsObtained")) < 11 && $familiar[chest mimic].experience > 100 && to_monster(get_property("lastCopyableMonster")) == copyTarget){
-        set_property("famOverride","chest mimic");
-        set_property("maxOverride","familiar weight, equip eternity codpiece");
-        if (have_effect($effect[driving waterproofly]) == 0)
-            set_property("pantsOverride",", equip really nice swim");
-        set_property("acc3Override",", equip backup camera");
-        pearloP3();
-        set_property("acc3Override","");
-    }
     while (to_int(get_property("_backUpUses")) < 11){
         if (have_effect($effect[driving waterproofly]) == 0)
             set_property("pantsOverride",", equip really nice swim");
         if (to_monster(get_property("lastCopyableMonster")) != copyTarget2){
             if (get_property("_photocopyUsed") == false){
                 whitelist("Temporary");
-            set_property("acc2Override",", equip spring shoes");
-            visit_url("clan_viplounge.php?action=faxmachine&whichfloor=2");
-            visit_url("clan_viplounge.php?preaction=receivefax&whichfloor=2");
-            if (item_amount($item[photocopied monster]) > 0){
-                mimicPrep();
-                main@preadventure( );
-                use($item[photocopied monster]);
+                visit_url("clan_viplounge.php?action=faxmachine&whichfloor=2");
+                visit_url("clan_viplounge.php?preaction=receivefax&whichfloor=2");
+                if (item_amount($item[photocopied monster]) > 0){
+                    mimicPrep();
+                    main@preadventure( );
+                    use($item[photocopied monster]);
                 }
             } else {
                 abort("trying to backup to not " + copyTarget2);
@@ -1261,9 +1253,21 @@ void backup(){
             if (have_effect($effect[everything looks purple]) == 0)
                 set_property("offOverride",", equip roman candel");
         }
-        pearloP3();
-        set_property("offOverride","");
-        set_property("acc2Override","");
+        if (to_int(get_property("_mimicEggsObtained")) < 11 && $familiar[chest mimic].experience > 100 && to_monster(get_property("lastCopyableMonster")) == copyTarget2){
+            set_property("famOverride","chest mimic");
+            set_property("maxOverride","familiar weight, equip eternity codpiece");
+            if (have_effect($effect[driving waterproofly]) == 0)
+                set_property("pantsOverride",", equip really nice swim");
+            set_property("acc3Override",", equip backup camera");
+            set_property("offOverride",", equip McHugeLarge left pole");
+            adv1($location[the dive bar]);
+            set_property("offOverride","");
+            set_property("acc3Override","");
+        } else {
+            pearloP3();
+            set_property("offOverride","");
+            set_property("acc2Override","");
+        }
     }
     set_property("acc3Override","");
 }

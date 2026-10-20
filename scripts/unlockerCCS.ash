@@ -308,12 +308,8 @@ void main(int round, monster mob, string page_text) {
         if (have_equipped($item[roman candelabra]))
             use_skill($skill[blow the purple candle!]);
     }
-    if (to_monster(get_property("lastCopyableMonster")) == copyTarget2 && get_property("beGregariousFightsLeft").to_int() > 0)
+    if (to_monster(get_property("beGregariousMonster")) == copyTarget2 && get_property("beGregariousFightsLeft").to_int() > 0)
         replace();
-    if (last_monster() == copyTarget2){
-        if (gregsToSave().to_boolean() == true && get_property("beGregariousMonster").to_monster() != copyTarget2 && get_property("beGregariousCharges").to_int() > 0)
-            use_skill($skill[Be Gregarious]);
-    }
     if ($locations[cyberzone 1,cyberzone 2,cyberzone 3] contains my_location()){
         if (last_monster().phylum == $phylum[construct]){
             while (current_round() > 0 && current_round() < 10 && my_hp( ) > my_maxhp()/10)
@@ -415,14 +411,22 @@ void main(int round, monster mob, string page_text) {
         sauce(4);
     }
 
-    if (get_property("script") == "FreeKill" && have_equipped($item[backup camera]) && last_monster() != copyTarget2 && (to_monster(get_property("lastCopyableMonster")) == copyTarget || to_monster(get_property("lastCopyableMonster")) == copyTarget2)){
-        if (is_banished(copyTarget2))
-            use_skill($skill[spring kick]);
+    if (get_property("script") == "FreeKill" && have_equipped($item[backup camera]) && get_property("lastCopyableMonster").to_monster() == copyTarget2){
+        if (last_monster() == $monster[Mer-kin tippler] && !contains_text(get_property("trackedMonsters"), "Mer-kin tippler:Transcendent Olfaction")){
+            use_skill($skill[Transcendent Olfaction]);
+            if (have_skill($skill[Gallapagosian Mating Call]))
+                use_skill($skill[Gallapagosian Mating Call]);
+            use_skill($skill[McHugeLarge Slash]);
+        }
         use_skill($skill[BACK-UP TO YOUR LAST ENEMY]);
-        if (last_monster() == copyTarget){
+        if (last_monster() == copyTarget2){
             while (my_familiar() == $familiar[chest mimic] && to_int(get_property("_mimicEggsObtained")) < 11 && $familiar[chest mimic].experience > 50){
                 use_skill($skill[%FN, LAY AN EGG]);
             }
+        }
+        if (last_monster() == copyTarget2){
+            if (gregsToSave().to_boolean() == true && get_property("beGregariousMonster").to_monster() != copyTarget2 && get_property("beGregariousCharges").to_int() > 0)
+                use_skill($skill[Be Gregarious]);
         }
     }
 
@@ -528,8 +532,6 @@ void main(int round, monster mob, string page_text) {
             if (my_hp() < 200)
                 throw_items($item[new age healing crystal],$item[new age healing crystal]);
         }
-        if (get_property("beGregariousMonster").to_monster() == copyTarget2 && !is_banished(copyTarget2))
-            use_skill($skill[spring kick]);
         if (my_location() == $location[Gingerbread Civic Center])
             throw_item($item[gingerbread cigarette]);
         if ((my_basestat($stat[submysticality]) - 62500) > BCZcost("RefractedGazeCasts") && last_monster() == $monster[shadow guy]) {
