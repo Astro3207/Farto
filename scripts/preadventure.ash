@@ -438,7 +438,7 @@ void preAdv(){
     // ── Familiar equip helper ─────────────────────────────────────────────────
         string famEquip(){
             if (get_property("famEquipOverride") != "") return get_property("famEquipOverride");
-            if ((my_location().environment == "underwater" || get_property("_seadentWaveZone") == my_location().to_string())
+            if (contains_text(get_property("maxOverride"),"sea")
                 && !my_familiar().underwater
                 && have_effect($effect[Wet Willied]) == 0
                 && have_effect($effect[Driving Waterproofly]) == 0
