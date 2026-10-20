@@ -1073,7 +1073,9 @@ void spendAdv(){
     }
     if (dayType() == 1 && delay() && get_property("seaAftercore") == "true"){
         delayPrep();
+        set_property("maxOverride","item drop");
         adv1($location[cobb's knob treasury]);
+        set_property("maxOverride","");
         set_property("mainOverride","");
         set_property("offOverride","");
         set_property("acc3Override","");
@@ -1093,7 +1095,9 @@ void spendAdv(){
         else if (get_property("questM10Azazel") != "finished")
             azazelUnicornQuest();
         
-        if (dayType() == 1 && get_property("_batWingsSwoopUsed").to_int() < 11){
+        if (dayType() == 1 && get_property("shrunkenHeadZombieMonster") == ""){
+            abort("Do shrunken head and VYKEA");
+        } else if (dayType() == 1 && get_property("_batWingsSwoopUsed").to_int() < 11){
             set_property("maxOverride","item drop");
             if (available_amount($item[Flash Liquidizer Ultra Dousing Accessory]) == 0)
                 retrieve_item($item[Flash Liquidizer Ultra Dousing Accessory]);
@@ -1105,15 +1109,13 @@ void spendAdv(){
                 set_property("mainOverride",", equip moss mace");
             retrieve_item($item[waffle]);
             retrieve_item($item[Septapus summoning charm]);
-            set_property("famOverride",bonusFam().to_string());
+            set_property("famOverride","mini kiwi");
             shadowRealm();
             set_property("mainOverride","");
             set_property("famOverride","");
             set_property("backOverride","");
             set_property("acc2Override","");
             set_property("acc3Override","");
-        } else if (get_property("shrunkenHeadZombieMonster") == ""){
-            abort("Do shrunken head and VYKEA");
         } else if (!pearlsDone()){
             foreach str in $strings[anemone,bar,reef,deepests,trench]{
                 if (get_property(pearls[str].donePref) == "false"){
