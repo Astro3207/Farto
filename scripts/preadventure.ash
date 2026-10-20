@@ -68,7 +68,7 @@ void mood(string function){
             if (have_effect(ef) > 0)
                 cli_execute("uneffect " + ef);
         foreach ef in $effects[Only Dogs Love a Drunken Sailor,Best Pals,Sweat equity, Flapper Dancin',Legendary Pasta Eyeball,material witness,
-            Singer's Faithful Ocelot, Leash of Linguini, empathy,Thoughtful Empathy,Blood Bond,Bet Your Autumn Dollar,Incredibly Well Lit,
+            Singer's Faithful Ocelot, Leash of Linguini, empathy,Thoughtful Empathy,Blood Bond,Bet Your Autumn Dollar,Incredibly Well Lit,Fat Leon's Phat Loot Lyric,
             Disco Leer,Polka of Plenty,Tubes of Universal Meat,Lubricating Sauce,Strength of the Tortoise, party soundtrack]{
             if (ef == $effect[material witness] && get_property("_jukebox") == "false"){
                 visit_url("showclan.php?whichclan=2046992052&action=joinclan&confirm=on");
@@ -126,7 +126,7 @@ void mood(string function){
                 cli_execute("aprilband effect c");
             break;
         case "item drop":
-            if (numeric_modifier("item drop") < 666)
+            if (numeric_modifier("item drop") < 666 && get_property("script") != "farto")
                 cli_execute("gain 666 item drop 100 maxmeatspent");
             break;
         case "spooky res":
@@ -733,16 +733,12 @@ void preAdv(){
                     set_property("_seadentWaveZone",flooded);
             }
         }
-    if (my_familiar() == $familiar[comma chameleon] && chameleon() != $familiar[stocking mimic] && get_property("script") == "FreeKill" && get_property("subscript") != "NonSMFK" && get_property("subscript") != "stompingBoots"){
-        if (item_amount($item[bag of many confections]) == 0){
-            cli_execute("refresh all");
-            retrieve_item(1,$item[bag of many confections]);
-        }
-        visit_url("inv_equip.php?pwd="+my_hash()+"&which=2&action=equip&whichitem=4329");
-    }
-
-        if (contains_text(get_property("shrunkenHeadZombieAbilities"),"Meat Drop") && have_effect($effect[Juiced]) == 0){
-            use($item[mer-kin cooljuice]);
+        if (my_familiar() == $familiar[comma chameleon] && chameleon() != $familiar[stocking mimic] && get_property("script") == "FreeKill" && get_property("subscript") != "NonSMFK" && get_property("subscript") != "stompingBoots"){
+            if (item_amount($item[bag of many confections]) == 0){
+                cli_execute("refresh all");
+                retrieve_item(1,$item[bag of many confections]);
+            }
+            visit_url("inv_equip.php?pwd="+my_hash()+"&which=2&action=equip&whichitem=4329");
         }
 
         //monster level
@@ -775,6 +771,10 @@ void preAdv(){
             if (have_effect(ef) > 0)
                 cli_execute("uneffect " + ef);
         }
+    }
+
+    if (contains_text(get_property("shrunkenHeadZombieAbilities"),"Meat Drop") && have_effect($effect[Juiced]) == 0 && my_buffedstat($stat[moxie]) < $monster[giant squid].base_attack){
+        use($item[mer-kin cooljuice]);
     }
     if (item_amount($item[dry noodles]) < 2)
         retrieve_item(2,$item[dry noodles]);

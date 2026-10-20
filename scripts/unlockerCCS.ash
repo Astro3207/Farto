@@ -279,6 +279,7 @@ void main(int round, monster mob, string page_text) {
             abort("Replacement chain: did not produce " + copyTarget + ".");
     }
     print ("monster hp is " + last_monster().base_hp);
+    print ("monster attack is " + last_monster().base_attack);
     print ("monster level is "+ numeric_modifier("monster level"));
     print ("high stat is " + max(my_buffedstat($stat[muscle]),my_buffedstat($stat[mysticality]),my_buffedstat($stat[moxie])));
     if (last_monster() == $monster[school of many] && my_familiar() == $familiar[vampire vintner]){
@@ -400,7 +401,7 @@ void main(int round, monster mob, string page_text) {
         if (have_skill($skill[McHugeLarge Avalanche]))         use_skill($skill[McHugeLarge Avalanche]);
         if (have_skill($skill[Launch spikolodon spikes]))      use_skill($skill[Launch spikolodon spikes]);
         if (my_primestat( ) == $stat[moxie] || have_equipped($item[mime army infiltration glove])) steal( );
-        if (have_skill($skill[sing along]) && my_familiar() != $familiar[peace turkey] && my_familiar() != $familiar[pair of stomping boots] && chameleon() != $familiar[pair of stomping boots])      use_skill($skill[sing along]);
+        if (have_skill($skill[sing along]) && my_familiar() != $familiar[peace turkey] && my_familiar() != $familiar[pair of stomping boots] && chameleon() != $familiar[pair of stomping boots] && my_location() != $location[guano junction])      use_skill($skill[sing along]);
         if (have_skill($skill[Prepare to reanimate your Foe])) use_skill($skill[Prepare to reanimate your Foe]);
         if (item_amount($item[cosmic bowling ball]) > 0 && (have_effect($effect[Cosmic Ball in the Air]) < 22 || dayType() == 0)){
             use_skill($skill[Bowl Straight Up]);
@@ -974,8 +975,8 @@ void main(int round, monster mob, string page_text) {
         return;
     }
     if (my_location() == $location[guano junction]){
-        if (have_equipped($item[shrunken head]))
-            use_skill($skill[Prepare to reanimate your Foe]);
+    //    if (have_equipped($item[shrunken head]))
+      //      use_skill($skill[Prepare to reanimate your Foe]);
         free_kill(page_text);
     }
     if (my_location() == $location[the marinara trench]){
