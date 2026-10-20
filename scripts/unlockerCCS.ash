@@ -975,7 +975,7 @@ void main(int round, monster mob, string page_text) {
         return;
     }
     if (my_location() == $location[guano junction]){
-        if (last_monster() == $monster[doughbat]){
+        if (last_monster() == $monster[doughbat] && !contains_text(get_property("trackedMonsters"), "doughbat:Transcendent Olfaction")){
             use_skill($skill[Transcendent Olfaction]);
             if (have_skill($skill[Gallapagosian Mating Call]))
                 use_skill($skill[Gallapagosian Mating Call]);
