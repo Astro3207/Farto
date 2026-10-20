@@ -1230,7 +1230,8 @@
         }
         if (item_amount($item[apriling band saxophone]) > 0 && get_property("_aprilBandSaxophoneUses").to_int() < 3)
             cli_execute("aprilband play saxophone");
-        if (numeric_modifier("Meat drop") > 4400){
+        int n = mall_price($item[11-leaf clover])/700;
+        if (n < (numeric_modifier($modifier[meat drop])/100 + 1)){
             use($item[11-leaf clover]);
             return;
         }

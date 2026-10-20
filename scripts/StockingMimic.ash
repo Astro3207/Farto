@@ -2544,9 +2544,7 @@ void main(){
             set_property("inSpendAdv","true");
             set_property("script","FreeKill");
             FKPrep();
-            if (!contains_text(get_property("thoth19_event_list"),"postprepD2")){
-                cli_execute("ptrack add postprepD2");
-            }else if (!contains_text(get_property("thoth19_event_list"),"postprepD1") && dayType() == 0)
+            if (!contains_text(get_property("thoth19_event_list"),"postprepD1") && dayType() == 0)
                 cli_execute("ptrack add postprepD1");
         }
         if (dayType() == 0)

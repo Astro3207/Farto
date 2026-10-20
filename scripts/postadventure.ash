@@ -1163,6 +1163,7 @@ void spendAdv(){
             set_property("mainOverride",", equip june cleaver");
             set_property("offOverride",", equip kramco");
             set_property("acc1Override", ", equip spring shoes");
+            set_property("acc2Override",",equip Ass-Stompers of Violence");
             adv1($location[cobb's knob treasury]);
             set_property("maxOverride","");
             set_property("famOverride", "");
