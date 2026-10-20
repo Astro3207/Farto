@@ -975,8 +975,11 @@ void main(int round, monster mob, string page_text) {
         return;
     }
     if (my_location() == $location[guano junction]){
-    //    if (have_equipped($item[shrunken head]))
-      //      use_skill($skill[Prepare to reanimate your Foe]);
+        if (last_monster() == $monster[doughbat]){
+            use_skill($skill[Transcendent Olfaction]);
+            if (have_skill($skill[Gallapagosian Mating Call]))
+                use_skill($skill[Gallapagosian Mating Call]);
+        }
         free_kill(page_text);
     }
     if (my_location() == $location[the marinara trench]){

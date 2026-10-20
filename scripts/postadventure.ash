@@ -326,8 +326,9 @@ void BoFaWish(){
 void shrunkenDoughbat(){
     if (get_property("shrunkenHeadZombieMonster") != "" || !have_item($item[shrunken head]))
         return;
-    if (!(periledLocations() contains $location[Guano Junction]))
+    if (!(periledLocations() contains $location[Guano Junction])){
         set_property("acc2Override",", equip peridot of peril");
+    }
     if (!can_adventure($location[Guano Junction]))
         abort("Can't adventure in Guano Junction.");
     set_property("maxOverride","monster level");
