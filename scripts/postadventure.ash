@@ -752,8 +752,6 @@ void postAdv(){
         set_property("famOverride", "peace turkey");
         set_property("mainOverride",", equip june cleaver");
         set_property("acc1Override", ", equip spring shoes");
-        if (have_item($item[mime army infiltration glove]))
-            set_property("acc2Override", ", equip mime army infiltration glove");
         set_auto_attack(0);
         adv1($location[cobb's knob treasury]);
         set_property("maxOverride","");
@@ -1098,6 +1096,8 @@ void spendAdv(){
             set_property("maxOverride","item drop");
             if (available_amount($item[Flash Liquidizer Ultra Dousing Accessory]) == 0)
                 retrieve_item($item[Flash Liquidizer Ultra Dousing Accessory]);
+            if (have_item($item[mime army infiltration glove]))
+                set_property("acc2Override", ", equip mime army infiltration glove");
             if (get_property("_douseFoeUses").to_int() < 3)
                 set_property("acc3Override",", equip Flash Liquidizer Ultra Dousing Accessory");
             if (have_item($item[moss mace]) && my_class() == $class[seal clubber] && my_fury( ) >= 3)
@@ -1162,8 +1162,6 @@ void spendAdv(){
             set_property("mainOverride",", equip june cleaver");
             set_property("offOverride",", equip kramco");
             set_property("acc1Override", ", equip spring shoes");
-            if (have_item($item[mime army infiltration glove]))
-                set_property("acc2Override", ", equip mime army infiltration glove");
             adv1($location[cobb's knob treasury]);
             set_property("maxOverride","");
             set_property("famOverride", "");
