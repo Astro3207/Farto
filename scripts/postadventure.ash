@@ -91,7 +91,7 @@ void shadowRealm(){
             if (get_property("rufusQuestTarget") == "shadow scythe" || get_property("rufusQuestTarget") == "shadow spire")
                 set_property("acc2Override",", equip Drunkula's ring of haze");
             else if (get_property("rufusQuestTarget") == "shadow orrery")
-                use($item[null-day]);
+                use($item[null-day exploit]);
             set_property("acc3Override",", equip congressional medal");
         }
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
@@ -100,7 +100,7 @@ void shadowRealm(){
         if (get_property("rufusQuestTarget") == "shadow scythe" || get_property("rufusQuestTarget") == "shadow spire")
             set_property("acc2Override",", equip Drunkula's ring of haze");
         else if (get_property("rufusQuestTarget") == "shadow orrery")
-            use($item[null-day]);
+            use($item[null-day exploit]);
         set_property("acc3Override",", equip congressional medal");
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
     }
@@ -733,6 +733,11 @@ void postAdv(){
         if (my_fullness() == fullness_limit()-1){
             cli_execute("CONSUME ORGANS 1 0 0");
         }
+    }
+    if (get_property("_RubberSpiderUsedToday") != "true" && dayType() == 0 && my_adventures() == 11){
+        retrieve_item($item[rubber spider]);
+        cli_execute("csend rubber spider to torturebot");
+        set_property("_RubberSpiderUsedToday","true");
     }
     endOfDayHandling();
     if (get_property("script") == "FreeKill" && get_property("cursedMagnifyingGlassCount").to_int() == 13){
