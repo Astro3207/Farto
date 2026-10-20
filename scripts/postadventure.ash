@@ -326,8 +326,8 @@ void BoFaWish(){
 void shrunkenDoughbat(){
     if (get_property("shrunkenHeadZombieMonster") != "" || !have_item($item[shrunken head]))
         return;
-    if (periledLocations() contains $location[Guano Junction])
-        abort("Guano Junction peridot already used today.");
+    if (!(periledLocations() contains $location[Guano Junction]))
+        set_property("acc1Override",", equip peridot of peril");
     if (!can_adventure($location[Guano Junction]))
         abort("Can't adventure in Guano Junction.");
     set_property("maxOverride","item drop");
@@ -724,7 +724,7 @@ void postAdv(){
         if (lastAdv == adv)
             abort(adventureAbortMessages[adv]);
     }
-    foreach ef in $effects[juiced,majorly poisoned]{
+    foreach ef in $effects[majorly poisoned]{
         if (have_effect(ef) > 0)
             cli_execute("uneffect " + ef);
     }

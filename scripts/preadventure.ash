@@ -741,7 +741,7 @@ void preAdv(){
         visit_url("inv_equip.php?pwd="+my_hash()+"&which=2&action=equip&whichitem=4329");
     }
 
-        if (get_property("shrunkenHeadZombieMonster") == "doughbat" && have_effect($effect[Juiced]) == 0){
+        if (contains_text(get_property("shrunkenHeadZombieAbilities"),"Meat Drop") && have_effect($effect[Juiced]) == 0){
             use($item[mer-kin cooljuice]);
         }
 
