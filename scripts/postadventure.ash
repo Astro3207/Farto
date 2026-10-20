@@ -584,6 +584,29 @@ void freeKillTurnGuard(){
     }
 }
 
+// Aborts when the last adventure cost a turn in Cobb's Knob Treasury on anything
+// but an Embezzler: a native goblin or one of its non-combats (Meat Score!,
+// Treasury Chest). Wanderers that show up there are left alone. treasuryGuardTurn
+// remembers total_turns_played() from the previous call, so a jump of a few turns
+// means this adventure cost one; a big gap (new session) is ignored.
+void treasuryTurnGuard(){
+    int turns = total_turns_played();
+    int last = get_property("treasuryGuardTurn").to_int();
+    set_property("treasuryGuardTurn", turns);
+    if (my_location() != $location[cobb's knob treasury] || turns <= last || turns - last > 5)
+        return;
+    string enc = get_property("lastEncounter");
+    if (enc == "Knob Goblin Embezzler")
+        return;
+    boolean nativeEnc = $strings[Meat Score!, Treasury Chest] contains enc;
+    foreach i, native in get_monsters($location[cobb's knob treasury]){
+        if (native.to_string() == enc)
+            nativeEnc = true;
+    }
+    if (nativeEnc)
+        abort("Spent a turn in the Treasury on " + enc + ", not an Embezzler");
+}
+
 // Out of adventures: abort for a manual nightcap where needed, otherwise walk the
 // bone-gear / stooper checklist one equip per turn ("refresh all; CONSUME ALL"
 // re-enters this each pass) before the final CONSUME NIGHTCAP.
@@ -695,6 +718,7 @@ void postAdv(){
         }
     }
     freeKillTurnGuard();
+    treasuryTurnGuard();
     lawOfAverages();
     if (is_online("OnlyFax"))
         clanFortune();
