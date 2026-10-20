@@ -597,6 +597,8 @@ void preAdv(){
             // Back
             if (get_property("backOverride") != "")
                 append(maximize, get_property("backOverride"));
+            else if (get_property("script") == "farto" && get_property("_batWingsSwoopUsed").to_int() < (8 + get_property("_douseFoeUses").to_int()))
+                append(maximize, ", equip bat wings");
             // Shirt
             if (have_equipped($item[devilbone corset]))
                 append(maximize, ", equip devilbone corset");

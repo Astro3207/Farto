@@ -984,6 +984,8 @@ void main(int round, monster mob, string page_text) {
                     use_skill(combatBan());
             }
         }
+        if (get_property("_batWingsSwoopUsed").to_int() < (8 + get_property("_douseFoeUses").to_int()) && have_equipped($item[bat wings]))
+            use_skill($skill[swoop like a bat]);
         farmingStuff();
         free_kill(page_text);
         crit();
