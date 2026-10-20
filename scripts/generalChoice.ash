@@ -475,7 +475,7 @@ void main(int whichchoice, string page) {
             if (whichchoice == 1562){
                 string [int] choices = available_choice_options();
                 foreach num, choice_text in choices {
-                    if (contains_text(choice_text,"Fix your parents") && get_property("script") == "FreeKill"){
+                    if (contains_text(choice_text,"parents") && get_property("script") == "FreeKill"){
                         run_choice(num);
                         exit;
                     }
