@@ -169,6 +169,8 @@ void eatSausage(){
 }
 
 void main(){
+    if (dayType() == 0 && get_campground() contains $item[Source Terminal])
+        cli_execute("terminal educate digitize.edu; terminal educate extract.edu; terminal enquiry familiar.enq");
     if (my_inebriety() >= inebriety_limit()-1)
         return;
     if (item_amount($item[Mayo Minder&trade;]) > 0 && get_property("mayoMinderSetting") != "")
@@ -205,6 +207,8 @@ void main(){
             use($item[sweet tooth]);
         if (get_property("_voraciTeaUsed") == "false")
             use($item[Cuppa Voraci tea]);
+        if (get_property("_sobrieTeaUsed") == "false" && my_inebriety() > 0)
+            use($item[Cuppa Sobrie tea]);
         foreach ef in $effects[dirge of dreadfulness, Ur-Kel's Aria of Annoyance,Inigo's Incantation of Inspiration]{
             if (have_effect(ef) > 0)
                 cli_execute("uneffect "+ef);
