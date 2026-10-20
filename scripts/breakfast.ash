@@ -257,10 +257,10 @@ void firstBreakfast(){
     primeFamiliar();
     cli_execute("garden pick");
     photoBooth();
-    if (available_amount($item[portable pantogram]) > 0){
+    if (available_amount($item[portable pantogram]) > 0 && dayType() == 1){
         retrieve_item(11,$item[lead necklace]);
         retrieve_item(1,$item[porquoise]);
-        visit_url("inv_use.php?whichitem=9573&ajax=1&pwd="+my_hash()+"&_=1792480711568");
+        visit_url("inv_use.php?whichitem=9573");
         visit_url("choice.php?whichchoice=1270&pwd="+my_hash()+"&option=1&m=3&e=2&s1=-1%2C0&s2=706%2C1&s3=865%2C11");
     }
     perilsForeseen();

@@ -233,7 +233,7 @@
 
     boolean [effect] manaBurnEffectsD1 = $effects[Only Dogs Love a Drunken Sailor,
         Singer's Faithful Ocelot, Leash of Linguini, Empathy, Thoughtful Empathy,
-        Polka of Plenty, Tubes of Universal Meat, Lubricating Sauce, Strength of the Tortoise,Musk of the Moose,Attracting Snakes,Quiet Desperation,Song of Bravado,Ur-Kel's Aria of Annoyance,Stevedave's Shanty of Superiority,
+        Polka of Plenty, Tubes of Universal Meat, Lubricating Sauce, Strength of the Tortoise,Musk of the Moose,Attracting Snakes,Quiet Desperation,Song of Bravado,Ur-Kel's Aria of Annoyance,
         Drescher's Annoying Noise,Legendary Penne Fedora,Pride of the Puffin,Slippery as a Seal,Blubbered Up,Big,Blubbered Up,Disco State of Mind];
 
     void manaBurn(int reserve){

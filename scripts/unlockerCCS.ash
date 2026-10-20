@@ -309,7 +309,7 @@ void main(int round, monster mob, string page_text) {
         if (have_equipped($item[roman candelabra]))
             use_skill($skill[blow the purple candle!]);
     }
-    if (to_monster(get_property("beGregariousMonster")) == copyTarget2 && get_property("beGregariousFightsLeft").to_int() > 0)
+    if (to_monster(get_property("beGregariousMonster")) == copyTarget2 && get_property("beGregariousFightsLeft").to_int() > 0 && my_location() == $location[the dive bar])
         replace();
     if ($locations[cyberzone 1,cyberzone 2,cyberzone 3] contains my_location()){
         if (last_monster().phylum == $phylum[construct]){
