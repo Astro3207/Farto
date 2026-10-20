@@ -203,7 +203,7 @@ void waffleShadowGuy(){
     int shadowGuyValue = item_drops_array($monster[shadow guy])[0].rate/100 * itDropMult * mall_price(item_drops_array($monster[shadow guy])[0].drop);
     int avgPrice = (mall_price($item[shadow brick]) + mall_price($item[shadow stick]))/2;
     int otherGuyValue = (item_drops_array($monster[shadow slab])[0].rate/100 * itDropMult * avgPrice) - mall_price($item[waffle]);
-    if (have_effect($effect[fishy]) < 840)
+    if (have_effect($effect[fishy]) < 860)
         use_skill($skill[Sea *dent: Talk to Some Fish]);
     else if (shadowGuyValue < otherGuyValue)
         throw_item($item[waffle]);
@@ -401,7 +401,7 @@ void main(int round, monster mob, string page_text) {
         if (have_skill($skill[McHugeLarge Avalanche]))         use_skill($skill[McHugeLarge Avalanche]);
         if (have_skill($skill[Launch spikolodon spikes]))      use_skill($skill[Launch spikolodon spikes]);
         if (my_primestat( ) == $stat[moxie] || have_equipped($item[mime army infiltration glove])) steal( );
-        if (have_skill($skill[sing along]) && my_familiar() != $familiar[peace turkey] && my_familiar() != $familiar[pair of stomping boots] && chameleon() != $familiar[pair of stomping boots] && my_location() != $location[guano junction])      use_skill($skill[sing along]);
+        if (have_skill($skill[sing along]) && my_familiar() != $familiar[peace turkey] && my_familiar() != $familiar[pair of stomping boots] && chameleon() != $familiar[pair of stomping boots] && my_location() != $location[guano junction] && my_location() != $location[The Defiled Cranny])      use_skill($skill[sing along]);
         if (have_skill($skill[Prepare to reanimate your Foe])) use_skill($skill[Prepare to reanimate your Foe]);
         if (item_amount($item[cosmic bowling ball]) > 0 && (have_effect($effect[Cosmic Ball in the Air]) < 22 || dayType() == 0)){
             use_skill($skill[Bowl Straight Up]);

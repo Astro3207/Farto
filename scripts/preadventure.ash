@@ -809,6 +809,8 @@ void preAdv(){
         if (have_effect($effect[Carlweather's Cantata of Confrontation]) == 0)
             use_skill($skill[Carlweather's Cantata of Confrontation]);
         if (numeric_modifier("combat rate") < 15)
+            cli_execute("equip little bitty bath");
+        if (numeric_modifier("combat rate") < 15)
             abort("combat rate too low, see what you can do to buff");
     }
 }
