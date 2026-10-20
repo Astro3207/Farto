@@ -300,7 +300,7 @@ void main(int round, monster mob, string page_text) {
             use_skill($skill[RECALL FACTS: MONSTER HABITATS]);
         } else if (get_property("_monsterHabitatsFightsLeft") == 0 && get_property("beGregariousFightsLeft").to_int() == 0 && get_property("beGregariousCharges").to_int() > gregsToSave() && dayType() == 1){
             use_skill($skill[Be Gregarious]);
-        } else if (get_property("commaFamiliar") == "Reanimated Reanimator" && get_property("_badlyRomanticArrows") == "0"){
+        } else if (my_familiar() == $familiar[reanimated reanimator] && get_property("_badlyRomanticArrows") == "0"){
             use_skill($skill[Wink at]);
         }
         if (get_property("_circadianRhythmsRecalled") == "false")

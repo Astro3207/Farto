@@ -1200,15 +1200,7 @@ void habitatRecall(){
             mimicPrep();
             if (get_auto_attack() == 0)
                 aa("facsimile");
-            if (get_property("beGregariousFightsLeft").to_int() == 1 && get_property("beGregariousCharges").to_int() == gregsToSave() && to_int(get_property("_monsterHabitatsRecalled")) == 3 && dayType() == 1){
-                if (mall_price($item[flask of embalming fluid]) < 1000){
-                    altFam($familiar[reanimated reanimator]);
-                    if (have_effect($effect[driving waterproofly]) == 0)
-                        set_property("pantsOverride", ", equip really nice swim");
-                    adv1($location[madness reef]);
-                }
-            } else 
-                pearloP2();
+            pearloP2();
         }
         set_property("offOverride","");
         set_property("acc2Override","");
@@ -2015,8 +2007,11 @@ void embezzler(){
         set_property("unconditionalOverride","meat drop, equip mafia pointer finger");
         if (get_property("_batWingsFreeFights").to_int() < 5)
             set_property("unconditionalOverride",get_property("unconditionalOverride") +", equip bat wings");
-        if (get_property("clubEmNextWeekMonster") != "" && total_turns_played() >= get_property("clubEmNextWeekMonsterTurn").to_int() + 8)
+        if (get_property("clubEmNextWeekMonster") != "" && total_turns_played() >= get_property("clubEmNextWeekMonsterTurn").to_int() + 8){
             set_property("unconditionalOverride",get_property("unconditionalOverride") +", equip legendary seal club");
+            if (have_familiar($familiar[Reanimated Reanimator]))
+                set_property("famOverride","Reanimated Reanimator");
+        }
         if (have_effect($effect[Lucky!]) == 0){
             getLucky();
         }
