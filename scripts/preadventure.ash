@@ -357,6 +357,17 @@ string bonusGear(){
     return out.to_string();
 }
 
+// acc2Override as the maximizer should see it. mimicPrep() parks the eternity
+// codpiece there and its callers don't clear it, so it only counts while the
+// fight is still a mimic setup (maxOverride starts with "familiar weight");
+// otherwise acc2 falls through to its normal choices.
+string acc2Override(){
+    string acc2 = get_property("acc2Override");
+    if (contains_text(acc2, "eternity codpiece") && !get_property("maxOverride").starts_with("familiar weight"))
+        return "";
+    return acc2;
+}
+
 void preAdv(){
     if (get_property("script") == "FreeKill" && dayType() == 1
         && have_effect($effect[eldritch attunement]) > 0
@@ -537,8 +548,8 @@ void preAdv(){
         // Acc2
         if (have_equipped($item[angelbone chopsticks]))
             append(maximize, ", equip angelbone chopsticks");
-        else if (get_property("acc2Override") != "")
-            append(maximize, get_property("acc2Override"));
+        else if (acc2Override() != "")
+            append(maximize, acc2Override());
         // Acc3
         if (have_equipped($item[devilbone rosary]))
             append(maximize, ", equip devilbone rosary");
@@ -624,8 +635,8 @@ void preAdv(){
             // Acc2
             if (have_equipped($item[angelbone chopsticks]))
                 append(maximize, ", equip angelbone chopsticks");
-            else if (get_property("acc2Override") != "")
-                append(maximize, get_property("acc2Override"));
+            else if (acc2Override() != "")
+                append(maximize, acc2Override());
             else if (have_equipped($item[angelbone dice]))
                 append(maximize, ", equip mafia thumb ring");
             else if (avalancheReady)

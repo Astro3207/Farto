@@ -430,7 +430,7 @@ void main(int round, monster mob, string page_text) {
         }
     }
 
-    if (get_property("script") == "FreeKill")
+    if (get_property("script") == "FreeKill" && have_equipped($item[heartstone]))
         use_skill($skill[Steal Monster's Heart]);
 
     if ((my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[stocking mimic]) && (last_monster() == $monster[flaming monstera] || last_monster() == $monster[leaviathan])){

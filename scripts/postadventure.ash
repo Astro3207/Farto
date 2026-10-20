@@ -1106,6 +1106,8 @@ void spendAdv(){
             set_property("backOverride","");
             set_property("acc2Override","");
             set_property("acc3Override","");
+        } else if (get_property("shrunkenHeadZombieMonster") == ""){
+            abort("Do shrunken head and VYKEA");
         } else if (!pearlsDone()){
             foreach str in $strings[anemone,bar,reef,deepests,trench]{
                 if (get_property(pearls[str].donePref) == "false"){

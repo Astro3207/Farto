@@ -744,7 +744,11 @@ void FKPrep(){
 
 void mimicPrep(string extraMax){
     altFam($familiar[stocking mimic]);
-    set_property("maxOverride","familiar weight, equip eternity codpiece" + extraMax);
+    set_property("maxOverride","familiar weight" + extraMax);
+    if (baseballPlayers() < 9)
+        set_property("acc2Override",", equip eternity codpiece");
+    else
+        set_property("acc2Override","");
     if (get_auto_attack() == 0)
         aa("facsimile");
 }
@@ -853,7 +857,11 @@ void shadowRealmFK(){
     if (get_auto_attack() == 0)
         aa("facsimile");
     if (!contains_text(get_property("maxOverride"),"familiar"))
-        set_property("maxOverride","familiar weight, equip eternity codpiece");
+        set_property("maxOverride","familiar weight");
+    if (get_property("_baseballInnings").to_int() < 3 && baseballPlayers() < 9)
+        set_property("acc2Override",", equip eternity codpiece");
+    else
+        set_property("acc2Override","");
     if (get_property("questRufus") == "step1") {
         use($item[closed-circuit pay phone]);
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
@@ -957,10 +965,6 @@ void archaeologist(){
         main@postadventure( );
     }
 }
-void MobiusMaybe(){
-    if (get_property("_timeCopsFoughtToday").to_int() < 10)
-        set_property("acc2Override",", equip mobius ring");
-}
 
 // Shrug the effect giving the most of your highest buffed stat. Returns false
 // when there was nothing to shrug or the shrug failed.
@@ -1000,7 +1004,7 @@ boolean uneffectBuff(){
     return have_effect(toRemove) == 0;
 }
 boolean looseFK(){
-    set_property("maxOverride","familiar weight, equip eternity codpiece");
+    set_property("maxOverride","familiar weight");
     if (have_effect($effect[everything looks red]) == 0){
         set_property("maxOverride","familiar weight, equip everfull dart holster");
         print ("FK is bullseye");
@@ -1023,30 +1027,30 @@ boolean looseFK(){
         return true;
     }
     if (have_effect($effect[everything looks yellow]) == 0){
-        set_property("maxOverride","familiar weight, equip eternity codpiece, equip jurassic parka (dilophosaur)");
+        set_property("maxOverride","familiar weight, equip jurassic parka (dilophosaur)");
         print ("FK is jurassic acid");
         return true;
     }
     if (get_property("_firedJokestersGun") == false){
         print ("FK is jokester's gun");
-        set_property("maxOverride","familiar weight, equip eternity codpiece, equip jokester's gun");
+        set_property("maxOverride","familiar weight, equip jokester's gun");
         return true;
     }
     if (get_property("_clubEmTimeUsed").to_int() < 5){
         print ("FK is club em back in time");
-        set_property("maxOverride","familiar weight, equip eternity codpiece, equip legendary seal-clubbing");
+        set_property("maxOverride","familiar weight, equip legendary seal-clubbing");
         return true;
     }
     if (get_property("_shadowBricksUsed").to_int() < 13){
         print ("FK is shadow brick");
-        set_property("maxOverride","familiar weight, equip eternity codpiece");
+        set_property("maxOverride","familiar weight");
         int n = 13 - get_property("_shadowBricksUsed").to_int();
         retrieve_item(n,$item[shadow brick]);
         return true;
     }
     if (item_amount($item[interesting coin]) > 0 && get_property("_interestingCoinHeads") == "false"){
         print("fk is interesting coin");
-        set_property("maxOverride","familiar weight, equip eternity codpiece");
+        set_property("maxOverride","familiar weight");
         return true;
     }
     if (get_property("_assertYourAuthorityCast").to_int() < 3){
@@ -1070,6 +1074,10 @@ void underwaterBaseball(){
     if (get_property("_curveballFightsLeft").to_int() == 0 && looseFK()){
         set_property("subscript","looseFK");
         set_property("acc1Override",", equip mafia pointer");
+        if (get_property("_baseballInnings").to_int() < 3 && baseballPlayers() < 9)
+            set_property("acc2Override",", equip eternity codpiece");
+        else
+            set_property("acc2Override","");
         adv1($location[The Dive Bar]);
         baseballD();
     } else if (get_property("_curveballFightsLeft").to_int() > 0){
@@ -1098,8 +1106,8 @@ void pearloP1(){
     banishFish();
     if (get_auto_attack() == 0)
         aa("facsimile");
-    equip($slot[acc2],$item[mafia pointer finger ring ]);
-    set_property("acc2Override",", bonus mafia pointer finger");
+    equip($slot[acc1],$item[mafia pointer finger ring ]);
+    set_property("acc1Override",", bonus mafia pointer finger");
     if (numeric_modifier("Critical Hit Percent") < 100)
         abort("can't guarantee critical hit");
     if ((baseballPlayers() >= 8 && get_property("_baseballInnings").to_int() < 3) || get_property("_curveballFightsLeft").to_int() > 0) {
@@ -1117,7 +1125,7 @@ void pearloP1(){
         }
     }
     set_property("pantsOverride","");
-    set_property("acc2Override","");
+    set_property("acc1Override","");
 }
 void pearloP2(){
     if (get_property("_fishyPipeUsed") == "false")
@@ -1203,7 +1211,7 @@ void habitatRecall(){
             pearloP2();
         }
         set_property("offOverride","");
-        set_property("acc2Override","");
+        set_property("acc1Override","");
     }
 }
 void backup(){
@@ -1223,7 +1231,6 @@ void backup(){
             } else {
                 abort("trying to backup to not " + copyTarget2);
             }
-            set_property("acc2Override","");
         }
         mimicPrep();
         if (get_property("beGregariousFightsLeft").to_int() > 0){
@@ -1240,14 +1247,12 @@ void backup(){
         } else {
             aa("facsimile");
             set_property("acc3Override",", equip backup camera");
-            if (is_banished(copyTarget2))
-                set_property("acc2Override",", equip spring shoes");
             if (have_effect($effect[everything looks purple]) == 0)
                 set_property("offOverride",", equip roman candel");
         }
         if (to_int(get_property("_mimicEggsObtained")) < 11 && $familiar[chest mimic].experience > 100 && to_monster(get_property("lastCopyableMonster")) == copyTarget2){
             set_property("famOverride","chest mimic");
-            set_property("maxOverride","familiar weight, equip eternity codpiece");
+            set_property("maxOverride","familiar weight");
             if (have_effect($effect[driving waterproofly]) == 0)
                 set_property("pantsOverride",", equip really nice swim");
             set_property("acc3Override",", equip backup camera");
@@ -1258,7 +1263,6 @@ void backup(){
         } else {
             pearloP3();
             set_property("offOverride","");
-            set_property("acc2Override","");
         }
     }
     set_property("acc3Override","");
@@ -1675,7 +1679,6 @@ void weakMonsters(){
                 mimicPrep();
                 retrieve_item(5,$item[glark cable]);
                 adv1($location[the red zeppelin]);
-                set_property("acc2Override","");
             }
             set_property("mainOverride","");
         } else if (pick == "sandworm"){
@@ -1710,7 +1713,6 @@ void weakMonsters(){
         main@postadventure( );
     }
 
-    set_property("acc2Override","");
     set_property("acc3Override","");
     set_property("mainOverride","");
     set_property("offOverride","");
@@ -1866,7 +1868,6 @@ void locationBasedWeakMonsters(){
         retrieve_item(5,$item[glark cable]);
         adv1($location[the red zeppelin]);
         set_property("mainOverride","");
-        set_property("acc2Override","");
         set_property("offOverride","");
         set_property("backOverride","");
     }
@@ -1952,7 +1953,6 @@ void nonlocationBasedWeakMonsters(){
         main@postadventure( );
     }
 
-    set_property("acc2Override","");
     set_property("acc3Override","");
     set_property("mainOverride","");
     set_property("offOverride","");
@@ -2236,7 +2236,8 @@ void peridotFishing(){
                 else
                     set_property("mainOverride","");
                 set_property("offOverride",", equip Kramco Sausage-o-Matic");
-                set_property("acc2Override",",bonus mafia pointer");
+                set_property("acc2Override",", equip eternity codpiece");
+                set_property("acc3Override",",bonus mafia pointer");
                 if (loc == $location[The Unquiet Garves]){
                     put_closet(item_amount($item[grave robbing shovel]),$item[grave robbing shovel]);
                     put_closet(item_amount($item[rusty grave robbing shovel]),$item[rusty grave robbing shovel]);
@@ -2252,11 +2253,12 @@ void peridotFishing(){
                     if (loc == $location[the caliginous abyss])
                         set_property("acc1Override",", equip black glass");
                 }else if (loc.zone == "The 8-Bit Realm") {
-                    set_property("acc2Override",", equip continuum");
+                    set_property("acc3Override",", equip continuum");
                 }
 
                 adv1(loc);
                 set_property("acc2Override","");
+                set_property("acc3Override","");
                 set_property("hatOverride","");
                 set_property("pantsOverride","");
             }
