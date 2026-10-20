@@ -2222,6 +2222,8 @@ void peridotFishing(){
             set_property("subscript","peridot");
             if (periledLocations()[loc] == false && can_adventure(loc) == true && loc.wanderers == true){
                 print (turns_until_forced_noncombat(loc) + " at " + loc);
+                if (loc == $location[Guano Junction] && dayType() == 1)
+                    continue;
                 if (loc == $location[Pandamonium Slums] && available_amount($item[Hey Deze map]) == 0)
                     continue;
                 if (loc == $location[The Deep Machine Tunnels] && have_effect($effect[Inside The Snowglobe]) == 0)
