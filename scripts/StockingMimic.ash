@@ -2320,8 +2320,11 @@ void bulkFKD2(){
         chew (toChew,$item[Extrovermectin&trade;]);
         int mojo = 3-get_property("currentMojoFilters").to_int();
         use(mojo,$item[mojo filter]);
-        if (get_property("coolerYetiMode") == "adventures" && mall_price($item[jar of fermented pickle juice]) < (251000 + mall_price($item[Hodgman's blanket])))
+        if (get_property("coolerYetiMode") == "adventures" && mall_price($item[jar of fermented pickle juice]) < (251000 + mall_price($item[Hodgman's blanket]))){
+            cli_execute("uneffect ur-kel; cast ode");
             drink($item[jar of fermented pickle juice]);
+            cli_execute("uneffect ode; cast ur-kel");
+        }
         toChew = floor((spleen_limit()-my_spleen_use())/2);
         chew (toChew,$item[Extrovermectin&trade;]);
     }

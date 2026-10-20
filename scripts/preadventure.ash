@@ -787,8 +787,9 @@ void preAdv(){
     if (item_amount($item[Arr\, M80]) < 60)
         retrieve_item(70,$item[Arr\, M80]);
 
-    if (get_property("maxOverride") == "-mus,-mys,-mox"){
-        set_property("maxOverride","");
+    if (contains_text(get_property("maxOverride"),"combat") && !contains_text(get_property("maxOverride"),"-combat")){
+        if (numeric_modifier("combat rate") < 15)
+            abort("combat rate too low, see what you can do to buff");
     }
 }
 
