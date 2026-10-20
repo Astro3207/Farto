@@ -205,6 +205,8 @@ void main(){
             use($item[sweet tooth]);
         if (get_property("_voraciTeaUsed") == "false")
             use($item[Cuppa Voraci tea]);
+        if (get_property("_sobrieTeaUsed") == "false" && my_inebriety() > 0)
+            use($item[Cuppa Sobrie tea]);
         foreach ef in $effects[dirge of dreadfulness, Ur-Kel's Aria of Annoyance,Inigo's Incantation of Inspiration]{
             if (have_effect(ef) > 0)
                 cli_execute("uneffect "+ef);
