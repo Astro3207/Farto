@@ -2180,7 +2180,7 @@ void miscellaneousFams(){
                 cli_execute("gain 15 combat");
             set_property("subscript","stompingBoots");
             set_property("maxOverride","familiar weight");
-            if (get_property("_banderRunaways").to_int() < ((my_familiar().familiar_weight() + weight_adjustment( ))/5 - 6)){
+            if (get_property("_banderRunaways").to_int() < ((my_familiar().familiar_weight() + weight_adjustment( ))/5 - 10)){
                 set_property("offOverride",", equip rake");
                 set_property("mainOverride",", equip june cleaver");
                 set_property("acc1Override",", equip spring shoes");
