@@ -789,7 +789,7 @@ void postAdv(){
             cli_execute("CONSUME ORGANS 1 0 0");
         }
     }
-    if (get_property("_RubberSpiderUsedToday") != "true" && dayType() == 0 && my_adventures() == 11){
+    if (get_property("_RubberSpiderUsedToday") != "true" && dayType() == 0 && my_adventures() == 12){
         retrieve_item($item[rubber spider]);
         cli_execute("csend rubber spider to torturebot");
         set_property("_RubberSpiderUsedToday","true");
