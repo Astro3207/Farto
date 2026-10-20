@@ -408,13 +408,19 @@ void preAdv(){
     // ── Familiar equip helper ─────────────────────────────────────────────────
         string famEquip(){
             if (get_property("famEquipOverride") != "") return get_property("famEquipOverride");
-            if (my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[robortender]) return "";
-            if (contains_text(get_property("maxOverride"), "sea")) return ", equip das boot";
+            if ((my_location().environment == "underwater" || get_property("_seadentWaveZone") == my_location().to_string())
+                && !my_familiar().underwater
+                && have_effect($effect[Wet Willied]) == 0
+                && have_effect($effect[Driving Waterproofly]) == 0
+                && !(boolean_modifier("Underwater Familiar")
+                    && !boolean_modifier(equipped_item($slot[familiar]),"Underwater Familiar")))
+                return available_amount($item[das boot]) > 0 ? ", equip das boot" : ", equip little bitty bathysphere";
             if (my_familiar() == $familiar[skeleton of crimbo past]) return ", equip small peppermint-flavored sugar walking crook";
             if (my_familiar() == $familiar[cooler yeti] || my_familiar() == $familiar[chest mimic]) return ", equip toy cupid bow";
             if (my_familiar() == $familiar[mini kiwi]) return ", equip aviator goggles";
             if (my_familiar() == $familiar[Hobo in Sheep's Clothing]) return ", equip half-height cigar";
             if (my_familiar() == $familiar[stocking mimic]) return ", equip bag of many confections";
+            if (my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[robortender]) return "";
             if (my_familiar() == $familiar[none] || my_familiar() == $familiar[purse rat] || get_property("maxOverride") == "-combat" || get_property("maxOverride") == "combat") return "";
             return ", equip Li'l Businessman Kit";
         }
@@ -539,8 +545,7 @@ void preAdv(){
         else if (get_property("acc3Override") != "")
             append(maximize, get_property("acc3Override"));
         // Fam equip
-        if (get_property("famEquipOverride") != "")
-            append(maximize, get_property("famEquipOverride"));
+        append(maximize, famEquip());
     } else {
         if (get_property("unconditionalOverride") == ""){
             // Hat
@@ -646,13 +651,15 @@ void preAdv(){
         }
     }
 
-    if (get_property("savedMaximizer") == maximize.to_string()){
+    string context = my_location() + ";" + get_property("_seadentWaveZone");
+    if (get_property("savedMaximizer") == maximize.to_string() && get_property("savedMaximizerContext") == context){
         outfit("farming");
     } else {
         if (!maximize(maximize.to_string(), false))
             if (!maximize(maximize.to_string(), false))
                 abort();
         set_property("savedMaximizer",maximize.to_string());
+        set_property("savedMaximizerContext",context);
         cli_execute("outfit save farming");
     }
     // Sheriff override — only in non-slime non-angelbone-totem context
@@ -693,9 +700,10 @@ void preAdv(){
             if (dayType() == 0 && contains_text(get_property("lastEncounter"),"gingerbread")){
                 use_skill($skill[Sea *dent: Summon a Wave]);
             } else if (dayType() == 1 && contains_text(get_property("lastEncounter"),"shadow")){
+                location flooded = my_location();
                 use_skill($skill[Sea *dent: Summon a Wave]);
                 if (get_property("_seadentWaveZone") == "Shadow Rift")
-                    set_property("_seadentWaveZone",my_location());
+                    set_property("_seadentWaveZone",flooded);
             }
         }
     if (my_familiar() == $familiar[comma chameleon] && chameleon() != $familiar[stocking mimic] && get_property("script") == "FreeKill" && get_property("subscript") != "NonSMFK" && get_property("subscript") != "stompingBoots"){
