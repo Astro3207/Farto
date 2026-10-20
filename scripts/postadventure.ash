@@ -431,12 +431,13 @@ void drunkPygmy(){
 // Clear the ziggurat lianas with a candy-cane-sword machete, then pop the shrine NC.
 void lianas(){
     if (get_property("zigguratLianas") == 0){
-        cli_execute("acquire antique machete;equip weapon antique machete");
         foreach loc in $locations[An Overgrown Shrine (Northeast),An Overgrown Shrine (Southwest),An Overgrown Shrine (Southeast),An Overgrown Shrine (Northwest),A Massive Ziggurat]{
             int n;
             while (loc.turns_spent < 3 && n < 3) {
                 if ($familiar[cooler yeti].experience >= 360 && dayType() == 0)
                     return;
+                if (!have_equipped($item[antique machete]))
+                    cli_execute("acquire antique machete;equip weapon antique machete");
                 set_property("maxOverride","familiar exp, -weapon");
                 set_property("mainOverride"," ");
                 if (!($strings[chest mimic, cooler yeti] contains get_property("famOverride"))){
