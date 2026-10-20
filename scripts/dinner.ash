@@ -192,7 +192,7 @@ void main(){
     certificates();
     cli_execute ("maximize adv; av-snapshot.ash");
     YetiRO();
-    while ((my_basestat($stat[submoxie]) - 118881) > BCZcost("SweatEquityCasts")){
+    while ((my_basestat($stat[submoxie]) - 118881) > BCZcost("SweatEquityCasts"))
         use_skill($skill[BCZ: Sweat Equity]);
     set_property("banishedPhylaSaved",get_property("banishedPhyla"));
  //   step("phase: clockwork maid");
