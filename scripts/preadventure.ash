@@ -387,6 +387,25 @@ string acc2Override(){
     return acc2;
 }
 
+// ── Familiar equip helper ─────────────────────────────────────────────────
+    string famEquip(){
+        if (get_property("famEquipOverride") != "") return get_property("famEquipOverride");
+        if (contains_text(get_property("maxOverride"),"sea")
+            && !my_familiar().underwater
+            && have_effect($effect[Wet Willied]) == 0
+            && have_effect($effect[Driving Waterproofly]) == 0)
+            return available_amount($item[das boot]) > 0 ? ", equip das boot" : ", equip little bitty bathysphere";
+        print ("SKIPPING DAS BOOT","red");
+        if (my_familiar() == $familiar[skeleton of crimbo past]) return ", equip small peppermint-flavored sugar walking crook";
+        if (my_familiar() == $familiar[cooler yeti] || my_familiar() == $familiar[chest mimic]) return ", equip toy cupid bow";
+        if (my_familiar() == $familiar[mini kiwi]) return ", equip aviator goggles";
+        if (my_familiar() == $familiar[Hobo in Sheep's Clothing]) return ", equip half-height cigar";
+        if (my_familiar() == $familiar[stocking mimic]) return ", equip bag of many confections";
+        if (my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[robortender]) return "";
+        if (my_familiar() == $familiar[none] || my_familiar() == $familiar[purse rat] || get_property("maxOverride") == "-combat" || get_property("maxOverride") == "combat") return "";
+        return ", equip Li'l Businessman Kit";
+    }
+
 void preAdv(){
     if (get_property("script") == "FreeKill" && dayType() == 1
         && have_effect($effect[eldritch attunement]) > 0
@@ -435,24 +454,6 @@ void preAdv(){
                 use_familiar($familiar[comma chameleon]);
         }
 
-    // ── Familiar equip helper ─────────────────────────────────────────────────
-        string famEquip(){
-            if (get_property("famEquipOverride") != "") return get_property("famEquipOverride");
-            if (contains_text(get_property("maxOverride"),"sea")
-                && !my_familiar().underwater
-                && have_effect($effect[Wet Willied]) == 0
-                && have_effect($effect[Driving Waterproofly]) == 0
-                && !(boolean_modifier("Underwater Familiar")))
-                return available_amount($item[das boot]) > 0 ? ", equip das boot" : ", equip little bitty bathysphere";
-            if (my_familiar() == $familiar[skeleton of crimbo past]) return ", equip small peppermint-flavored sugar walking crook";
-            if (my_familiar() == $familiar[cooler yeti] || my_familiar() == $familiar[chest mimic]) return ", equip toy cupid bow";
-            if (my_familiar() == $familiar[mini kiwi]) return ", equip aviator goggles";
-            if (my_familiar() == $familiar[Hobo in Sheep's Clothing]) return ", equip half-height cigar";
-            if (my_familiar() == $familiar[stocking mimic]) return ", equip bag of many confections";
-            if (my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[robortender]) return "";
-            if (my_familiar() == $familiar[none] || my_familiar() == $familiar[purse rat] || get_property("maxOverride") == "-combat" || get_property("maxOverride") == "combat") return "";
-            return ", equip Li'l Businessman Kit";
-        }
         if ((my_familiar() == $familiar[robortender] || (my_familiar() == $familiar[Comma Chameleon]) && (chameleon() == $familiar[none] || chameleon() == $familiar[robortender])) && get_property("script") == "farto"){
             if (my_familiar() == $familiar[Comma Chameleon] && chameleon() == $familiar[none]){
                 retrieve_item(item_amount(familiar_equipment($familiar[robortender]))+1,familiar_equipment($familiar[robortender]));

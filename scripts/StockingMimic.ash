@@ -887,7 +887,7 @@ void shadowRealmFK(){
         aa("facsimile");
     if (!contains_text(get_property("maxOverride"),"familiar"))
         set_property("maxOverride","familiar weight");
-    if (get_property("_baseballInnings").to_int() < 3 && baseballPlayers() < 9)
+    if ((get_property("_baseballInnings").to_int() < 3 && baseballPlayers() < 9) || contains_text(get_property("baseballTeam"),"768"))
         set_property("acc2Override",", equip eternity codpiece");
     else
         set_property("acc2Override","");
@@ -1294,10 +1294,13 @@ void backup(){
     set_property("acc3Override","");
 }
 void mimicEgg(){
-    while (item_amount($item[mimic egg]) > 0 && dayType() == 1 && contains_text(get_property("mimicEggMonsters"),copyTarget.to_int().to_string())){
+    while (item_amount($item[mimic egg]) > 0 && dayType() == 1 && (contains_text(get_property("mimicEggMonsters"),copyTarget.to_int().to_string()) || contains_text(get_property("mimicEggMonsters"),copyTarget2.to_int().to_string()))){
         mimicPrep();
         main@preadventure( );
-        cli_execute("c2t_megg fight " + copyTarget);
+        if (contains_text(get_property("mimicEggMonsters"),copyTarget.to_int().to_string()))
+            cli_execute("c2t_megg fight " + copyTarget);
+        else
+            cli_execute("c2t_megg fight " + copyTarget2);
         run_combat();
         cli_execute("postadventure");
     }
