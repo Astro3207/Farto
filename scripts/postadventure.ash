@@ -799,8 +799,11 @@ void postAdv(){
         set_property("maxOverride","familiar weight");
         set_property("offOverride",", equip cursed magnifying glass");
         set_property("acc3Override",", equip " + timeBadge().to_string());
+        set_property("subscript","weakling");
         altFam($familiar[stocking mimic]);
         adv1($location[cobb's knob treasury]);
+        set_property("subscript","");
+        clearOverrides();
     }
     if (have_item($item[cosmic bowling ball]) && dayType() == 1 && get_property("script") == "FreeKill" && my_inebriety() <= inebriety_limit()){
         set_property("maxOverride","combat,-equip drunkula's wineglass");
