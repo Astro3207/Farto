@@ -273,14 +273,20 @@ float pointerRingValue(){
 // Pantogram pants: the pants' own meat plus whatever their familiar weight adds
 // to the current familiar's meat drop, as a share of this location's base meat.
 // Both are read off the pants, since the pantogram roll can change.
+// One numeric modifier out of _pantogramModifier ("Meat Drop: +60, Familiar
+// Weight: +10, ..."); 0 when the pants don't have it.
+int pantogramModifier(string name){
+    matcher m = create_matcher(name + ": \\+?(-?\\d+)", get_property("_pantogramModifier"));
+    return m.find() ? m.group(1).to_int() : 0;
+}
+
 float pantogramValue(){
-    item pants = $item[pantogram pants];
     int weight = familiar_weight(my_familiar()) + weight_adjustment();
-    int extra = numeric_modifier(pants, "familiar weight").to_int();
-    if (have_equipped(pants)) weight -= extra;
+    int extra = pantogramModifier("Familiar Weight");
+    if (have_equipped($item[pantogram pants])) weight -= extra;
     float famMeat = numeric_modifier(my_familiar(), "meat drop", weight + extra, equipped_item($slot[familiar]))
         - numeric_modifier(my_familiar(), "meat drop", weight, equipped_item($slot[familiar]));
-    return (numeric_modifier(pants, "meat drop") + famMeat) / 100 * locationBaseMeat();
+    return (pantogramModifier("Meat Drop") + famMeat) / 100 * locationBaseMeat();
 }
 
 // Ordnance magnet: 25% of fights drop one of these combat items, picked evenly.
