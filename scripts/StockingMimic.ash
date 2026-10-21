@@ -925,10 +925,12 @@ void shadowRealmFK(){
     } else {
         NCforce(false);
         if (get_property("rufusQuestType") == "entity"){
-            if (to_int(get_property("_spikolodonSpikeUses")) < 5 && have_effect($effect[everything looks yellow]) == 0){
-                set_property("shirtOverride",", equip jurassic parka (spikolodon)");
-            } else {
-                set_property("shirtOverride","");
+            if (get_property("shirtOverride") != ", equip jurassic parka (dilophosaur)"){
+                if (to_int(get_property("_spikolodonSpikeUses")) < 5 && have_effect($effect[everything looks yellow]) == 0){
+                    set_property("shirtOverride",", equip jurassic parka (spikolodon)");
+                } else {
+                    set_property("shirtOverride","");
+                }
             }
             if (to_int(get_property("_mcHugeLargeAvalancheUses")) < 3)
                 set_property("offOverride",", equip mchugelarge left ski");
@@ -1033,6 +1035,8 @@ boolean uneffectBuff(){
     return have_effect(toRemove) == 0;
 }
 boolean looseFK(){
+    if (get_property("shirtOverride") == ", equip jurassic parka (dilophosaur)")
+        set_property("shirtOverride","");
     set_property("maxOverride","familiar weight");
     if (have_effect($effect[everything looks red]) == 0){
         set_property("maxOverride","familiar weight, equip everfull dart holster");
@@ -1056,7 +1060,7 @@ boolean looseFK(){
         return true;
     }
     if (have_effect($effect[everything looks yellow]) == 0){
-        set_property("maxOverride","familiar weight, equip jurassic parka (dilophosaur)");
+        set_property("shirtOverride",", equip jurassic parka (dilophosaur)");
         print ("FK is jurassic acid");
         return true;
     }
