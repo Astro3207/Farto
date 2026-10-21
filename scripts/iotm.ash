@@ -902,7 +902,7 @@
             (pos + 6) % 8: 2,
             (pos + 7) % 8: 19
         };
-        visit_url("choice.php?forceoption=0?whichchoice=1485&option=1"
+        visit_url("choice.php?forceoption=0&whichchoice=1485&option=1"
             + "&slot%5B0%5D=" + slots[0]
             + "&slot%5B1%5D=" + slots[1]
             + "&slot%5B2%5D=" + slots[2]
