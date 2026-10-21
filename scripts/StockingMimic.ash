@@ -2402,6 +2402,12 @@ void bulkFKD2(){
     while (have_effect($effect[shadow affinity]) > 0){
         shadowRealmFK();
     }
+    step("phase: bulkFK NC force");
+    NCforce(false);
+    while (get_property("noncombatForcerActive") == true || get_property("encountersUntilSRChoice").to_int() == 0){
+        shadowRealmFK();
+        NCforce(false);
+    }
     step("phase: bulkFK loose FK");
     while (looseFK()){
         set_property("subscript","looseFK");
@@ -2410,12 +2416,6 @@ void bulkFKD2(){
         shadowRealmFK();
     }
     set_property("subscript","");
-    step("phase: bulkFK NC force");
-    NCforce(false);
-    while (get_property("noncombatForcerActive") == true || get_property("encountersUntilSRChoice").to_int() == 0){
-        shadowRealmFK();
-        NCforce(false);
-    }
     miscellaneousFams();
     step("phase: bulkFK reminisce");
     reminisce();
