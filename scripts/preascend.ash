@@ -28,6 +28,7 @@ void Nightcap(){
     equip($slot[acc2],$item[angelbone dice]);
     cli_execute("CONSUME NIGHTCAP");
     cli_execute("unequip devilbone rosary; unequip angelbone dice");
+    equip($item[drunkula's wineglass]);
 }
 
 // One more stench-airport-ticket farming pass, once today's ticket is spent.
@@ -46,7 +47,8 @@ void drunkInko(){
     set_property("script","farto");
     while (my_adventures() > 0){
         altFam($familiar[robortender]);
-        set_property("offOverride",", equip drunkula's wineglass")
+        set_property("maxOverride","3.25 meat drop, 7 item drop, sea");
+        set_property("offOverride",", equip drunkula's wineglass");
 //        set_property("famOverride","sword of Swords");
         adv1($location[The Marinara Trench],0,"");
     }
