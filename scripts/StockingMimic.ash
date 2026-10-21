@@ -924,15 +924,10 @@ void shadowRealmFK(){
     } else {
         NCforce(false);
         if (get_property("rufusQuestType") == "entity"){
-            if (to_int(get_property("_spikolodonSpikeUses")) < 5 && have_effect($effect[everything looks yellow]) == 0){
+            if (to_int(get_property("_spikolodonSpikeUses")) < 5 && have_effect($effect[everything looks yellow]) == 0)
                 set_property("shirtOverride",", equip jurassic parka (spikolodon)");
-            } else {
-                set_property("shirtOverride","");
-            }
             if (to_int(get_property("_mcHugeLargeAvalancheUses")) < 3)
                 set_property("offOverride",", equip mchugelarge left ski");
-            else
-                set_property("offOverride","");
             if (get_property("noncombatForcerActive") == "true" || get_property("encountersUntilSRChoice").to_int() == 0){
                 set_auto_attack(0);
                 shadowBoss();
@@ -945,6 +940,8 @@ void shadowRealmFK(){
         }
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
         set_property("backOverride","");
+        set_property("offOverride","");
+        set_property("shirtOverride","");
     }
     if (get_property("questRufus") == "step1") {
         use($item[closed-circuit pay phone]);
@@ -1032,6 +1029,7 @@ boolean uneffectBuff(){
     return have_effect(toRemove) == 0;
 }
 boolean looseFK(){
+    set_property("acc3Override","");
     set_property("maxOverride","familiar weight");
     if (have_effect($effect[everything looks red]) == 0){
         set_property("maxOverride","familiar weight, equip everfull dart holster");
@@ -1104,8 +1102,6 @@ void underwaterBaseball(){
         set_property("acc1Override",", equip mafia pointer");
         if (get_property("_baseballInnings").to_int() < 3 && baseballPlayers() < 9)
             set_property("acc2Override",", equip eternity codpiece");
-        else
-            set_property("acc2Override","");
         adv1($location[The Dive Bar]);
         baseballD();
     } else if (get_property("_curveballFightsLeft").to_int() > 0){
@@ -1114,6 +1110,7 @@ void underwaterBaseball(){
     }
     set_property("acc1Override","");
     set_property("backOverride","");
+    set_property("acc2Override","");
 }
 
 boolean pearloP1Done(){
