@@ -2332,7 +2332,14 @@ void eldritchFights(){
 }
 
 void shadowRealmBuffUp(){
-    abort("Prep buffing up");
+    //spell crit, spell damage, and mys
+    foreach ef in $effects[Wizard Squint,OMG WTF,Sauce Monocle,Sweet Pirate Curse,Up To 11,Carol of the Hells,Gamer Rage,Imported Strength,Ultraheart]{
+        if (have_effect(ef) > 0)
+            continue;
+        if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
+            continue;
+        cli_execute(ef.default);
+    }
 }
 
 void bulkFKD2(){
