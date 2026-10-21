@@ -863,10 +863,10 @@ void shadowBoss(){
         if (have_skill($skill[blood bubble])) {
             if (have_effect($effect[blood bubble]) == 0)
                 use_skill($skill[blood bubble]);
-            set_property("maxOverride","familiar weight, equip petrified wood wizard's pouch");
+            set_property("maxOverride","familiar weight, equip congressional medal of");
             set_property("backOverride",", equip wicker slicker");
         } else{
-            set_property("maxOverride","familiar weight, equip petrified wood wizard's pouch, equip Drunkula's ring of haze");
+            set_property("maxOverride","familiar weight, equip congressional medal of, equip Drunkula's ring of haze");
             set_property("backOverride",", equip wicker slicker");
         }
     }else if (get_property("rufusQuestTarget") == "shadow orrery"){
@@ -906,8 +906,8 @@ void shadowRealmFK(){
         }
     }
     if ($monster[shadow slab].elemental_resistance > 85){
-        if (have_item($item[petrified wood wizard's pouch]))
-            set_property("acc3Override",",equip petrified wood wizard's pouch");
+        if (have_item($item[congressional medal of]))
+            set_property("acc3Override",",equip congressional medal of");
     }
     if (to_int(get_property("_batWingsSwoopUsed")) < 11 && dayType() == 0)
         set_property("backOverride",", equip bat wings");
@@ -1202,7 +1202,7 @@ void gingerbread(){
     }
     retrieve_item(29,$item[gingerbread cigarette]);
     if (get_property("_gingerbreadCityTurns").to_int() < 30){
-        mimicPrep();
+        mimicPrep(", -equip mobius ring");
         adv1($location[Gingerbread Upscale Retail District]);
     }
     if (contains_text(LastAdvTxt(),"almost midnight") || get_property("_gingerbreadCityTurns").to_int() == 19)
@@ -2331,6 +2331,10 @@ void eldritchFights(){
     }
 }
 
+void shadowRealmBuffUp(){
+    abort("Prep buffing up");
+}
+
 void bulkFKD2(){
     step("phase: bulkFK start");
     set_property("inSpendAdv","true");
@@ -2388,6 +2392,7 @@ void bulkFKD2(){
         cyberzone();
     }
     step("phase: bulkFK shadow rift");
+    shadowRealmBuffUp();
     if (get_property("_shadowAffinityToday") == "false")
         shadowRealmFK();
     while (have_effect($effect[shadow affinity]) > 0){

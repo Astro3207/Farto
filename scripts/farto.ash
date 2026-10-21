@@ -224,6 +224,8 @@ void main(){
                     }
                     abort("Hunter use heartstone banish and monkeypaw slap and do the mayfly manually, send it to me and Ill script it in fully");
                 }
+            } else if (dayType() == 0 ){
+                abort("script in ink bladdering in treasury");
             } else if ((my_class() == $class[accordion thief] || have_effect($effect[fishy]) > 0) || dayType() == 0){
                 inko();
             } else if (my_class() == $class[pastamancer] && numeric_modifier($modifier[meat drop]) > 1700){
