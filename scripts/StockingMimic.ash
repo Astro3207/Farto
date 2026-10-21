@@ -866,7 +866,8 @@ void shadowBoss(){
             set_property("maxOverride","familiar weight, equip congressional medal of");
             set_property("backOverride",", equip wicker slicker");
         } else{
-            set_property("maxOverride","familiar weight, equip congressional medal of, equip Drunkula's ring of haze");
+            set_property("maxOverride","familiar weight, equip congressional medal of");
+            set_property("acc2Override",", equip Drunkula's ring of haze");
             set_property("backOverride",", equip wicker slicker");
         }
     }else if (get_property("rufusQuestTarget") == "shadow orrery"){
