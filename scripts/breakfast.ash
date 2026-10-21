@@ -257,7 +257,7 @@ void firstBreakfast(){
     primeFamiliar();
     cli_execute("garden pick");
     photoBooth();
-    if (available_amount($item[portable pantogram]) > 0 && dayType() == 1){
+    if (available_amount($item[portable pantogram]) > 0 && dayType() == 1 && get_property("_pantogramModifier") == ""){
         retrieve_item(11,$item[lead necklace]);
         retrieve_item(1,$item[porquoise]);
         visit_url("inv_use.php?whichitem=9573");
