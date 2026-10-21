@@ -998,6 +998,32 @@ void ELKPrep(){
         set_property("acc1Override",", equip everfull dart holster");
 }
 
+void PPShadowRift(){ //setup for shadow rift PP but taking it out for now
+    if (dayType() == 1 && get_property("_batWingsSwoopUsed").to_int() < 11){
+        set_property("maxOverride","item drop");
+        if (available_amount($item[Flash Liquidizer Ultra Dousing Accessory]) == 0)
+            retrieve_item($item[Flash Liquidizer Ultra Dousing Accessory]);
+        if (have_item($item[mime army infiltration glove]))
+            set_property("acc2Override", ", equip mime army infiltration glove");
+        if (get_property("_douseFoeUses").to_int() < 3)
+            set_property("acc3Override",", equip Flash Liquidizer Ultra Dousing Accessory");
+        if (have_item($item[moss mace]) && my_class() == $class[seal clubber] && my_fury( ) >= 3)
+            set_property("mainOverride",", equip moss mace");
+        if (get_property("_batWingsSwoopUsed").to_int() < 5 && get_property("shrunkenHeadZombieMonster") == "" )
+            set_property("offOverride",", equip shrunken head");
+        retrieve_item($item[waffle]);
+        retrieve_item($item[Septapus summoning charm]);
+        set_property("famOverride","mini kiwi");
+        shadowRealm();
+        set_property("mainOverride","");
+        set_property("offOverride","");
+        set_property("famOverride","");
+        set_property("backOverride","");
+        set_property("acc2Override","");
+        set_property("acc3Override","");
+    }
+}
+
 // Pocket Professor target for the reminisce chain: the locket monster whose rare drop
 // (under 1%, e.g. the f0.1 / f0.33 Crimbo and holiday gear) has the best expected
 // value per fight. Rates are fixed, so +item% doesn't change the order, but 0.33% vs 0.1%
@@ -1151,29 +1177,7 @@ void spendAdv(){
         
         if (get_property("_VYKEACompanionName") == "" && dayType() == 1)
             setupVykea();
-        if (dayType() == 1 && get_property("_batWingsSwoopUsed").to_int() < 11){
-            set_property("maxOverride","item drop");
-            if (available_amount($item[Flash Liquidizer Ultra Dousing Accessory]) == 0)
-                retrieve_item($item[Flash Liquidizer Ultra Dousing Accessory]);
-            if (have_item($item[mime army infiltration glove]))
-                set_property("acc2Override", ", equip mime army infiltration glove");
-            if (get_property("_douseFoeUses").to_int() < 3)
-                set_property("acc3Override",", equip Flash Liquidizer Ultra Dousing Accessory");
-            if (have_item($item[moss mace]) && my_class() == $class[seal clubber] && my_fury( ) >= 3)
-                set_property("mainOverride",", equip moss mace");
-            if (get_property("_batWingsSwoopUsed").to_int() < 5 && get_property("shrunkenHeadZombieMonster") == "" )
-                set_property("offOverride",", equip shrunken head");
-            retrieve_item($item[waffle]);
-            retrieve_item($item[Septapus summoning charm]);
-            set_property("famOverride","mini kiwi");
-            shadowRealm();
-            set_property("mainOverride","");
-            set_property("offOverride","");
-            set_property("famOverride","");
-            set_property("backOverride","");
-            set_property("acc2Override","");
-            set_property("acc3Override","");
-        } else if (dayType() == 1 && get_property("shrunkenHeadZombieMonster") == ""){
+        if (dayType() == 1 && get_property("shrunkenHeadZombieMonster") == ""){
             shrunkenDoughbat();
         } else if (!pearlsDone()){
             foreach str in $strings[anemone,bar,reef,deepests,trench]{
