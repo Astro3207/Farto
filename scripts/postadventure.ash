@@ -778,6 +778,8 @@ void postAdv(){
     if (get_property("leprecondoInstalled") != "19,9,13,18" && to_int(get_property("_leprecondoRearrangements")) < 3){
         leprecondo("19,9,13,18,25");
     }
+    if (get_property("_VYKEACompanionName") == "" && dayType() == 1)
+        setupVykea();
     if (have_equipped($item[drunkula's wineglass]) && dayType() == 0)
         abort("Done for the day");
     if (my_inebriety() < inebriety_limit() && dayType() != 0 && get_property("familiarSweat").to_int() >= (my_inebriety() < 10 ? 358 : 449)){
@@ -1170,8 +1172,6 @@ void spendAdv(){
         else if (get_property("questM10Azazel") != "finished")
             azazelUnicornQuest();
         
-        if (get_property("_VYKEACompanionName") == "" && dayType() == 1)
-            setupVykea();
         if (dayType() == 1 && get_property("shrunkenHeadZombieMonster") == ""){
             shrunkenDoughbat();
         } else if (!pearlsDone()){
