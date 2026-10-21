@@ -1264,6 +1264,14 @@
         "Packrat":9,  "Bad Moon":10
     };
 
+    boolean pearlsDone(){
+        foreach str in $strings[anemone,bar,reef,deepests,trench]{
+            if (get_property(pearls[str].donePref) == "false")
+                return false;
+        }
+        return true;
+    }
+
     int universe() {
         for y from 0 to my_adventures() {
             for x from 1 to 99 {

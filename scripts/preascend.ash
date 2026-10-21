@@ -16,7 +16,7 @@ void step(string msg){
 // ─── PHASES ──────────────────────────────────────────────────────────────────
 
 // Mood/law-of-averages pass and a nightcap, once not already overdrunk.
-void dailyMoodAndNightcap(){
+void Nightcap(){
     if (my_inebriety() > inebriety_limit())
         return;
     visit_url("showclan.php?whichclan=" + get_property("homeClanID").to_int() + "&action=joinclan&confirm=on");
@@ -28,8 +28,6 @@ void dailyMoodAndNightcap(){
     equip($slot[acc2],$item[angelbone dice]);
     cli_execute("CONSUME NIGHTCAP");
     cli_execute("unequip devilbone rosary; unequip angelbone dice");
-    equip($item[angelbone chopsticks]);
-    use_familiar($familiar[sword of s words]);
 }
 
 // One more stench-airport-ticket farming pass, once today's ticket is spent.
@@ -42,29 +40,21 @@ void stenchAirportFarm(){
 }
 
 void drunkInko(){
-    if ((!have_familiar($familiar[robortender]) && get_property("commaFamiliar") == "Robortender") && my_inebriety() <= inebriety_limit())
-        set_property("famOverride","comma chameleon");
-    else if (have_familiar($familiar[Robortender]) && my_inebriety() <= inebriety_limit())
-        set_property("famOverride","robortender");
-    else
-        set_property("famOverride","sword of Swords");
+    if (have_equipped($item[angelbone totem]))
+        return;
+    starter();
     set_property("script","farto");
-    if (have_effect($effect[driving waterproofly]) == 0)
-        set_property("backOverride",", equip elf guard scuba tank");
-    item banItem = $item[none];
-    if (my_inebriety() > inebriety_limit() && get_property("_unblemishedPearlDiveBar").to_boolean() == false){
-        equip($item[drunkula's wineglass]);
-        set_property("maxOverride","sleaze resistance");
-        adv1($location[The Dive Bar]);
-    } else {
-        set_property("maxOverride","item drop");
+    while (my_adventures() > 0){
+        altFam($familiar[robortender]);
+        set_property("offOverride",", equip drunkula's wineglass")
+//        set_property("famOverride","sword of Swords");
         adv1($location[The Marinara Trench],0,"");
     }
 }
 
 // Re-equip the bone gear (idempotent -- no-op if already on) and top off diet.
 void equipBonesAndConsume(){
-    cli_execute("equip angelbone totem; equip acc1 angelbone chopsticks; equip devilbone corset; equip devilbone greaves; refresh all; CONSUME ALL");
+    cli_execute("equip angelbone totem; equip acc1 angelbone chopsticks; equip devilbone corset; equip devilbone greaves; CONSUME ALL");
 }
 
 // Spend down to the count of unused Grimace Prime maps (so each remaining one
@@ -74,9 +64,19 @@ void spendGrimacePrimeMaps(){
     equip($item[angelbone totem]);
     int n = item_amount($item[Map to Safety Shelter Grimace Prime]);
     while (my_adventures() > n){
-        set_property("famOverride","skeleton of crimbo past");
-        set_property("maxOverride","drops items");
-        adv1($location[the skeleton store]);
+        if (!pearlsDone()){
+            if (get_property("_unblemishedPearlDiveBar").to_boolean() == false){
+                equip($item[drunkula's wineglass]);
+                set_property("maxOverride","sleaze resistance");
+                adv1($location[The Dive Bar]);
+            } else {
+                abort();
+            }
+        } else {
+            set_property("famOverride","skeleton of crimbo past");
+            set_property("maxOverride","drops items");
+            adv1($location[the skeleton store]);
+        }
     }
     finisher();
     if (item_amount($item[Map to Safety Shelter Grimace Prime]) > 0){
@@ -254,27 +254,26 @@ void main(){
     step("phase: Organ phase 1");
     if (isFartScauce())
         set_property("valueOfAdventure","5400");
-    equipBonesAndConsume();
-    if (!contains_text(get_property("thoth19_event_list"),"overfull1"))
-        cli_execute("ptrack add overfull1");
-    while (my_inebriety() == inebriety_limit() && my_adventures() > 0)
-        drunkInko();
-    if (!contains_text(get_property("thoth19_event_list"),"overfull2"))
-        cli_execute("ptrack add overfull2");
     step("phase: nightcap");
-    dailyMoodAndNightcap();
-    if (!contains_text(get_property("thoth19_event_list"),"overdrunk1"))
-        cli_execute("ptrack add overdrunk1");
+    Nightcap();
+    if (!contains_text(get_property("thoth19_event_list"),"overdrunkStart"))
+        cli_execute("ptrack add overdrunkStart");
+    drunkInko();
+    if (!contains_text(get_property("thoth19_event_list"),"overdrunkEnd"))
+        cli_execute("ptrack add overdrunkEnd");
     if (isFartScauce())
         set_property("valueOfAdventure","5000");
+    equipBonesAndConsume();
+    if (!contains_text(get_property("thoth19_event_list"),"overorganStart"))
+        cli_execute("ptrack add overorganStart");
     try {
-        step("phase: grimace prime maps");
+        step("phase: over Organed");
         spendGrimacePrimeMaps();
     } finally {
         finisher();
     }
-    if (!contains_text(get_property("thoth19_event_list"),"overdrunk2"))
-        cli_execute("ptrack add overdrunk2");
+    if (!contains_text(get_property("thoth19_event_list"),"overorganEnd"))
+        cli_execute("ptrack add overorganEnd");
     step("phase: pvp");
     pvpCleanup();
     step("phase: other iotm todos");

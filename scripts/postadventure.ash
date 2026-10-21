@@ -1068,14 +1068,6 @@ monster lowDrop(){
     return targets[0].mon;
 }
 
-boolean pearlsDone(){
-    foreach str in $strings[anemone,bar,reef,deepests,trench]{
-        if (get_property(pearls[str].donePref) == "false")
-            return false;
-    }
-    return true;
-}
-
 // Burn the turn on the next task in priority order: forced NCs, spooky-forest
 // delay, the Azazel push, Black Forest / Guild loops, spikolodon temple, in-run
 // free kills, Shadow Rift, cookbookbat, Book of Facts wishes, then level 11.
