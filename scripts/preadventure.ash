@@ -390,12 +390,13 @@ string acc2Override(){
 // ── Familiar equip helper ─────────────────────────────────────────────────
     string famEquip(){
         if (get_property("famEquipOverride") != "") return get_property("famEquipOverride");
+        cli_execute("unequip familiar equipment");
         if (contains_text(get_property("maxOverride"),"sea")
             && !my_familiar().underwater
             && have_effect($effect[Wet Willied]) == 0
-            && have_effect($effect[Driving Waterproofly]) == 0)
+            && have_effect($effect[Driving Waterproofly]) == 0
+            && !(boolean_modifier("Underwater Familiar")))
             return available_amount($item[das boot]) > 0 ? ", equip das boot" : ", equip little bitty bathysphere";
-        print ("SKIPPING DAS BOOT","red");
         if (my_familiar() == $familiar[skeleton of crimbo past]) return ", equip small peppermint-flavored sugar walking crook";
         if (my_familiar() == $familiar[cooler yeti] || my_familiar() == $familiar[chest mimic]) return ", equip toy cupid bow";
         if (my_familiar() == $familiar[mini kiwi]) return ", equip aviator goggles";
