@@ -1035,7 +1035,6 @@ boolean uneffectBuff(){
     return have_effect(toRemove) == 0;
 }
 boolean looseFK(){
-    set_property("acc3Override","");
     if (get_property("shirtOverride") == ", equip jurassic parka (dilophosaur)")
         set_property("shirtOverride","");
     set_property("maxOverride","familiar weight");
