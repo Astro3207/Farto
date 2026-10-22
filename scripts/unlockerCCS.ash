@@ -1039,7 +1039,7 @@ void main(int round, monster mob, string page_text) {
             cleanUp();
         }
         if (last_monster() == $monster[shadow guy])
-            throw_item($item[waffleset_property("script","bladdering");]);
+            throw_item($item[waffle]);
         while (to_int(get_property("_douseFoeUses")) < 3
             && get_property("_douseFoeSuccess") == "false"
             && current_round() < 25 && current_round() > 0 && have_equipped($item[Flash Liquidizer Ultra Dousing Accessory])){

@@ -754,7 +754,7 @@ void postAdv(){
         }
     }
     freeKillTurnGuard();
-    treasuryTurnGuard();
+ //   treasuryTurnGuard();
     lawOfAverages();
     if (is_online("OnlyFax"))
         clanFortune();

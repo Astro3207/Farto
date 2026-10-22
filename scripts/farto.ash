@@ -185,11 +185,18 @@ void bladdering(){
     set_property("script","bladdering");
     if (have_item($item[mime army infiltration glove]) && my_primestat() != $stat[moxie])
         set_property("acc2Override", ", equip mime army infiltration glove");
+    set_property("bonusOverride"," ");
     set_property("maxOverride","combat,-equip drunkula's wineglass");
     set_property("famOverride", "peace turkey");
     set_property("mainOverride",", equip june cleaver");
-    set_property("acc2Override",",equip Ass-Stompers of Violence");
+    set_property("acc3Override",", equip Ass-Stompers of Violence");
+    if (have_effect($effect[Apriling Band Battle Cadence]) == 0 && total_turns_played() >= get_property("nextAprilBandTurn").to_int())
+        cli_execute("aprilband effect c");
     adv1($location[cobb's knob treasury]);
+    if (get_property("_seadentWaveUsed").to_boolean() == false)
+        use_skill($skill[Sea *dent: Summon a Wave]);
+    if (get_property("_seadentWaveZone") != "Cobb's Knob Treasury")
+        abort("treasury isn't flooded");
 }
 
 //unusued, bunchu free kills, spooky VHS tape (shadow rift is a great target), god lobster,  red zeppelin? debatable tbh
