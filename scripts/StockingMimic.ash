@@ -860,7 +860,7 @@ void cyberzone() {
     }}
 void shadowBoss(){
     if (get_property("rufusQuestTarget") == "shadow scythe" || get_property("rufusQuestTarget") == "shadow spire"){
-        set_property("acc3Override",", equip petrified wood wizard's pouch");
+        set_property("acc3Override",", equip congressional medal of");
         if (have_skill($skill[blood bubble])) {
             if (have_effect($effect[blood bubble]) == 0)
                 use_skill($skill[blood bubble]);
