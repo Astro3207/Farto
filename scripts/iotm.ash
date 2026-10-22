@@ -911,6 +911,8 @@
             + "&slot%5B5%5D=" + slots[5]
             + "&slot%5B6%5D=" + slots[6]
             + "&slot%5B7%5D=" + slots[7]);
+        if (handling_choice() && last_choice() == 1485)
+            visit_url("main.php");
     }
 
     string nextTrainStation(){
