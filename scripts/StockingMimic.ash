@@ -860,14 +860,14 @@ void cyberzone() {
     }}
 void shadowBoss(){
     if (get_property("rufusQuestTarget") == "shadow scythe" || get_property("rufusQuestTarget") == "shadow spire"){
+        set_property("acc3Override",", equip congressional medal of");
         if (have_skill($skill[blood bubble])) {
             if (have_effect($effect[blood bubble]) == 0)
                 use_skill($skill[blood bubble]);
-            set_property("maxOverride","familiar weight, equip congressional medal of");
+            set_property("maxOverride","familiar weight");
             set_property("backOverride",", equip wicker slicker");
         } else{
-            set_property("maxOverride","familiar weight, equip congressional medal of");
-            set_property("acc2Override",", equip Drunkula's ring of haze");
+            set_property("maxOverride","familiar weight, equip Drunkula's ring of haze");
             set_property("backOverride",", equip wicker slicker");
         }
     }else if (get_property("rufusQuestTarget") == "shadow orrery"){
@@ -925,8 +925,13 @@ void shadowRealmFK(){
     } else {
         NCforce(false);
         if (get_property("rufusQuestType") == "entity"){
-            if (to_int(get_property("_spikolodonSpikeUses")) < 5 && have_effect($effect[everything looks yellow]) == 0)
-                set_property("shirtOverride",", equip jurassic parka (spikolodon)");
+            if (get_property("shirtOverride") != ", equip jurassic parka (dilophosaur)"){
+                if (to_int(get_property("_spikolodonSpikeUses")) < 5 && have_effect($effect[everything looks yellow]) == 0){
+                    set_property("shirtOverride",", equip jurassic parka (spikolodon)");
+                } else {
+                    set_property("shirtOverride","");
+                }
+            }
             if (to_int(get_property("_mcHugeLargeAvalancheUses")) < 3)
                 set_property("offOverride",", equip mchugelarge left ski");
             if (get_property("noncombatForcerActive") == "true" || get_property("encountersUntilSRChoice").to_int() == 0){
@@ -1031,6 +1036,8 @@ boolean uneffectBuff(){
 }
 boolean looseFK(){
     set_property("acc3Override","");
+    if (get_property("shirtOverride") == ", equip jurassic parka (dilophosaur)")
+        set_property("shirtOverride","");
     set_property("maxOverride","familiar weight");
     if (have_effect($effect[everything looks red]) == 0){
         set_property("maxOverride","familiar weight, equip everfull dart holster");
@@ -1054,7 +1061,7 @@ boolean looseFK(){
         return true;
     }
     if (have_effect($effect[everything looks yellow]) == 0){
-        set_property("maxOverride","familiar weight, equip jurassic parka (dilophosaur)");
+        set_property("shirtOverride",", equip jurassic parka (dilophosaur)");
         print ("FK is jurassic acid");
         return true;
     }
