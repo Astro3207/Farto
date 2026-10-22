@@ -887,7 +887,7 @@ void shadowRealmFK(){
         aa("facsimile");
     if (!contains_text(get_property("maxOverride"),"familiar"))
         set_property("maxOverride","familiar weight");
-    if (get_property("_baseballInnings").to_int() < 3 && baseballPlayers() < 9)
+    if ((get_property("_baseballInnings").to_int() < 3 && baseballPlayers() < 9) || contains_text(get_property("baseballTeam"),"768"))
         set_property("acc2Override",", equip eternity codpiece");
     else
         set_property("acc2Override","");
@@ -907,8 +907,8 @@ void shadowRealmFK(){
         }
     }
     if ($monster[shadow slab].elemental_resistance > 85){
-        if (have_item($item[petrified wood wizard's pouch]))
-            set_property("acc3Override",",equip petrified wood wizard's pouch");
+        if (have_item($item[congressional medal of]))
+            set_property("acc3Override",",equip congressional medal of");
     }
     if (to_int(get_property("_batWingsSwoopUsed")) < 11 && dayType() == 0)
         set_property("backOverride",", equip bat wings");
@@ -917,7 +917,7 @@ void shadowRealmFK(){
     if (get_property("questRufus") == "started" && get_property("rufusQuestType") == "items"){
         retrieve_item(3,to_item(get_property("rufusQuestTarget")));
     } else if (have_effect($effect[shadow affinity]) > 0){
-        if (have_effect($effect[fishy]) < 860 && my_class() == $class[seal clubber])
+        if (have_effect($effect[fishy]) < 880 && my_class() == $class[seal clubber])
             set_property("mainOverride",", equip monodent");
         else
             set_property("mainOverride","");
@@ -934,8 +934,6 @@ void shadowRealmFK(){
             }
             if (to_int(get_property("_mcHugeLargeAvalancheUses")) < 3)
                 set_property("offOverride",", equip mchugelarge left ski");
-            else
-                set_property("offOverride","");
             if (get_property("noncombatForcerActive") == "true" || get_property("encountersUntilSRChoice").to_int() == 0){
                 set_auto_attack(0);
                 shadowBoss();
@@ -948,6 +946,8 @@ void shadowRealmFK(){
         }
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
         set_property("backOverride","");
+        set_property("offOverride","");
+        set_property("shirtOverride","");
     }
     if (get_property("questRufus") == "step1") {
         use($item[closed-circuit pay phone]);
@@ -1035,6 +1035,7 @@ boolean uneffectBuff(){
     return have_effect(toRemove) == 0;
 }
 boolean looseFK(){
+    set_property("acc3Override","");
     if (get_property("shirtOverride") == ", equip jurassic parka (dilophosaur)")
         set_property("shirtOverride","");
     set_property("maxOverride","familiar weight");
@@ -1109,8 +1110,6 @@ void underwaterBaseball(){
         set_property("acc1Override",", equip mafia pointer");
         if (get_property("_baseballInnings").to_int() < 3 && baseballPlayers() < 9)
             set_property("acc2Override",", equip eternity codpiece");
-        else
-            set_property("acc2Override","");
         adv1($location[The Dive Bar]);
         baseballD();
     } else if (get_property("_curveballFightsLeft").to_int() > 0){
@@ -1119,6 +1118,7 @@ void underwaterBaseball(){
     }
     set_property("acc1Override","");
     set_property("backOverride","");
+    set_property("acc2Override","");
 }
 
 boolean pearloP1Done(){
@@ -1207,7 +1207,7 @@ void gingerbread(){
     }
     retrieve_item(29,$item[gingerbread cigarette]);
     if (get_property("_gingerbreadCityTurns").to_int() < 30){
-        mimicPrep();
+        mimicPrep(", -equip mobius ring");
         adv1($location[Gingerbread Upscale Retail District]);
     }
     if (contains_text(LastAdvTxt(),"almost midnight") || get_property("_gingerbreadCityTurns").to_int() == 19)
@@ -1301,10 +1301,13 @@ void backup(){
     set_property("acc3Override","");
 }
 void mimicEgg(){
-    while (item_amount($item[mimic egg]) > 0 && dayType() == 1 && contains_text(get_property("mimicEggMonsters"),copyTarget.to_int().to_string())){
+    while (item_amount($item[mimic egg]) > 0 && dayType() == 1 && (contains_text(get_property("mimicEggMonsters"),copyTarget.to_int().to_string()) || contains_text(get_property("mimicEggMonsters"),copyTarget2.to_int().to_string()))){
         mimicPrep();
         main@preadventure( );
-        cli_execute("c2t_megg fight " + copyTarget);
+        if (contains_text(get_property("mimicEggMonsters"),copyTarget.to_int().to_string()))
+            cli_execute("c2t_megg fight " + copyTarget);
+        else
+            cli_execute("c2t_megg fight " + copyTarget2);
         run_combat();
         cli_execute("postadventure");
     }
@@ -2336,6 +2339,17 @@ void eldritchFights(){
     }
 }
 
+void shadowRealmBuffUp(){
+    //spell crit, spell damage, and mys
+    foreach ef in $effects[Wizard Squint,OMG WTF,Sauce Monocle,Sweet Pirate Curse,Up To 11,Carol of the Hells,Gamer Rage,Imported Strength,Ultraheart]{
+        if (have_effect(ef) > 0)
+            continue;
+        if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
+            continue;
+        cli_execute(ef.default);
+    }
+}
+
 void bulkFKD2(){
     step("phase: bulkFK start");
     set_property("inSpendAdv","true");
@@ -2393,10 +2407,17 @@ void bulkFKD2(){
         cyberzone();
     }
     step("phase: bulkFK shadow rift");
+    shadowRealmBuffUp();
     if (get_property("_shadowAffinityToday") == "false")
         shadowRealmFK();
     while (have_effect($effect[shadow affinity]) > 0){
         shadowRealmFK();
+    }
+    step("phase: bulkFK NC force");
+    NCforce(false);
+    while (get_property("noncombatForcerActive") == true || get_property("encountersUntilSRChoice").to_int() == 0){
+        shadowRealmFK();
+        NCforce(false);
     }
     step("phase: bulkFK loose FK");
     while (looseFK()){
@@ -2406,12 +2427,6 @@ void bulkFKD2(){
         shadowRealmFK();
     }
     set_property("subscript","");
-    step("phase: bulkFK NC force");
-    NCforce(false);
-    while (get_property("noncombatForcerActive") == true || get_property("encountersUntilSRChoice").to_int() == 0){
-        shadowRealmFK();
-        NCforce(false);
-    }
     miscellaneousFams();
     step("phase: bulkFK reminisce");
     reminisce();

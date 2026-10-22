@@ -228,7 +228,7 @@
     }
 
     boolean [effect] manaBurnEffects = $effects[Only Dogs Love a Drunken Sailor, Legendary Pasta Eyeball,disco fever,Mariachi Mood,Blubbered Up,
-        Singer's Faithful Ocelot, Leash of Linguini, Empathy, Thoughtful Empathy, Disco Leer,Song of Bravado,Slippery as a Seal,Big,
+        Singer's Faithful Ocelot, Leash of Linguini, Empathy, Thoughtful Empathy,Slippery as a Seal,Big,
         Polka of Plenty, Tubes of Universal Meat, Lubricating Sauce, Strength of the Tortoise,Musk of the Moose,Attracting Snakes];
 
     boolean [effect] manaBurnEffectsD1 = $effects[Only Dogs Love a Drunken Sailor,
@@ -1263,6 +1263,14 @@
         "Opossum":5,  "Marmot":6,  "Wombat":7,  "Blender":8,
         "Packrat":9,  "Bad Moon":10
     };
+
+    boolean pearlsDone(){
+        foreach str in $strings[anemone,bar,reef,deepests,trench]{
+            if (get_property(pearls[str].donePref) == "false")
+                return false;
+        }
+        return true;
+    }
 
     int universe() {
         for y from 0 to my_adventures() {

@@ -754,7 +754,7 @@ void postAdv(){
         }
     }
     freeKillTurnGuard();
-    treasuryTurnGuard();
+ //   treasuryTurnGuard();
     lawOfAverages();
     if (is_online("OnlyFax"))
         clanFortune();
@@ -778,6 +778,8 @@ void postAdv(){
     if (get_property("leprecondoInstalled") != "19,9,13,18" && to_int(get_property("_leprecondoRearrangements")) < 3){
         leprecondo("19,9,13,18,25");
     }
+    if (get_property("_VYKEACompanionName") == "" && dayType() == 1)
+        setupVykea();
     if (have_equipped($item[drunkula's wineglass]) && dayType() == 0)
         abort("Done for the day");
     if (my_inebriety() < inebriety_limit() && dayType() != 0 && get_property("familiarSweat").to_int() >= (my_inebriety() < 10 ? 358 : 449)){
@@ -799,8 +801,11 @@ void postAdv(){
         set_property("maxOverride","familiar weight");
         set_property("offOverride",", equip cursed magnifying glass");
         set_property("acc3Override",", equip " + timeBadge().to_string());
+        set_property("subscript","weakling");
         altFam($familiar[stocking mimic]);
         adv1($location[cobb's knob treasury]);
+        set_property("subscript","");
+        clearOverrides();
     }
     if (have_item($item[cosmic bowling ball]) && dayType() == 1 && get_property("script") == "FreeKill" && my_inebriety() <= inebriety_limit()){
         set_property("maxOverride","combat,-equip drunkula's wineglass");
@@ -998,6 +1003,33 @@ void ELKPrep(){
         set_property("acc1Override",", equip everfull dart holster");
 }
 
+void PPShadowRift(){
+    if (dayType() == 0 && get_property("_douseFoeUses").to_int() < 3 && (my_class() != $class[seal clubber] || my_fury( ) >= 3)){
+        set_property("maxOverride","item drop");
+        set_property("acc2Override", ", equip bat wings");
+        if (available_amount($item[Flash Liquidizer Ultra Dousing Accessory]) == 0)
+            retrieve_item($item[Flash Liquidizer Ultra Dousing Accessory]);
+        if (have_item($item[mime army infiltration glove]) && my_primestat() != $stat[moxie])
+            set_property("acc2Override", ", equip mime army infiltration glove");
+        if (get_property("_douseFoeUses").to_int() < 3)
+            set_property("acc3Override",", equip Flash Liquidizer Ultra Dousing Accessory");
+        if (have_item($item[moss mace]) && my_class() == $class[seal clubber] && my_fury( ) >= 3)
+            set_property("mainOverride",", equip moss mace");
+        if (my_class() == $class[seal clubber])
+            set_property("offOverride",", equip monodent");
+        retrieve_item($item[waffle]);
+        retrieve_item(5,$item[Septapus summoning charm]);
+        set_property("famOverride","mini kiwi");
+        adv1($location[shadow rift (The Misspelled Cemetary)]);
+        set_property("mainOverride","");
+        set_property("offOverride","");
+        set_property("famOverride","");
+        set_property("backOverride","");
+        set_property("acc2Override","");
+        set_property("acc3Override","");
+    }
+}
+
 // Pocket Professor target for the reminisce chain: the locket monster whose rare drop
 // (under 1%, e.g. the f0.1 / f0.33 Crimbo and holiday gear) has the best expected
 // value per fight. Rates are fixed, so +item% doesn't change the order, but 0.33% vs 0.1%
@@ -1040,14 +1072,6 @@ monster lowDrop(){
         return t.mon;
     }
     return targets[0].mon;
-}
-
-boolean pearlsDone(){
-    foreach str in $strings[anemone,bar,reef,deepests,trench]{
-        if (get_property(pearls[str].donePref) == "false")
-            return false;
-    }
-    return true;
 }
 
 // Burn the turn on the next task in priority order: forced NCs, spooky-forest
@@ -1149,31 +1173,7 @@ void spendAdv(){
         else if (get_property("questM10Azazel") != "finished")
             azazelUnicornQuest();
         
-        if (get_property("_VYKEACompanionName") == "" && dayType() == 1)
-            setupVykea();
-        if (dayType() == 1 && get_property("_batWingsSwoopUsed").to_int() < 11){
-            set_property("maxOverride","item drop");
-            if (available_amount($item[Flash Liquidizer Ultra Dousing Accessory]) == 0)
-                retrieve_item($item[Flash Liquidizer Ultra Dousing Accessory]);
-            if (have_item($item[mime army infiltration glove]))
-                set_property("acc2Override", ", equip mime army infiltration glove");
-            if (get_property("_douseFoeUses").to_int() < 3)
-                set_property("acc3Override",", equip Flash Liquidizer Ultra Dousing Accessory");
-            if (have_item($item[moss mace]) && my_class() == $class[seal clubber] && my_fury( ) >= 3)
-                set_property("mainOverride",", equip moss mace");
-            if (get_property("_batWingsSwoopUsed").to_int() < 5 && get_property("shrunkenHeadZombieMonster") == "" )
-                set_property("offOverride",", equip shrunken head");
-            retrieve_item($item[waffle]);
-            retrieve_item($item[Septapus summoning charm]);
-            set_property("famOverride","mini kiwi");
-            shadowRealm();
-            set_property("mainOverride","");
-            set_property("offOverride","");
-            set_property("famOverride","");
-            set_property("backOverride","");
-            set_property("acc2Override","");
-            set_property("acc3Override","");
-        } else if (dayType() == 1 && get_property("shrunkenHeadZombieMonster") == ""){
+        if (dayType() == 1 && get_property("shrunkenHeadZombieMonster") == ""){
             shrunkenDoughbat();
         } else if (!pearlsDone()){
             foreach str in $strings[anemone,bar,reef,deepests,trench]{

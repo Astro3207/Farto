@@ -273,14 +273,20 @@ float pointerRingValue(){
 // Pantogram pants: the pants' own meat plus whatever their familiar weight adds
 // to the current familiar's meat drop, as a share of this location's base meat.
 // Both are read off the pants, since the pantogram roll can change.
+// One numeric modifier out of _pantogramModifier ("Meat Drop: +60, Familiar
+// Weight: +10, ..."); 0 when the pants don't have it.
+int pantogramModifier(string name){
+    matcher m = create_matcher(name + ": \\+?(-?\\d+)", get_property("_pantogramModifier"));
+    return m.find() ? m.group(1).to_int() : 0;
+}
+
 float pantogramValue(){
-    item pants = $item[pantogram pants];
     int weight = familiar_weight(my_familiar()) + weight_adjustment();
-    int extra = numeric_modifier(pants, "familiar weight").to_int();
-    if (have_equipped(pants)) weight -= extra;
+    int extra = pantogramModifier("Familiar Weight");
+    if (have_equipped($item[pantogram pants])) weight -= extra;
     float famMeat = numeric_modifier(my_familiar(), "meat drop", weight + extra, equipped_item($slot[familiar]))
         - numeric_modifier(my_familiar(), "meat drop", weight, equipped_item($slot[familiar]));
-    return (numeric_modifier(pants, "meat drop") + famMeat) / 100 * locationBaseMeat();
+    return (pantogramModifier("Meat Drop") + famMeat) / 100 * locationBaseMeat();
 }
 
 // Ordnance magnet: 25% of fights drop one of these combat items, picked evenly.
@@ -387,6 +393,26 @@ string acc2Override(){
     return acc2;
 }
 
+// ── Familiar equip helper ─────────────────────────────────────────────────
+    string famEquip(){
+        if (get_property("famEquipOverride") != "") return get_property("famEquipOverride");
+        cli_execute("unequip familiar equipment");
+        if (contains_text(get_property("maxOverride"),"sea")
+            && !my_familiar().underwater
+            && have_effect($effect[Wet Willied]) == 0
+            && have_effect($effect[Driving Waterproofly]) == 0
+            && !(boolean_modifier("Underwater Familiar")))
+            return available_amount($item[das boot]) > 0 ? ", equip das boot" : ", equip little bitty bathysphere";
+        if (my_familiar() == $familiar[skeleton of crimbo past]) return ", equip small peppermint-flavored sugar walking crook";
+        if (my_familiar() == $familiar[cooler yeti] || my_familiar() == $familiar[chest mimic]) return ", equip toy cupid bow";
+        if (my_familiar() == $familiar[mini kiwi]) return ", equip aviator goggles";
+        if (my_familiar() == $familiar[Hobo in Sheep's Clothing]) return ", equip half-height cigar";
+        if (my_familiar() == $familiar[stocking mimic]) return ", equip bag of many confections";
+        if (my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[robortender]) return "";
+        if (my_familiar() == $familiar[none] || my_familiar() == $familiar[purse rat] || get_property("maxOverride") == "-combat" || get_property("maxOverride") == "combat") return "";
+        return ", equip Li'l Businessman Kit";
+    }
+
 void preAdv(){
     if (get_property("script") == "FreeKill" && dayType() == 1
         && have_effect($effect[eldritch attunement]) > 0
@@ -435,24 +461,6 @@ void preAdv(){
                 use_familiar($familiar[comma chameleon]);
         }
 
-    // ── Familiar equip helper ─────────────────────────────────────────────────
-        string famEquip(){
-            if (get_property("famEquipOverride") != "") return get_property("famEquipOverride");
-            if (contains_text(get_property("maxOverride"),"sea")
-                && !my_familiar().underwater
-                && have_effect($effect[Wet Willied]) == 0
-                && have_effect($effect[Driving Waterproofly]) == 0
-                && !(boolean_modifier("Underwater Familiar")))
-                return available_amount($item[das boot]) > 0 ? ", equip das boot" : ", equip little bitty bathysphere";
-            if (my_familiar() == $familiar[skeleton of crimbo past]) return ", equip small peppermint-flavored sugar walking crook";
-            if (my_familiar() == $familiar[cooler yeti] || my_familiar() == $familiar[chest mimic]) return ", equip toy cupid bow";
-            if (my_familiar() == $familiar[mini kiwi]) return ", equip aviator goggles";
-            if (my_familiar() == $familiar[Hobo in Sheep's Clothing]) return ", equip half-height cigar";
-            if (my_familiar() == $familiar[stocking mimic]) return ", equip bag of many confections";
-            if (my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[robortender]) return "";
-            if (my_familiar() == $familiar[none] || my_familiar() == $familiar[purse rat] || get_property("maxOverride") == "-combat" || get_property("maxOverride") == "combat") return "";
-            return ", equip Li'l Businessman Kit";
-        }
         if ((my_familiar() == $familiar[robortender] || (my_familiar() == $familiar[Comma Chameleon]) && (chameleon() == $familiar[none] || chameleon() == $familiar[robortender])) && get_property("script") == "farto"){
             if (my_familiar() == $familiar[Comma Chameleon] && chameleon() == $familiar[none]){
                 retrieve_item(item_amount(familiar_equipment($familiar[robortender]))+1,familiar_equipment($familiar[robortender]));
@@ -771,6 +779,9 @@ void preAdv(){
             if (have_effect(ef) > 0)
                 cli_execute("uneffect " + ef);
         }
+    }
+    if (get_property("script") == "bladdering"){
+        retrieve_item(2,$item[ink bladder]);
     }
 
     if (contains_text(get_property("shrunkenHeadZombieAbilities"),"Meat Drop") && have_effect($effect[Juiced]) == 0 && my_buffedstat($stat[moxie]) < $monster[giant squid].base_attack){

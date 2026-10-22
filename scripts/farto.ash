@@ -181,6 +181,24 @@ void inko(){
         set_property(to_string(to_slot(banItem)) + "Override", "");
 }
 
+void bladdering(){
+    set_property("script","bladdering");
+    if (have_item($item[mime army infiltration glove]) && my_primestat() != $stat[moxie])
+        set_property("acc2Override", ", equip mime army infiltration glove");
+    set_property("bonusOverride"," ");
+    set_property("maxOverride","combat,-equip drunkula's wineglass");
+    set_property("famOverride", "peace turkey");
+    set_property("mainOverride",", equip june cleaver");
+    set_property("acc3Override",", equip Ass-Stompers of Violence");
+    if (have_effect($effect[Apriling Band Battle Cadence]) == 0 && total_turns_played() >= get_property("nextAprilBandTurn").to_int())
+        cli_execute("aprilband effect c");
+    adv1($location[cobb's knob treasury]);
+    if (get_property("_seadentWaveUsed").to_boolean() == false)
+        use_skill($skill[Sea *dent: Summon a Wave]);
+    if (get_property("_seadentWaveZone") != "Cobb's Knob Treasury")
+        abort("treasury isn't flooded");
+}
+
 //unusued, bunchu free kills, spooky VHS tape (shadow rift is a great target), god lobster,  red zeppelin? debatable tbh
 //since I can only get 1k meat from FK, should save FK and relavant wanderers for cyberzone
 //For the same reason I can see with FK is better to farm spice melange.... Hypothetically pearl farming has higher value???? ~4k
@@ -224,6 +242,8 @@ void main(){
                     }
                     abort("Hunter use heartstone banish and monkeypaw slap and do the mayfly manually, send it to me and Ill script it in fully");
                 }
+            } else if (dayType() == 0 && get_property("bladderMax").to_boolean() == true && have_effect($effect[fishy]) > 0){
+                bladdering();
             } else if ((my_class() == $class[accordion thief] || have_effect($effect[fishy]) > 0) || dayType() == 0){
                 inko();
             } else if (my_class() == $class[pastamancer] && numeric_modifier($modifier[meat drop]) > 1700){

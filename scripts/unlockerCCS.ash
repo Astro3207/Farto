@@ -203,7 +203,7 @@ void waffleShadowGuy(){
     int shadowGuyValue = item_drops_array($monster[shadow guy])[0].rate/100 * itDropMult * mall_price(item_drops_array($monster[shadow guy])[0].drop);
     int avgPrice = (mall_price($item[shadow brick]) + mall_price($item[shadow stick]))/2;
     int otherGuyValue = (item_drops_array($monster[shadow slab])[0].rate/100 * itDropMult * avgPrice) - mall_price($item[waffle]);
-    if (have_effect($effect[fishy]) < 860)
+    if (have_effect($effect[fishy]) < 880)
         use_skill($skill[Sea *dent: Talk to Some Fish]);
     else if (shadowGuyValue < otherGuyValue)
         throw_item($item[waffle]);
@@ -397,7 +397,7 @@ void main(int round, monster mob, string page_text) {
     // The generic pre-combat buffs (avalanche/spikolodon/reanimate/bowling-ball/kill-a-lot)
     // are kept ahead of this whole group so they still apply before every branch in it, same
     // as they did before this section existed as its own block.
-    if (last_monster() != $monster[shadow scythe] && last_monster() != $monster[shadow spire] && last_monster() != $monster[Guard turtle] && !have_equipped($item[backup camera])) {
+    if (last_monster() != $monster[shadow scythe] && last_monster() != $monster[shadow spire] && last_monster() != $monster[Guard turtle] && !have_equipped($item[backup camera]) && get_property("script") != "bladdering") {
         if (have_skill($skill[McHugeLarge Avalanche]))         use_skill($skill[McHugeLarge Avalanche]);
         if (have_skill($skill[Launch spikolodon spikes]))      use_skill($skill[Launch spikolodon spikes]);
         if (my_primestat( ) == $stat[moxie] || have_equipped($item[mime army infiltration glove])) steal( );
@@ -950,6 +950,10 @@ void main(int round, monster mob, string page_text) {
             use_skill($skill[Sea *dent: Throw a Lightning Bolt]);
     }
     if (my_location() == $location[cobb's knob treasury]){
+        if (get_property("script") == "bladdering"){
+            steal();
+            throw_item($item[ink bladder]);
+        }
         if (last_monster() == $monster[Knob Goblin Embezzler])
             attack(5);
         else
@@ -1036,24 +1040,23 @@ void main(int round, monster mob, string page_text) {
         }
         if (last_monster() == $monster[shadow guy])
             throw_item($item[waffle]);
-        if (have_effect($effect[null afternoon]) == 0)
-            throw_items($item[crayon shavings],$item[crayon shavings]);
-        throw_item($item[septapus summoning charm]);
         while (to_int(get_property("_douseFoeUses")) < 3
             && get_property("_douseFoeSuccess") == "false"
-            && current_round() < 25 && have_equipped($item[Flash Liquidizer Ultra Dousing Accessory])){
-            if (my_hp() < 500)
-                throw_item($item[new age healing crystal]);
+            && current_round() < 25 && current_round() > 0 && have_equipped($item[Flash Liquidizer Ultra Dousing Accessory])){
             use_skill($skill[douse foe]);
         }
+        int itAmount = item_amount(item_drops_array(last_monster())[0].drop);
+        while (current_round() < 25 && current_round() > 0 && item_amount($item[septapus summoning charm]) > 0 && itAmount == item_amount(item_drops_array(last_monster())[0].drop)){
+            throw_item($item[septapus summoning charm]);
+        }
+        if (have_equipped($item[moss mace]) && my_fury() >= 3)
+            use_skill($skill[moss mugging]);
+        if (have_skill($skill[perpetrate mild evil]))
+            use_skill($skill[perpetrate mild evil]);
         if (have_equipped($item[bat wings]))
             use_skill($skill[swoop like a bat]);
-        if (my_hp() < 500)
-            throw_item($item[new age healing crystal]);
-        if (have_equipped($item[moss mace]))
-            use_skill($skill[moss mugging]);
-        free_run(page_text);
-        free_kill(page_text);
+        if (have_equipped($item[monodent of the sea]))
+            use_skill($skill[Sea *dent: Talk to Some Fish]);
         cleanUp();
         return;
     }
