@@ -242,11 +242,8 @@ void main(){
                     }
                     abort("Hunter use heartstone banish and monkeypaw slap and do the mayfly manually, send it to me and Ill script it in fully");
                 }
-            } else if (dayType() == 0 && get_property("bladderMax").to_boolean() == true){
-                if (have_effect($effect[fishy]) > 0){
-                    bladdering();
-                } else
-                    abort("out of fishy");
+            } else if (dayType() == 0 && get_property("bladderMax").to_boolean() == true && have_effect($effect[fishy]) > 0){
+                bladdering();
             } else if ((my_class() == $class[accordion thief] || have_effect($effect[fishy]) > 0) || dayType() == 0){
                 inko();
             } else if (my_class() == $class[pastamancer] && numeric_modifier($modifier[meat drop]) > 1700){
