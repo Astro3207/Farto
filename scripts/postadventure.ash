@@ -1009,7 +1009,7 @@ void PPShadowRift(){
         set_property("acc2Override", ", equip bat wings");
         if (available_amount($item[Flash Liquidizer Ultra Dousing Accessory]) == 0)
             retrieve_item($item[Flash Liquidizer Ultra Dousing Accessory]);
-        if (have_item($item[mime army infiltration glove]) && my_primestat() != $class[moxie])
+        if (have_item($item[mime army infiltration glove]) && my_primestat() != $stat[moxie])
             set_property("acc2Override", ", equip mime army infiltration glove");
         if (get_property("_douseFoeUses").to_int() < 3)
             set_property("acc3Override",", equip Flash Liquidizer Ultra Dousing Accessory");
@@ -1020,7 +1020,7 @@ void PPShadowRift(){
         retrieve_item($item[waffle]);
         retrieve_item(5,$item[Septapus summoning charm]);
         set_property("famOverride","mini kiwi");
-        adv1($location[shadow rift (the mispelled cemetary)]);
+        adv1($location[shadow rift (The Misspelled Cemetary)]);
         set_property("mainOverride","");
         set_property("offOverride","");
         set_property("famOverride","");

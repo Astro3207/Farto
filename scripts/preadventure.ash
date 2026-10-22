@@ -780,6 +780,9 @@ void preAdv(){
                 cli_execute("uneffect " + ef);
         }
     }
+    if (get_property("script") == "bladdering"){
+        retrieve_item(2,$item[ink bladder]);
+    }
 
     if (contains_text(get_property("shrunkenHeadZombieAbilities"),"Meat Drop") && have_effect($effect[Juiced]) == 0 && my_buffedstat($stat[moxie]) < $monster[giant squid].base_attack){
         use($item[mer-kin cooljuice]);

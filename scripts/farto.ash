@@ -182,7 +182,14 @@ void inko(){
 }
 
 void bladdering(){
-
+    set_property("script","bladdering");
+    if (have_item($item[mime army infiltration glove]) && my_primestat() != $stat[moxie])
+        set_property("acc2Override", ", equip mime army infiltration glove");
+    set_property("maxOverride","combat,-equip drunkula's wineglass");
+    set_property("famOverride", "peace turkey");
+    set_property("mainOverride",", equip june cleaver");
+    set_property("acc2Override",",equip Ass-Stompers of Violence");
+    adv1($location[cobb's knob treasury]);
 }
 
 //unusued, bunchu free kills, spooky VHS tape (shadow rift is a great target), god lobster,  red zeppelin? debatable tbh

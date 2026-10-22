@@ -397,7 +397,7 @@ void main(int round, monster mob, string page_text) {
     // The generic pre-combat buffs (avalanche/spikolodon/reanimate/bowling-ball/kill-a-lot)
     // are kept ahead of this whole group so they still apply before every branch in it, same
     // as they did before this section existed as its own block.
-    if (last_monster() != $monster[shadow scythe] && last_monster() != $monster[shadow spire] && last_monster() != $monster[Guard turtle] && !have_equipped($item[backup camera])) {
+    if (last_monster() != $monster[shadow scythe] && last_monster() != $monster[shadow spire] && last_monster() != $monster[Guard turtle] && !have_equipped($item[backup camera]) && get_property("script") != "bladdering") {
         if (have_skill($skill[McHugeLarge Avalanche]))         use_skill($skill[McHugeLarge Avalanche]);
         if (have_skill($skill[Launch spikolodon spikes]))      use_skill($skill[Launch spikolodon spikes]);
         if (my_primestat( ) == $stat[moxie] || have_equipped($item[mime army infiltration glove])) steal( );
@@ -950,6 +950,10 @@ void main(int round, monster mob, string page_text) {
             use_skill($skill[Sea *dent: Throw a Lightning Bolt]);
     }
     if (my_location() == $location[cobb's knob treasury]){
+        if (get_property("script") == "bladdering"){
+            steal();
+            throw_item($item[ink bladder]);
+        }
         if (last_monster() == $monster[Knob Goblin Embezzler])
             attack(5);
         else
@@ -1035,7 +1039,7 @@ void main(int round, monster mob, string page_text) {
             cleanUp();
         }
         if (last_monster() == $monster[shadow guy])
-            throw_item($item[waffle]);
+            throw_item($item[waffleset_property("script","bladdering");]);
         while (to_int(get_property("_douseFoeUses")) < 3
             && get_property("_douseFoeSuccess") == "false"
             && current_round() < 25 && current_round() > 0 && have_equipped($item[Flash Liquidizer Ultra Dousing Accessory])){
