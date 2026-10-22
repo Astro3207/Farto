@@ -1003,23 +1003,24 @@ void ELKPrep(){
         set_property("acc1Override",", equip everfull dart holster");
 }
 
-void PPShadowRift(){ //setup for shadow rift PP but taking it out for now
-    if (dayType() == 1 && get_property("_batWingsSwoopUsed").to_int() < 11){
+void PPShadowRift(){
+    if (dayType() == 0 && get_property("_douseFoeUses").to_int() < 3 && (my_class() != $class[seal clubber] || my_fury( ) >= 3)){
         set_property("maxOverride","item drop");
+        set_property("acc2Override", ", equip bat wings");
         if (available_amount($item[Flash Liquidizer Ultra Dousing Accessory]) == 0)
             retrieve_item($item[Flash Liquidizer Ultra Dousing Accessory]);
-        if (have_item($item[mime army infiltration glove]))
+        if (have_item($item[mime army infiltration glove]) && my_primestat() != $class[moxie])
             set_property("acc2Override", ", equip mime army infiltration glove");
         if (get_property("_douseFoeUses").to_int() < 3)
             set_property("acc3Override",", equip Flash Liquidizer Ultra Dousing Accessory");
         if (have_item($item[moss mace]) && my_class() == $class[seal clubber] && my_fury( ) >= 3)
             set_property("mainOverride",", equip moss mace");
-        if (get_property("_batWingsSwoopUsed").to_int() < 5 && get_property("shrunkenHeadZombieMonster") == "" )
-            set_property("offOverride",", equip shrunken head");
+        if (my_class() == $class[seal clubber])
+            set_property("offOverride",", equip monodent");
         retrieve_item($item[waffle]);
-        retrieve_item($item[Septapus summoning charm]);
+        retrieve_item(5,$item[Septapus summoning charm]);
         set_property("famOverride","mini kiwi");
-        shadowRealm();
+        adv1($location[shadow rift (the mispelled cemetary)]);
         set_property("mainOverride","");
         set_property("offOverride","");
         set_property("famOverride","");

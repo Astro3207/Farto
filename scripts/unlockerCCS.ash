@@ -1036,24 +1036,23 @@ void main(int round, monster mob, string page_text) {
         }
         if (last_monster() == $monster[shadow guy])
             throw_item($item[waffle]);
-        if (have_effect($effect[null afternoon]) == 0)
-            throw_items($item[crayon shavings],$item[crayon shavings]);
-        throw_item($item[septapus summoning charm]);
         while (to_int(get_property("_douseFoeUses")) < 3
             && get_property("_douseFoeSuccess") == "false"
-            && current_round() < 25 && have_equipped($item[Flash Liquidizer Ultra Dousing Accessory])){
-            if (my_hp() < 500)
-                throw_item($item[new age healing crystal]);
+            && current_round() < 25 && current_round() > 0 && have_equipped($item[Flash Liquidizer Ultra Dousing Accessory])){
             use_skill($skill[douse foe]);
         }
+        int itAmount = item_amount(item_drops_array(last_monster())[0].drop);
+        while (current_round() < 25 && current_round() > 0 && item_amount($item[septapus summoning charm]) > 0 && itAmount == item_amount(item_drops_array(last_monster())[0].drop)){
+            throw_item($item[septapus summoning charm]);
+        }
+        if (have_equipped($item[moss mace]) && my_fury() >= 3)
+            use_skill($skill[moss mugging]);
+        if (have_skill($skill[perpetrate mild evil]))
+            use_skill($skill[perpetrate mild evil]);
         if (have_equipped($item[bat wings]))
             use_skill($skill[swoop like a bat]);
-        if (my_hp() < 500)
-            throw_item($item[new age healing crystal]);
-        if (have_equipped($item[moss mace]))
-            use_skill($skill[moss mugging]);
-        free_run(page_text);
-        free_kill(page_text);
+        if (have_equipped($item[monodent of the sea]))
+            use_skill($skill[Sea *dent: Talk to Some Fish]);
         cleanUp();
         return;
     }
