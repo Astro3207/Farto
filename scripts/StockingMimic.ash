@@ -2727,10 +2727,6 @@ item bestCupIngredient(int [item] ingredients, int meatPerTurn, boolean always){
     return best;
 }
 
-item bestCupIngredient(int [item] ingredients, int meatPerTurn){
-    return bestCupIngredient(ingredients, meatPerTurn, false);
-}
-
 // Drink the Cup of 13s (choice 1601): always one Runneth With The Pack ingredient,
 // plus two Runneth On Empty ones when that is profitable, else more of the Pack
 // one. False when the cup isn't charged or the items can't be had, so the caller
@@ -2741,7 +2737,7 @@ boolean drinkCupOf13s(){
     item pack = bestCupIngredient(runnethWithThePackItems, 150, true);
     if (pack == $item[none])
         return false;
-    item empty = bestCupIngredient(runnethOnEmptyItems, 325);
+    item empty = bestCupIngredient(runnethOnEmptyItems, 325, false);
     if (empty == $item[none])
         empty = pack;
     if (!retrieve_item(empty == pack ? 3 : 1, pack) || !retrieve_item(empty == pack ? 3 : 2, empty))
