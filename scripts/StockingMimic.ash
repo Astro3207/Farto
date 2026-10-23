@@ -910,7 +910,14 @@ void shadowRealmFK(){
         if (have_item($item[congressional medal of]))
             set_property("acc3Override",",equip congressional medal of");
     }
-    if (to_int(get_property("_batWingsSwoopUsed")) < 11 && dayType() == 0)
+    // Douse Foe charges: the Flash Liquidizer takes acc3 unless the medal already has it.
+    if (get_property("_douseFoeUses").to_int() < 3 && !contains_text(get_property("acc3Override"),"congressional medal")){
+        if (available_amount($item[Flash Liquidizer Ultra Dousing Accessory]) == 0)
+            retrieve_item($item[Flash Liquidizer Ultra Dousing Accessory]);
+        set_property("acc3Override",", equip Flash Liquidizer Ultra Dousing Accessory");
+    } else if (contains_text(get_property("acc3Override"),"Flash Liquidizer"))
+        set_property("acc3Override","");
+    if (to_int(get_property("_batWingsSwoopUsed")) < 11)
         set_property("backOverride",", equip bat wings");
     if (get_property("questRufus") == "unstarted")
         use($item[closed-circuit pay phone]);
@@ -935,6 +942,7 @@ void shadowRealmFK(){
             if (to_int(get_property("_mcHugeLargeAvalancheUses")) < 3)
                 set_property("offOverride",", equip mchugelarge left ski");
             if (get_property("noncombatForcerActive") == "true" || get_property("encountersUntilSRChoice").to_int() == 0){
+                abort("see if bosses still take a shadow affinity charge");
                 set_auto_attack(0);
                 shadowBoss();
             } else {
