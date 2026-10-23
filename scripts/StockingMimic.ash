@@ -1685,7 +1685,7 @@ void weakMonsters(){
             main@postadventure( );
         } else if (pick == "speakeasy"){
             step("phase: weakMonsters traveling hobo");
-            mimicPrep();
+            mimicPrep(",-equip equip mobius");
             adv1($location[An Unusually Quiet Barroom Brawl]);
         } else if (pick == "shorts"){
             step("phase: weakMonsters cargo shorts (haxx0r)");
