@@ -1859,10 +1859,13 @@ void locationBasedWeakMonsters(){
         use($item[phial of coldness]);
     equip($slot[acc3],timeBadge());
     step ("phase: rose garden");
-    roseGarden();
     if (dayType() == 0 && mall_price($item[Homeowner's loam]) < 30000){
-        abort("Script in using loams for black rose garden");
+        while (get_property("_loamsUsed").to_int() < 1){
+            use($item[homeowner's loam]);
+            set_property("_loamsUsed",get_property("_loamsUsed").to_int() + 1);
+        }
     }
+    roseGarden();
     neverendingParty();
     snowman();
     step("phase: weakMonsters gingerbread");
