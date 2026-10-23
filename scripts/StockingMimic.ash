@@ -1770,49 +1770,31 @@ void LBMWPrep(boolean lantern){
 // Every thing in the garden is a choice.php form: option 1 plus rgpoi/rgx/rgy/rgf.
 // Walking around is client-side only, so posting a point's form interacts
 // with it from anywhere. rgpoi indexes are renumbered after each action, so
-// re-parse the current page before every interaction.
-
-record rosePoi {
-    int i;
-    int x;
-    int y;
-    int f;
-    string label;      // button text minus " at position x,y"
-    boolean disabled;  // e.g. "blocked by monster at 7,15"
-};
+// mafia's available_choice_extras() is re-read before every interaction.
 
 string [int] roseLoot     = {0: "wine", 1: "bowl", 2: "incense"};
 string [int] roseMonsters = {0: "flamingo", 1: "golem", 2: "ghost", 3: "angel", 4: "gnome"};
+string [int] roseMisc     = {0: "fountain", 1: "chest"};
 
 boolean inRoseGarden(string page){
     return contains_text(page, "name=whichchoice value=\"1637\"");
 }
 
-rosePoi [int] rosePois(string page){
-    rosePoi [int] out;
-    matcher m = create_matcher("class=rgpoi data-x=\"(\\d+)\" data-y=\"(\\d+)\" data-i=\"(\\d+)\">"
-        + ".*?name=\"rgf\" value=\"(-?\\d+)\"><input type=submit class=\"button( disabled)?\""
-        + " value=\"(.+?) at position", page);
-    while (m.find())
-        out[count(out)] = new rosePoi(m.group(3).to_int(), m.group(1).to_int(),
-            m.group(2).to_int(), m.group(4).to_int(), m.group(6), m.group(5) != "");
-    return out;
-}
-
-// First enabled point whose label starts with verb and names one of keys.
-rosePoi roseFind(rosePoi [int] pois, string verb, string [int] keys){
-    foreach _, p in pois{
-        if (p.disabled || !p.label.starts_with(verb)) continue;
+// Index into available_choice_extras() of the first point whose label starts
+// with verb and names one of keys; -1 when there is none.
+int roseFind(string verb, string [int] keys){
+    foreach i, ce in available_choice_extras(){
+        if (!ce.label.starts_with(verb)) continue;
         foreach k, key in keys
-            if (contains_text(p.label.to_lower_case(), key))
-                return p;
+            if (contains_text(ce.label.to_lower_case(), key))
+                return i;
     }
-    return new rosePoi(-1);
+    return -1;
 }
 
-string roseInteract(rosePoi p){
-    print("Rose garden: " + p.label + " at " + p.x + "," + p.y, "blue");
-    return run_choice(1, "rgpoi=" + p.i + "&rgx=" + p.x + "&rgy=" + p.y + "&rgf=" + p.f);
+string roseInteract(int i){
+    print("Rose garden: " + available_choice_extras()[i].label, "blue");
+    return run_choice(available_choice_extras()[i].decision, available_choice_extras()[i].extras_joined);
 }
 
 // Loot every wine / bowl / incense first, then fight every listed monster, then
@@ -1820,28 +1802,35 @@ string roseInteract(rosePoi p){
 // means re-entering the garden afterwards, because the maximize can't run
 // from inside the choice. Loot that a monster was blocking unlocks once it dies.
 void roseGarden(){
+    if (mall_price($item[black rose pentacle]) < mall_price($item[pocket wish]) && item_amount($item[black rose pentacle]) == 0)
+        retrieve_item($item[black rose pentacle]);
     string garden = "campground.php?action=rosegarden";
     string page = visit_url(garden);
     int loopCount = 0;
     while (inRoseGarden(page)){
         if (loopCount++ > 40)
             abort("roseGarden: looped over 40 times -- an interaction probably isn't changing the garden");
-        rosePoi [int] pois = rosePois(page);
-
-        rosePoi loot = roseFind(pois, "Take", roseLoot);
-        if (loot.i >= 0){
+        int loot = roseFind("Take", roseLoot);
+        if (loot >= 0){
             page = roseInteract(loot);
             continue;
         }
 
-        rosePoi mob = roseFind(pois, "Fight", roseMonsters);
-        if (mob.i < 0) break;
+        int misc = roseFind("Drink", roseMisc);
+        if (misc >= 0 && dayType() == 0
+            && mall_price($item[black rose pentacle]) < mall_price($item[pocket wish])
+            && have_effect($effect[Lucky!]) == 0 && have_effect($effect[One Coin In a Fountain]) == 0){
+            page = roseInteract(misc);
+            continue;
+        }
+
+        if (roseFind("Fight", roseMonsters) < 0) break;
         run_choice(2);   // step out so the maximizer can change gear
         mimicPrep();
         main@preadventure();
         page = visit_url(garden);
-        mob = roseFind(rosePois(page), "Fight", roseMonsters);
-        if (mob.i < 0) continue;
+        int mob = roseFind("Fight", roseMonsters);
+        if (mob < 0) continue;
         roseInteract(mob);
         if (current_round() > 0)
             run_combat();
