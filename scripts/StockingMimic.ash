@@ -450,6 +450,11 @@ int valueOfFamPot(item it) {
     return n;
 }
 
+// A 1950 Vampire Vintner wine is on hand and carries the Wine-Befouled effect.
+boolean vintnerWineReady(){
+    return get_property("vintnerWineEffect") == "Wine-Befouled" && item_amount($item[1950 Vampire Vintner wine]) > 0;
+}
+
 // Effect extenders on day 1 of ascensions, some nohookah food on day 2
 void dieting(){
 	if (dayType() == 0){
@@ -487,9 +492,6 @@ void dieting(){
             if (have_skill($skill[Sweat Out Some Booze]) && get_property("sweat").to_int() >= 25)
                 use_skill($skill[Sweat Out Some Booze]);
         }
-        if (get_property("_mimeArmyShotglassUsed") == "false")
-            drink($item[Temps Tempranillo]);
-        drink(inebriety_limit() - my_inebriety(), $item[Temps Tempranillo]);
         if (my_fullness() == fullness_limit() && get_property("_pantsgivingFullness").to_int() < 1){
             if (available_amount($item[pantsgiving]) == 0)
                 stashgrab($item[pantsgiving]);
@@ -504,11 +506,20 @@ void dieting(){
                     eat(1,$item[thyme jelly donut]);
             }
         }
-        if (get_property("spiceMelangeUsed") == "false")
-            use ($item[spice melange]);
-		eat(fullness_limit() - my_fullness(), $item[thyme jelly donut]);
-		drink(inebriety_limit() - my_inebriety(), $item[Temps Tempranillo]);
-
+        if (get_property("_mimeArmyShotglassUsed") == "false"){
+            if (my_inebriety() < inebriety_limit())
+                drink($item[Temps Tempranillo]);
+            else if (vintnerWineReady())
+                drink($item[1950 Vampire Vintner wine]);
+        }
+        if (get_property("spiceMelangeUsed") == "false"){
+            drink(inebriety_limit() - my_inebriety(), $item[Temps Tempranillo]);
+            use($item[spice melange]);
+        }
+        eat(fullness_limit() - my_fullness(), $item[thyme jelly donut]);
+        drink(max(0, inebriety_limit() - my_inebriety() - (vintnerWineReady() ? 1 : 0)), $item[Temps Tempranillo]);
+        if (my_inebriety() < inebriety_limit() && vintnerWineReady())
+            drink($item[1950 Vampire Vintner wine]);
 	} else {
 		foreach fo in $effects[In the Depths, Sugar-Frosted Pet Guts, ratabunga\, dude!, Beefy Heart]{
 			if (my_fullness() >= fullness_limit())
