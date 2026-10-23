@@ -906,35 +906,29 @@ void shadowRealmFK(){
         use($item[closed-circuit pay phone]);
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
     }
-    if (get_property("_shadowAffinityToday") == false && get_property("questRufus") != "unstarted"){
-        if (get_property("rufusQuestType") == "entity")
-            shadowBoss();
-        else if (have_effect($effect[shadow affinity]) < get_property("encountersUntilSRChoice").to_int() && get_property("rufusQuestType") == "artifact"){
-            NCforce(false);
-            if (get_property("noncombatForcerActive") == "false")
-                cli_execute("alliedradio misc sniper");
-        } else if (have_effect($effect[shadow affinity]) < get_property("encountersUntilSRChoice").to_int()){
-            abort("script out non entity case");
-        }
-    }
     if ($monster[shadow slab].elemental_resistance > 85){
         if (have_item($item[congressional medal of]))
             set_property("acc3Override",",equip congressional medal of");
     }
-    // Douse Foe charges: the Flash Liquidizer takes acc3 unless the medal already has it.
-    if (get_property("_douseFoeUses").to_int() < 3 && !contains_text(get_property("acc3Override"),"congressional medal")){
-        if (available_amount($item[Flash Liquidizer Ultra Dousing Accessory]) == 0)
-            retrieve_item($item[Flash Liquidizer Ultra Dousing Accessory]);
-        set_property("acc3Override",", equip Flash Liquidizer Ultra Dousing Accessory");
-    } else if (contains_text(get_property("acc3Override"),"Flash Liquidizer"))
-        set_property("acc3Override","");
-    if (to_int(get_property("_batWingsSwoopUsed")) < 11)
-        set_property("backOverride",", equip bat wings");
     if (get_property("questRufus") == "unstarted")
         use($item[closed-circuit pay phone]);
     if (get_property("questRufus") == "started" && get_property("rufusQuestType") == "items"){
         retrieve_item(3,to_item(get_property("rufusQuestTarget")));
     } else if (have_effect($effect[shadow affinity]) > 0){
+        if (get_property("noncombatForcerActive") == "true" || get_property("encountersUntilSRChoice").to_int() == 0){
+            abort("see if bosses still take a shadow affinity charge");
+            set_auto_attack(0);
+            shadowBoss();
+        } else {
+            if (get_property("_douseFoeUses").to_int() < 3 && !contains_text(get_property("acc3Override"),"congressional medal")){
+                if (available_amount($item[Flash Liquidizer Ultra Dousing Accessory]) == 0)
+                    retrieve_item($item[Flash Liquidizer Ultra Dousing Accessory]);
+                set_property("acc3Override",", equip Flash Liquidizer Ultra Dousing Accessory");
+            } else if (contains_text(get_property("acc3Override"),"Flash Liquidizer"))
+                set_property("acc3Override","");
+            if (to_int(get_property("_batWingsSwoopUsed")) < 11)
+                set_property("backOverride",", equip bat wings");
+        }
         if (have_effect($effect[fishy]) < 880 && my_class() == $class[seal clubber])
             set_property("mainOverride",", equip monodent");
         else
@@ -1807,6 +1801,8 @@ string roseInteract(int i){
 // means re-entering the garden afterwards, because the maximize can't run
 // from inside the choice. Loot that a monster was blocking unlocks once it dies.
 void roseGarden(){
+    if (get_property("_roseGardenDone") == "true")
+        return;
     if (mall_price($item[black rose pentacle]) < mall_price($item[pocket wish]) && item_amount($item[black rose pentacle]) == 0)
         retrieve_item($item[black rose pentacle]);
     string garden = "campground.php?action=rosegarden";
@@ -1842,8 +1838,10 @@ void roseGarden(){
         main@postadventure();
         page = visit_url(garden);
     }
-    if (inRoseGarden(page))
+    if (inRoseGarden(page)){
         run_choice(2);
+        set_property("_roseGardenDone","true");
+    }
 }
 
 void locationBasedWeakMonsters(){
@@ -1854,7 +1852,7 @@ void locationBasedWeakMonsters(){
     equip($slot[acc3],timeBadge());
     step ("phase: rose garden");
     if (dayType() == 0 && mall_price($item[Homeowner's loam]) < 30000){
-        float loamsToUse = ceill((30000-mall_price($item[Homeowner's loam]))/2000)
+        float loamsToUse = ceil((30000-mall_price($item[Homeowner's loam]))/2000);
         if (get_property("_loamsUsed").to_int() < loamsToUse){
             use(loamsToUse,$item[homeowner's loam]);
             set_property("_loamsUsed",get_property("_loamsUsed").to_int() + loamsToUse);

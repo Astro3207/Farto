@@ -349,8 +349,11 @@ void candyRichBlock(){
 }
 
 void speakeasyPool(){
-    cli_execute("maximize pool skill");
-    visit_url("place.php?whichplace=speakeasy&action=olivers_pooltable");
+    if (get_property("_speakeasyPool") != "true"){
+        cli_execute("maximize pool skill");
+        visit_url("place.php?whichplace=speakeasy&action=olivers_pooltable");
+        set_property("_speakeasyPool","true");
+    }
 }
 
 void printScreenButton(){
