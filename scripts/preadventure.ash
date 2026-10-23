@@ -109,6 +109,10 @@ void mood(string function){
         string hpAutoRecoveryTarget = to_float(round(hpTar * 10000))/10000;
         string mpAutoRecovery = to_float(round(mpTar * 0.5 * 10000))/10000;
         string mpAutoRecoveryTarget = to_float(round(mpTar * 10000))/10000;
+        set_property("hpAutoRecovery",       hpAutoRecovery);
+        set_property("hpAutoRecoveryTarget", hpAutoRecoveryTarget);
+        set_property("mpAutoRecovery",       mpAutoRecovery);
+        set_property("mpAutoRecoveryTarget", mpAutoRecoveryTarget);
     }
     if (function == "")
         function = get_property("maxOverride");

@@ -1247,12 +1247,6 @@ void spendAdv(){
 
 void main(){
     string boof = get_property("betweenBattleScript");
-    if (get_property("script") != "FreeKill"){
-        set_property("hpAutoRecovery",0.75);
-        set_property("hpAutoRecoveryTarget",0.95);
-        set_property("mpAutoRecovery",0.45);
-        set_property("mpAutoRecoveryTarget",0.6);
-    }
     try {
         postAdv();
         // This is to prevent an infinite postadventure loop
