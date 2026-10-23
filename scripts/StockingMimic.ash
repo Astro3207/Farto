@@ -907,7 +907,7 @@ void shadowRealmFK(){
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
     }
     if ($monster[shadow slab].elemental_resistance > 85){
-        if (have_item($item[congressional medal of]))
+        if (have_item($item[Congressional Medal of Insanity]))
             set_property("acc3Override",",equip congressional medal of");
     }
     if (get_property("questRufus") == "unstarted")
@@ -941,7 +941,6 @@ void shadowRealmFK(){
             if (to_int(get_property("_mcHugeLargeAvalancheUses")) < 3)
                 set_property("offOverride",", equip mchugelarge left ski");
             if (get_property("noncombatForcerActive") == "true" || get_property("encountersUntilSRChoice").to_int() == 0){
-                abort("see if bosses still take a shadow affinity charge");
                 set_auto_attack(0);
                 shadowBoss();
             } else {

@@ -807,7 +807,8 @@ void postAdv(){
         set_property("subscript","");
         clearOverrides();
     }
-    if (have_item($item[cosmic bowling ball]) && dayType() == 1 && get_property("script") == "FreeKill" && my_inebriety() <= inebriety_limit()){
+    if (have_item($item[cosmic bowling ball]) && dayType() == 1 && get_property("script") == "FreeKill" 
+        && my_inebriety() <= inebriety_limit() && get_property("noncombatForcerActive").to_boolean() == false){
         set_property("maxOverride","combat,-equip drunkula's wineglass");
         set_property("famOverride", "peace turkey");
         set_property("mainOverride",", equip june cleaver");

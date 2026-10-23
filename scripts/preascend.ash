@@ -74,10 +74,22 @@ void spendGrimacePrimeMaps(){
             } else {
                 abort();
             }
-        } else {
+        } else if (get_property("farmKnucklebones").to_boolean() == true){
             set_property("famOverride","skeleton of crimbo past");
             set_property("maxOverride","drops items");
             adv1($location[the skeleton store]);
+        } else {
+            while (my_adventures() > 0){
+                if (have_familiar($familiar[robortender]))
+                    set_property("famOverride","robortender");
+                else if (get_property("commaFamiliar") == "Robortender")
+                    set_property("famOverride","comma chameleon");
+                else
+                    set_property("famOverride","sword of Swords");
+                set_property("maxOverride","3.25 meat drop, 7 item drop, sea");
+                set_property("offOverride",", equip drunkula's wineglass");
+                adv1($location[The Marinara Trench],0,"");
+            }
         }
     }
     finisher();

@@ -83,7 +83,6 @@ void clanBreakfasts(){
     visit_url("showclan.php?whichclan=" + get_property("homeClanID").to_int() + "&action=joinclan&confirm=on");
 }
 
-// Chest Mimic rides along through breakfast to soak up familiar xp.
 void primeFamiliar(){
     if (have_familiar($familiar[Chest Mimic]))
         use_familiar($familiar[Chest Mimic]);
@@ -91,9 +90,9 @@ void primeFamiliar(){
 
 // Photobooth the Sheriff costume pieces for the day's free equipment.
 void photoBooth(){
-    whitelist("Bonus Adventures from Hell");
     if (get_property("_photoBoothEquipment").to_int() != 0)
         return;
+    whitelist("Bonus Adventures from Hell");
     foreach part in $strings[Sheriff badge, Sheriff pistol, Sheriff moustache]
         cli_execute("photobooth item " + part);
     whitelist("homeclan");
@@ -254,8 +253,8 @@ void firstBreakfast(){
     step("phase: sausage casing");
     makeSausage();
     step("phase: daily buttons");
-    primeFamiliar();
-    cli_execute("garden pick");
+    if (my_garden_type( ) != "black_rose")
+        cli_execute("garden pick");
     photoBooth();
     if (available_amount($item[portable pantogram]) > 0 && dayType() == 1 && get_property("_pantogramModifier") == ""){
         retrieve_item(11,$item[lead necklace]);
@@ -417,7 +416,6 @@ void secondBreakfast(){
 
 void main(){
     try {
-        set_property("script", "turnburn");
         step("phase: first breakfast");
         firstBreakfast();
         step("phase: second breakfast");

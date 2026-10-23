@@ -1599,10 +1599,6 @@
 
     // starter(): point mafia's between-battle / after-adventure / choice hooks and the CCS at this environment.
     void starter(){
-        set_property("hpAutoRecovery",0.75);
-        set_property("hpAutoRecoveryTarget",0.95);
-        set_property("mpAutoRecovery",0.25);
-        set_property("mpAutoRecoveryTarget",0.3);
         set_auto_attack(0);
         set_property("battleAction", "custom combat script");
         buffer ccs = "consult unlockerCCS.ash \n abort";
