@@ -628,7 +628,7 @@ void FKPrep(){
 	set_property("script", "FreeKill");
     retrieve_item($item[burning paper crane]);
     step("phase: 9 special buffs");
-    foreach ef in $effects[Robot Friends,Healthy Green Glow,Shortly Stacked,Shortly Wired,steely-eyed squint,Human-Fish Hybrid,Black Tongue,Human-Machine Hybrid,Warm Shoulders]{
+    foreach ef in $effects[Robot Friends,Healthy Green Glow,Shortly Stacked,Shortly Wired,steely-eyed squint,Human-Fish Hybrid,green Tongue,Human-Machine Hybrid,Warm Shoulders]{
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
             continue;
         if (buffCount() == 5 && !get_property("_bagOTricksUsed").to_boolean()
