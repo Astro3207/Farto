@@ -2026,7 +2026,7 @@ boolean EmbezBetter(){
 void embezzler(){
     while ((get_property("_aprilBandSaxophoneUses").to_int() < 3 || EmbezBetter()) && dayType() == 1){
         altFam($familiar[robortender]);
-        if (get_property("_roboDrinks") != "drive-by shooting"){
+        if (!contains_text(get_property("_roboDrinks"), "drive-by shooting")){
             retrieve_item($item[drive-by shooting]);
             visit_url("inventory.php?action=robooze&which=1&whichitem=9396");
         }
@@ -2451,6 +2451,25 @@ void bulkFKD2(){
         seals();
     }
     eldritchFights();
+    if (have_effect($effect[Lucky!]) > 0){
+        if (have_familiar($familiar[robortender])){
+            use_familiar($familiar[Robortender]);
+            set_property("famOverride","robortender");
+            if (!contains_text(get_property("_roboDrinks"), "drive-by shooting")){
+                retrieve_item($item[drive-by shooting]);
+                visit_url("inventory.php?action=robooze&which=1&whichitem=9396");
+            }
+        } else
+            set_property("famOverride","jill-of-all-trades");
+        set_property("script","embezzler");
+        set_property("unconditionalOverride","meat drop, equip mafia pointer finger");
+        if (get_property("_batWingsFreeFights").to_int() < 5)
+            set_property("unconditionalOverride",get_property("unconditionalOverride") +", equip bat wings");
+        adv1($location[Cobb's knob treasury]);
+        set_property("script","FreeKill");
+        set_property("unconditionalOverride","");
+        set_property("famOverride","");
+    }
     step("phase: peridot fishing");
     peridotFishing();
     if (!contains_text(get_property("thoth19_event_list"),"postFKD2"))
