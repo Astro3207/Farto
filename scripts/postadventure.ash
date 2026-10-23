@@ -807,12 +807,17 @@ void postAdv(){
         set_property("subscript","");
         clearOverrides();
     }
-    if (have_item($item[cosmic bowling ball]) && dayType() == 1 && get_property("script") == "FreeKill" && my_inebriety() <= inebriety_limit()){
+    if (have_item($item[cosmic bowling ball]) && dayType() == 1 && get_property("script") == "FreeKill" && my_inebriety() <= inebriety_limit()
+        && !choice_follows_fight() && !handling_choice()){
         set_property("maxOverride","combat,-equip drunkula's wineglass");
         set_property("famOverride", "peace turkey");
         set_property("mainOverride",", equip june cleaver");
         set_property("acc1Override", ", equip spring shoes");
         set_auto_attack(0);
+        set_location($location[Cobb's Knob Treasury]);
+        if (!cli_execute("preadventure.ash") || my_familiar() != $familiar[peace turkey]
+            || !have_equipped($item[spring shoes]) || !have_skill($skill[Bowl a Curveball]))
+            abort("I don't think we're ready for that treasury - we didn't prep free run properly!");
         adv1($location[cobb's knob treasury]);
         set_property("maxOverride","");
         set_property("famOverride", "");
