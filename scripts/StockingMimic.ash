@@ -915,20 +915,14 @@ void shadowRealmFK(){
     if (get_property("questRufus") == "started" && get_property("rufusQuestType") == "items"){
         retrieve_item(3,to_item(get_property("rufusQuestTarget")));
     } else if (have_effect($effect[shadow affinity]) > 0){
-        if (get_property("noncombatForcerActive") == "true" || get_property("encountersUntilSRChoice").to_int() == 0){
-            abort("see if bosses still take a shadow affinity charge");
-            set_auto_attack(0);
-            shadowBoss();
-        } else {
-            if (get_property("_douseFoeUses").to_int() < 3 && !contains_text(get_property("acc3Override"),"congressional medal")){
-                if (available_amount($item[Flash Liquidizer Ultra Dousing Accessory]) == 0)
-                    retrieve_item($item[Flash Liquidizer Ultra Dousing Accessory]);
-                set_property("acc3Override",", equip Flash Liquidizer Ultra Dousing Accessory");
-            } else if (contains_text(get_property("acc3Override"),"Flash Liquidizer"))
-                set_property("acc3Override","");
-            if (to_int(get_property("_batWingsSwoopUsed")) < 11)
-                set_property("backOverride",", equip bat wings");
-        }
+        if (get_property("_douseFoeUses").to_int() < 3 && !contains_text(get_property("acc3Override"),"congressional medal")){
+            if (available_amount($item[Flash Liquidizer Ultra Dousing Accessory]) == 0)
+                retrieve_item($item[Flash Liquidizer Ultra Dousing Accessory]);
+            set_property("acc3Override",", equip Flash Liquidizer Ultra Dousing Accessory");
+        } else if (contains_text(get_property("acc3Override"),"Flash Liquidizer"))
+            set_property("acc3Override","");
+        if (to_int(get_property("_batWingsSwoopUsed")) < 11)
+            set_property("backOverride",", equip bat wings");
         if (have_effect($effect[fishy]) < 880 && my_class() == $class[seal clubber])
             set_property("mainOverride",", equip monodent");
         else

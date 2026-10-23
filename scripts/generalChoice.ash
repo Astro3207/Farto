@@ -417,7 +417,6 @@ void main(int whichchoice, string page) {
             run_choice(3);
             break;
         case 1497:
-            run_choice(1);
             if (dayType() == 0)
                 run_choice(2);
             else if (have_effect($effect[shadow affinity]) > 10){
