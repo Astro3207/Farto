@@ -1250,19 +1250,8 @@ void backup(){
     while (to_int(get_property("_backUpUses")) < 11){
         if (have_effect($effect[driving waterproofly]) == 0)
             set_property("pantsOverride",", equip really nice swim");
-        if (to_monster(get_property("lastCopyableMonster")) != copyTarget2){
-            if (get_property("_photocopyUsed") == false){
-                whitelist("Temporary");
-                visit_url("clan_viplounge.php?action=faxmachine&whichfloor=2");
-                visit_url("clan_viplounge.php?preaction=receivefax&whichfloor=2");
-                if (item_amount($item[photocopied monster]) > 0){
-                    mimicPrep();
-                    main@preadventure( );
-                    use($item[photocopied monster]);
-                }
-            } else {
-                abort("trying to backup to not " + copyTarget2);
-            }
+        if (to_monster(get_property("lastCopyableMonster")) != copyTarget){
+            abort("trying to backup to not " + copyTarget);
         }
         mimicPrep();
         if (get_property("beGregariousFightsLeft").to_int() > 0){
@@ -1282,7 +1271,7 @@ void backup(){
             if (have_effect($effect[everything looks purple]) == 0)
                 set_property("offOverride",", equip roman candel");
         }
-        if (to_int(get_property("_mimicEggsObtained")) < 11 && $familiar[chest mimic].experience > 100 && to_monster(get_property("lastCopyableMonster")) == copyTarget2){
+        if (to_int(get_property("_mimicEggsObtained")) < 11 && $familiar[chest mimic].experience > 100 && to_monster(get_property("lastCopyableMonster")) == copyTarget){
             set_property("famOverride","chest mimic");
             set_property("maxOverride","familiar weight");
             if (have_effect($effect[driving waterproofly]) == 0)
@@ -1300,13 +1289,10 @@ void backup(){
     set_property("acc3Override","");
 }
 void mimicEgg(){
-    while (item_amount($item[mimic egg]) > 0 && dayType() == 1 && (contains_text(get_property("mimicEggMonsters"),copyTarget.to_int().to_string()) || contains_text(get_property("mimicEggMonsters"),copyTarget2.to_int().to_string()))){
+    while (item_amount($item[mimic egg]) > 0 && dayType() == 1 && contains_text(get_property("mimicEggMonsters"),copyTarget.to_int().to_string())){
         mimicPrep();
         main@preadventure( );
-        if (contains_text(get_property("mimicEggMonsters"),copyTarget.to_int().to_string()))
-            cli_execute("c2t_megg fight " + copyTarget);
-        else
-            cli_execute("c2t_megg fight " + copyTarget2);
+        cli_execute("c2t_megg fight " + copyTarget);
         run_combat();
         cli_execute("postadventure");
     }

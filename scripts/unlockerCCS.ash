@@ -84,7 +84,7 @@ void free_kill(string ptext) {
 void free_run(string ptext) {
     if (last_monster() == $monster[Knob Goblin Embezzler])
         abort("Trying to run from an embezzler");
-    if (last_monster() != copyTarget2 && have_skill($skill[Bowl a Curveball]))
+    if (last_monster() != copyTarget && have_skill($skill[Bowl a Curveball]))
         use_skill($skill[Bowl a Curveball]);
     foreach sk in $skills[spring away, snokebomb] {
         if (contains_text(ptext, to_string(sk))) {
@@ -242,15 +242,15 @@ boolean [monster] hurtMobs = {
 };
 
 void replace(){
-    if (last_monster() != copyTarget2){
+    if (last_monster() != copyTarget){
         skill replacer;
         if (have_equipped($item[Powerful Glove]) && get_property("_powerfulGloveBatteryPowerUsed").to_int() <= 90)
             replacer = $skill[CHEAT CODE: Replace Enemy];
         else if (have_skill($skill[Macrometeorite]) && get_property("_macrometeoriteUses").to_int() < 10)
             replacer = $skill[Macrometeorite];
         use_skill(replacer);
-        if (last_monster() != copyTarget2)
-            abort("Replacement chain: did not produce " + copyTarget2 + ".");
+        if (last_monster() != copyTarget)
+            abort("Replacement chain: did not produce " + copyTarget + ".");
     }
 }
 
@@ -309,7 +309,7 @@ void main(int round, monster mob, string page_text) {
         if (have_equipped($item[roman candelabra]))
             use_skill($skill[blow the purple candle!]);
     }
-    if (to_monster(get_property("beGregariousMonster")) == copyTarget2 && get_property("beGregariousFightsLeft").to_int() > 0 && my_location() == $location[the dive bar])
+    if (to_monster(get_property("beGregariousMonster")) == copyTarget && get_property("beGregariousFightsLeft").to_int() > 0 && my_location() == $location[the dive bar])
         replace();
     if ($locations[cyberzone 1,cyberzone 2,cyberzone 3] contains my_location()){
         if (last_monster().phylum == $phylum[construct]){
@@ -358,7 +358,7 @@ void main(int round, monster mob, string page_text) {
     if (get_property("subscript") == "stompingBoots"){
         if (last_monster() == $monster[infinite meat bug])
             abort();
-        if (last_monster() != copyTarget2 && have_skill($skill[Bowl a Curveball]))
+        if (last_monster() != copyTarget && have_skill($skill[Bowl a Curveball]))
             use_skill($skill[Bowl a Curveball]);
         runaway();
     }
@@ -412,7 +412,7 @@ void main(int round, monster mob, string page_text) {
         sauce(4);
     }
 
-    if (get_property("script") == "FreeKill" && have_equipped($item[backup camera]) && get_property("lastCopyableMonster").to_monster() == copyTarget2){
+    if (get_property("script") == "FreeKill" && have_equipped($item[backup camera]) && get_property("lastCopyableMonster").to_monster() == copyTarget){
         if (last_monster() == $monster[Mer-kin tippler] && !contains_text(get_property("trackedMonsters"), "Mer-kin tippler:Transcendent Olfaction")){
             use_skill($skill[Transcendent Olfaction]);
             if (have_skill($skill[Gallapagosian Mating Call]))
@@ -420,13 +420,13 @@ void main(int round, monster mob, string page_text) {
             use_skill($skill[McHugeLarge Slash]);
         }
         use_skill($skill[BACK-UP TO YOUR LAST ENEMY]);
-        if (last_monster() == copyTarget2){
+        if (last_monster() == copyTarget){
             while (my_familiar() == $familiar[chest mimic] && to_int(get_property("_mimicEggsObtained")) < 11 && $familiar[chest mimic].experience > 50){
                 use_skill($skill[%FN, LAY AN EGG]);
             }
         }
-        if (last_monster() == copyTarget2){
-            if (gregsToSave().to_boolean() == true && get_property("beGregariousMonster").to_monster() != copyTarget2 && get_property("beGregariousCharges").to_int() > 0)
+        if (last_monster() == copyTarget){
+            if (gregsToSave().to_boolean() == true && get_property("beGregariousMonster").to_monster() != copyTarget && get_property("beGregariousCharges").to_int() > 0)
                 use_skill($skill[Be Gregarious]);
         }
     }

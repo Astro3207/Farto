@@ -18,7 +18,6 @@
     boolean [monster] haveLocketMonster = get_locket_monsters();
     // The monster the free-kill run chain-copies (locket -> habitat recall, mimic eggs).
     monster copyTarget = $monster[sausage goblin];
-    monster copyTarget2 = $monster[Frozen Bag of Tortellini];
 
     boolean evokeReady(){
         return get_property("_eldritchTentaclesFoughtToday").to_int() < 11
