@@ -1854,9 +1854,10 @@ void locationBasedWeakMonsters(){
     equip($slot[acc3],timeBadge());
     step ("phase: rose garden");
     if (dayType() == 0 && mall_price($item[Homeowner's loam]) < 30000){
-        while (get_property("_loamsUsed").to_int() < 1){
-            use($item[homeowner's loam]);
-            set_property("_loamsUsed",get_property("_loamsUsed").to_int() + 1);
+        float loamsToUse = ceill((30000-mall_price($item[Homeowner's loam]))/2000)
+        if (get_property("_loamsUsed").to_int() < loamsToUse){
+            use(loamsToUse,$item[homeowner's loam]);
+            set_property("_loamsUsed",get_property("_loamsUsed").to_int() + loamsToUse);
         }
     }
     roseGarden();
