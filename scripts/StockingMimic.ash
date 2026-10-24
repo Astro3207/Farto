@@ -1020,7 +1020,7 @@ boolean uneffectBuff(){
         }
     }
     foreach ef in my_effects( ){
-        if ($effects[wine-befouled,spiced out,Chorale of Companionship] contain ef)
+        if ($effects[wine-befouled, spiced out, Chorale of Companionship] contains ef)
             continue;
         if (numeric_modifier(ef, to_string(st)) > statBuff){
             statBuff = numeric_modifier(ef, to_string(st));

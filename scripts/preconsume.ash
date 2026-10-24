@@ -11,7 +11,7 @@ void astral(){
     }
 }
 void timeArrow(){
-    if (to_int(get_property("valueOfAdventure"))*5 > mall_price($item[time's arrow]) || my_adventures() < 3){
+    if (to_int(get_property("valueOfAdventure"))*5 > mall_price($item[time's arrow])){
         retrieve_item($item[time's arrow]);
         cli_execute("csend time's arrow to botticelli");
     }
