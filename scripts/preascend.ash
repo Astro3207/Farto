@@ -89,8 +89,6 @@ void pvpFights(){
     }
 }
 
-// Cast sk while the substat still covers its next BCZ cost; stops if a cast fails
-// or doesn't spend any substat.
 void bczSpend(stat sub, string castsPref, skill sk){
     while (my_basestat(sub) > BCZcost(castsPref)){
         int before = my_basestat(sub);
@@ -99,15 +97,12 @@ void bczSpend(stat sub, string castsPref, skill sk){
     }
 }
 
-// Spend down BCZ substat casts while they're still cheaper than the current threshold.
 void bczCasts(){
     bczSpend($stat[submuscle],      "BloodThinnerCasts",      $skill[BCZ: Create Blood Thinner]);
     bczSpend($stat[submoxie],       "PheromoneCocktailCasts", $skill[BCZ: Craft a Pheromone Cocktail]);
     bczSpend($stat[submysticality], "SpinalTapasCasts",       $skill[BCZ: Prepare Spinal Tapas]);
 }
 
-// Spend the day's 5 Monkey's Paw wishes on shadow bricks. Reads
-// _monkeyPawWishesUsed fresh each call, so this is safe to resume mid-way.
 void monkeyPawWishes(){
     int monkeyWish = to_int(get_property("_monkeyPawWishesUsed"));
     if (monkeyWish < 5 && closet_amount($item[cursed monkey's paw]) > 0){
@@ -179,10 +174,7 @@ void finalChores(){
     if (have_item($item[packet of rock seeds]))
         use($item[packet of rock seeds]);
     cli_execute("garden pick");
-    if (have_skill($skill[That's not a knife]))
-        use_skill($skill[That's not a knife]);
     cli_execute("av-snapshot.ash");
-    set_ccs("hobopolis");
     retrieve_item(5, $item[unblemished pearl]);
     codpiece("unblemished pearl,unblemished pearl,unblemished pearl,unblemished pearl,unblemished pearl");
 }
@@ -194,21 +186,7 @@ void finalChores(){
 // carried over unchanged from the original script (see chat).
 void ascend(){
     set_property("postAscensionScript","postascend.ash");
-    if (get_property("looping") == "true"){
-        cli_execute("acquire 1 one-day ticket to Dinseylandfill; acquire 1 Calzone of Legend; acquire 1 Deep Dish of Legend; acquire 1 Pizza of Legend; acquire 1 borrowed time; acquire 1 abstraction: category");
-        set_property("looping","false");
-        visit_url("showclan.php?whichclan=2047009940&action=joinclan&confirm=on");
-        take_stash(1,$item[Platinum Yendorian Express Card]);
-        visit_url("showclan.php?whichclan=" + get_property("homeClanID").to_int() + "&action=joinclan&confirm=on");
-        visit_url("ascend.php?action=ascend&confirm=on&confirm2=on");
-        visit_url("afterlife.php?action=pearlygates");
-        visit_url("afterlife.php?place=deli");
-        visit_url("afterlife.php?action=buydeli&whichitem=5046");
-        visit_url("afterlife.php?action=ascend&asctype=2&whichclass=6&gender=1&whichpath=55&whichsign=8");
-        visit_url("afterlife.php?action=ascend&confirmascend=1&whichsign=8&gender=1&whichclass=6&whichpath=55&asctype=2&lamesignok=1&nopetok=1");
-        visit_url("main.php");
-        run_choice(-1);
-    } else if (isFartScauce() && get_property("runType") == "world event" && user_confirm("Grab PYEC?")){
+    if (isFartScauce() && get_property("runType") == "world event" && user_confirm("Grab PYEC?")){
         visit_url("showclan.php?whichclan=2047009940&action=joinclan&confirm=on");
         take_stash(1,$item[Platinum Yendorian Express Card]);
         set_property("garbo_valueOfFreeFight","1000");

@@ -1,5 +1,4 @@
 import iotm.ash;
-import preconsume.ash;
 
 // ─── postadventure.ash ───────────────────────────────────────────────────────
 // afterAdventureScript for the farto / free-kill environment.

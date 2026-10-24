@@ -136,6 +136,13 @@
             cli_execute("ptrack add " + tag);
     }
 
+    // Switch to the cooler yeti and take its adventures-tomorrow option (choice 2).
+    void yetiTalk(){
+        use_familiar($familiar[cooler yeti]);
+        visit_url("main.php?talktoyeti=1", false);
+        run_choice(2);
+    }
+
     boolean isFartScauce(){
         return my_name().to_lower_case() == "fart scauce";
     }
@@ -1114,6 +1121,378 @@
         if (available_amount($item[Time Bandit Badge of Courage]) > 0)
             return $item[Time Bandit Badge of Courage];
         return $item[Time Lord Badge of Honor];
+    }
+
+    // ── Cup of 13s ───────────────────────────────────────────────────────────────
+
+    // Cup of 13s ingredients that give Runneth On Empty, with the turns each one adds.
+    int [item] runnethOnEmptyItems = {
+        $item[string of blue beads]: 20,
+        $item[broken BRICKO brick]: 20,
+        $item[Pok&euml;mann band-aid]: 20,
+        $item[Mortimer's nostrum]: 20,
+        $item[folder (barbarian)]: 20,
+        $item[heavy duty umbrella]: 20,
+        $item[Crimbot schematic: Nerding Module]: 20,
+        $item[Crimbot schematic: Candle Lighter]: 20,
+        $item[vermiculite shield]: 20,
+        $item[goat]: 20,
+        $item[clockwork crossbow]: 20,
+        $item[gatorskin umbrella]: 20,
+        $item[decaying wooden oar]: 20,
+        $item[Alice's Army Coward]: 20,
+        $item[mini-Mr. Accessory]: 20,
+        $item[can of Br&uuml;talbr&auml;u]: 20,
+        $item[Staff of the Headmaster's Victuals]: 20,
+        $item[TI-9000 calculator]: 20,
+        $item[Crimbot schematic: Really Big Head]: 20,
+        $item[vibrating mushroom]: 20,
+        $item[cuppa Uncertain tea]: 20,
+        $item[gingerbread hoodie]: 20,
+        $item[bottle of clam juice]: 20,
+        $item[dedigitizer schematic: familiar-in-the-middle]: 20,
+        $item[basic meat crossbow]: 20,
+        $item[baconstone pendant]: 20,
+        $item[vodka stratocaster]: 20,
+        $item[styrofoam crossbow]: 20,
+        $item[dubious peppermint]: 20,
+        $item[scroll of Protection from Bad Stuff]: 20,
+        $item[chicle de salchicha]: 20,
+        $item[cuppa Flamibili tea]: 20,
+        $item[enchanted eyepatch]: 20,
+        $item[dusty right scapula]: 20,
+        $item[natural fennel soda]: 20,
+        $item[synthetic stuffing]: 20,
+        $item[fixed-gear bicycle]: 20,
+        $item[square CRIMBCOOKIE]: 20,
+        $item[Flaming Caipiranha]: 20,
+        $item[Chinese curse words]: 20,
+        $item[demonic cow's blood]: 20,
+        $item[nutcracking pliers]: 20,
+        $item[pheromone cocktail]: 20,
+        $item[Pork Elf toothpaste]: 20,
+        $item[gnauga hide buckler]: 40,
+        $item[clockwork maid head]: 40,
+        $item[foon of fearfulness]: 40,
+        $item[digital key lime pie]: 40,
+        $item[evil paper umbrella]: 40,
+        $item[six-rainbow shield]: 40,
+        $item[tortoboggan shield]: 40,
+        $item[noxious gas grenade]: 40,
+        $item[Gene Tonic: Penguin]: 40,
+        $item[Energy Buzz Pastaco]: 40,
+        $item[cuppa Serendipi tea]: 40,
+        $item[print screen button]: 40,
+        $item[murderbot live wire]: 40,
+        $item[temporary X tattoos]: 40,
+        $item[bag of sausage links]: 40,
+        $item[extra-strength goo]: 40,
+        $item[asbestos meat stack]: 40,
+        $item[stick-on-a-string]: 40,
+        $item[spiky turtle shield]: 40,
+        $item[pulled yellow taffy]: 40,
+        $item[plaid pocket square]: 40,
+        $item[drug cocktail sauce]: 40,
+        $item[Party-in-a-Can&trade;]: 40,
+        $item[Pesto alla Marziano]: 40,
+        $item[glass of goat's milk]: 40,
+        $item[gnatloaf casserole]: 40,
+        $item[rusty piece of rebar]: 40,
+        $item[floral-print skirt]: 40,
+        $item[cuppa Improprie tea]: 40,
+        $item[VYKEA instructions]: 40,
+        $item[daddy shortlegs leg]: 40,
+        $item[Elf Guard patrol cap]: 40,
+        $item[dedigitizer schematic: pocket GPU]: 40,
+        $item[clockwork chef head]: 60,
+        $item[toy maglev monorail]: 60,
+        $item[nauseating reagent]: 60,
+        $item[rusty diving helmet]: 60,
+        $item[Alice's Army Martyr]: 60,
+        $item[Winifred's whistle]: 60,
+        $item[tiny die-cast arc-welding Elfborg]: 60,
+        $item[carrot-on-a-stick]: 60,
+        $item[liquid rhinestones]: 60,
+        $item[barrel beryl choker]: 60,
+        $item[Aldebaran sardines]: 60,
+        $item[Affirmation Cookie]: 60,
+        $item[zero-trust tanktop]: 60,
+        $item[bowl of lucky charms]: 60,
+        $item[linoleum meat stack]: 60,
+        $item[baconstone earring]: 60,
+        $item[tiny plastic hermit]: 60,
+        $item[dense meat crossbow]: 60,
+        $item[Spooky Surprise Egg]: 60,
+        $item[green peawee marble]: 60,
+        $item[Massive Manual of Marauder Mockery]: 60,
+        $item[ghast iron codpiece]: 60,
+        $item[Cool Brunch Pastaco]: 60,
+        $item[short glass of water]: 60,
+        $item[sweet potato o' mine]: 60,
+        $item[Linguini Ubriacapa]: 60,
+        $item[porquoise necklace]: 80,
+        $item[delicious stinkbug]: 80,
+        $item[square sponge pants]: 80,
+        $item[Gene Tonic: Mer-kin]: 80,
+        $item[dark porquoise ring]: 80,
+        $item[yellow pixel potion]: 80,
+        $item[Daily Affirmation: Think Win-Lose]: 80,
+        $item[dedigitizer schematic: 3d printed server room key]: 80
+    };
+
+    // Cup of 13s ingredients that give Runneth With The Pack, with the turns each one adds.
+    int [item] runnethWithThePackItems = {
+        $item[clockwork trench coat]: 20,
+        $item[Serenity trading card]: 20,
+        $item[Young Man's Cargo Load]: 20,
+        $item[Gene Tonic: Elemental]: 20,
+        $item[buzzing mushroom wine]: 20,
+        $item[sprinkle-begging cup]: 20,
+        $item[gingerbread dog treat]: 20,
+        $item[primitive alien salad]: 20,
+        $item[Sneaky Pete's key lime]: 20,
+        $item[Ring of the Sewer Snake]: 20,
+        $item[charpuce jub-jub bird]: 20,
+        $item[potion of the field gar]: 20,
+        $item[The Cooler Out of Space]: 20,
+        $item[tiny die-cast CrimboTown Toy Factory]: 20,
+        $item[Paint A Vulgar Pitcher]: 20,
+        $item[Outer Wolf&trade; cologne]: 20,
+        $item[Omphalotus Omphaloskepsis mushroom]: 20,
+        $item[perfect cosmopolitan]: 20,
+        $item[green-iced sweet roll]: 20,
+        $item[industrial lubricant]: 20,
+        $item[dedigitizer schematic: cryptocloak]: 20,
+        $item[Skeleton Wars rations]: 20,
+        $item[tassel]: 20,
+        $item[tiny plastic sauceror]: 20,
+        $item[red plastic oyster egg]: 20,
+        $item[hot wad]: 20,
+        $item[chintzy accordion pin]: 20,
+        $item[miniature castagnets]: 20,
+        $item[spangly mariachi vest]: 20,
+        $item[cup of hickory chicory]: 20,
+        $item[nanorhino credit card]: 20,
+        $item[Artist's Cookie Cutter of Loneliness]: 20,
+        $item[candy mountain oyster]: 20,
+        $item[Pendant of Gargalesis]: 20,
+        $item[zombie]: 20,
+        $item[Newark]: 20,
+        $item[vodka cranberry sauce]: 20,
+        $item[eyedrops of the ocelot]: 20,
+        $item[carbonated water lily]: 20,
+        $item[Shot of the Living Dead]: 20,
+        $item[wind-up vampire teeth]: 20,
+        $item[Frigid Northern Beans]: 20,
+        $item[elf army field rations]: 20,
+        $item[eXpand]: 20,
+        $item[samurai turtle helmet]: 40,
+        $item[bugged b&Atilde;&para;n&plusmn;&Atilde;&copy;t]: 40,
+        $item[scale-mail underwear]: 40,
+        $item[warbear liquid lasers]: 40,
+        $item[weasel stomping pants]: 40,
+        $item[barrel beryl nose ring]: 40,
+        $item[jolly roger tattoo kit]: 40,
+        $item[blackberry moccasins]: 40,
+        $item[Alice's Army Horseman]: 40,
+        $item[pacification grenade]: 40,
+        $item[water wings for babies]: 40,
+        $item[Yeg's Motel mouthwash]: 40,
+        $item[waffle]: 40,
+        $item[candied yam pinky ring]: 40,
+        $item[red paisley oyster egg]: 40,
+        $item[tombstone-shaped Crimboween cookie]: 40,
+        $item[super-absorbent tarp]: 40,
+        $item[nugget of slicksilver]: 40,
+        $item[worksite credentials]: 40,
+        $item[melty plastic grenade]: 40,
+        $item[leprechaun hatchling]: 60,
+        $item[Knob Kitchen grab-bag]: 60,
+        $item[metallic foil cat ears]: 60,
+        $item[groovy prism necklace]: 60,
+        $item[tiny die-cast Unionize the Elves Sign]: 60,
+        $item[Gene Tonic: Construct]: 60,
+        $item[eldritch concentrate]: 60,
+        $item[murderbot shield unit]: 60,
+        $item[mafia organizer badge]: 60,
+        $item[cybeer]: 60,
+        $item[Elf Farm Raffle ticket]: 60,
+        $item[atomic vector plotter]: 60,
+        $item[vampire pearl earring]: 60,
+        $item[Alice's Army Lanceman]: 60,
+        $item[bottle of Old Pugilist]: 60,
+        $item[pebble of proud pyrite]: 60,
+        $item[Morbidda trading card]: 80,
+        $item[The Snake trading card]: 80,
+        $item[pulled porquoise ring]: 80,
+        $item[Alice's Army Foil Page]: 80,
+        $item[tin cup]: 80,
+        $item[anise-flavored venom]: 80,
+        $item[complex mushroom wine]: 80,
+        $item[capped red lava bottle]: 80,
+        $item[depleted Crimbonium football helmet]: 80,
+        $item[visual packet sniffer]: 80,
+        $item[papier Mach 1 airplane]: 80
+    };
+
+    // Adventures each Runneth On Empty ingredient adds to the drink. Runneth With
+    // The Pack ingredients aren't listed and count as 0.
+    int [item] cupAdventures = {
+        $item[string of blue beads]: 4,
+        $item[broken BRICKO brick]: 4,
+        $item[Pok&euml;mann band-aid]: 4,
+        $item[Mortimer's nostrum]: 4,
+        $item[folder (barbarian)]: 4,
+        $item[heavy duty umbrella]: 4,
+        $item[Crimbot schematic: Nerding Module]: 4,
+        $item[Crimbot schematic: Candle Lighter]: 4,
+        $item[vermiculite shield]: 4,
+        $item[goat]: 3,
+        $item[clockwork crossbow]: 3,
+        $item[gatorskin umbrella]: 3,
+        $item[decaying wooden oar]: 3,
+        $item[Alice's Army Coward]: 3,
+        $item[mini-Mr. Accessory]: 3,
+        $item[can of Br&uuml;talbr&auml;u]: 3,
+        $item[Staff of the Headmaster's Victuals]: 3,
+        $item[TI-9000 calculator]: 3,
+        $item[Crimbot schematic: Really Big Head]: 3,
+        $item[vibrating mushroom]: 3,
+        $item[cuppa Uncertain tea]: 3,
+        $item[gingerbread hoodie]: 3,
+        $item[bottle of clam juice]: 3,
+        $item[dedigitizer schematic: familiar-in-the-middle]: 3,
+        $item[basic meat crossbow]: 2,
+        $item[baconstone pendant]: 2,
+        $item[vodka stratocaster]: 2,
+        $item[styrofoam crossbow]: 2,
+        $item[dubious peppermint]: 2,
+        $item[scroll of Protection from Bad Stuff]: 2,
+        $item[chicle de salchicha]: 2,
+        $item[cuppa Flamibili tea]: 2,
+        $item[enchanted eyepatch]: 1,
+        $item[dusty right scapula]: 1,
+        $item[natural fennel soda]: 1,
+        $item[synthetic stuffing]: 1,
+        $item[fixed-gear bicycle]: 1,
+        $item[square CRIMBCOOKIE]: 1,
+        $item[Flaming Caipiranha]: 1,
+        $item[Chinese curse words]: 1,
+        $item[demonic cow's blood]: 1,
+        $item[nutcracking pliers]: 1,
+        $item[pheromone cocktail]: 1,
+        $item[Pork Elf toothpaste]: 1,
+        $item[gnauga hide buckler]: 3,
+        $item[clockwork maid head]: 3,
+        $item[foon of fearfulness]: 3,
+        $item[digital key lime pie]: 3,
+        $item[evil paper umbrella]: 3,
+        $item[six-rainbow shield]: 3,
+        $item[tortoboggan shield]: 3,
+        $item[noxious gas grenade]: 3,
+        $item[Gene Tonic: Penguin]: 3,
+        $item[Energy Buzz Pastaco]: 3,
+        $item[cuppa Serendipi tea]: 3,
+        $item[print screen button]: 3,
+        $item[murderbot live wire]: 3,
+        $item[temporary X tattoos]: 3,
+        $item[bag of sausage links]: 3,
+        $item[extra-strength goo]: 3,
+        $item[asbestos meat stack]: 2,
+        $item[stick-on-a-string]: 2,
+        $item[spiky turtle shield]: 2,
+        $item[pulled yellow taffy]: 2,
+        $item[plaid pocket square]: 2,
+        $item[drug cocktail sauce]: 2,
+        $item[Party-in-a-Can&trade;]: 2,
+        $item[Pesto alla Marziano]: 2,
+        $item[glass of goat's milk]: 1,
+        $item[gnatloaf casserole]: 1,
+        $item[rusty piece of rebar]: 1,
+        $item[floral-print skirt]: 1,
+        $item[cuppa Improprie tea]: 1,
+        $item[VYKEA instructions]: 1,
+        $item[daddy shortlegs leg]: 1,
+        $item[Elf Guard patrol cap]: 1,
+        $item[dedigitizer schematic: pocket GPU]: 1,
+        $item[clockwork chef head]: 2,
+        $item[toy maglev monorail]: 2,
+        $item[nauseating reagent]: 2,
+        $item[rusty diving helmet]: 2,
+        $item[Alice's Army Martyr]: 2,
+        $item[Winifred's whistle]: 2,
+        $item[tiny die-cast arc-welding Elfborg]: 2,
+        $item[carrot-on-a-stick]: 2,
+        $item[liquid rhinestones]: 2,
+        $item[barrel beryl choker]: 2,
+        $item[Aldebaran sardines]: 2,
+        $item[Affirmation Cookie]: 2,
+        $item[zero-trust tanktop]: 2,
+        $item[bowl of lucky charms]: 1,
+        $item[linoleum meat stack]: 1,
+        $item[baconstone earring]: 1,
+        $item[tiny plastic hermit]: 1,
+        $item[dense meat crossbow]: 1,
+        $item[Spooky Surprise Egg]: 1,
+        $item[green peawee marble]: 1,
+        $item[Massive Manual of Marauder Mockery]: 1,
+        $item[ghast iron codpiece]: 1,
+        $item[Cool Brunch Pastaco]: 1,
+        $item[short glass of water]: 1,
+        $item[sweet potato o' mine]: 1,
+        $item[Linguini Ubriacapa]: 1,
+        $item[porquoise necklace]: 1,
+        $item[delicious stinkbug]: 1,
+        $item[square sponge pants]: 1,
+        $item[Gene Tonic: Mer-kin]: 1,
+        $item[dark porquoise ring]: 1,
+        $item[yellow pixel potion]: 1,
+        $item[Daily Affirmation: Think Win-Lose]: 1,
+        $item[dedigitizer schematic: 3d printed server room key]: 1
+    };
+
+    // Best ingredient from one Runneth list: turns * meatPerTurn, plus the drink
+    // adventures it adds valued at advValue, minus its mall price. always returns the
+    // best tradeable one even at a loss; otherwise $item[none] when nothing profits.
+    item bestCupIngredient(int [item] ingredients, int meatPerTurn, float advValue, boolean always){
+        item best = $item[none];
+        float bestProfit = 0;
+        foreach it, turns in ingredients{
+            int price = mall_price(it);
+            if (!it.tradeable || price <= 0)
+                continue;
+            float profit = turns * meatPerTurn + cupAdventures[it] * advValue - price;
+            if (profit > bestProfit || (always && best == $item[none])){
+                best = it;
+                bestProfit = profit;
+            }
+        }
+        return best;
+    }
+
+    // Fill the Cup of 13s once the jewels are in: slot 1 is always the best Runneth
+    // With The Pack item (150 meat/turn), slots 2-3 the best Runneth On Empty item
+    // (325 meat/turn), falling back to the Pack item. advValue prices each adventure
+    // an ingredient adds (0 ignores them). False when nothing was drunk.
+    boolean drinkCupOf13s(float advValue){
+        if (get_property("_cupOf13sJewels") != "13")
+            return false;
+        item pack = bestCupIngredient(runnethWithThePackItems, 150, advValue, true);
+        if (pack == $item[none])
+            return false;
+        item empty = bestCupIngredient(runnethOnEmptyItems, 325, advValue, false);
+        if (empty == $item[none])
+            empty = pack;
+        if (!retrieve_item(empty == pack ? 3 : 1, pack) || !retrieve_item(empty == pack ? 3 : 2, empty))
+            return false;
+        print("Cup of 13s: " + pack + ", " + empty + ", " + empty, "blue");
+        visit_url("inventory.php?action=cupof13s");
+        run_choice(1, "whichitem1=" + pack.to_int() + "&whichitem2=" + empty.to_int() + "&whichitem3=" + empty.to_int());
+        return true;
+    }
+
+    boolean drinkCupOf13s(){
+        return drinkCupOf13s(0);
     }
 
 // ─── 9. ADVENTURING-STATE CHECKS ─────────────────────────────────────────────

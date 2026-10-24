@@ -41,11 +41,8 @@ void certificates(){
 }
 
 void YetiRO(){
-    if ($familiar[cooler yeti].experience > 400 && get_property("_coolerYetiAdventures") == "false"){
-        use_familiar($familiar[cooler yeti]);
-        visit_url("main.php?talktoyeti=1", false);
-        run_choice(2);
-    }
+    if ($familiar[cooler yeti].experience > 400 && get_property("_coolerYetiAdventures") == "false")
+        yetiTalk();
 }
 
 void pvpCombat(){
