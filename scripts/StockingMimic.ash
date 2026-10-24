@@ -500,6 +500,8 @@ void dieting(){
                 visit_url("inv_use.php?which=3&whichitem=9908");
                 run_combat();
                 run_choice(-1);
+                if (have_effect($effect[Your Days Are Numbed]) > 0)
+                    cli_execute("uneffect your days are numbed");
                 if (my_fullness() < fullness_limit())
                     eat(1,$item[thyme jelly donut]);
             }
