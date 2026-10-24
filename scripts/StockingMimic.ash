@@ -1303,11 +1303,14 @@ void faxing(){
         cli_execute("/whitelist fart sauce annex");
         visit_url("clan_viplounge.php?action=faxmachine&whichfloor=2");
         visit_url("clan_viplounge.php?preaction=receivefax&whichfloor=2");
+        if (get_property("clubEmNextWeekMonster") == "")
+            set_property("mainOverride",", equip legendary seal clubbing club");
         if (item_amount($item[photocopied monster]) > 0){
             mimicPrep();
             main@preadventure( );
             use($item[photocopied monster]);
         }
+        set_property("mainOverride","");
     }
 }
 // Locket fights used today. split_string("") yields one empty entry, so "" is checked first.
@@ -2252,10 +2255,6 @@ void peridotFishing(){
                 if (turns_until_forced_noncombat(loc) == 0) 
                     continue;
                 mimicPrep();
-                if (get_property("clubEmNextWeekMonster") == "")
-                    set_property("mainOverride",", equip legendary seal clubbing club");
-                else
-                    set_property("mainOverride","");
                 set_property("offOverride",", equip Kramco Sausage-o-Matic");
                 set_property("acc2Override",", equip eternity codpiece");
                 set_property("acc3Override",",bonus mafia pointer");

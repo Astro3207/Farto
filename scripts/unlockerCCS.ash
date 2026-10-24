@@ -549,7 +549,7 @@ void main(int round, monster mob, string page_text) {
             use_skill($skill[BCZ: Refracted Gaze]);
         if (last_monster().max_meat > 0 && have_equipped($item[mafia pointer finger ring]) && current_round() < 28)
             attack();
-        if (last_monster() == $monster[sausage goblin])
+        if (last_monster() == $monster[Black Crayon Crimbo Elf])
             if (have_equipped($item[legendary seal-clubbing club]))
                 use_skill($skill[Club 'Em Into Next Week]); 
         if (get_property("subscript") == "looseFK" && (get_property("_curveballMonster").to_monster() != last_monster() || get_property("_curveballFightsLeft").to_int() == 0) && last_monster().boss == false)
