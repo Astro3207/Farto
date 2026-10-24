@@ -684,7 +684,8 @@ void preAdv(){
     string context = my_location() + ";" + get_property("_seadentWaveZone");
     if (get_property("savedMaximizer") == maximize.to_string() && get_property("savedMaximizerContext") == context){
         outfit("farming");
-        set_property("savedFamEquip",equipped_item($slot[familiar]));
+        if (get_property("savedFamEquip").to_item() != $item[none])
+            equip(get_property("savedFamEquip").to_item());
     } else {
         if (!maximize(maximize.to_string(), false))
             if (!maximize(maximize.to_string(), false))
@@ -692,8 +693,7 @@ void preAdv(){
         set_property("savedMaximizer",maximize.to_string());
         set_property("savedMaximizerContext",context);
         cli_execute("outfit save farming");
-        if (get_property("savedFamEquip").to_item() != $item[none])
-            equip(get_property("savedFamEquip").to_item());
+        set_property("savedFamEquip",equipped_item($slot[familiar]));
     }
     // Free kill flag
     set_property("freeKillReady",
