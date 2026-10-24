@@ -604,9 +604,6 @@
         visit_url("showclan.php?whichclan="+clan_to_ID[clan]+"&action=joinclan&confirm=on");
     }
 
-    // Items stashgrab() took and still owes back, as comma-separated item ids in
-    // stashReturnTemporary / stashReturnBFC. Properties instead of globals because
-    // the grab (preadventure) and the return (farto, finisher) run as separate scripts.
     int [item] stashOwed(string prop){
         int [item] owed;
         foreach i, id in split_string(get_property(prop), ","){
@@ -634,8 +631,6 @@
         whitelist("homeclan");
     }
 
-    // Puts back what one ledger owes -- only `only`, or everything when it is
-    // $item[none] -- keeping in the ledger whatever wasn't returned.
     void stashReturnTo(string clan, string prop, item only){
         string unreturned;
         foreach it, n in stashOwed(prop){
@@ -722,9 +717,6 @@
         return true;
     }
 
-    // Turns of Everything Looks Red a bullseye gives: 50, minus 10 for each
-    // cooldown perk ("You are less impressed by bullseyes" / "Bullseyes do not
-    // impress you much"), counting repeats.
     int bullseyeCooldown(){
         perks = get_property("everfullDartPerks");
         int n = count_substring(perks, "You are less impressed by bullseyes") + count_substring(perks, "Bullseyes do not impress you much");

@@ -2739,6 +2739,29 @@ item bestCupIngredient(int [item] ingredients, int meatPerTurn, boolean always){
     return best;
 }
 
+void dinnerLiverSpleen(){
+    use_familiar($familiar[stooper]);
+    equip($item[devilbone greaves]);
+    equip($slot[acc1],$item[angelbone dice]);
+    equip($slot[acc2],$item[devilbone rosary]);
+    if (my_inebriety() <= inebriety_limit()){
+        if (my_inebriety() == inebriety_limit()-3 && !drinkCupOf13s())
+            drink($item[friendly turkey]);
+        if (my_inebriety() == inebriety_limit()-2)
+            drink($item[jack-o-lantern beer]);
+        if (my_inebriety() == inebriety_limit())
+            drink($item[vintage smart drink]);
+    }
+    if (my_spleen_use() < spleen_limit()){
+        int toChew = floor((spleen_limit()-my_spleen_use())/2);
+        chew (toChew,$item[Extrovermectin&trade;]);
+        int mojo = 3-get_property("currentMojoFilters").to_int();
+        use(mojo,$item[mojo filter]);
+        toChew = floor((spleen_limit()-my_spleen_use())/2);
+        chew (toChew,$item[Extrovermectin&trade;]);
+    }
+}
+
 // Drink the Cup of 13s (choice 1601): always one Runneth With The Pack ingredient,
 // plus two Runneth On Empty ones when that is profitable, else more of the Pack
 // one. False when the cup isn't charged or the items can't be had, so the caller
@@ -2767,27 +2790,7 @@ void bulkFKD1(){
     buffML($monster[Flaming leaflet]);
     locationBasedAdventuring();
     if (my_spleen_use() < 10){
-        use_familiar($familiar[stooper]);
-        equip($item[devilbone greaves]);
-        equip($slot[acc1],$item[angelbone dice]);
-        equip($slot[acc2],$item[devilbone rosary]);
-        doSpleen();
-        if (my_inebriety() <= inebriety_limit()){
-            if (my_inebriety() == inebriety_limit()-3 && !drinkCupOf13s())
-                drink($item[friendly turkey]);
-            if (my_inebriety() == inebriety_limit()-2)
-                drink($item[jack-o-lantern beer]);
-            if (my_inebriety() == inebriety_limit())
-                drink($item[vintage smart drink]);
-        }
-        if (my_spleen_use() < spleen_limit()){
-            int toChew = floor((spleen_limit()-my_spleen_use())/2);
-            chew (toChew,$item[Extrovermectin&trade;]);
-            int mojo = 3-get_property("currentMojoFilters").to_int();
-            use(mojo,$item[mojo filter]);
-            toChew = floor((spleen_limit()-my_spleen_use())/2);
-            chew (toChew,$item[Extrovermectin&trade;]);
-        }
+        dinnerLiverSpleen();
         use_familiar($familiar[comma chameleon]);
         cli_execute("maximize familiar weight");
     }
