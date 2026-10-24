@@ -491,6 +491,7 @@ void dieting(){
                 use_skill($skill[Sweat Out Some Booze]);
         }
         if (my_fullness() == fullness_limit() && get_property("_pantsgivingFullness").to_int() < 1){
+            put_closet($item[leprecondo]);
             if (available_amount($item[pantsgiving]) == 0)
                 stashgrab($item[pantsgiving]);
             if (available_amount($item[pantsgiving]) > 0){
@@ -500,11 +501,10 @@ void dieting(){
                 visit_url("inv_use.php?which=3&whichitem=9908");
                 run_combat();
                 run_choice(-1);
-                if (have_effect($effect[Your Days Are Numbed]) > 0)
-                    cli_execute("uneffect your days are numbed");
                 if (my_fullness() < fullness_limit())
                     eat(1,$item[thyme jelly donut]);
             }
+            take_closet($item[leprecondo]);
         }
         if (get_property("_mimeArmyShotglassUsed") == "false"){
             if (my_inebriety() < inebriety_limit())
