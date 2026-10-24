@@ -2227,6 +2227,8 @@ void miscellaneousFams(){
 }
 
 void peridotFishing(){
+    if (get_property("_doneFishing") == "true")
+        return;
     string perilLocations;
     whitelist("Temporary");
     	codpiece("heartstone,blood cubic zirconia,baseball diamond,peridot of peril,tuesday's ruby");
@@ -2310,6 +2312,7 @@ void peridotFishing(){
     set_property("acc1Override","");
     set_property("offOverride","");
     set_property("subscript","");
+    set_property("_doneFishing","true");
 }
 
 void eldritchFights(){
