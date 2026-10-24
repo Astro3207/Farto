@@ -962,6 +962,8 @@ void spendAdv(){
                 azazelUnicornQuest();
             else if ((get_property("questG09Muscle") != "finished" && my_class() == $class[seal clubber]) || get_property("questL05Goblin") == "started")
                 outskirts();
+            else
+                adv1($location[cobb's knob treasury]);
             clearOverrides();
         }
         boolean vintnerEmpty = item_amount($item[1950 Vampire Vintner wine]) == 0 && get_property("vintnerCharge").to_int() == 0;
