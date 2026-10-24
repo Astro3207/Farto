@@ -267,7 +267,7 @@ void main(){
     starter();
     step("phase: Organ phase 1");
     if (isFartScauce())
-        set_property("valueOfAdventure","5400");
+        set_property("valueOfAdventure","7600");
     step("phase: nightcap");
     Nightcap();
     if (!contains_text(get_property("thoth19_event_list"),"overdrunkStart"))

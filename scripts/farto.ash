@@ -205,7 +205,7 @@ void bladdering(){
 void main(){
     try {
         starter();
-        if (to_int(get_property("_pantsgivingCount")) < 500 && available_amount($item[pantsgiving]) == 0)
+        if (to_int(get_property("_pantsgivingCount")) < 50 && available_amount($item[pantsgiving]) == 0)
             stashgrab($item[pantsgiving]);
         set_property("script","farto");
         while (my_adventures() > 0){

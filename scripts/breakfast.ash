@@ -415,12 +415,8 @@ void secondBreakfast(){
 // ─── ENTRY ───────────────────────────────────────────────────────────────────
 
 void main(){
-    try {
-        step("phase: first breakfast");
-        firstBreakfast();
-        step("phase: second breakfast");
-        secondBreakfast();
-    } finally {
-        finisher();
-    }
+    step("phase: first breakfast");
+    firstBreakfast();
+    step("phase: second breakfast");
+    secondBreakfast();
 }

@@ -611,11 +611,6 @@ void volcanoBuff(){
 
 void FKPrep(){
 	step("phase: FKPrep start");
-	starter();
-	// Combat runs off the player's saved combat macro (id in the combatMacroID
-	// pref) as the native KoL auto-attack -- round 0 only works when the macro is
-	// set natively, not embedded in a mafia CCS. starter() just cleared the
-	// auto-attack, so re-arm it here.
     if (dayType() == 0 && have_effect($effect[shadow affinity]) == 0){
         int peevp = pvp_attacks_left();
         if (peevp > 0 && count(current_pvp_stances( )) > 0) {
@@ -923,7 +918,7 @@ void shadowRealmFK(){
             set_property("acc3Override","");
         if (to_int(get_property("_batWingsSwoopUsed")) < 11)
             set_property("backOverride",", equip bat wings");
-        if (have_effect($effect[fishy]) < 880 && my_class() == $class[seal clubber])
+        if (have_effect($effect[fishy]) < 910 && my_class() == $class[seal clubber])
             set_property("mainOverride",", equip monodent");
         else
             set_property("mainOverride","");
@@ -2171,7 +2166,7 @@ void miscellaneousFams(){
         set_auto_attack(0);
         if (have_effect($effect[Apriling Band Battle Cadence]) == 0 && total_turns_played() >= get_property("nextAprilBandTurn").to_int())
             cli_execute("aprilband effect c");
-        while (get_property("_banderRunaways").to_int() < floor((my_familiar().familiar_weight() + weight_adjustment( ))/5)){
+        while (get_property("_banderRunaways").to_int() < (my_familiar().familiar_weight() + weight_adjustment() - (my_familiar() == $familiar[comma chameleon] ? 5 : 0)) / 5){
             if ($location[Cobb's Knob Treasury].combat_percent < 100)
                 cli_execute("gain 15 combat");
             set_property("subscript","stompingBoots");
@@ -2342,9 +2337,6 @@ void bulkFKD2(){
     step("phase: bulkFK start");
     set_property("inSpendAdv","true");
     set_property("script","FreeKill");
-    // Arm the player's combat macro as the native auto-attack so a standalone
-    // bulkFK() run (FKPrep skipped because the express card is already used) still fights.
-    starter();
     if (get_auto_attack() == 0)
         aa("facsimile");
     if (get_campground() contains $item[Source Terminal])

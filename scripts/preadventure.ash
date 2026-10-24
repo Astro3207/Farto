@@ -841,6 +841,8 @@ void main(){
         if (item_amount($item[4-D camera]) == 0)
             retrieve_item($item[4-D camera]);
         cli_execute("checkpoint clear");
+        if (!contains_text(get_property("thoth19_event_list"),"midFarm") && have_effect($effect[Runneth On Empty]) == 0)
+            cli_execute("ptrack add midFarm");
         mood("");
     } finally {
         set_property("betweenBattleScript",boof);
