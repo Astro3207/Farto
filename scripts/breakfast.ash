@@ -195,45 +195,6 @@ void pantogram(){
     }
 }
 
-void firstBreakfast(){
-    int startClan = get_clan_id();
-
-    step("phase: daily update");
-    dailyUpdate();
-    step("phase: workshed");
-    takerSpace();
-    step("phase: clan breakfasts");
-    clanBreakfasts();
-    step("phase: unlock locations");
-    unlockLocations();
-    step("phase: sausage casing");
-    makeSausage();
-    step("phase: daily buttons");
-    if (my_garden_type( ) != "black_rose")
-        cli_execute("garden pick");
-    photoBooth();
-    pantogram();
-    perilsForeseen();
-    spookyTapes();
-    alliedRadio();
-    if (have_item($item[SongBoom&trade; BoomBox]) && get_property("boomBoxSong") != "Total Eclipse of Your Meat")
-        use($item[SongBoom&trade; BoomBox]);
-
-    step("phase: unaccompanied miner");
-    unaccompaniedMiner();
-
-    healUp();
-    stillsuit();
-    grabAccessories();
-
-    whitelist("homeclan");
-
-    step("phase: mayam rings");
-    mayamRings();
-}
-
-// ─── SECOND BREAKFAST ───────────────────────────────────────────────────────
-
 void dailySkills(){
     foreach sk in $skills[Lunch Break, Spaghetti Breakfast, Grab a Cold One,
         Summon Kokomo Resort Pass, Perfect Freeze, Acquire Rhinestones,
@@ -329,7 +290,41 @@ void mummeryMeat(){
     cli_execute("mummery meat");
 }
 
-void secondBreakfast(){
+void firstBreakfast(){
+    int startClan = get_clan_id();
+
+    step("phase: daily update");
+    dailyUpdate();
+    step("phase: workshed");
+    takerSpace();
+    step("phase: clan breakfasts");
+    clanBreakfasts();
+    step("phase: unlock locations");
+    unlockLocations();
+    step("phase: sausage casing");
+    makeSausage();
+    step("phase: daily buttons");
+    if (my_garden_type( ) != "black_rose")
+        cli_execute("garden pick");
+    photoBooth();
+    pantogram();
+    perilsForeseen();
+    spookyTapes();
+    alliedRadio();
+    if (have_item($item[SongBoom&trade; BoomBox]) && get_property("boomBoxSong") != "Total Eclipse of Your Meat")
+        use($item[SongBoom&trade; BoomBox]);
+
+    step("phase: unaccompanied miner");
+    unaccompaniedMiner();
+
+    healUp();
+    stillsuit();
+    grabAccessories();
+
+    whitelist("homeclan");
+
+    step("phase: mayam rings");
+    mayamRings();
     step("phase: daily skills");
     dailySkills();
     glitchItem();
@@ -355,5 +350,4 @@ void secondBreakfast(){
 void main(){
     step("phase: breakfast");
     firstBreakfast();
-    secondBreakfast();
 }
