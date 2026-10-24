@@ -15,24 +15,6 @@ void dailyUpdate(){
         cli_execute("stock_market");
 }
 
-void takerSpace(){
-    if (get_property("_workshedItemUsed").to_boolean() || get_workshed() != $item[TakerSpace letter of Marque])
-        return;
-    if (get_property("takerSpaceGold").to_int() >= 1 && get_property("takerSpaceMast").to_int() >= 1
-        && get_property("takerSpaceAnchor").to_int() >= 3 && get_property("takerSpaceRum").to_int() >= 1)
-        create($item[anchor bomb]);
-    if (get_property("takerSpaceSpice").to_int() >= 1 && get_property("takerSpaceRum").to_int() >= 2)
-        create($item[tankard of spiced rum]);
-    while (get_property("takerSpaceMast").to_int() >= 2)
-        if (!create($item[harpoon]))
-            break;
-    while (get_property("takerSpaceSpice").to_int() >= 1)
-        if (!create($item[spices]))
-            break;
-    if (available_amount($item[model train set]) > 0)
-        use($item[model train set]);
-}
-
 void clanBreakfasts(){
     if (get_property("_chipBags").to_int() < 3){
         whitelist("Bonus Adventures from Hell");
@@ -55,84 +37,22 @@ void photoBooth(){
     whitelist("homeclan");
 }
 
-void perilsForeseen(){
-    if (!isFartScauce() || get_property("_perilsForeseen").to_int() != 0)
+void takerSpace(){
+    if (get_property("_workshedItemUsed").to_boolean() || get_workshed() != $item[TakerSpace letter of Marque])
         return;
-    codpiece("none");
-    visit_url("inventory.php?action=foresee");
-    foreach who in $ints[2463557, 1197090, 4409, 2456712]
-        visit_url("choice.php?whichchoice=1558&option=1&who=" + who);
-}
-
-void spookyTapes(){
-    int credits = get_property("availableMrStore2002Credits").to_int();
-    if (credits > 0)
-        create(credits, $item[Spooky VHS Tape]);
-}
-
-void alliedRadio(){
-    if (!have_item($item[Allied Radio Backpack]) || get_property("_alliedRadioDropsUsed").to_int() >= 3)
-        return;
-    visit_url("inventory.php?action=requestdrop");
-    while (get_property("_alliedRadioDropsUsed").to_int() < 3){
-        int used = get_property("_alliedRadioDropsUsed").to_int();
-        visit_url("choice.php?request=radio&whichchoice=1561&option=1");
-        if (get_property("_alliedRadioDropsUsed").to_int() == used)
-            return;
-    }
-}
-
-void unaccompaniedMiner(){
-    if (!have_skill($skill[Unaccompanied Miner]))
-        return;
-    int fruitlessResets;
-    while (get_property("_unaccompaniedMinerUsed").to_int() < 5){
-        cli_execute("acquire miner's helmet; acquire 7-Foot Dwarven mattock; acquire miner's pants");
-        cli_execute("outfit mining gear");
-        if (my_hp() == 0)
-            cli_execute("restore hp");
-        string wall = visit_url("mining.php?intro=1&mine=1");
-        matcher chunk = create_matcher(
-            "(?i)which=(\\d+)(?:(?!</a>)[\\s\\S]){0,200}?promising chunk of wall", wall);
-        if (chunk.find()){
-            visit_url("mining.php?mine=1&which=" + chunk.group(1));
-            fruitlessResets = 0;
-        } else {
-            visit_url("mining.php?mine=1&reset=1");
-            fruitlessResets += 1;
-            if (fruitlessResets >= 20){
-                print("BF: unaccompaniedMiner: 20 resets with no reachable chunk, giving up", "red");
-                return;
-            }
-        }
-    }
-}
-
-void healUp(){
-    if (have_effect($effect[Beaten Up]) > 0)
-        cli_execute("cast tongue of the walrus; cast cannelloni cocoon");
-}
-
-void stillsuit(){
-    if (!have_item($item[tiny stillsuit]) || !have_familiar($familiar[tickle-me emilio]))
-        return;
-    use_familiar($familiar[tickle-me emilio]);
-    equip($item[tiny stillsuit]);
-}
-
-void grabAccessories(){
-    foreach it in $items[mother's necklace, pearl diver's necklace, giant yellow hat, perfume-soaked bandana,filthy knitted dread sack, mini kiwi bikini]
-        retrieve_item(it);
-}
-
-void mayamRings(){
-    if (get_property("_mayamSymbolsUsed") != "" || !have_item($item[Mayam Calendar]))
-        return;
-    if (have_familiar($familiar[Chest Mimic]))
-        use_familiar($familiar[Chest Mimic]);
-    cli_execute("mayam rings vessel yam cheese explosion;"
-        + " mayam rings fur lightning eyepatch yam;"
-        + " mayam rings eye meat yam clock");
+    if (get_property("takerSpaceGold").to_int() >= 1 && get_property("takerSpaceMast").to_int() >= 1
+        && get_property("takerSpaceAnchor").to_int() >= 3 && get_property("takerSpaceRum").to_int() >= 1)
+        create($item[anchor bomb]);
+    if (get_property("takerSpaceSpice").to_int() >= 1 && get_property("takerSpaceRum").to_int() >= 2)
+        create($item[tankard of spiced rum]);
+    while (get_property("takerSpaceMast").to_int() >= 2)
+        if (!create($item[harpoon]))
+            break;
+    while (get_property("takerSpaceSpice").to_int() >= 1)
+        if (!create($item[spices]))
+            break;
+    if (available_amount($item[model train set]) > 0)
+        use($item[model train set]);
 }
 
 void unlockLocations(){
@@ -168,6 +88,82 @@ void unlockLocations(){
     }
 }
 
+void dailySkills(){
+    foreach sk in $skills[Lunch Break, Spaghetti Breakfast, Grab a Cold One,
+        Summon Kokomo Resort Pass, Perfect Freeze, Acquire Rhinestones,
+        Prevent Scurvy and Sobriety, That's Not a Knife,Bowl Full of Jelly,Eye and a Twist,Chubby and Plump]{
+        if (have_skill(sk))
+            use_skill(sk);
+    }
+}
+
+void spookyTapes(){
+    int credits = get_property("availableMrStore2002Credits").to_int();
+    if (credits > 0)
+        create(credits, $item[Spooky VHS Tape]);
+}
+
+void printScreenButton(){
+    if (get_property("_internetPrintScreenButtonBought") == "false")
+        create($item[print screen button]);
+}
+
+void burningLeaves(){
+    while (get_property("_leafLassosCrafted").to_int() < 3){
+        if (!create($item[lit leaf lasso]))
+            break;
+    }
+    if (!get_property("_leafDayShortenerCrafted").to_boolean())
+        create($item[day shortener]);
+}
+
+void glitchItem(){
+    if (!get_property("_glitchItemImplemented").to_boolean() && available_amount($item[[glitch season reward name]]) > 0)
+        use($item[[glitch season reward name]]);
+}
+
+void devilCandyEggs(){
+    while (get_property("_candyEggsDeviled").to_int() < 3){
+        int made = get_property("_candyEggsDeviled").to_int();
+        cli_execute("devilcandyegg daffy taffy");
+        if (get_property("_candyEggsDeviled").to_int() == made)
+            return;
+    }
+}
+
+void netiPot(){
+    if (!get_property("_porkElfNetiPotUsed").to_boolean() && available_amount($item[Pork Elf neti pot]) > 0)
+        use($item[Pork Elf neti pot]);
+}
+
+void aprilShower(){
+    if (!get_property("_aprilShower").to_boolean())
+        cli_execute("shower cold");
+}
+
+void alliedRadio(){
+    if (!have_item($item[Allied Radio Backpack]) || get_property("_alliedRadioDropsUsed").to_int() >= 3)
+        return;
+    visit_url("inventory.php?action=requestdrop");
+    while (get_property("_alliedRadioDropsUsed").to_int() < 3){
+        int used = get_property("_alliedRadioDropsUsed").to_int();
+        visit_url("choice.php?request=radio&whichchoice=1561&option=1");
+        if (get_property("_alliedRadioDropsUsed").to_int() == used)
+            return;
+    }
+}
+
+void votingBooth(){
+    if (have_item($item[&quot;I Voted!&quot; sticker]))
+        return;
+    if (have_item($item[voter registration form])){
+        use($item[voter registration form]);
+    } else {
+        retrieve_item($item[absentee voter ballot]);
+        use($item[absentee voter ballot]);
+    }
+}
+
 void makeSausage(){
     if (!have_item($item[Kramco Sausage-o-Matic&trade;]))
         return;
@@ -191,43 +187,26 @@ void pantogram(){
     }
 }
 
-void dailySkills(){
-    foreach sk in $skills[Lunch Break, Spaghetti Breakfast, Grab a Cold One,
-        Summon Kokomo Resort Pass, Perfect Freeze, Acquire Rhinestones,
-        Prevent Scurvy and Sobriety, That's Not a Knife,Bowl Full of Jelly,Eye and a Twist,Chubby and Plump]{
-        if (have_skill(sk))
-            use_skill(sk);
-    }
+void grabAccessories(){
+    foreach it in $items[mother's necklace, pearl diver's necklace, giant yellow hat, perfume-soaked bandana,filthy knitted dread sack, mini kiwi bikini]
+        retrieve_item(it);
 }
 
-void glitchItem(){
-    if (!get_property("_glitchItemImplemented").to_boolean() && available_amount($item[[glitch season reward name]]) > 0)
-        use($item[[glitch season reward name]]);
-}
-
-void votingBooth(){
-    if (have_item($item[&quot;I Voted!&quot; sticker]))
+void perilsForeseen(){
+    if (!isFartScauce() || get_property("_perilsForeseen").to_int() != 0)
         return;
-    if (have_item($item[voter registration form])){
-        use($item[voter registration form]);
-    } else {
-        retrieve_item($item[absentee voter ballot]);
-        use($item[absentee voter ballot]);
-    }
+    codpiece("none");
+    visit_url("inventory.php?action=foresee");
+    foreach who in $ints[2463557, 1197090, 4409, 2456712]
+        visit_url("choice.php?whichchoice=1558&option=1&who=" + who);
 }
 
-void aprilShower(){
-    if (!get_property("_aprilShower").to_boolean())
-        cli_execute("shower cold");
-}
-
-void burningLeaves(){
-    while (get_property("_leafLassosCrafted").to_int() < 3){
-        if (!create($item[lit leaf lasso]))
-            break;
+void speakeasyPool(){
+    if (get_property("_speakeasyPool") != "true"){
+        cli_execute("maximize pool skill");
+        visit_url("place.php?whichplace=speakeasy&action=olivers_pooltable");
+        set_property("_speakeasyPool","true");
     }
-    if (!get_property("_leafDayShortenerCrafted").to_boolean())
-        create($item[day shortener]);
 }
 
 void candyRichBlock(){
@@ -245,31 +224,45 @@ void candyRichBlock(){
     candy("treat");
 }
 
-void speakeasyPool(){
-    if (get_property("_speakeasyPool") != "true"){
-        cli_execute("maximize pool skill");
-        visit_url("place.php?whichplace=speakeasy&action=olivers_pooltable");
-        set_property("_speakeasyPool","true");
+void unaccompaniedMiner(){
+    if (!have_skill($skill[Unaccompanied Miner]))
+        return;
+    int fruitlessResets;
+    while (get_property("_unaccompaniedMinerUsed").to_int() < 5){
+        cli_execute("acquire miner's helmet; acquire 7-Foot Dwarven mattock; acquire miner's pants");
+        cli_execute("outfit mining gear");
+        if (my_hp() == 0)
+            cli_execute("restore hp");
+        string wall = visit_url("mining.php?intro=1&mine=1");
+        matcher chunk = create_matcher(
+            "(?i)which=(\\d+)(?:(?!</a>)[\\s\\S]){0,200}?promising chunk of wall", wall);
+        if (chunk.find()){
+            visit_url("mining.php?mine=1&which=" + chunk.group(1));
+            fruitlessResets = 0;
+        } else {
+            visit_url("mining.php?mine=1&reset=1");
+            fruitlessResets += 1;
+            if (fruitlessResets >= 20){
+                print("BF: unaccompaniedMiner: 20 resets with no reachable chunk, giving up", "red");
+                return;
+            }
+        }
     }
 }
 
-void printScreenButton(){
-    if (get_property("_internetPrintScreenButtonBought") == "false")
-        create($item[print screen button]);
+void healUp(){
+    if (have_effect($effect[Beaten Up]) > 0)
+        cli_execute("cast tongue of the walrus; cast cannelloni cocoon");
 }
 
-void devilCandyEggs(){
-    while (get_property("_candyEggsDeviled").to_int() < 3){
-        int made = get_property("_candyEggsDeviled").to_int();
-        cli_execute("devilcandyegg daffy taffy");
-        if (get_property("_candyEggsDeviled").to_int() == made)
-            return;
-    }
-}
-
-void netiPot(){
-    if (!get_property("_porkElfNetiPotUsed").to_boolean() && available_amount($item[Pork Elf neti pot]) > 0)
-        use($item[Pork Elf neti pot]);
+void mayamRings(){
+    if (get_property("_mayamSymbolsUsed") != "" || !have_item($item[Mayam Calendar]))
+        return;
+    if (have_familiar($familiar[Chest Mimic]))
+        use_familiar($familiar[Chest Mimic]);
+    cli_execute("mayam rings vessel yam cheese explosion;"
+        + " mayam rings fur lightning eyepatch yam;"
+        + " mayam rings eye meat yam clock");
 }
 
 void mummeryMeat(){
@@ -286,45 +279,57 @@ void mummeryMeat(){
     cli_execute("mummery meat");
 }
 
+void stillsuit(){
+    if (!have_item($item[tiny stillsuit]) || !have_familiar($familiar[tickle-me emilio]))
+        return;
+    use_familiar($familiar[tickle-me emilio]);
+    equip($item[tiny stillsuit]);
+}
+
 void firstBreakfast(){
     step("phase: daily update");
     dailyUpdate();
-    takerSpace();
+
+    step("phase: clan");
     clanBreakfasts();
-    unlockLocations();
-    makeSausage();
+    photoBooth();
+    clanFortune();
+
+    step("phase: campground");
     if (my_garden_type( ) != "black_rose")
         cli_execute("garden pick");
-    photoBooth();
-    pantogram();
-    perilsForeseen();
+    takerSpace();
+    unlockLocations();
+
+    step("phase: daily freebies");
+    dailySkills();
     spookyTapes();
+    printScreenButton();
+    burningLeaves();
+    glitchItem();
+    devilCandyEggs();
+    netiPot();
+    aprilShower();
+    aprilBand();
     alliedRadio();
+    votingBooth();
     if (have_item($item[SongBoom&trade; BoomBox]) && get_property("boomBoxSong") != "Total Eclipse of Your Meat")
         use($item[SongBoom&trade; BoomBox]);
 
-    step("phase: unaccompanied miner");
-    unaccompaniedMiner();
-
-    healUp();
-    stillsuit();
+    step("phase: purchases");
+    makeSausage();
+    pantogram();
     grabAccessories();
-    mayamRings();
-    step("phase: daily skills");
-    dailySkills();
-    glitchItem();
-    votingBooth();
-    step("phase: clan fortune");
-    clanFortune();
-    aprilShower();
+
+    step("phase: gear and familiar chores");
+    perilsForeseen();
     speakeasyPool();
-    printScreenButton();
-    burningLeaves();
     candyRichBlock();
-    aprilBand();
+    unaccompaniedMiner();
+    healUp();
+    mayamRings();
     mummeryMeat();
-    devilCandyEggs();
-    netiPot();
+    stillsuit();
 }
 
 // ─── ENTRY ───────────────────────────────────────────────────────────────────
