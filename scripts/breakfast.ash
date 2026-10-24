@@ -2,10 +2,6 @@ import iotm.ash;
 
 // ═══ breakfast.ash ══════════════════════════════════════════════════════════
 // Start-of-day chores
-//
-// ─── PER-ACCOUNT CONFIG ─────────────────────────────────────────────────────
-//  * Reads the homeClanID preference for the clan to return to between hops
-//    (set once via FartoController.ash, or `set homeClanID=<id>`).
 
 void step(string msg){
     print("BF: " + msg, "blue");
@@ -39,7 +35,7 @@ void takerSpace(){
 
 void clanBreakfasts(){
     if (get_property("_chipBags").to_int() < 3){
-        whitelist("Bonus Adventures from Hell")
+        whitelist("Bonus Adventures from Hell");
         cli_execute("breakfast; chips radium; chips wintergreen; chips ennui");
         visit_url("clan_rumpus.php?action=click&spot=5&furni=1");
     }
@@ -191,7 +187,7 @@ void pantogram(){
         retrieve_item(11,$item[lead necklace]);
         retrieve_item(1,$item[porquoise]);
         visit_url("inv_use.php?whichitem=9573");
-        visit_url("choice.php?whichchoice=1270&pwd="+my_hash()+"&option=1&m=3&e=2&s1=-1%2C0&s2=706%2C1&s3=865%2C11");
+        visit_url("choice.php?whichchoice=1270&pwd="+my_hash()+"&option=1&m=3&e=2&s1=-1,0&s2=706,1&s3=865,11");
     }
 }
 
@@ -291,19 +287,12 @@ void mummeryMeat(){
 }
 
 void firstBreakfast(){
-    int startClan = get_clan_id();
-
     step("phase: daily update");
     dailyUpdate();
-    step("phase: workshed");
     takerSpace();
-    step("phase: clan breakfasts");
     clanBreakfasts();
-    step("phase: unlock locations");
     unlockLocations();
-    step("phase: sausage casing");
     makeSausage();
-    step("phase: daily buttons");
     if (my_garden_type( ) != "black_rose")
         cli_execute("garden pick");
     photoBooth();
@@ -320,10 +309,6 @@ void firstBreakfast(){
     healUp();
     stillsuit();
     grabAccessories();
-
-    whitelist("homeclan");
-
-    step("phase: mayam rings");
     mayamRings();
     step("phase: daily skills");
     dailySkills();
@@ -331,14 +316,11 @@ void firstBreakfast(){
     votingBooth();
     step("phase: clan fortune");
     clanFortune();
-
-    step("phase: daily buttons");
     aprilShower();
     speakeasyPool();
     printScreenButton();
     burningLeaves();
     candyRichBlock();
-    zoneOpening();
     aprilBand();
     mummeryMeat();
     devilCandyEggs();

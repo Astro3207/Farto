@@ -1670,7 +1670,7 @@ void weakMonsters(){
         } else if (pick == "speakeasy"){
             set_property("FKRunEligible","true");
             step("phase: weakMonsters traveling hobo");
-            mimicPrep(",-equip equip mobius");
+            mimicPrep(",-equip mobius");
             adv1($location[An Unusually Quiet Barroom Brawl]);
             set_property("FKRunEligible","false");
         } else if (pick == "shorts"){
