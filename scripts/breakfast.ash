@@ -286,8 +286,9 @@ void stillsuit(){
     equip($item[tiny stillsuit]);
 }
 
-void firstBreakfast(){
-    step("phase: daily update");
+void main(){
+    step("phase: breakfast");
+        step("phase: daily update");
     dailyUpdate();
 
     step("phase: clan");
@@ -330,11 +331,4 @@ void firstBreakfast(){
     mayamRings();
     mummeryMeat();
     stillsuit();
-}
-
-// ─── ENTRY ───────────────────────────────────────────────────────────────────
-
-void main(){
-    step("phase: breakfast");
-    firstBreakfast();
 }
