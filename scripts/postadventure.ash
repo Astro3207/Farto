@@ -725,6 +725,16 @@ void postAdv(){
         if (have_effect(ef) > 0)
             cli_execute("uneffect " + ef);
     }
+    if (get_property("_seadentWaveUsed") == "false"){
+        if (dayType() == 0 && contains_text(get_property("lastEncounter"),"gingerbread")){
+            use_skill($skill[Sea *dent: Summon a Wave]);
+        } else if (dayType() == 1 && contains_text(my_location().to_string(),"shadow")){
+            location flooded = my_location();
+            use_skill($skill[Sea *dent: Summon a Wave]);
+            if (get_property("_seadentWaveZone") == "Shadow Rift")
+                set_property("_seadentWaveZone",flooded);
+        }
+    }
     if (item_amount($item[tiny stillsuit]) > 0 && have_familiar($familiar[tickle-me emilio]) && familiar_equipped_equipment($familiar[tickle-me emilio]) != $item[tiny stillsuit]){
         use_familiar($familiar[tickle-me emilio]);
         equip($item[tiny stillsuit]);

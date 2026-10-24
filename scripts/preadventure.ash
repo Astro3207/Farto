@@ -735,16 +735,6 @@ void preAdv(){
         set_property("mpAutoRecoveryTarget", mpAutoRecoveryTarget);
         if (equipped_item($slot[codpiece5]) != $item[Tuesday's ruby])
             codpiece("heartstone,blood cubic zirconia,baseball diamond,tuesday's ruby,tuesday's ruby");
-        if (get_property("_seadentWaveUsed") == "false"){
-            if (dayType() == 0 && contains_text(get_property("lastEncounter"),"gingerbread")){
-                use_skill($skill[Sea *dent: Summon a Wave]);
-            } else if (dayType() == 1 && contains_text(my_location().to_string(),"shadow")){
-                location flooded = my_location();
-                use_skill($skill[Sea *dent: Summon a Wave]);
-                if (get_property("_seadentWaveZone") == "Shadow Rift")
-                    set_property("_seadentWaveZone",flooded);
-            }
-        }
         if (my_familiar() == $familiar[comma chameleon] && chameleon() != $familiar[stocking mimic] && get_property("script") == "FreeKill" && get_property("subscript") != "NonSMFK" && get_property("subscript") != "stompingBoots"){
             if (item_amount($item[bag of many confections]) == 0){
                 cli_execute("refresh all");
