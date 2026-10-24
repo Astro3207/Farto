@@ -1,23 +1,50 @@
 import iotm.ash;
 
+// ─── ESP mission (choice 989) ───────────────────────────────────────────────
+// Option number for the clue phrase on the page; 0 when none matches.
+string[int] espClues = {
+    1: "ever-changing constellation",
+    2: "circle of light",
+    3: "waves a fly",
+    4: "back to square one",
+    5: "adds to your anxiety"
+};
+
 int ESPmission(string page){
     int num;
-    if (contains_text(page, "ever-changing constellation")){
-        num = 1;
-    }
-    if (contains_text(page, "circle of light")){
-        num = 2;
-    }
-    if (contains_text(page, "waves a fly")){
-        num = 3;
-    }
-    if (contains_text(page, "back to square one")){
-        num = 4;
-    }
-    if (contains_text(page, "adds to your anxiety")){
-        num = 5;
-    }
+    foreach option, clue in espClues
+        if (contains_text(page, clue))
+            num = option;
     return num;
+}
+
+// ─── Pill keeper (choice 536) ───────────────────────────────────────────────
+// Walks the choice chain toward whichever pill we have fewer of; retries on
+// server errors.
+void distentionPills(){
+    int target = available_amount($item[distention pill]) < available_amount($item[synthetic dog hair pill]) ? 1 : 2;
+    int tries = 0, maxTries = 5;
+    repeat {
+        if (available_choice_options()[1] == "Down the Hatch!")
+            run_choice(1);
+        if (available_choice_options()[1] == "Have a Drink")
+            run_choice(1);
+        if (available_choice_options()[2] == "Try That One Door")
+            run_choice(2);
+        if (available_choice_options()[1] == "Follow Captain Smirk")
+            run_choice(target);
+        //if still in choice, give it a few seconds before trying again
+        if (handling_choice()) {
+            print("problem encountered while handling the choice","blue");
+            if (++tries < maxTries) {
+                print("waiting a few seconds to try again","blue");
+                wait(5);
+            }
+            else {
+                print(`giving up after {tries} tries`,"red");
+            }
+        }
+    } until (!handling_choice());
 }
 
 // ─── Darts perk priority (choice 1525) ──────────────────────────────────────
@@ -52,7 +79,7 @@ int bestDartsOption(){
     foreach num, text in opts{
         int rank = 999;
         foreach i, perk in dartPerks
-            if (text == perk || contains_text(text, perk)){
+            if (contains_text(text, perk)){
                 rank = i;
                 break;
             }
@@ -130,43 +157,6 @@ int[int] voteLocalPicks(){
 }
 
 void main(int whichchoice, string page) {
-    if (whichchoice == 536){
-        item pill;
-        int target;
-        if (available_amount($item[distention pill]) < available_amount($item[synthetic dog hair pill])) {
-            pill = $item[distention pill];
-            target = 1;
-        } else {
-            pill = $item[synthetic dog hair pill];
-            target = 2;
-        }
-        int start = available_amount(pill);
-
-        //keep trying even on server errors
-        int tries = 0,max = 5;
-        repeat {
-            //do the choice chain to evenly get pills
-            if (available_choice_options()[1] == "Down the Hatch!")
-                run_choice(1);
-            if (available_choice_options()[1] == "Have a Drink")
-                run_choice(1);
-            if (available_choice_options()[2] == "Try That One Door")
-                run_choice(2);
-            if (available_choice_options()[1] == "Follow Captain Smirk")
-                run_choice(target);
-            //if still in choice, give it a few seconds before trying again
-            if (handling_choice()) {
-                print("problem encountered while handling the choice","blue");
-                if (++tries < max) {
-                    print("waiting a few seconds to try again","blue");
-                    wait(5);
-                }
-                else {
-                    print(`giving up after {tries} tries`,"red");
-                }
-            }
-        } until (!handling_choice());
-    }
     switch (whichchoice){
         // ── simple: a single fixed run_choice(#), grouped by that number, then by case # ──
         case 633:
@@ -220,9 +210,6 @@ void main(int whichchoice, string page) {
             break;
 
         // ── complex: conditional / multiple / dynamic run_choice, or none at all -- sorted by case # ──
-        // Was `case 211: case 1310: run_choice(1);` falling through into 1467's
-        // run_choice(3); inlined here so 1467 could move up to the simple run_choice(3)
-        // group above.
         case 211:
         case 1310:
             run_choice(1);
@@ -246,18 +233,15 @@ void main(int whichchoice, string page) {
         // slime.ash / advanced by unlockerCCS): "done"/"ML" -> skip (option 2);
         // fresh ("" / "started") + a caustic slime nodule -> tickle (option 1),
         // stamp "tickled". Tickling is once per instance.
-        case 337:
-            if (get_property(get_clan_id() + "Tickled") == "done"){
-                run_choice(2);
-            } else if (get_property(get_clan_id() + "Tickled") == "ML"){
-                run_choice(2);
-            } else if (item_amount($item[caustic slime nodule]) > 0 && (get_property(get_clan_id() + "Tickled") != "finished" && get_property(get_clan_id() + "Tickled") != "ML" && get_property(get_clan_id() + "Tickled") != "tickled")){
+        case 337: {
+            string tickled = get_property(get_clan_id() + "Tickled");
+            if (item_amount($item[caustic slime nodule]) > 0 && !($strings[done, ML, finished, tickled] contains tickled)){
                 run_choice(1);
-                set_property(get_clan_id() + "Tickled","tickled");
-            } else {
+                set_property(get_clan_id() + "Tickled", "tickled");
+            } else
                 run_choice(2);
-            }
             break;
+        }
         case 360:
             if (item_amount($item[memory of a glowing crystal]) == 0){
                 run_choice(1);
@@ -266,9 +250,6 @@ void main(int whichchoice, string page) {
                 run_choice(2);
             }
             break;
-        // Was `case 399/400/401:` (queue update, no break) falling through into
-        // `case 1344: case 705: run_choice(1);`; the run_choice(1) is inlined here so
-        // 1344 and 705 could move up to the simple run_choice(1) group above.
         case 399:
         case 400:
         case 401:
@@ -287,6 +268,9 @@ void main(int whichchoice, string page) {
             } else {
                 run_choice(5);
             }
+            break;
+        case 536:
+            distentionPills();
             break;
         case 580:
             run_choice(2);
@@ -322,8 +306,6 @@ void main(int whichchoice, string page) {
                 run_choice(2);
             }
             break;
-        // Was falling through into the run_choice(6) group above; the run_choice(6)
-        // is inlined here so that group could stay a clean simple group.
         case 785:
             if (have_equipped($item[candy cane sword cane]))
                 run_choice(4);
@@ -359,32 +341,31 @@ void main(int whichchoice, string page) {
             else
                 run_choice(6);
             break;
-        case 1114:
-            if (whichchoice == 1114){
-                string [int] choices = available_choice_options();
+        case 1114: {
+            string [int] choices = available_choice_options();
+            foreach num, choice_text in choices {
+                print(`{num}: {choice_text}`);
+            }
+            foreach task in $strings[moonbeams,blood,bolts, ice, chicken, chum, milk, rain]{
                 foreach num, choice_text in choices {
-                    print(`{num}: {choice_text}`);
-                }
-                foreach task in $strings[moonbeams,blood,bolts, ice, chicken, chum, milk, rain]{
-                    foreach num, choice_text in choices {
-                        if (contains_text(choice_text,task)){
-                            run_choice(num);
-                            exit;
-                        }
+                    if (contains_text(choice_text,task)){
+                        run_choice(num);
+                        exit;
                     }
                 }
-                run_choice(1);
             }
+            run_choice(1);
             break;
+        }
         case 1115:
-            if (get_property("_VYKEALoungeRaided") == false){
+            if (get_property("_VYKEALoungeRaided") == "false"){
                 run_choice(4);
             } else{
                 run_choice(3);
             }
             break;
         case 1116:
-            if (get_property("_iceHotelRoomsRaided") == false){
+            if (get_property("_iceHotelRoomsRaided") == "false"){
                 run_choice(5);
             } else{
                 run_choice(3);
@@ -433,14 +414,12 @@ void main(int whichchoice, string page) {
         case 1331: {
             // I Voted! booth: best monster for g=, best two distinct initiatives for local[].
             int[int] lp = voteLocalPicks();
-            string url = "choice.php?whichchoice=1331&option=1&g=" + voteMonsterPick()
-                + "&local[]=" + lp[0] + "&local[]=" + lp[1];
-            print(url);
-            visit_url(url);
+            visit_url("choice.php?whichchoice=1331&option=1&g=" + voteMonsterPick()
+                + "&local[]=" + lp[0] + "&local[]=" + lp[1]);
             break;
         }
         case 1500:
-            if (get_property("_shadowForestLooted") == false)
+            if (get_property("_shadowForestLooted") == "false")
                 run_choice(3);
             else
                 run_choice(2);
@@ -474,44 +453,27 @@ void main(int whichchoice, string page) {
                 run_choice(2);
             }
             break;
-        case 1562:
-            if (whichchoice == 1562){
-                string [int] choices = available_choice_options();
+        case 1562: {
+            string [int] choices = available_choice_options();
+            string [int] wanted;
+            if (get_property("script") == "FreeKill")
+                wanted[count(wanted)] = "ix your parents";
+            wanted[count(wanted)] = "investment tips";
+            if (dayType() == 0){
+                foreach str in $strings[when they were young,Stop your arch-nemesis as a baby,Take the long odds on the trifecta,Hey, free gun!,Borrow meat from your future,Draw a goatee on yourself,Plant some seeds in the distant past,Peek in on your future,Plant some trees and harvest them in the future,Steal a cupcake from young Susie,Borrow a cup of sugar from yourself,Steal a club from the past,Go back and write a best-seller,Go back and take a 20-year-long nap]
+                    wanted[count(wanted)] = str;
+            }
+            wanted[count(wanted)] = "Steal from your future self";
+            foreach i, text in wanted {
                 foreach num, choice_text in choices {
-                    if (contains_text(choice_text,"ix your parents") && get_property("script") == "FreeKill"){
+                    if (contains_text(choice_text, text)){
                         run_choice(num);
                         exit;
-                    }
-                    if (contains_text(choice_text,"investment tips")){
-                        run_choice(num);
-                        exit;
-                    }
-                    if (dayType() == 0){
-                        foreach str in $strings[when they were young,Stop your arch-nemesis as a baby,Take the long odds on the trifecta,Hey, free gun!,Borrow meat from your future,Draw a goatee on yourself,Plant some seeds in the distant past,Peek in on your future,Plant some trees and harvest them in the future,Steal a cupcake from young Susie,Borrow a cup of sugar from yourself,Steal a club from the past,Go back and write a best-seller,Go back and take a 20-year-long nap]{
-                            foreach num, choice_text in choices {
-                                if (contains_text(choice_text,str)){
-                                    run_choice(num);
-                                    exit;
-                                }
-                            }
-                        }
-                    } else {
-                        foreach num, choice_text in choices {
-                            if (contains_text(choice_text,"Steal from your future self")){
-                                run_choice(num);
-                                exit;
-                            }
-                        }
-                    }
-                    foreach num, choice_text in choices {
-                        if (contains_text(choice_text,"Steal from your future self")){
-                            run_choice(num);
-                            exit;
-                        }
                     }
                 }
             }
             break;
+        }
         case 1596:
             set_property("NCtoC","true");
             run_choice(3);

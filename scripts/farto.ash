@@ -38,21 +38,16 @@ void setDropWeighting(location loc){
 
 // ─── shared zone helpers ─────────────────────────────────────────────────────
 
-// Pins the dart holster in acc1 until the bullseye perks are bought.
 void dartHolster(){
     set_property("acc1Override", everfullReady() ? "" : ", equip everfull dart holster");
 }
 
-// Hands the borrowed Pantsgiving back once today's fullness drops are used up.
 void returnPantsgiving(){
     int count = get_property("_pantsgivingCount").to_int();
     if (available_amount($item[pantsgiving]) > 0 && count >= (dayType() == 0 ? 50 : 500))
         stashreturn($item[pantsgiving]);
 }
 
-// Adventures once at loc with banish gear on, then clears the override
-// banishGear() left -- preadventure feeds every override to the maximizer, so
-// without this the banish item stays forced on in other zones.
 void advWithBanish(location loc, boolean needBanish){
     item banItem = needBanish ? banishGear(loc) : $item[none];
     if (banItem != $item[none])
@@ -64,8 +59,6 @@ void advWithBanish(location loc, boolean needBanish){
 
 // ─── zones ───────────────────────────────────────────────────────────────────
 
-// Day-1 zone unlocks: hidden temple, Azazel, Black Forest, outskirts, then the
-// Knob Goblin King (manual from the mayfly on).
 void dayOneUnlocks(){
     cli_execute("postadventure");
     if (get_property("questM16Temple") != "finished")
