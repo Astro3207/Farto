@@ -750,7 +750,6 @@ void postAdv(){
         }
         if (get_property("freeMeat").to_int() != my_meat( )){
             print ("FK meat profit of " + (my_meat( ) - get_property("freeMeat").to_int()));
-            set_property("freeMeat",my_meat());
         }
     }
     freeKillTurnGuard();

@@ -466,6 +466,10 @@ void main(int round, monster mob, string page_text) {
             }
             use_skill($skill[saucegeyser]);
         }
+        if (get_property("FKRunEligible") == "true" && (get_property("freeMeat").to_int() + 3500) > my_meat()){
+            if (user_confirm("Do you want to free run? Meat gained is " + (my_meat()-get_property("freeMeat").to_int())))
+                throw_item($item[stuffed yam stinkbomb]);
+        }
         if (my_location() == $location[the red zeppelin] && get_property("_glarkCableUses").to_int() < 5 && get_property("NCtoC") == "false")
             throw_item($item[glark cable]);
         if (my_location() == $location[Gingerbread Upscale Retail District] || my_location() == $location[Gingerbread civic center]){
@@ -506,7 +510,7 @@ void main(int round, monster mob, string page_text) {
         return;
     }
 
-    if ((my_familiar() == $familiar[comma chameleon] || my_familiar() == $familiar[stocking mimic]) && get_property("script") == "FreeKill"){
+    if ((chameleon() == $familiar[stocking mimic]) || my_familiar() == $familiar[stocking mimic]) && get_property("script") == "FreeKill"){
         if (my_location().zone == "Shadow Rift" && last_monster().boss == false){
             while (to_int(get_property("_douseFoeUses")) < 3 && get_property("_douseFoeSuccess") == "false"
                 && current_round() > 0 && current_round() < 25 && have_equipped($item[Flash Liquidizer Ultra Dousing Accessory]))
@@ -537,6 +541,14 @@ void main(int round, monster mob, string page_text) {
             }
             if (my_hp() < 200)
                 throw_items($item[new age healing crystal],$item[new age healing crystal]);
+        }
+        if (get_property("FKRunEligible") == "true" && (get_property("freeMeat").to_int() + 3500) > my_meat()){
+            if (user_confirm("Do you want to free run? Meat gained is " + (my_meat()-get_property("freeMeat").to_int()))){
+                if (my_location().environment == "underwater" || my_location() == to_location(get_property("_seadentWaveZone")))
+                    throw_item($item[pulled indigo taffy]);
+                else
+                    throw_item($item[stuffed yam stinkbomb]);
+            }
         }
         if (my_location() == $location[Gingerbread Civic Center])
             throw_item($item[gingerbread cigarette]);

@@ -277,8 +277,6 @@ int prefFreeKillsLeft(string pref, int cap){
     return max(0, cap - to_int(val));
 }
 
-// Daily cap for every free kill source that's a simple "preference counts up to a cap"
-// deal (looseFK()/weakMonsters() sources included). Keyed by the preference itself.
 int [string] freeKillCap = {
     "_backUpUses": 11,
     "_cyberFreeFights": 10,
@@ -1049,9 +1047,6 @@ boolean looseFK(){
         print ("FK is sweat");
         return true;
     }
-    if (get_property("_bczSweatBulletsCasts").to_int() < 9){
-        abort("Script has been skipping over sweat bullets for some reason");
-    }
     if (get_property("_gingerbreadMobHitUsed") == "false"){
         print ("FK is gingerbread");
         return true;
@@ -1396,10 +1391,14 @@ boolean buffML(monster m){
             continue;
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
             continue;
-        if (have_effect(ef) == 0)
-            cli_execute(ef.default);
+        if (have_effect(ef) != 0)
+            continue;
+        if (dayType() == 0 && !user_confirm(`{ef} will add {numeric_modifier(ef, "Monster Level")} ML (currently {numeric_modifier("Monster Level")}, {m} HP {m.base_hp} vs target {lowHPTarget()}). Continue?`))
+            continue;
+        cli_execute(ef.default);
     }
-    if (m.base_hp <= lowHPTarget() && mcd_max() > current_mcd())
+    if (m.base_hp <= lowHPTarget() && mcd_max() > current_mcd()
+        && (dayType() != 0 || user_confirm(`MCD will add {mcd_max() - current_mcd()} ML (currently {numeric_modifier("Monster Level")}, {m} HP {m.base_hp} vs target {lowHPTarget()}). Continue?`)))
         change_mcd(mcd_max());
     return m.base_hp > lowHPTarget();
 }
@@ -1669,9 +1668,11 @@ void weakMonsters(){
             use($item[bricko ooze]);
             main@postadventure( );
         } else if (pick == "speakeasy"){
+            set_property("FKRunEligible","true");
             step("phase: weakMonsters traveling hobo");
             mimicPrep(",-equip equip mobius");
             adv1($location[An Unusually Quiet Barroom Brawl]);
+            set_property("FKRunEligible","false");
         } else if (pick == "shorts"){
             step("phase: weakMonsters cargo shorts (haxx0r)");
             shorts();
@@ -1697,6 +1698,7 @@ void weakMonsters(){
                 archaeologist();
                 set_property("archSkeleton","false");
             } else if (to_int(get_property("_glarkCableUses")) < 5 && can_adventure($location[A Mob of Zeppelin Protesters])){
+                set_property("FKRunEligible","true");
                 if (get_property("questL11Ron") == "step4")
                     set_property("mainOverride",", equip legendary seal-clubbing club");
                 else
@@ -1704,6 +1706,7 @@ void weakMonsters(){
                 mimicPrep();
                 retrieve_item(5,$item[glark cable]);
                 adv1($location[the red zeppelin]);
+                set_property("FKRunEligible","false");
             }
             set_property("mainOverride","");
         } else if (pick == "sandworm"){
@@ -1858,15 +1861,23 @@ void locationBasedWeakMonsters(){
         gingerbread();
     }
     step("phase: weakMonsters pearl P1");
-    while (looseFK()){
-        LBMWPrep (false);
-        pearloP1();
+    if (looseFK()){
+        set_property("FKRunEligible","true");
+        while (looseFK()){
+            LBMWPrep (false);
+            pearloP1();
+        }
+        set_property("FKRunEligible","false");
     }
     set_property("subscript","weakling");
-    while (to_int(get_property("_speakeasyFreeFights")) < 3){
-        step("phase: weakMonsters traveling hobo");
-        LBMWPrep (true);
-        adv1($location[An Unusually Quiet Barroom Brawl]);
+    if (get_property("_speakeasyFreeFights").to_int() < 3){
+        set_property("FKRunEligible","true");
+        while (to_int(get_property("_speakeasyFreeFights")) < 3){
+            step("phase: weakMonsters traveling hobo");
+            LBMWPrep (true);
+            adv1($location[An Unusually Quiet Barroom Brawl]);
+        }
+        set_property("FKRunEligible","false");
     }
     if (get_property("questPAGhost") == "started" && get_property("ghostLocation") != ""){
         step("phase: weakMonsters paranormal ghost (walkie-talkie)");
@@ -1875,6 +1886,8 @@ void locationBasedWeakMonsters(){
             adv1(get_property("ghostLocation").to_location());
     }
     while (to_int(get_property("_glarkCableUses")) < 5 && can_adventure($location[A Mob of Zeppelin Protesters])){
+        if (get_property("_glarkCableUses").to_int() <= 3)
+            set_property("FKRunEligible","true");
         if (get_property("questL11Ron") == "step4")
             set_property("mainOverride",", equip legendary seal-clubbing club");
         else
@@ -1892,6 +1905,8 @@ void locationBasedWeakMonsters(){
         set_property("mainOverride","");
         set_property("offOverride","");
         set_property("backOverride","");
+        if (get_property("_glarkCableUses").to_int() > 3)
+            set_property("FKRunEligible","false");
     }
 }
 
@@ -2380,17 +2395,23 @@ void bulkFKD2(){
     step("phase: bulkFK backup camera");
     backup();
     step("phase: bulkFK cyberzone");
-    while (get_property("_cyberFreeFights").to_int() < 10){
-        constructBanish();
-        mimicPrep();
-        cyberzone();
+    if (get_property("_cyberFreeFights").to_int() < 10){
+        set_property("FKRunEligible","true");
+        while (get_property("_cyberFreeFights").to_int() < 10){
+            constructBanish();
+            mimicPrep();
+            cyberzone();
+        }
+        set_property("FKRunEligible","false");
     }
     step("phase: bulkFK shadow rift");
     shadowRealmBuffUp();
-    if (get_property("_shadowAffinityToday") == "false")
-        shadowRealmFK();
-    while (have_effect($effect[shadow affinity]) > 0){
-        shadowRealmFK();
+    if (looseFK()){
+        set_property("FKRunEligible","true");
+        while (have_effect($effect[shadow affinity]) > 0){
+            shadowRealmFK();
+        }
+        set_property("FKRunEligible","false");
     }
     step("phase: bulkFK NC force");
     NCforce(false);
@@ -2399,11 +2420,15 @@ void bulkFKD2(){
         NCforce(false);
     }
     step("phase: bulkFK loose FK");
-    while (looseFK()){
-        set_property("subscript","looseFK");
-        if (baseballPlayers() == 9 && get_property("_curveballFightsLeft").to_int() == 0 && get_property("_baseballInnings").to_int() < 3)
-            baseballD();
-        shadowRealmFK();
+    if (looseFK()){
+        set_property("FKRunEligible","true");
+        while (looseFK()){
+            set_property("subscript","looseFK");
+            if (baseballPlayers() == 9 && get_property("_curveballFightsLeft").to_int() == 0 && get_property("_baseballInnings").to_int() < 3)
+                baseballD();
+            shadowRealmFK();
+        }
+        set_property("FKRunEligible","false");
     }
     set_property("subscript","");
     miscellaneousFams();
@@ -2474,9 +2499,13 @@ void locationBasedAdventuring(){
     step("phase: bulkFK backup camera");
     backup();
     step("phase: bulkFK cyberzone");
-    while (get_property("_cyberFreeFights").to_int() < 10){
-        mimicPrep();
-        cyberzone();
+    if (get_property("_cyberFreeFights").to_int() < 10){
+        set_property("FKRunEligible","true");
+        while (get_property("_cyberFreeFights").to_int() < 10){
+            mimicPrep();
+            cyberzone();
+        }
+        set_property("FKRunEligible","false");
     }
     if (my_spleen_use() < 15){
         step("phase: peridot fishing");

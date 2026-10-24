@@ -1623,6 +1623,7 @@
         set_property("hpAutoRecoveryTarget",  hpAutoRecoveryTargetStorage);
         set_property("mpAutoRecovery",        mpAutoRecoveryStorage);
         set_property("mpAutoRecoveryTarget",  mpAutoRecoveryTargetStorage);
+        set_property("FKRunEligible","false");
         // Numeric macro ids go through the int overload; a skill-name auto-attack
         // (to_int == 0) goes through the string one; empty / "0" just clears it.
         if (autoAttackStorage == "" || autoAttackStorage == "0")

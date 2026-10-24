@@ -811,6 +811,8 @@ void preAdv(){
         retrieve_item($item[4-D camera]);
     if (item_amount($item[pulled green taffy]) == 0)
         retrieve_item($item[pulled green taffy]);
+    if (item_amount($item[pulled indigo taffy]) == 0)
+        retrieve_item($item[pulled indigo taffy]);
     if (item_amount($item[pulled red taffy]) < 100 && mall_price($item[pulled red taffy]) < (redTaffyValue() - 100))
         buy($item[pulled red taffy], 2000, redTaffyValue() - 100);
     if (item_amount($item[stuffed yam stinkbomb]) == 0)
@@ -828,6 +830,8 @@ void preAdv(){
         if (numeric_modifier("combat rate") < 15)
             abort("combat rate too low, see what you can do to buff");
     }
+    if (get_property("script") == "FreeKill")
+        set_property("freeMeat",my_meat());
 }
 
 void main(){
