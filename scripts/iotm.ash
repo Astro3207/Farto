@@ -249,6 +249,8 @@
 
     void manaBurn(int reserve){
         if (dayType() == 0){
+            if (have_effect($effect[ode to booze]) > 0)
+                cli_execute("uneffect ode to booze");
             while (my_mp() > 800){
                 effect best = $effect[none];
                 foreach ef in manaBurnEffectsD1 {

@@ -1084,7 +1084,10 @@ boolean looseFK(){
     }
     if (get_property("_assertYourAuthorityCast").to_int() < 3){
         print ("FK is assert");
-        set_property("maxOverride","familiar weight, equip sheriff pistol, equip sheriff moustache, equip sheriff badge");
+        set_property("maxOverride","familiar weight");
+        set_property("offOverride",", equip sheriff pistol");
+        set_property("acc1Override",", equip sheriff moustache");
+        set_property("acc2Override",", equip sheriff badge");
         return true;
     }
     return false;
@@ -1868,6 +1871,9 @@ void locationBasedWeakMonsters(){
             pearloP1();
         }
         set_property("FKRunEligible","false");
+        set_property("offOverride","");
+        set_property("acc1Override","");
+        set_property("acc2Override","");
     }
     set_property("subscript","weakling");
     if (get_property("_speakeasyFreeFights").to_int() < 3){
