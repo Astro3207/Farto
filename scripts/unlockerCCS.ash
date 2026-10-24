@@ -467,8 +467,7 @@ void main(int round, monster mob, string page_text) {
             use_skill($skill[saucegeyser]);
         }
         if (get_property("FKRunEligible") == "true" && (get_property("freeMeat").to_int() + 3500) > my_meat()){
-            if (user_confirm("Do you want to free run? Meat gained is " + (my_meat()-get_property("freeMeat").to_int())))
-                throw_item($item[stuffed yam stinkbomb]);
+            throw_item($item[stuffed yam stinkbomb]);
         }
         if (my_location() == $location[the red zeppelin] && get_property("_glarkCableUses").to_int() < 5 && get_property("NCtoC") == "false")
             throw_item($item[glark cable]);
@@ -543,12 +542,10 @@ void main(int round, monster mob, string page_text) {
                 throw_items($item[new age healing crystal],$item[new age healing crystal]);
         }
         if (get_property("FKRunEligible") == "true" && (get_property("freeMeat").to_int() + 3500) > my_meat()){
-            if (user_confirm("Do you want to free run? Meat gained is " + (my_meat()-get_property("freeMeat").to_int()))){
-                if (my_location().environment == "underwater" || my_location() == to_location(get_property("_seadentWaveZone")))
-                    throw_item($item[pulled indigo taffy]);
-                else
-                    throw_item($item[stuffed yam stinkbomb]);
-            }
+            if (my_location().environment == "underwater" || my_location() == to_location(get_property("_seadentWaveZone")))
+                throw_item($item[pulled indigo taffy]);
+            else
+                throw_item($item[stuffed yam stinkbomb]);
         }
         if (my_location() == $location[Gingerbread Civic Center])
             throw_item($item[gingerbread cigarette]);
