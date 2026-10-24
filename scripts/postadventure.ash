@@ -176,12 +176,7 @@ void blackForest(){
     if ($location[the black forest].last_noncombat_turns_spent == 4)
         set_property("mainOverride",", equip candy cane sword cane");
     adv1($location[the black forest]);
-
-    set_property("maxOverride","");
-    set_property("mainOverride","");
-    set_property("acc2Override","");
-    set_property("acc3Override","");
-    set_property("famOverride","");
+    clearOverrides();
 }
 
 // Free-run with the Stomping Boots while bander runaways remain, otherwise fall
@@ -525,12 +520,8 @@ void constructBanish(){
         set_property("acc3Override","");
     }
     set_property("subscript","");
-    if (get_property("_cyberFreeFights").to_int() == 10){
-        set_property("famOverride","");
-        set_property("maxOverride","");
-        set_property("acc2Override","");
-        set_property("acc3Override","");
-    }
+    if (get_property("_cyberFreeFights").to_int() == 10)
+        clearOverrides();
 }
 
 // Screech-banish the beast phylum in the Bat Hole; assumes the eagle is already charged.
@@ -672,11 +663,7 @@ void postAdv(){
         equip($item[tiny stillsuit]);
     }
     if (get_property("script") == "FreeKill"){
-        if (dayType() == 1){
-            if (have_effect($effect[eldritch attunement]) > 0
-                && get_property("_eldritchTentaclesFoughtToday").to_int() >= (evokeReady() ? 10 : 11))
-                cli_execute("uneffect eldritch attunement");
-        }
+        dropEldritchAttunement();
         if (get_property("freeMeat").to_int() != my_meat( )){
             print ("FK meat profit of " + (my_meat( ) - get_property("freeMeat").to_int()));
         }
@@ -718,11 +705,6 @@ void postAdv(){
             cli_execute("CONSUME ORGANS 1 0 0");
         }
     }
-    if (get_property("_RubberSpiderUsedToday") != "true" && dayType() == 0 && my_adventures() == 12){
-        retrieve_item($item[rubber spider]);
-        cli_execute("csend rubber spider to torturebot");
-        set_property("_RubberSpiderUsedToday","true");
-    }
     endOfDayHandling();
     if (get_property("script") == "FreeKill" && get_property("cursedMagnifyingGlassCount").to_int() == 13){
         set_property("maxOverride","familiar weight");
@@ -742,11 +724,7 @@ void postAdv(){
         set_property("acc1Override", ", equip spring shoes");
         set_auto_attack(0);
         adv1($location[cobb's knob treasury]);
-        set_property("maxOverride","");
-        set_property("famOverride", "");
-        set_property("mainOverride","");
-        set_property("acc1Override", "");
-        set_property("acc2Override", "");
+        clearOverrides();
     }
 }
 

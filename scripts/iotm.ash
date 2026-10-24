@@ -1120,6 +1120,14 @@
                 || (mall_price($item[crappy waiter disguise]) > 0 && mall_price($item[crappy waiter disguise]) <= 10000));
     }
 
+    // Day 2: shrug Eldritch Attunement once today's tentacle fights are used up
+    // (10 when an Evoke is still coming, 11 otherwise).
+    void dropEldritchAttunement(){
+        if (dayType() == 1 && have_effect($effect[eldritch attunement]) > 0
+            && get_property("_eldritchTentaclesFoughtToday").to_int() >= (evokeReady() ? 10 : 11))
+            cli_execute("uneffect eldritch attunement");
+    }
+
     // stack == false: pre-charge NC-forcing resources before a forcer is active (the
     // original call sites' behavior). stack == true: forceNoncombats() wants to spend
     // an additional resource to stack another forced NC on top of one already active.

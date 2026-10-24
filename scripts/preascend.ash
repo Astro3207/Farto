@@ -1,13 +1,6 @@
 import iotm.ash;
 
 // ═══ preascend.ash ══════════════════════════════════════════════════════════
-// Day-N-of-ascension chore list, run before pulling the ascension trigger at
-// the end. This pass is a pure reshape of the old top-to-bottom flat script
-// into named phases -- it preserves every guard as-is. One known reentrancy
-// gap remains in ascend() (see chat): the `looping` flag is cleared before
-// the ascend/afterlife sequence actually completes, and none of the
-// visit_url() calls in that sequence check whether an earlier one already
-// succeeded. Not fixed here -- ask if you want that addressed separately.
 
 void step(string msg){
     print("PA: " + msg, "blue");
@@ -35,9 +28,8 @@ void Nightcap(){
 void stenchAirportFarm(){
     if (my_adventures() <= 9 || have_equipped($item[devilbone greaves]))
         return;
-    if (get_property("_stenchAirportToday") == "true"){
+    if (get_property("_stenchAirportToday") == "true")
         cli_execute("garbo ascend -15");
-    }
 }
 
 void drunkInko(){
@@ -49,7 +41,6 @@ void drunkInko(){
         altFam($familiar[robortender]);
         set_property("maxOverride","3.25 meat drop, 7 item drop, sea");
         set_property("offOverride",", equip drunkula's wineglass");
-//        set_property("famOverride","sword of Swords");
         adv1($location[The Marinara Trench],0,"");
     }
 }
@@ -93,9 +84,8 @@ void spendGrimacePrimeMaps(){
         }
     }
     finisher();
-    if (item_amount($item[Map to Safety Shelter Grimace Prime]) > 0){
+    if (item_amount($item[Map to Safety Shelter Grimace Prime]) > 0)
         mapgrim();
-    }
 }
 
 void pvpCleanup(){
