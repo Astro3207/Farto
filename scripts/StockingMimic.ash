@@ -1141,7 +1141,7 @@ void pearloP1(){
     set_property("acc1Override",", bonus mafia pointer finger");
     if (numeric_modifier("Critical Hit Percent") < 100)
         abort("can't guarantee critical hit");
-    if ((baseballPlayers() >= 8 && get_property("_baseballInnings").to_int() < 3) || get_property("_curveballFightsLeft").to_int() > 0) {
+    if ((get_property("_baseballInnings").to_int() < 3 || get_property("_curveballFightsLeft").to_int() > 0) && get_property("_shadowBricksUsed").to_int() < 13) {
         underwaterBaseball();
     } else if (looseFK()){
         set_property("acc3Override",", equip " + timeBadge());

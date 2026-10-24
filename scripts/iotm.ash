@@ -821,10 +821,15 @@
     }
 
     // ── Combat Baseball ──────────────────────────────────────────────────────────
-    string [int] lineup = split_string(get_property("baseballTeam"), ",");
+    // Current lineup as recruited monster ids, slot 1 first. A function rather than
+    // a global so it re-reads baseballTeam on every call instead of once at import.
+    string [int] baseballLineup(){
+        return split_string(get_property("baseballTeam"), ",");
+    }
+
     int baseballPlayers(){
         int players;
-        foreach num in lineup { players = num + 1; }
+        foreach num in baseballLineup() { players = num + 1; }
         return players;
     }
 
@@ -843,6 +848,7 @@
     }
     void baseballD() {
         if (baseballPlayers() != 9) return;
+        string [int] lineup = baseballLineup();
 
         try {
             int YRPitchNum;
