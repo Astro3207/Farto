@@ -4,14 +4,10 @@ import StockingMimic.ash;
 // ═══ Dinner.ash ══════════════════════════════════════════════════════════════
 // End-of-day wind-down chores.
 
-void step(string msg){
-    print("DN: " + msg, "blue");
-}
-
 // ─── PHASES ──────────────────────────────────────────────────────────────────
 
 void fillOrgans(){
-    int availableLiver = inebriety_limit() - my_inebriety() + to_int(!have_equipped($item[angelbone dice])) + !have_equipped($item[devilbone rosary]).to_int() + (my_familiar() == $familiar[stooper]).to_int();
+    int availableLiver = inebriety_limit() - my_inebriety() + to_int(!have_equipped($item[angelbone dice])) + to_int(!have_equipped($item[devilbone rosary])) + to_int((my_familiar() != $familiar[stooper]));
     if (availableLiver > 0)
         dinnerLiverSpleen();
     int availableStomach = fullness_limit() - my_fullness() + to_int(!have_equipped($item[devilbone corset])) + to_int(!have_equipped($item[angelbone chopsticks]));
@@ -148,7 +144,6 @@ void main(){
     step("phase: nightcap");
     fillOrgans();
 
-    // Spend the day's leftover charges before rollover wipes them.
     step("phase: leftover charges");
     augSkills();
     certificates();
@@ -169,7 +164,6 @@ void main(){
     step("phase: final outfit");
     finalOutfit();
 
-    // Closet meat and valuables so overnight PvP can't take them.
     step("phase: closing meat chores");
     closingMeatChores();
     pvpCleanup();

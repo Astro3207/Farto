@@ -3,13 +3,6 @@ import preadventure.ash;
 import zlib.ash; // for sell_val() -- item valuation for itemDropValueAt()
 
 // ─── farto.ash ───────────────────────────────────────────────────────────────
-// The meat-farming remainder of the old farto script. The free-kill flow
-// (FKPrep / bulkFK and its helper tree) now lives in StockingMimic.ash and the
-// shared utilities in iotm.ash; this file keeps only:
-//   main()               -- the garbo() barf-mountain loop entry point
-//   garbo() / cowo()     -- one farming turn (Barf Mountain / Coral Corral)
-//   shadowRealmNCForce() -- NC-forcer burn-down, called by postadventure.ash via
-//                           `cli_execute("ash import farto;shadowRealmNCForce()")`
 
 // ─── drop-value weighting (garbo's modeValueOfMeat/modeValueOfItem) ─────────
 
@@ -24,13 +17,6 @@ float baseMeatAt(location loc){
     return average + 25;
 }
 
-// Marginal cash value of 1% Item Drop at loc: for every monster there,
-// weighted by encounter rate, sum up (drop rate) * (what the drop is worth
-// right now) -- skipping boss/pickpocket-only drops, since Item Drop% doesn't
-// touch those. Mirrors garbo's FarmingStrategy.itemDropValue(). Doesn't
-// account for olfaction skewing a target monster's effective encounter
-// weight the way garbo's adventureTargetToWeightedMap() does -- close enough
-// for a maximize() weight, not exact.
 float itemDropValueAt(location loc){
     float total;
     foreach mon, rate in appearance_rates(loc){

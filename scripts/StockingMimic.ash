@@ -2739,6 +2739,23 @@ item bestCupIngredient(int [item] ingredients, int meatPerTurn, boolean always){
     return best;
 }
 
+boolean drinkCupOf13s(){
+    if (get_property("_cupOf13sJewels") != "13")
+        return false;
+    item pack = bestCupIngredient(runnethWithThePackItems, 150, true);
+    if (pack == $item[none])
+        return false;
+    item empty = bestCupIngredient(runnethOnEmptyItems, 325, false);
+    if (empty == $item[none])
+        empty = pack;
+    if (!retrieve_item(empty == pack ? 3 : 1, pack) || !retrieve_item(empty == pack ? 3 : 2, empty))
+        return false;
+    print("Cup of 13s: " + pack + ", " + empty + ", " + empty, "blue");
+    visit_url("inventory.php?action=cupof13s");
+    run_choice(1, "whichitem1=" + pack.to_int() + "&whichitem2=" + empty.to_int() + "&whichitem3=" + empty.to_int());
+    return true;
+}
+
 void dinnerLiverSpleen(){
     use_familiar($familiar[stooper]);
     equip($item[devilbone greaves]);
@@ -2760,27 +2777,6 @@ void dinnerLiverSpleen(){
         toChew = floor((spleen_limit()-my_spleen_use())/2);
         chew (toChew,$item[Extrovermectin&trade;]);
     }
-}
-
-// Drink the Cup of 13s (choice 1601): always one Runneth With The Pack ingredient,
-// plus two Runneth On Empty ones when that is profitable, else more of the Pack
-// one. False when the cup isn't charged or the items can't be had, so the caller
-// can drink something else.
-boolean drinkCupOf13s(){
-    if (get_property("_cupOf13sJewels") != "13")
-        return false;
-    item pack = bestCupIngredient(runnethWithThePackItems, 150, true);
-    if (pack == $item[none])
-        return false;
-    item empty = bestCupIngredient(runnethOnEmptyItems, 325, false);
-    if (empty == $item[none])
-        empty = pack;
-    if (!retrieve_item(empty == pack ? 3 : 1, pack) || !retrieve_item(empty == pack ? 3 : 2, empty))
-        return false;
-    print("Cup of 13s: " + pack + ", " + empty + ", " + empty, "blue");
-    visit_url("inventory.php?action=cupof13s");
-    run_choice(1, "whichitem1=" + pack.to_int() + "&whichitem2=" + empty.to_int() + "&whichitem3=" + empty.to_int());
-    return true;
 }
 
 void bulkFKD1(){

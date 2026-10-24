@@ -2,30 +2,27 @@
     // Shared helpers for the farto / free-kill environment.
     //   1. Globals
     //   2. General utilities
-    //   3. Banish utilities
-    //   4. Clan & instance access
-    //   5. IOTM & item helpers   (one sub-section per item)
-    //   6. Adventuring-state checks
-    //   7. Unblemished pearls
-    //   8. Universe calculator
-    //  10. Script lifecycle
+    //   3. Buffing
+    //   4. ML tuning
+    //   5. Valuation
+    //   6. Banish utilities
+    //   7. Clan & instance access
+    //   8. IOTM & item helpers   (one sub-section per item)
+    //   9. Adventuring-state checks
+    //  10. Unblemished pearls
+    //  11. Universe calculator
+    //  12. Grimace maps
+    //  13. Integrated busking
+    //  99. Script lifecycle
 
 // ─── 1. GLOBALS ──────────────────────────────────────────────────────────────
 
-    int uniInt, uniAdv, pearlsDoneToday;
+    int uniInt, uniAdv;
     string clan = get_clan_name();
-    int estimatedTurns;
     boolean [monster] haveLocketMonster = get_locket_monsters();
     // The monster the free-kill run chain-copies (locket -> habitat recall, mimic eggs).
     monster copyTarget = $monster[sausage goblin];
 
-    boolean evokeReady(){
-        return get_property("_eldritchTentaclesFoughtToday").to_int() < 11
-            && have_skill($skill[Evoke Eldritch Horror]) && !get_property("_eldritchHorrorEvoked").to_boolean()
-            && (have_effect($effect[Crappily Disguised as a Waiter]) > 0
-                || item_amount($item[crappy waiter disguise]) > 0
-                || (mall_price($item[crappy waiter disguise]) > 0 && mall_price($item[crappy waiter disguise]) <= 10000));
-    }
     // Mafia state snapshot, read once at import so finisher() can hand the account
     // back exactly what it had. starter() repoints the between-battle / after-
     // adventure / choice hooks, swaps in the CCCS custom combat script, pins the
@@ -137,7 +134,7 @@
         return my_name().to_lower_case() == "fart scauce";
     }
 
-    // Returns true if the item exists anywhere accessible (inventory, equipped, storage, closet)
+    // Returns true if the item exists anywhere accessible (inventory, equipped, storage)
     boolean have_item(item it) {
         return item_amount(it) > 0
             || have_equipped(it)
@@ -216,6 +213,8 @@
         return get_property("dayType").to_int();
     }
 
+// ─── 3. BUFFING ──────────────────────────────────────────────────────────────
+
     boolean [location] periledLocations() {
         boolean [location] periled;
         foreach i, id in split_string(get_property("_perilLocations"), ","){
@@ -290,7 +289,8 @@
         }
     }
 
-    
+// ─── 4. ML TUNING ────────────────────────────────────────────────────────────
+
     boolean [effect] mlEffects = $effects[Ur-Kel's Aria of Annoyance, Pride of the Puffin,
         Bloodbathed, Misplaced Rage, Manbait, Sweetbreads Flamb&eacute;, Red Lettered,
         Spangled Star, Tortious, Litterbug, Not Sharing, Para-lyzed Jaw,
@@ -429,6 +429,8 @@
             abort();
     }
 
+// ─── 5. VALUATION ────────────────────────────────────────────────────────────
+
     // Meat value of one item: mafia's saved mall price (no live search, so it's
     // safe in loops over $items[]), falling back to autosell when the price is 100
     // or less, which for most items means mall-minimum junk or no listing at all.
@@ -475,7 +477,31 @@
             return meat;
     }
 
-// ─── 3. BANISH UTILITIES ─────────────────────────────────────────────────────
+    // Drop weights for using a pulled red taffy underwater (Briny Deeps).
+    float [item] redTaffyWeights = {
+        $item[Alewife&trade; Ale]: 0.03,             $item[bazookafish bubble gum]: 0.03,
+        $item[beefy fish meat]: 0.03,          $item[dull fish scale]: 0.0925,
+        $item[eel battery]: 0.03,              $item[eel sauce]: 0.03,
+        $item[glistening fish meat]: 0.03,     $item[high-pressure seltzer bottle]: 0.03,
+        $item[imitation crab crate]: 0.03,     $item[ink bladder]: 0.03,
+        $item[live nautical mine]: 0.03,       $item[Mer-kin healscroll]: 0.03,
+        $item[Mer-kin lunchbox]: 0.0925,       $item[Mer-kin thingpouch]: 0.03,
+        $item[pufferfish spine]: 0.03,         $item[rough fish scale]: 0.03,
+        $item[salinated mint julep]: 0.03,     $item[sand dollar]: 0.125,
+        $item[sea lace]: 0.03,                 $item[seaweed]: 0.03,
+        $item[shark cartilage]: 0.03,          $item[slick fish meat]: 0.03,
+        $item[slug of rum]: 0.03,              $item[slug of shochu]: 0.03,
+        $item[slug of vodka]: 0.03,            $item[soggy seed packet]: 0.03,
+    };
+
+    float redTaffyValue() {
+        float value;
+        foreach it in redTaffyWeights
+            value += redTaffyWeights[it] * mall_price(it);
+        return value;
+    }
+
+// ─── 6. BANISH UTILITIES ─────────────────────────────────────────────────────
 
     record ban {
         item gear;          // $item[none] for a skill-only banish
@@ -572,18 +598,7 @@
         return $skill[none];
     }
 
-    int patrioticDelays(){
-        int delay;
-        if (can_adventure($location[the hidden bowling alley])){
-            int n = 11 - get_property("_drunkPygmyBanishes").to_int();
-            delay += n;
-        }
-        if (get_property("zigguratLianas") == 0)
-            delay += 10;
-        return delay;
-    }
-
-// ─── 4. CLAN & INSTANCE ACCESS ───────────────────────────────────────────────
+// ─── 7. CLAN & INSTANCE ACCESS ───────────────────────────────────────────────
 
     int [string] clan_to_ID {
         "Hyrule" : 72876,
@@ -691,12 +706,12 @@
     void clanFortune(){
         if (get_property("_clanFortuneConsultUses").to_int() == 3)
             return;
-        visit_url("showclan.php?whichclan=90485&action=joinclan&confirm=on");
+        whitelist("Bonus Adventures from Hell");
         cli_execute("fortune onlyfax pizza batman thick");
-        visit_url("showclan.php?whichclan=" + get_property("homeClanID").to_int() + "&action=joinclan&confirm=on");
+        whitelist("homeclan");
     }
 
-// ─── 5. IOTM & ITEM HELPERS ──────────────────────────────────────────────────
+// ─── 8. IOTM & ITEM HELPERS ──────────────────────────────────────────────────
 
     // ── Everfull Dart Holster ────────────────────────────────────────────────────
     string perks = get_property("everfullDartPerks");
@@ -714,7 +729,6 @@
                 && contains_text(perks, "Bullseyes do not impress you much"))
             || count_substring(perks, "Bullseyes do not impress you much") >= 2
             || count_substring(perks, "You are less impressed by bullseyes") >= 2;
-        return true;
     }
 
     int bullseyeCooldown(){
@@ -792,9 +806,8 @@
     }
 
     // ── Combat Baseball ──────────────────────────────────────────────────────────
-
+    string [int] lineup = split_string(get_property("baseballTeam"), ",");
     int baseballPlayers(){
-        string [int] lineup = split_string(get_property("baseballTeam"), ",");
         int players;
         foreach num in lineup { players = num + 1; }
         return players;
@@ -814,10 +827,7 @@
             abort("Not enough open slots to fill prereqs for outcome at slot " + outcomeSlot);
     }
     void baseballD() {
-        string [int] lineup = split_string(get_property("baseballTeam"), ",");
-        int players;
-        foreach num in lineup { players = num + 1; }
-        if (players != 9) return;
+        if (baseballPlayers() != 9) return;
 
         try {
             int YRPitchNum;
@@ -913,7 +923,7 @@
         return stations[get_property("trainsetPosition").to_int() % 8];
     }
 
-    // Locket
+    // ── Combat Lover's Locket ────────────────────────────────────────────────────
 
     int locketAvailable(){
         int n;
@@ -1001,7 +1011,8 @@
         return false;
     }
 
-    // Aprilband
+    // ── Apriling Band ────────────────────────────────────────────────────────────
+
     void aprilBand(){
         if (get_property("_aprilBandInstruments").to_int() >= 2)
             return;
@@ -1039,6 +1050,8 @@
         }
     }
 
+    // ── August Scepter ───────────────────────────────────────────────────────────
+
     skill augToday(){
         return to_skill(7451 + today_to_string().substring(6).to_int());
     }
@@ -1051,7 +1064,7 @@
         use_skill(1, augToday());
     }
 
-    // ─── TRICK OR TREAT ───────────────────────────────────────────────────────
+    // ── Trick or Treat ───────────────────────────────────────────────────────────
 
     void candy(string action) {
         if (action == "fight"){
@@ -1079,31 +1092,7 @@
         }
     }
 
-    // ── Pulled Red Taffy ─────────────────────────────────────────────────────────
-
-    // Drop weights for using a pulled red taffy underwater (Briny Deeps).
-    float [item] redTaffyWeights = {
-        $item[Alewife&trade; Ale]: 0.03,             $item[bazookafish bubble gum]: 0.03,
-        $item[beefy fish meat]: 0.03,          $item[dull fish scale]: 0.0925,
-        $item[eel battery]: 0.03,              $item[eel sauce]: 0.03,
-        $item[glistening fish meat]: 0.03,     $item[high-pressure seltzer bottle]: 0.03,
-        $item[imitation crab crate]: 0.03,     $item[ink bladder]: 0.03,
-        $item[live nautical mine]: 0.03,       $item[Mer-kin healscroll]: 0.03,
-        $item[Mer-kin lunchbox]: 0.0925,       $item[Mer-kin thingpouch]: 0.03,
-        $item[pufferfish spine]: 0.03,         $item[rough fish scale]: 0.03,
-        $item[salinated mint julep]: 0.03,     $item[sand dollar]: 0.125,
-        $item[sea lace]: 0.03,                 $item[seaweed]: 0.03,
-        $item[shark cartilage]: 0.03,          $item[slick fish meat]: 0.03,
-        $item[slug of rum]: 0.03,              $item[slug of shochu]: 0.03,
-        $item[slug of vodka]: 0.03,            $item[soggy seed packet]: 0.03,
-    };
-
-    float redTaffyValue() {
-        float value;
-        foreach it in redTaffyWeights
-            value += redTaffyWeights[it] * mall_price(it);
-        return value;
-    }
+    // ── Macrometeorite / Powerful Glove ──────────────────────────────────────────
 
     int gregsToSave(){
         if ((have_skill($skill[Macrometeorite]) && get_property("_macrometeoriteUses").to_int() < 10) || 
@@ -1113,13 +1102,23 @@
             return 0;
     }
 
+    // ── Time Badges ──────────────────────────────────────────────────────────────
+
     item timeBadge(){
         if (available_amount($item[Time Bandit Badge of Courage]) > 0)
             return $item[Time Bandit Badge of Courage];
         return $item[Time Lord Badge of Honor];
     }
 
-// ─── 6. ADVENTURING-STATE CHECKS ─────────────────────────────────────────────
+// ─── 9. ADVENTURING-STATE CHECKS ─────────────────────────────────────────────
+
+    boolean evokeReady(){
+        return get_property("_eldritchTentaclesFoughtToday").to_int() < 11
+            && have_skill($skill[Evoke Eldritch Horror]) && !get_property("_eldritchHorrorEvoked").to_boolean()
+            && (have_effect($effect[Crappily Disguised as a Waiter]) > 0
+                || item_amount($item[crappy waiter disguise]) > 0
+                || (mall_price($item[crappy waiter disguise]) > 0 && mall_price($item[crappy waiter disguise]) <= 10000));
+    }
 
     // stack == false: pre-charge NC-forcing resources before a forcer is active (the
     // original call sites' behavior). stack == true: forceNoncombats() wants to spend
@@ -1232,7 +1231,18 @@
             abort("Did not acquire lucky");
     }
 
-// ─── 7. UNBLEMISHED PEARLS ───────────────────────────────────────────────────
+    int patrioticDelays(){
+        int delay;
+        if (can_adventure($location[the hidden bowling alley])){
+            int n = 11 - get_property("_drunkPygmyBanishes").to_int();
+            delay += n;
+        }
+        if (get_property("zigguratLianas") == 0)
+            delay += 10;
+        return delay;
+    }
+
+// ─── 10. UNBLEMISHED PEARLS ──────────────────────────────────────────────────
 
     record pearl {
         location loc;
@@ -1247,7 +1257,16 @@
         "deepests":	new pearl($location[The Briniest Deepests],     $modifier[cold resistance],     "_unblemishedPearlTheBriniestDeepests"),
     };
 
-// ─── 8. UNIVERSE CALCULATOR ──────────────────────────────────────────────────
+    boolean pearlsDone(){
+        foreach str in $strings[anemone,bar,reef,deepests,trench]{
+            if (get_property(pearls[str].donePref) == "false")
+                return false;
+        }
+        return true;
+    }
+
+// ─── 11. UNIVERSE CALCULATOR ─────────────────────────────────────────────────
+
     // Finds the adventure count at which the universe alignment hits 69.
     // Sets globals uniInt and uniAdv as a side effect and also returns uniAdv.
 
@@ -1256,14 +1275,6 @@
         "Opossum":5,  "Marmot":6,  "Wombat":7,  "Blender":8,
         "Packrat":9,  "Bad Moon":10
     };
-
-    boolean pearlsDone(){
-        foreach str in $strings[anemone,bar,reef,deepests,trench]{
-            if (get_property(pearls[str].donePref) == "false")
-                return false;
-        }
-        return true;
-    }
 
     int universe() {
         for y from 0 to my_adventures() {
@@ -1281,7 +1292,7 @@
         return uniAdv;
     }
 
-// ─── 9. GRIMACE MAPS ──────────────────────────────────────────────────
+// ─── 12. GRIMACE MAPS ────────────────────────────────────────────────────────
 
     boolean mapgrim() {
         item it = $item[Map to Safety Shelter Grimace Prime];
@@ -1308,7 +1319,7 @@
         return false;
     }
 
-// ─── 10. INTEGRATED BUSKING ──────────────────────────────────────────────────
+// ─── 13. INTEGRATED BUSKING ──────────────────────────────────────────────────
 
     // Beret Busking (5 casts/day, tracked by _beretBuskingUses) grants buffs
     // decided by total equipment power and the cast index.
@@ -1601,10 +1612,26 @@
         set_property("choiceAdventureScript", "generalChoice.ash");
     }
 
-    // finisher(): undo everything starter() changed. Restores the hooks, CCS,
-    // battle action and auto-recovery levels captured at import, drops the native
-    // auto-attack, and clears this environment's own scratch properties (script /
-    // subscript / inSpendAdv / every *Override).
+    void clearOverrides(boolean [string] slotNames){
+        foreach slotName in slotNames {
+            set_property(slotName + "Override", "");
+        }
+    }
+
+    void clearMLOverrides(){
+        boolean [string] pinned;
+        foreach i, slotName in split_string(get_property("tuneMLOverrides"), ","){
+            if (slotName != "") pinned[slotName] = true;
+        }
+        clearOverrides(pinned);
+        set_property("tuneMLOverrides", "");
+    }
+
+    void clearOverrides(){
+        clearMLOverrides();
+        clearOverrides($strings[unconditional, max, fam, hat, main, weapon, off, back, shirt, pants, acc1, acc2, acc3, famEquip, bonus]);
+    }
+
     void finisher() {
         set_property("script", "");
         set_property("subscript", "");
@@ -1624,30 +1651,7 @@
             set_auto_attack(autoAttackStorage.to_int());
         else
             set_auto_attack(autoAttackStorage);
-        foreach slotName in $strings[unconditional, max, fam, hat, main, weapon, off, back, shirt, pants, acc1, acc2, acc3, famEquip] {
-            set_property(slotName + "Override", "");
-        }
+        clearOverrides();
         stashreturn();
         set_property("inSpendAdv","false");
-    }
-
-    void clearOverrides(boolean [string] slotNames){
-        foreach slotName in slotNames {
-            set_property(slotName + "Override", "");
-        }
-    }
-
-    // Clears only the slots lowerMLWithGear() pinned, as listed in tuneMLOverrides.
-    void clearMLOverrides(){
-        boolean [string] pinned;
-        foreach i, slotName in split_string(get_property("tuneMLOverrides"), ","){
-            if (slotName != "") pinned[slotName] = true;
-        }
-        clearOverrides(pinned);
-        set_property("tuneMLOverrides", "");
-    }
-
-    void clearOverrides(){
-        clearMLOverrides();
-        clearOverrides($strings[unconditional, max, fam, hat, main, weapon, off, back, shirt, pants, acc1, acc2, acc3, famEquip, bonus]);
     }
