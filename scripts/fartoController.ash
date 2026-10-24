@@ -40,7 +40,6 @@ void main(){
             cli_execute("farto");
         }
         cli_execute("stockingmimic");
-        if (user_confirm("Ready to run dinner?"))
-            cli_execute("dinner");
+        cli_execute("dinner");
     }
 }
