@@ -12,9 +12,9 @@ void step(string msg){
 void Nightcap(){
     if (my_inebriety() > inebriety_limit())
         return;
-    visit_url("showclan.php?whichclan=" + get_property("homeClanID").to_int() + "&action=joinclan&confirm=on");
+    whitelist("homeclan");
     cli_execute("mood apathetic; uneffect cletus");
-    if (get_property("lawOfAveragesAvailable") == true)
+    if (get_property("lawOfAveragesAvailable").to_boolean())
         use($item[law of averages]);
     use_familiar($familiar[Stooper]);
     equip($slot[acc3],$item[devilbone rosary]);
@@ -24,12 +24,11 @@ void Nightcap(){
     equip($item[drunkula's wineglass]);
 }
 
-// One more stench-airport-ticket farming pass, once today's ticket is spent.
-void stenchAirportFarm(){
-    if (my_adventures() <= 9 || have_equipped($item[devilbone greaves]))
-        return;
-    if (get_property("_stenchAirportToday") == "true")
-        cli_execute("garbo ascend -15");
+// One overdrunk Marinara Trench turn with the wineglass on; the caller picks the familiar.
+void trenchTurn(){
+    set_property("maxOverride","3.25 meat drop, 7 item drop, sea");
+    set_property("offOverride",", equip drunkula's wineglass");
+    adv1($location[The Marinara Trench],0,"");
 }
 
 void drunkInko(){
@@ -39,9 +38,7 @@ void drunkInko(){
     set_property("script","farto");
     while (my_adventures() > 0){
         altFam($familiar[robortender]);
-        set_property("maxOverride","3.25 meat drop, 7 item drop, sea");
-        set_property("offOverride",", equip drunkula's wineglass");
-        adv1($location[The Marinara Trench],0,"");
+        trenchTurn();
     }
 }
 
@@ -58,8 +55,7 @@ void spendGrimacePrimeMaps(){
     int n = item_amount($item[Map to Safety Shelter Grimace Prime]);
     while (my_adventures() > n){
         if (!pearlsDone()){
-            if (get_property("_unblemishedPearlDiveBar").to_boolean() == false){
-                equip($item[drunkula's wineglass]);
+            if (!get_property("_unblemishedPearlDiveBar").to_boolean()){
                 set_property("maxOverride","sleaze resistance");
                 adv1($location[The Dive Bar]);
             } else {
@@ -70,17 +66,14 @@ void spendGrimacePrimeMaps(){
             set_property("maxOverride","drops items");
             adv1($location[the skeleton store]);
         } else {
-            while (my_adventures() > 0){
-                if (have_familiar($familiar[robortender]))
-                    set_property("famOverride","robortender");
-                else if (get_property("commaFamiliar") == "Robortender")
-                    set_property("famOverride","comma chameleon");
-                else
-                    set_property("famOverride","sword of Swords");
-                set_property("maxOverride","3.25 meat drop, 7 item drop, sea");
-                set_property("offOverride",", equip drunkula's wineglass");
-                adv1($location[The Marinara Trench],0,"");
-            }
+            // One turn per pass: the outer loop stops at n so the maps keep their adventures.
+            if (have_familiar($familiar[robortender]))
+                set_property("famOverride","robortender");
+            else if (get_property("commaFamiliar") == "Robortender")
+                set_property("famOverride","comma chameleon");
+            else
+                set_property("famOverride","sword of Swords");
+            trenchTurn();
         }
     }
     finisher();
@@ -88,30 +81,29 @@ void spendGrimacePrimeMaps(){
         mapgrim();
 }
 
-void pvpCleanup(){
+// Spend the remaining PvP fights while a season is running.
+void pvpFights(){
     int peevp = pvp_attacks_left();
     if (peevp > 0 && count(current_pvp_stances()) > 0){
         cli_execute("PVP_MAB; unequip pants");
     }
 }
 
+// Cast sk while the substat still covers its next BCZ cost; stops if a cast fails
+// or doesn't spend any substat.
+void bczSpend(stat sub, string castsPref, skill sk){
+    while (my_basestat(sub) > BCZcost(castsPref)){
+        int before = my_basestat(sub);
+        if (!use_skill(sk, 1) || my_basestat(sub) >= before)
+            break;
+    }
+}
+
 // Spend down BCZ substat casts while they're still cheaper than the current threshold.
 void bczCasts(){
-    while (my_basestat($stat[submuscle]) > BCZcost("BloodThinnerCasts")){
-        int before = my_basestat($stat[submuscle]);
-        if (!use_skill($skill[BCZ: Create Blood Thinner],1) || my_basestat($stat[submuscle]) >= before)
-            break;
-    }
-    while (my_basestat($stat[submoxie]) > BCZcost("PheromoneCocktailCasts")){
-        int before = my_basestat($stat[submoxie]);
-        if (!use_skill($skill[BCZ: Craft a Pheromone Cocktail],1) || my_basestat($stat[submoxie]) >= before)
-            break;
-    }
-    while (my_basestat($stat[submysticality]) > BCZcost("SpinalTapasCasts")){
-        int before = my_basestat($stat[submysticality]);
-        if (!use_skill($skill[BCZ: Prepare Spinal Tapas],1) || my_basestat($stat[submysticality]) >= before)
-            break;
-    }
+    bczSpend($stat[submuscle],      "BloodThinnerCasts",      $skill[BCZ: Create Blood Thinner]);
+    bczSpend($stat[submoxie],       "PheromoneCocktailCasts", $skill[BCZ: Craft a Pheromone Cocktail]);
+    bczSpend($stat[submysticality], "SpinalTapasCasts",       $skill[BCZ: Prepare Spinal Tapas]);
 }
 
 // Spend the day's 5 Monkey's Paw wishes on shadow bricks. Reads
@@ -136,12 +128,8 @@ void septEmberCrafting(){
         if (to_int(get_property("availableSeptEmbers")) >= before)
             break;
     }
-    while (to_int(get_property("availableSeptEmbers")) == 1){
-        int before = to_int(get_property("availableSeptEmbers"));
+    if (to_int(get_property("availableSeptEmbers")) == 1)
         cli_execute("make wheel of camembert");
-        if (to_int(get_property("availableSeptEmbers")) >= before)
-            break;
-    }
 }
 
 // Accordion Thieves burn the LP-ROM; everyone else runs the TakerSpace
@@ -175,10 +163,6 @@ void workshedSetup(){
     while (to_int(get_property("takerSpaceSpice")) >= 1){
         if (!create($item[spices])) break;
     }
-    while (to_int(get_property("takerSpaceGold")) >= 1 && to_int(get_property("takerSpaceMast")) >= 1
-        && to_int(get_property("takerSpaceAnchor")) >= 3 && to_int(get_property("takerSpaceRum")) >= 1){
-        if (!create($item[anchor bomb])) break;
-    }
 }
 
 // Last odds and ends before the ascend: sweatpants, garden, knife skill,
@@ -201,7 +185,6 @@ void finalChores(){
     set_ccs("hobopolis");
     retrieve_item(5, $item[unblemished pearl]);
     codpiece("unblemished pearl,unblemished pearl,unblemished pearl,unblemished pearl,unblemished pearl");
-    finisher();
 }
 
 // Grab a PYEC (automatically if `looping` was left set, otherwise ask) and
@@ -260,26 +243,22 @@ void main(){
         set_property("valueOfAdventure","7400");
     step("phase: nightcap");
     Nightcap();
-    if (!contains_text(get_property("thoth19_event_list"),"overdrunkStart"))
-        cli_execute("ptrack add overdrunkStart");
+    ptrackOnce("overdrunkStart");
     drunkInko();
-    if (!contains_text(get_property("thoth19_event_list"),"overdrunkEnd"))
-        cli_execute("ptrack add overdrunkEnd");
+    ptrackOnce("overdrunkEnd");
     if (isFartScauce())
         set_property("valueOfAdventure","7100");
     equipBonesAndConsume();
-    if (!contains_text(get_property("thoth19_event_list"),"overorganStart"))
-        cli_execute("ptrack add overorganStart");
+    ptrackOnce("overorganStart");
     try {
         step("phase: over Organed");
         spendGrimacePrimeMaps();
     } finally {
         finisher();
     }
-    if (!contains_text(get_property("thoth19_event_list"),"overorganEnd"))
-        cli_execute("ptrack add overorganEnd");
+    ptrackOnce("overorganEnd");
     step("phase: pvp");
-    pvpCleanup();
+    pvpFights();
     step("phase: other iotm todos");
     bczCasts();
     monkeyPawWishes();
@@ -287,8 +266,7 @@ void main(){
     workshedSetup();
     step("phase: ascension prep");
     finalChores();
-    if (!contains_text(get_property("thoth19_event_list"),"postFarmD2"))
-        cli_execute("ptrack add postFarmD2");
+    ptrackOnce("postFarmD2");
     step("phase: ascend");
     ascend();
 }

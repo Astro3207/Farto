@@ -810,8 +810,8 @@ void main(){
             postAdv();
         preAdv();
         cli_execute("checkpoint clear");
-        if (!contains_text(get_property("thoth19_event_list"),"midFarm") && have_effect($effect[Runneth On Empty]) == 0)
-            cli_execute("ptrack add midFarm");
+        if (have_effect($effect[Runneth On Empty]) == 0)
+            ptrackOnce("midFarm");
         mood("");
     } finally {
         set_property("betweenBattleScript",boof);

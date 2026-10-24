@@ -75,8 +75,6 @@ int baseMeat(){
         return get_property("baseMeat").to_int();
 }
 
-// meat you'd expect to gain from an item's granted effect's Meat Drop bonus alone,
-// on top of whatever CONSUME already values the item's adventures/organ fill at
 int total_meat_value(item it){
     if (numeric_modifier(itemEffectNotes(it).ef,"meat drop") > 0)
         return (numeric_modifier(itemEffectNotes(it).ef,"meat drop")/100) * baseMeat() * itemEffectNotes(it).turns;

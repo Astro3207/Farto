@@ -130,6 +130,12 @@
     }
 
     // True only for the script's author; gates the hand-tuned personal chores.
+    // Add a ptrack checkpoint unless today's event list already has it.
+    void ptrackOnce(string tag){
+        if (!contains_text(get_property("thoth19_event_list"), tag))
+            cli_execute("ptrack add " + tag);
+    }
+
     boolean isFartScauce(){
         return my_name().to_lower_case() == "fart scauce";
     }

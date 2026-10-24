@@ -2485,8 +2485,7 @@ void bulkFKD2(){
     }
     step("phase: peridot fishing");
     peridotFishing();
-    if (!contains_text(get_property("thoth19_event_list"),"postFKD2"))
-        cli_execute("ptrack add postFKD2");
+    ptrackOnce("postFKD2");
     codpiece("none");
     embezzler();
 }
@@ -2834,8 +2833,7 @@ void bulkFKD1(){
         seals();
     }
     eldritchFights();
-    if (!contains_text(get_property("thoth19_event_list"),"postFKD1"))
-        cli_execute("ptrack add postFKD1");
+    ptrackOnce("postFKD1");
     codpiece("none");
 }
 
@@ -2853,13 +2851,13 @@ void main(){
                 cli_execute("breakfast.ash");
             if (get_property("prusias_profitTracking_date") != today_to_string( ))
                 cli_execute("ptrack add preprepD2");
-            else if (!contains_text(get_property("thoth19_event_list"),"preprepD1") && dayType() == 0)
-                cli_execute("ptrack add preprepD1");
+            else if (dayType() == 0)
+                ptrackOnce("preprepD1");
             set_property("inSpendAdv","true");
             set_property("script","FreeKill");
             FKPrep();
-            if (!contains_text(get_property("thoth19_event_list"),"postprepD1") && dayType() == 0)
-                cli_execute("ptrack add postprepD1");
+            if (dayType() == 0)
+                ptrackOnce("postprepD1");
         }
         if (dayType() == 0)
             bulkFKD1();

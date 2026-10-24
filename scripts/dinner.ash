@@ -167,8 +167,7 @@ void main(){
     step("phase: closing meat chores");
     closingMeatChores();
     pvpCleanup();
-    if (!contains_text(get_property("thoth19_event_list"),"postFarmD1"))
-        cli_execute("ptrack add postFarmD1");
+    ptrackOnce("postFarmD1");
 
     step("phase: inbox cleanup");
     fartScauceInboxCleanup();
