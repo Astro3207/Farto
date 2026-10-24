@@ -543,7 +543,7 @@ void dieting(){
                 }else
                     abort();
 			} else if (valueOfFamPot(effect_to_item(fo)) > valueOfOrgan("stomach")){
-				eat(effect_to_item(fo));
+				eatsilent(1,effect_to_item(fo));
 			}
 		}
 	}
