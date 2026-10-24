@@ -693,6 +693,7 @@ void preAdv(){
     string context = my_location() + ";" + get_property("_seadentWaveZone");
     if (get_property("savedMaximizer") == maximize.to_string() && get_property("savedMaximizerContext") == context){
         outfit("farming");
+        set_property("savedFamEquip",equipped_item($slot[familiar]));
     } else {
         if (!maximize(maximize.to_string(), false))
             if (!maximize(maximize.to_string(), false))
@@ -700,6 +701,8 @@ void preAdv(){
         set_property("savedMaximizer",maximize.to_string());
         set_property("savedMaximizerContext",context);
         cli_execute("outfit save farming");
+        if (get_property("savedFamEquip").to_item() != $item[none])
+            equip(get_property("savedFamEquip").to_item());
     }
     // Sheriff override — only in non-slime non-angelbone-totem context
  //   if (get_property("script") != "slime" && sheriff && !have_equipped($item[angelbone totem]) && get_property("script") != "coat" && get_property("script") != "stick" && get_property("script") != "FreeKill" && get_property("script") != "farto")
