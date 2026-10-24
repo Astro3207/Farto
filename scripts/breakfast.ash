@@ -1,39 +1,16 @@
 import iotm.ash;
 
 // ═══ breakfast.ash ══════════════════════════════════════════════════════════
-// Start-of-day chores for the farto / free-kill environment: workshed crafting,
-// clan-hopping breakfasts, daily skills/summons, the free mining and Allied
-// Radio pulls, and the assorted once-a-day IOTM buttons. Run once after
-// rollover, before any farming script.
+// Start-of-day chores
 //
 // ─── PER-ACCOUNT CONFIG ─────────────────────────────────────────────────────
 //  * Reads the homeClanID preference for the clan to return to between hops
 //    (set once via FartoController.ash, or `set homeClanID=<id>`).
-//  * Clan ids 90485 (snack machine + fortune teller) and 2047010939 (Fart
-//    Sauce Annex) are public whitelist clans, not this account's own -- swap
-//    them for your own or drop clanBreakfasts() / clanFortune() if you have
-//    neither.
-//  * Blocks gated on isFartScauce() are hand-tuned to this character (a
-//    private stock-trading script, hard-coded Foresee Peril targets) and are
-//    skipped entirely on any other account.
-//  * Everything else self-guards on have_skill / have_item / have_familiar, so
-//    an account missing a given IOTM just skips that chore instead of
-//    aborting or hanging.
 
-// Progress marker: prints "BF: phase: XXX" so an abort mid-run is easy to
-// place (mirrors UnderTheSea's step()).
 void step(string msg){
     print("BF: " + msg, "blue");
 }
 
-// Forest Village zone-opening chores (crackpot mystic, etc). Not written yet.
-void zoneOpening(){
-}
-
-// ─── FIRST BREAKFAST ────────────────────────────────────────────────────────
-
-// git update every rollover; the author also refreshes a private stock script
-// that would just error out (harmlessly) on anyone else's account.
 void dailyUpdate(){
     if (get_property("_gitUpdated").to_boolean())
         return;
@@ -42,11 +19,6 @@ void dailyUpdate(){
         cli_execute("stock_market");
 }
 
-// Spend the TakerSpace's daily crafting materials, then hand the workshed to
-// the model train set for the rest of the day. Order matters: the TakerSpace
-// craft is a one-shot at rollover, the train set is what should be running
-// while farming. Each while-loop bails on the first failed craft instead of
-// spinning if a required sub-ingredient runs out.
 void takerSpace(){
     if (get_property("_workshedItemUsed").to_boolean() || get_workshed() != $item[TakerSpace letter of Marque])
         return;
@@ -55,40 +27,29 @@ void takerSpace(){
         create($item[anchor bomb]);
     if (get_property("takerSpaceSpice").to_int() >= 1 && get_property("takerSpaceRum").to_int() >= 2)
         create($item[tankard of spiced rum]);
-    while (get_property("takerSpaceMast").to_int() >= 2){
+    while (get_property("takerSpaceMast").to_int() >= 2)
         if (!create($item[harpoon]))
             break;
-    }
-    while (get_property("takerSpaceSpice").to_int() >= 1){
+    while (get_property("takerSpaceSpice").to_int() >= 1)
         if (!create($item[spices]))
             break;
-    }
     if (available_amount($item[model train set]) > 0)
         use($item[model train set]);
 }
 
-// Collect the day's clan-VIP breakfasts: the snack-machine clan (chip bags)
-// and the Fart Sauce Annex, then return to homeClanID. The caller is
-// responsible for getting back to wherever it actually started.
 void clanBreakfasts(){
     if (get_property("_chipBags").to_int() < 3){
-        visit_url("showclan.php?whichclan=90485&action=joinclan&confirm=on");
+        whitelist("Bonus Adventures from Hell")
         cli_execute("breakfast; chips radium; chips wintergreen; chips ennui");
         visit_url("clan_rumpus.php?action=click&spot=5&furni=1");
     }
     if (get_property("_clanRumpusSpot3Visited") == "false"){
-        visit_url("showclan.php?whichclan=2047010939&action=joinclan&confirm=on");
+        whitelist("Fart Sauce Annex");
         cli_execute("breakfast");
     }
-    visit_url("showclan.php?whichclan=" + get_property("homeClanID").to_int() + "&action=joinclan&confirm=on");
+    whitelist("homeclan");
 }
 
-void primeFamiliar(){
-    if (have_familiar($familiar[Chest Mimic]))
-        use_familiar($familiar[Chest Mimic]);
-}
-
-// Photobooth the Sheriff costume pieces for the day's free equipment.
 void photoBooth(){
     if (get_property("_photoBoothEquipment").to_int() != 0)
         return;
@@ -98,10 +59,6 @@ void photoBooth(){
     whitelist("homeclan");
 }
 
-// Fart Scauce only -- Foresee Peril on a hand-picked set of targets after
-// clearing the Eternity Codpiece slots (Foresee Peril requires an empty
-// codpiece). The who= ids are personal, so this is skipped on every other
-// account rather than firing on someone else's targets.
 void perilsForeseen(){
     if (!isFartScauce() || get_property("_perilsForeseen").to_int() != 0)
         return;
@@ -111,16 +68,12 @@ void perilsForeseen(){
         visit_url("choice.php?whichchoice=1558&option=1&who=" + who);
 }
 
-// Burn any 2002 Mr. Store credits on Spooky VHS Tapes (free-kill wanderers).
 void spookyTapes(){
     int credits = get_property("availableMrStore2002Credits").to_int();
     if (credits > 0)
         create(credits, $item[Spooky VHS Tape]);
 }
 
-// Pull the day's 3 free Allied Radio drops. Guarded on owning the backpack --
-// without it _alliedRadioDropsUsed never moves and the loop would spin
-// forever; the inner loop also bails if a pull stops making progress.
 void alliedRadio(){
     if (!have_item($item[Allied Radio Backpack]) || get_property("_alliedRadioDropsUsed").to_int() >= 3)
         return;
@@ -159,13 +112,11 @@ void unaccompaniedMiner(){
     }
 }
 
-// Tongue of the Walrus off a Beaten Up before it eats into the day's turns.
 void healUp(){
     if (have_effect($effect[Beaten Up]) > 0)
         cli_execute("cast tongue of the walrus; cast cannelloni cocoon");
 }
 
-// Park the tiny stillsuit on tickle-me Emilio so it brews a free drink.
 void stillsuit(){
     if (!have_item($item[tiny stillsuit]) || !have_familiar($familiar[tickle-me emilio]))
         return;
@@ -173,14 +124,11 @@ void stillsuit(){
     equip($item[tiny stillsuit]);
 }
 
-// Pull a few cheap meat/init accessories into inventory for the day.
 void grabAccessories(){
     foreach it in $items[mother's necklace, pearl diver's necklace, giant yellow hat, perfume-soaked bandana,filthy knitted dread sack, mini kiwi bikini]
         retrieve_item(it);
 }
 
-// Spend the day's three Mayam Calendar resonance rings (guarded so a second
-// call is a no-op).
 void mayamRings(){
     if (get_property("_mayamSymbolsUsed") != "" || !have_item($item[Mayam Calendar]))
         return;
@@ -238,6 +186,15 @@ void makeSausage(){
     }
 }
 
+void pantogram(){
+    if (available_amount($item[portable pantogram]) > 0 && dayType() == 1 && get_property("_pantogramModifier") == ""){
+        retrieve_item(11,$item[lead necklace]);
+        retrieve_item(1,$item[porquoise]);
+        visit_url("inv_use.php?whichitem=9573");
+        visit_url("choice.php?whichchoice=1270&pwd="+my_hash()+"&option=1&m=3&e=2&s1=-1%2C0&s2=706%2C1&s3=865%2C11");
+    }
+}
+
 void firstBreakfast(){
     int startClan = get_clan_id();
 
@@ -245,7 +202,6 @@ void firstBreakfast(){
     dailyUpdate();
     step("phase: workshed");
     takerSpace();
-
     step("phase: clan breakfasts");
     clanBreakfasts();
     step("phase: unlock locations");
@@ -256,12 +212,7 @@ void firstBreakfast(){
     if (my_garden_type( ) != "black_rose")
         cli_execute("garden pick");
     photoBooth();
-    if (available_amount($item[portable pantogram]) > 0 && dayType() == 1 && get_property("_pantogramModifier") == ""){
-        retrieve_item(11,$item[lead necklace]);
-        retrieve_item(1,$item[porquoise]);
-        visit_url("inv_use.php?whichitem=9573");
-        visit_url("choice.php?whichchoice=1270&pwd="+my_hash()+"&option=1&m=3&e=2&s1=-1%2C0&s2=706%2C1&s3=865%2C11");
-    }
+    pantogram();
     perilsForeseen();
     spookyTapes();
     alliedRadio();
@@ -275,9 +226,7 @@ void firstBreakfast(){
     stillsuit();
     grabAccessories();
 
-    // clanBreakfasts() only guarantees homeClanID; get back to wherever this
-    // run actually started.
-    visit_url("showclan.php?whichclan=" + startClan + "&action=joinclan&confirm=on");
+    whitelist("homeclan");
 
     step("phase: mayam rings");
     mayamRings();
@@ -285,7 +234,6 @@ void firstBreakfast(){
 
 // ─── SECOND BREAKFAST ───────────────────────────────────────────────────────
 
-// Cast every free daily buff/summon skill the account actually has.
 void dailySkills(){
     foreach sk in $skills[Lunch Break, Spaghetti Breakfast, Grab a Cold One,
         Summon Kokomo Resort Pass, Perfect Freeze, Acquire Rhinestones,
@@ -295,7 +243,6 @@ void dailySkills(){
     }
 }
 
-// Eat the glitch season reward item once it's implemented, if we have one.
 void glitchItem(){
     if (!get_property("_glitchItemImplemented").to_boolean() && available_amount($item[[glitch season reward name]]) > 0)
         use($item[[glitch season reward name]]);
@@ -312,14 +259,11 @@ void votingBooth(){
     }
 }
 
-// April Shower for the day's buff.
 void aprilShower(){
     if (!get_property("_aprilShower").to_boolean())
         cli_execute("shower cold");
 }
 
-// Craft the 3 daily lit leaf lassos and the free day shortener from burning
-// leaves; the loop bails early if a craft fails instead of spinning.
 void burningLeaves(){
     while (get_property("_leafLassosCrafted").to_int() < 3){
         if (!create($item[lit leaf lasso]))
@@ -329,9 +273,6 @@ void burningLeaves(){
         create($item[day shortener]);
 }
 
-// Walk the day's trick-or-treat block with the Map to a candy-rich block:
-// use the map for its own house (if not already used), then treat every
-// remaining "L" house on the block.
 void candyRichBlock(){
     boolean mapUsed = get_property("_mapToACandyRichBlockUsed").to_boolean();
     if (!mapUsed)
@@ -360,8 +301,6 @@ void printScreenButton(){
         create($item[print screen button]);
 }
 
-// Deviled candy eggs (3/day); bail if the command stops making progress
-// instead of spinning when the account has no candy egg to devil.
 void devilCandyEggs(){
     while (get_property("_candyEggsDeviled").to_int() < 3){
         int made = get_property("_candyEggsDeviled").to_int();
@@ -371,7 +310,6 @@ void devilCandyEggs(){
     }
 }
 
-// Pork Elf neti pot for the day's free effect, if we have one.
 void netiPot(){
     if (!get_property("_porkElfNetiPotUsed").to_boolean() && available_amount($item[Pork Elf neti pot]) > 0)
         use($item[Pork Elf neti pot]);
@@ -415,8 +353,7 @@ void secondBreakfast(){
 // ─── ENTRY ───────────────────────────────────────────────────────────────────
 
 void main(){
-    step("phase: first breakfast");
+    step("phase: breakfast");
     firstBreakfast();
-    step("phase: second breakfast");
     secondBreakfast();
 }

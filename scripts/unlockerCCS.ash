@@ -510,7 +510,7 @@ void main(int round, monster mob, string page_text) {
         return;
     }
 
-    if ((chameleon() == $familiar[stocking mimic]) || my_familiar() == $familiar[stocking mimic]) && get_property("script") == "FreeKill"){
+    if ((chameleon() == $familiar[stocking mimic] || my_familiar() == $familiar[stocking mimic]) && get_property("script") == "FreeKill"){
         if (my_location().zone == "Shadow Rift" && last_monster().boss == false){
             while (to_int(get_property("_douseFoeUses")) < 3 && get_property("_douseFoeSuccess") == "false"
                 && current_round() > 0 && current_round() < 25 && have_equipped($item[Flash Liquidizer Ultra Dousing Accessory]))
