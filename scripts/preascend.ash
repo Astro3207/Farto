@@ -257,7 +257,7 @@ void main(){
     starter();
     step("phase: Organ phase 1");
     if (isFartScauce())
-        set_property("valueOfAdventure","7600");
+        set_property("valueOfAdventure","7400");
     step("phase: nightcap");
     Nightcap();
     if (!contains_text(get_property("thoth19_event_list"),"overdrunkStart"))
@@ -266,7 +266,7 @@ void main(){
     if (!contains_text(get_property("thoth19_event_list"),"overdrunkEnd"))
         cli_execute("ptrack add overdrunkEnd");
     if (isFartScauce())
-        set_property("valueOfAdventure","5000");
+        set_property("valueOfAdventure","7100");
     equipBonesAndConsume();
     if (!contains_text(get_property("thoth19_event_list"),"overorganStart"))
         cli_execute("ptrack add overorganStart");

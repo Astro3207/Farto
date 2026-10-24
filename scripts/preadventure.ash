@@ -1,37 +1,7 @@
 import iotm.ash;
 import postadventure.ash;
 
-// Meat a buff earns over the turns it will run: its Meat Drop and Item Drop %
-// times the per-1% weights setDropWeighting() wrote into maxOverride, capped
-// at the adventures left today. Returns -1 when maxOverride carries no weights.
-float buffValue(effect ef){
-    float meatWeight = -1;
-    float itemWeight = 0;
-    matcher m = create_matcher("([0-9.]+) Meat Drop", get_property("maxOverride"));
-    if (m.find())
-        meatWeight = m.group(1).to_float();
-    m = create_matcher("([0-9.]+) Item Drop", get_property("maxOverride"));
-    if (m.find())
-        itemWeight = m.group(1).to_float();
-    if (meatWeight < 0)
-        return -1;
-    float perTurn = numeric_modifier(ef, "Meat Drop") * meatWeight + numeric_modifier(ef, "Item Drop") * itemWeight;
-    return perTurn * min(effectDuration(ef), my_adventures());
-}
-
-// True when ef's source item is already on hand, isn't an item, or costs less
-// in the mall than the buff earns. Without drop weights, keeps buying as before.
-boolean buffWorthBuying(effect ef){
-    item it = effect_to_item(ef);
-    if (it == $item[none] || item_amount(it) > 0)
-        return true;
-    float value = buffValue(ef);
-    int price = mall_price(it);
-    if (value < 0 || price <= value)
-        return true;
-    print("Skipping " + ef + ": " + it + " costs " + price + ", buff worth ~" + round(value), "orange");
-    return false;
-}
+// ─── SHARED HELPERS ──────────────────────────────────────────────────────────
 
 // Auto-recovery levels scaled so HP recovers toward 1000 and MP toward 500,
 // whatever the current max.
@@ -44,110 +14,7 @@ void setAutoRecovery(){
     set_property("mpAutoRecoveryTarget", to_float(round(mpTar * 10000))/10000);
 }
 
-// True when ef can be had: its source item costs no more than a pocket wish, and
-// any skill behind it is known.
-boolean buffAvailable(effect ef){
-    if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
-        return false;
-    return to_skill(ef) == $skill[none] || have_skill(to_skill(ef));
-}
-
-// Farto mood buffs that aren't worth (or can't be) cast right now.
-boolean skipMoodBuff(effect ef){
-    switch (ef){
-        case $effect[material witness]:        return get_property("_jukebox") == "true";
-        case $effect[best pals]:               return to_int(get_property("_heartstonePalsUsed")) >= (4 + dayType());
-        case $effect[party soundtrack]:        return dayType() == 0 || get_property("_cinchUsed").to_int() > 85;
-        case $effect[sweat equity]:            return (my_basestat($stat[submoxie]) - 118881) < BCZcost("SweatEquityCasts");
-        case $effect[Legendary Pasta Eyeball]: return my_class() == $class[pastamancer];
-        case $effect[Incredibly Well Lit]:     return get_property("_aug7Cast").to_boolean() || get_property("_augSkillsCast").to_int() == 5;
-    }
-    return false;
-}
-
-void mood(string function){
-    if (get_property("script") == "6-kiss"){
-        foreach ef in $effects[Troubled Waters, Pride of the Puffin, Ur-Kel's Aria of Annoyance, Drescher's Annoying Noise, ode to booze, Let's Go Shopping!]
-            if (have_effect(ef) > 0)
-                cli_execute("uneffect " + ef);
-        if (current_mcd() > 0)
-            cli_execute("mcd 0");
-        int targetInit = max($monster[hot skeleton].base_initiative + 1, $monster[hot werewolf].base_initiative + 1, $monster[hot ghost].base_initiative + 1);
-        if (numeric_modifier("initiative") < targetInit)
-            cli_execute("gain " + targetInit + " initiative");
-        if (have_effect($effect[chilled to the bone]) > 0 && have_effect($effect[Touched by a Ghost]) > 0 && my_maxhp() < 1000 && get_property("subscript") == "village")
-            use($item[hot Dreadsylvanian cocoa]);
-        if (get_property("_monkeyPawWishesUsed").to_int() > 0 || !bullseyeReady()){
-            if (numeric_modifier("item drop") < 500)
-                cli_execute("gain 500 item drop 100 maxmeatspent");
-            if (get_property("subscript") == "castle" && item_amount($item[shadow brick]) == 0)
-                retrieve_item($item[shadow brick]);
-            if (get_property("subscript") == "forest"){
-                if (have_effect($effect[null afternoon]) == 0)
-                    use($item[null-day exploit]);
-                if (have_effect($effect[chilled to the bone]) > 0)
-                    use($item[hot dreadsylvanian cocoa]);
-                if (my_maxhp() < 700)
-                    cli_execute("gain 700 hp 100 maxmeatspent");
-            }
-        }
-    } else if (get_property("script") == "slime"){
-        if (have_effect($effect[Let's Go Shopping!]) > 0)
-            cli_execute("uneffect Let's Go Shopping!");
-    } else if (get_property("script") == "farto"){
-        foreach ef in $effects[Yes\, Can Haz, ode to booze]
-            if (have_effect(ef) > 0)
-                cli_execute("uneffect " + ef);
-        foreach ef in $effects[Only Dogs Love a Drunken Sailor,Best Pals,Sweat equity, Flapper Dancin',Legendary Pasta Eyeball,material witness,
-            Singer's Faithful Ocelot, Leash of Linguini, empathy,Thoughtful Empathy,Blood Bond,Bet Your Autumn Dollar,Incredibly Well Lit,Fat Leon's Phat Loot Lyric,
-            Disco Leer,Polka of Plenty,Tubes of Universal Meat,Lubricating Sauce,Strength of the Tortoise, party soundtrack]{
-            if (skipMoodBuff(ef))
-                continue;
-            // The jukebox lives in another clan; hop there for the first play.
-            if (ef == $effect[material witness])
-                visit_url("showclan.php?whichclan=2046992052&action=joinclan&confirm=on");
-            if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
-                continue;
-            if (dayType() == 0 && effectDuration(ef) > (my_adventures() + pvp_attacks_left()))
-                continue;
-            if (dayType() == 1 && effectDuration(ef) > my_adventures() && have_equipped($item[devilbone corset]))
-                continue;
-            if (have_effect(ef) == 0 && !buffWorthBuying(ef))
-                continue;
-            if (have_effect(ef) == 0)
-                cli_execute(ef.default);
-            if (have_effect(ef) == 0)
-                abort(ef + " did not increase");
-        }
-        cli_execute("gain meat drop 3 eff");
-        if (my_location().environment == "underwater")
-            cli_execute("gain better diver 3 eff");
-        setAutoRecovery();
-    }
-    if (function == "")
-        function = get_property("maxOverride");
-    switch (function){
-        case "-combat":
-            if (numeric_modifier("combat rate") > -35)
-                cli_execute("gain -35 combat rate 100 maxmeatspent");
-            if (have_effect($effect[Apriling Band Patrol Beat]) == 0 && total_turns_played() >= get_property("nextAprilBandTurn").to_int())
-                cli_execute("aprilband effect nc");
-            break;
-        case "combat":
-            if (numeric_modifier("combat rate") < 35)
-                cli_execute("gain 35 combat rate 100 maxmeatspent");
-            if (have_effect($effect[Apriling Band Battle Cadence]) == 0 && total_turns_played() >= get_property("nextAprilBandTurn").to_int())
-                cli_execute("aprilband effect c");
-            break;
-        case "item drop":
-            if (numeric_modifier("item drop") < 666 && get_property("script") != "farto")
-                cli_execute("gain 666 item drop 100 maxmeatspent");
-            break;
-        case "spooky res":
-            if (numeric_modifier("spooky res") < 10)
-                cli_execute("gain spooky res 100 maxmeatspent");
-            break;
-    }}
+// ─── BONUS GEAR VALUES (bonusGear) ───────────────────────────────────────────
 
 float boozeValue(string q1, string q2){
     string pref = "_cupBoozeValue" + q1 + q2;
@@ -327,10 +194,6 @@ float ordnanceValue(){
     return average_value(ordnanceDrops, 100000) * 0.25;
 }
 
-// Dread zones need other pants, so Pantsgiving is never weighed there.
-boolean [location] hotZones = $locations[The Dark Elbow of the Woods, The Dark Heart of the Woods,
-    The Dark Neck of the Woods, Pandamonium Slums, Infernal Rackets Backstage];
-
 float pantsgivingValue(){
     int fights = get_property("_pantsgivingCount").to_int();
     if (fights >= 500 && get_property("_pantsgivingFullness").to_int() >= 3) return 0;
@@ -389,6 +252,8 @@ string bonusGear(){
     return out.to_string();
 }
 
+// ─── MAXIMIZER SLOT HELPERS ──────────────────────────────────────────────────
+
 // acc2Override as the maximizer should see it. mimicPrep() parks the eternity
 // codpiece there and its callers don't clear it, so it only counts while the
 // fight is still a mimic setup (maxOverride starts with "familiar weight");
@@ -400,7 +265,6 @@ string acc2Override(){
     return acc2;
 }
 
-// ── Familiar equip helper ─────────────────────────────────────────────────
 string famEquip(){
     if (get_property("famEquipOverride") != "") return get_property("famEquipOverride");
     cli_execute("unequip familiar equipment");
@@ -424,6 +288,20 @@ string famEquip(){
 // maximizer keeps it; otherwise the slot's override (possibly "").
 string boneOr(item bone, string override){
     return have_equipped(bone) ? ", equip " + bone : override;
+}
+
+// Dread zones need other pants, so Pantsgiving is never weighed there.
+boolean [location] hotZones = $locations[The Dark Elbow of the Woods, The Dark Heart of the Woods,
+    The Dark Neck of the Woods, Pandamonium Slums, Infernal Rackets Backstage];
+
+// ─── PRE-ADVENTURE ───────────────────────────────────────────────────────────
+
+// True when ef can be had: its source item costs no more than a pocket wish, and
+// any skill behind it is known.
+boolean buffAvailable(effect ef){
+    if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
+        return false;
+    return to_skill(ef) == $skill[none] || have_skill(to_skill(ef));
 }
 
 // Combat consumables preAdv() keeps on hand: under low, retrieve up to target.
@@ -791,6 +669,139 @@ void preAdv(){
     if (get_property("script") == "FreeKill")
         set_property("freeMeat",my_meat());
 }
+
+// ─── MOOD ────────────────────────────────────────────────────────────────────
+
+// Meat a buff earns over the turns it will run: its Meat Drop and Item Drop %
+// times the per-1% weights setDropWeighting() wrote into maxOverride, capped
+// at the adventures left today. Returns -1 when maxOverride carries no weights.
+float buffValue(effect ef){
+    float meatWeight = -1;
+    float itemWeight = 0;
+    matcher m = create_matcher("([0-9.]+) Meat Drop", get_property("maxOverride"));
+    if (m.find())
+        meatWeight = m.group(1).to_float();
+    m = create_matcher("([0-9.]+) Item Drop", get_property("maxOverride"));
+    if (m.find())
+        itemWeight = m.group(1).to_float();
+    if (meatWeight < 0)
+        return -1;
+    float perTurn = numeric_modifier(ef, "Meat Drop") * meatWeight + numeric_modifier(ef, "Item Drop") * itemWeight;
+    return perTurn * min(effectDuration(ef), my_adventures());
+}
+
+// True when ef's source item is already on hand, isn't an item, or costs less
+// in the mall than the buff earns. Without drop weights, keeps buying as before.
+boolean buffWorthBuying(effect ef){
+    item it = effect_to_item(ef);
+    if (it == $item[none] || item_amount(it) > 0)
+        return true;
+    float value = buffValue(ef);
+    int price = mall_price(it);
+    if (value < 0 || price <= value)
+        return true;
+    print("Skipping " + ef + ": " + it + " costs " + price + ", buff worth ~" + round(value), "orange");
+    return false;
+}
+
+// Farto mood buffs that aren't worth (or can't be) cast right now.
+boolean skipMoodBuff(effect ef){
+    switch (ef){
+        case $effect[material witness]:        return get_property("_jukebox") == "true";
+        case $effect[best pals]:               return to_int(get_property("_heartstonePalsUsed")) >= (4 + dayType());
+        case $effect[party soundtrack]:        return dayType() == 0 || get_property("_cinchUsed").to_int() > 85;
+        case $effect[sweat equity]:            return (my_basestat($stat[submoxie]) - 118881) < BCZcost("SweatEquityCasts");
+        case $effect[Legendary Pasta Eyeball]: return my_class() == $class[pastamancer];
+        case $effect[Incredibly Well Lit]:     return get_property("_aug7Cast").to_boolean() || get_property("_augSkillsCast").to_int() == 5;
+    }
+    return false;
+}
+
+void mood(string function){
+    if (get_property("script") == "6-kiss"){
+        foreach ef in $effects[Troubled Waters, Pride of the Puffin, Ur-Kel's Aria of Annoyance, Drescher's Annoying Noise, ode to booze, Let's Go Shopping!]
+            if (have_effect(ef) > 0)
+                cli_execute("uneffect " + ef);
+        if (current_mcd() > 0)
+            cli_execute("mcd 0");
+        int targetInit = max($monster[hot skeleton].base_initiative + 1, $monster[hot werewolf].base_initiative + 1, $monster[hot ghost].base_initiative + 1);
+        if (numeric_modifier("initiative") < targetInit)
+            cli_execute("gain " + targetInit + " initiative");
+        if (have_effect($effect[chilled to the bone]) > 0 && have_effect($effect[Touched by a Ghost]) > 0 && my_maxhp() < 1000 && get_property("subscript") == "village")
+            use($item[hot Dreadsylvanian cocoa]);
+        if (get_property("_monkeyPawWishesUsed").to_int() > 0 || !bullseyeReady()){
+            if (numeric_modifier("item drop") < 500)
+                cli_execute("gain 500 item drop 100 maxmeatspent");
+            if (get_property("subscript") == "castle" && item_amount($item[shadow brick]) == 0)
+                retrieve_item($item[shadow brick]);
+            if (get_property("subscript") == "forest"){
+                if (have_effect($effect[null afternoon]) == 0)
+                    use($item[null-day exploit]);
+                if (have_effect($effect[chilled to the bone]) > 0)
+                    use($item[hot dreadsylvanian cocoa]);
+                if (my_maxhp() < 700)
+                    cli_execute("gain 700 hp 100 maxmeatspent");
+            }
+        }
+    } else if (get_property("script") == "slime"){
+        if (have_effect($effect[Let's Go Shopping!]) > 0)
+            cli_execute("uneffect Let's Go Shopping!");
+    } else if (get_property("script") == "farto"){
+        foreach ef in $effects[Yes\, Can Haz, ode to booze]
+            if (have_effect(ef) > 0)
+                cli_execute("uneffect " + ef);
+        foreach ef in $effects[Only Dogs Love a Drunken Sailor,Best Pals,Sweat equity, Flapper Dancin',Legendary Pasta Eyeball,material witness,
+            Singer's Faithful Ocelot, Leash of Linguini, empathy,Thoughtful Empathy,Blood Bond,Bet Your Autumn Dollar,Incredibly Well Lit,Fat Leon's Phat Loot Lyric,
+            Disco Leer,Polka of Plenty,Tubes of Universal Meat,Lubricating Sauce,Strength of the Tortoise, party soundtrack]{
+            if (skipMoodBuff(ef))
+                continue;
+            // The jukebox lives in another clan; hop there for the first play.
+            if (ef == $effect[material witness])
+                visit_url("showclan.php?whichclan=2046992052&action=joinclan&confirm=on");
+            if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
+                continue;
+            if (dayType() == 0 && effectDuration(ef) > (my_adventures() + pvp_attacks_left()))
+                continue;
+            if (dayType() == 1 && effectDuration(ef) > my_adventures() && have_equipped($item[devilbone corset]))
+                continue;
+            if (have_effect(ef) == 0 && !buffWorthBuying(ef))
+                continue;
+            if (have_effect(ef) == 0)
+                cli_execute(ef.default);
+            if (have_effect(ef) == 0)
+                abort(ef + " did not increase");
+        }
+        cli_execute("gain meat drop 3 eff");
+        if (my_location().environment == "underwater")
+            cli_execute("gain better diver 3 eff");
+        setAutoRecovery();
+    }
+    if (function == "")
+        function = get_property("maxOverride");
+    switch (function){
+        case "-combat":
+            if (numeric_modifier("combat rate") > -35)
+                cli_execute("gain -35 combat rate 100 maxmeatspent");
+            if (have_effect($effect[Apriling Band Patrol Beat]) == 0 && total_turns_played() >= get_property("nextAprilBandTurn").to_int())
+                cli_execute("aprilband effect nc");
+            break;
+        case "combat":
+            if (numeric_modifier("combat rate") < 35)
+                cli_execute("gain 35 combat rate 100 maxmeatspent");
+            if (have_effect($effect[Apriling Band Battle Cadence]) == 0 && total_turns_played() >= get_property("nextAprilBandTurn").to_int())
+                cli_execute("aprilband effect c");
+            break;
+        case "item drop":
+            if (numeric_modifier("item drop") < 666 && get_property("script") != "farto")
+                cli_execute("gain 666 item drop 100 maxmeatspent");
+            break;
+        case "spooky res":
+            if (numeric_modifier("spooky res") < 10)
+                cli_execute("gain spooky res 100 maxmeatspent");
+            break;
+    }}
+
+// ─── ENTRY ───────────────────────────────────────────────────────────────────
 
 void main(){
     string boof = get_property("betweenBattleScript");

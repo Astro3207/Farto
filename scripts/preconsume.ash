@@ -2,9 +2,8 @@ import iotm.ash;
 
 void astral(){
     //get salty mouth the night before
-    if (item_amount($item[astral six-pack])>0){
+    if (item_amount($item[astral six-pack])>0)
         use($item[astral six-pack]);
-    }
     if (item_amount($item[astral pilsner]) > 0){
         cli_execute("cast ode");
         drink(item_amount($item[astral pilsner]), $item[astral pilsner]);
@@ -18,7 +17,7 @@ void timeArrow(){
 }
 void clanAdv(){
     if (to_int(get_property("valueOfAdventure")) > 10000){
-        cli_execute("/whitelist fart sauce annex");
+        whitelist("Fart Sauce Annex");
         int n;
         repeat {
             visit_url("clan_buytraining.php?action=buyround&members=1&size=1&whichgift=9");

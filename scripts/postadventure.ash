@@ -10,6 +10,8 @@ import preconsume.ash;
 // The per-quest helpers below are also called by name from farto.ash and
 // StockingMimic.ash, so their names and signatures are frozen.
 
+// ─── GLOBALS ─────────────────────────────────────────────────────────────────
+
 // Zone mafia last adventured in; compared against adventureAbortMessages.
 string lastAdv = get_property("lastAdventure");
 
@@ -19,6 +21,8 @@ string [string] adventureAbortMessages = {
     "Bloated and Nauseous": "Overfull",
     "Drunken Stupor": "Overdrunk"
 };
+
+// ─── SHARED HELPERS ──────────────────────────────────────────────────────────
 
 // Equip the sword of s words and sniff its target (monster id 307) so the sword drop lines up.
 void swordPrep(){
@@ -44,6 +48,30 @@ void swordPrep(){
     }
 }
 
+// Free-run with the Stomping Boots while bander runaways remain, otherwise fall
+// back to the sword of s words.
+void runawayOrSword(){
+    if (get_property("_banderRunaways").to_int() < (my_familiar().familiar_weight() + weight_adjustment( ))/5)
+        altFam($familiar[Pair of Stomping Boots]);
+    else
+        swordPrep();
+}
+
+// Clear whichever of the two common non-combat debuffs are currently up.
+void uneffectDebuffs(){
+    if (have_effect($effect[Coated in Slime]) > 0)
+        camo();
+    if (have_effect($effect[chilled to the bone]) > 0)
+        use($item[hot Dreadsylvanian cocoa]);
+}
+
+// Jump into a fight with monid via the crepe paper parachute cape. The fight is
+// left open; callers run_combat() or let the next adventure pick it up.
+void parachuteTo(int monid){
+    visit_url("inventory.php?action=parachute");
+    visit_url("choice.php?option=1&whichchoice=1543&monid=" + monid);
+}
+
 // Pick the accessory to burn a delay turn on: club-em wanderer > "I Voted!" > spring shoes.
 void delayPrep(){
     if (get_property("clubEmNextWeekMonster") != "" && total_turns_played() >= get_property("clubEmNextWeekMonsterTurn").to_int() + 8){
@@ -62,13 +90,245 @@ void delayPrep(){
     }
 }
 
-// Clear whichever of the two common non-combat debuffs are currently up.
-void uneffectDebuffs(){
-    if (have_effect($effect[Coated in Slime]) > 0)
-        camo();
-    if (have_effect($effect[chilled to the bone]) > 0)
-        use($item[hot Dreadsylvanian cocoa]);
+// ─── QUEST LINES ─────────────────────────────────────────────────────────────
+
+// One Friars turn toward the next missing infernal item (dodecagram / candles / butterknife).
+void friars(){
+    if (item_amount($item[dodecagram]) == 0){
+        adv1($location[the dark neck of the woods],0,"");
+    } else if (item_amount($item[box of birthday candles]) == 0){
+        adv1($location[the dark heart of the woods],0,"");
+    } else if (item_amount($item[eldritch butterknife]) == 0)
+        adv1($location[the dark elbow of the woods],0,"");
 }
+
+// Drive the Hidden Temple unlock: the choiceAdventure props select tree-holed
+// coin -> temple map -> sapling -> plant, then adventure the Spooky Forest.
+void findHiddenTemple(){
+    print("Farto: findHiddenTemple");
+    if (get_property("questM16Temple") == "finished")
+        return;
+    uneffectDebuffs();
+    runawayOrSword();
+    set_property("maxOverride","-combat");
+    if (item_amount($item[Spooky-Gro fertilizer]) == 0)
+        cli_execute("acquire Spooky-Gro fertilizer");
+    if (item_amount($item[tree-holed coin]) == 0 && item_amount($item[Spooky Temple map]) == 0){
+        set_property("choiceAdventure502","2");
+        set_property("choiceAdventure505","2");
+    } else if (item_amount($item[Spooky Temple map]) == 0){
+        set_property("choiceAdventure502","3");
+        set_property("choiceAdventure506","3");
+        set_property("choiceAdventure507","1");
+    } else if (item_amount($item[spooky sapling]) == 0){
+        set_property("choiceAdventure502","1");
+        set_property("choiceAdventure503","3");
+        set_property("choiceAdventure504","3");
+    } else {
+        use($item[Spooky Temple map]);
+    }
+    adv1($location[the spooky forest]);
+    set_property("maxOverride","");
+}
+
+// One Black Forest turn toward the blackbird. On the 4th NC turn, equip the CCS
+// cane and pause for a manual check that the sword NC fired.
+void blackForest(){
+    print("Farto: black forest");
+    set_property("maxOverride","combat");
+    cli_execute("acquire blackberry galoshes");
+    set_property("acc3Override",", equip blackberry galoshes");
+    if (item_amount($item[reassembled blackbird]) == 0)
+        set_property("famOverride","reassembled blackbird");
+    else 
+        swordPrep();
+    if (item_amount($item[sunken eyes]) == 1 && item_amount($item[broken wings]) == 1)
+        cli_execute("acquire reassembled blackbird");
+    if ((item_amount($item[sunken eyes]) == 1 && item_amount($item[broken wings]) == 0) || (item_amount($item[sunken eyes]) == 0 && item_amount($item[broken wings]) == 1))
+        set_property("acc2Override",", equip peridot of peril");
+    if ($location[the black forest].last_noncombat_turns_spent == 4)
+        set_property("mainOverride",", equip candy cane sword cane");
+    adv1($location[the black forest]);
+    clearOverrides();
+}
+
+// Finish the Guild muscle challenge (Cobb's Knob outskirts). No-op once finished.
+void outskirts() {
+    print("Farto: Outskirts");
+    if (get_property("questG09Muscle") == "finished" && get_property("questL05Goblin") != "started")
+        return;
+    runawayOrSword();
+    set_property("unconditionalOverride", get_property("famOverride") != "sword of s words" && get_property("_spikolodonSpikeUses").to_int() < 5
+        ? "familiar weight,equip parka (spikolodon)" : "");
+    if (get_property("questG09Muscle") == "unstarted")
+        visit_url("guild.php?place=challenge");
+    if (get_property("questG09Muscle") == "started")
+        adv1($location[The Outskirts of Cobb's Knob]);
+    else if (get_property("questL05Goblin") == "started"){
+        if (available_amount($item[Knob Goblin Encryption Key]) > 0)
+            use ($item[Cobb's Knob map]);
+        else
+            adv1($location[The Outskirts of Cobb's Knob]);
+    }
+    visit_url("guild.php?place=challenge");
+    visit_url("guild.php?place=paco");
+    run_choice(1);
+    set_property("unconditionalOverride","");
+    set_property("famOverride","");
+}
+
+int backstageCount(int side){
+    boolean [item] gifts = $items[gin-soaked blotter paper, beer-scented teddy bear, giant marshmallow];
+    if (side == 2)
+        gifts = $items[booze-soaked cherry, comfy pillow, sponge cake];
+    int n;
+    foreach it in gifts
+        n += item_amount(it);
+    return n;
+}
+
+record svenGift {
+    string member;
+    item fallback;
+};
+
+svenGift [item] svenGifts = {
+    $item[beer-scented teddy bear]: new svenGift("Stinkface", $item[gin-soaked blotter paper]),
+    $item[booze-soaked cherry]:     new svenGift("Flargwurm", $item[sponge cake]),
+    $item[comfy pillow]:            new svenGift("Jim",       $item[sponge cake]),
+    $item[giant marshmallow]:       new svenGift("Bognort",   $item[gin-soaked blotter paper])
+};
+
+void azazelUnicornQuest(){
+    print("Farto: Azazel Quest");
+    if (get_property("questM10Azazel") != "finished"){
+        uneffectDebuffs();
+        if (get_property("questL06Friar") == "started")
+            visit_url("friars.php?action=friars");
+        location [item] friarItemLocations = {
+            $item[dodecagram]: $location[the dark neck of the woods],
+            $item[box of birthday candles]: $location[the dark heart of the woods],
+            $item[eldritch butterknife]: $location[the dark elbow of the woods]
+        };
+        foreach friarItem in friarItemLocations {
+            while (item_amount(friarItem) == 0 && get_property("questL06Friar") == "step1"){
+                if (get_property("questL05Goblin") == "started" && get_property("noncombatForcerActive") == false && get_property("_spikolodonSpikeUses").to_int() < 5) {
+                    outskirts();
+                } else {
+                    set_property("maxOverride","-combat");
+                    if (get_property("noncombatForcerActive") == false)
+                        swordPrep();
+                    adv1(friarItemLocations[friarItem],0,"");
+                }
+            }
+        }
+        if (get_property("questL06Friar") == "step2")
+            visit_url("friars.php?action=ritual");
+        if (get_property("questL06Friar") == "finished"){
+            //BC of the combat buffs, which is unusual, doing all at once
+            while (item_amount($item[observational glasses]) == 0){
+                set_property("maxOverride","combat");
+                swordPrep();
+                if (numeric_modifier("combat rate") < 35)
+                    cli_execute("gain 35 combat rate 100 spendperturn");
+                if (have_effect($effect[Apriling Band Battle Cadence]) == 0 && total_turns_played() >= get_property("nextAprilBandTurn").to_int())
+                    cli_execute("aprilband effect c");
+                adv1($location[The Laugh Floor],0,"");
+            }
+            if ((backstageCount(1) < 2 || backstageCount(2) < 2) && item_amount($item[Azazel's unicorn]) == 0){
+                if (have_effect($effect[Patent Aggression]) == 0){
+                    set_property("maxOverride","-combat");
+                    swordPrep();
+                    adv1($location[Infernal Rackets Backstage],0,"");
+                }
+            }
+        }
+    }
+    if (backstageCount(1) > 1 && backstageCount(2) > 1 && item_amount($item[observational glasses]) > 0){
+        cli_execute("equip acc3 observational glasses; acquire 5 bus pass; acquire 5 imp air");
+        visit_url("pandamonium.php?action=moan");
+        visit_url("pandamonium.php?action=moan");
+        visit_url("pandamonium.php?action=mourn");
+        visit_url("pandamonium.php?action=mourn&preaction=observe");
+        visit_url("pandamonium.php?action=sven");
+        foreach gift, sg in svenGifts {
+            visit_url("pandamonium.php?action=sven");
+            item give = item_amount(gift) > 0 ? gift : sg.fallback;
+            visit_url("pandamonium.php?action=sven&bandmember=" + sg.member + "&togive=" + to_int(give) + "&preaction=try");
+        }
+        visit_url("pandamonium.php?action=temp");
+        if (item_amount($item[steel margarita]) > 0)
+            drink($item[steel margarita]);
+    }
+}
+
+// Grind Zeppelin Protesters up to step2: mood sleaze, keep Lucky! going while
+// under 80 protesters, and abort if sleaze damage can't one-shot them.
+void unlock_zeppelin(){
+    string ron = get_property("questL11Ron");
+    if (ron == "step2" || ron == "step3" || ron == "step4" || ron == "finished"
+        || !can_adventure($location[A Mob of Zeppelin Protesters]))
+        return;
+    foreach ef in $effects[Bendin' Hell,Belch the Rainbow&trade;,Amorous,Blood-Gorged,Sleazy Hands,Benetton's Medley of Diversity,Greasy Peasy,Takin' It Greasy,Cuts Like a Lightly-Buttered Knife,Colorful Gratitude,Sleazy Weapon,Stained,Crud&eacute;,Why So Serious?,Improprie Tea,Boschface,All Glory To the Toad,Herder\, Bitter\, Fester\, Stranger,Yoloswagyoloswag]{
+        if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
+            continue;
+        if (have_effect(ef) == 0)
+            cli_execute(ef.default);
+    }
+    while(get_property("questL11Ron") != "step2"){
+        cli_execute("maximize sleaze damage, sleaze spell damage, equip candy cane sword cane");
+        set_property("unconditionalOverride","sleaze damage, sleaze spell damage, equip candy cane sword cane");
+        if ((numeric_modifier("sleaze damage")+numeric_modifier("sleaze spell damage")) < 1596 && to_int(get_property("zeppelinProtestors")) < 80)
+            abort("Buff up to 1600 sleaze damage to unlock zeppelin");
+        if (to_int(get_property("zeppelinProtestors")) < 80 && have_effect($effect[lucky!]) == 0)
+            getLucky();
+        adv1($location[A Mob of Zeppelin Protesters]);
+    }
+    set_property("unconditionalOverride","");
+}
+
+void level11Sprint(){
+    boolean allLooksUp = have_effect($effect[everything looks red]) > 3 && have_effect($effect[everything looks yellow]) > 3 && have_effect($effect[everything looks green]) > 3;
+    if (!allLooksUp && my_adventures() >= 60)
+        return;
+    if (get_property("questM16Temple") != "finished")
+        return;
+    if (get_property("questL11Black") == "step2"){
+        retrieve_item($item[forged identification documents]);
+        if (item_amount($item[bitchin' meatcar]) == 0)
+            retrieve_item($item[bitchin' meatcar]);
+        adv1($location[The Shore, Inc. Travel Agency]);
+    } else if (get_property("questL11Worship") == "step1" || get_property("questL11Worship") == "step2"){
+        use($item[stone wool]);
+        if (item_amount($item[the Nostril of the Serpent]) == 0 && get_property("questL11Worship") != "step2"){
+            set_property("choiceAdventure582","1");
+            set_property("choiceAdventure579","2");
+            while (have_effect($effect[Stone-Faced]) > 0)
+                adv1($location[the hidden temple]);
+        } else {
+            set_property("choiceAdventure582","2");
+            while (have_effect($effect[Stone-Faced]) > 0){
+                adv1($location[the hidden temple]);
+                visit_url("main.php");
+                run_choice(-1);
+            }
+        }
+    }
+    unlock_zeppelin();
+    if (get_property("questL11Worship") == "step3" && get_property("questL11Spare") == "unstarted"){
+        while(get_property("questL11Spare") == "unstarted"){
+            cli_execute("acquire antique machete;equip weapon antique machete");
+            set_property("maxOverride","familiar exp, -weapon");
+            set_property("mainOverride"," ");
+            set_property("famOverride","chest mimic");
+            adv1($location[An Overgrown Shrine (Southeast)]);
+        }
+        set_property("maxOverride","");
+        set_property("mainOverride","");
+    }
+}
+
+// ─── SHADOW RIFT ─────────────────────────────────────────────────────────────
 
 boolean srChoiceGear(boolean orreryDamage){
     if (get_property("encountersUntilSRChoice").to_int() != 0)
@@ -109,298 +369,7 @@ void shadowRealm(){
     }
 }
 
-// Jump into a fight with monid via the crepe paper parachute cape. The fight is
-// left open; callers run_combat() or let the next adventure pick it up.
-void parachuteTo(int monid){
-    visit_url("inventory.php?action=parachute");
-    visit_url("choice.php?option=1&whichchoice=1543&monid=" + monid);
-}
-
-// Fight the cookbookbat quest monster. Route depends on which free banish is up
-// (spring shoes / june cleaver / peridot bander); the CCS is always restored on exit.
-void cookbookbat(){
-    if (get_property("_cookbookbatQuestMonster") != ""){
-        set_property("famOverride","cookbookbat");
-        location CBBLoc = to_location(get_property("_cookbookbatQuestLastLocation"));
-        if (CBBLoc.zone == "Memories")
-            return;
-        monster CBBMon = to_monster(get_property("_cookbookbatQuestMonster"));
-        if (have_effect($effect[everything looks green]) == 0 && have_effect($effect[Everything looks Beige]) == 0 && have_item($item[Crepe paper parachute cape])){
-            set_property("acc1Override",", equip spring shoes");
-            equip($slot[acc2],$item[spring shoes]);
-            set_property("battleAction", "skill spring away");
-            visit_url("adventure.php?snarfblat=" + to_int(CBBLoc));
-            if (get_property("lastEncounter") == get_property("_cookbookbatQuestMonster")){
-                set_property("battleAction", "skill saucegeyser");
-                run_combat();
-            } else {
-                run_combat();
-                set_property("battleAction", "attack with weapon");
-                parachuteTo(to_int(CBBMon));
-                run_combat();
-                set_property("battleAction", "custom combat script");
-            }
-        } else if (get_property("_juneCleaverFightsLeft") == 0 && have_effect($effect[Everything looks Beige]) == 0 && have_item($item[Crepe paper parachute cape])){
-            set_property("mainOverride",", equip june cleaver");
-            adv1(CBBLoc);
-            parachuteTo(to_int(CBBMon));
-            run_combat();
-            set_property("battleAction", "custom combat script");
-        } else if (!contains_text(get_property("_perilLocations"), to_string(to_int(CBBLoc))) && CBBLoc!= $location[the primordial soup]){
-            set_property("acc1Override",", equip peridot of peril");
-            set_property("choiceAdventure1557","1&bandersnatch=" + to_int(CBBMon));
-            adv1(CBBLoc,0,"");
-        }
-    }
-    set_property("battleAction", "custom combat script");
-    set_property("mainOverride","");
-    set_property("famOverride","");
-    set_property("acc1Override","");
-}
-
-// One Black Forest turn toward the blackbird. On the 4th NC turn, equip the CCS
-// cane and pause for a manual check that the sword NC fired.
-void blackForest(){
-    print("Farto: black forest");
-    set_property("maxOverride","combat");
-    cli_execute("acquire blackberry galoshes");
-    set_property("acc3Override",", equip blackberry galoshes");
-    if (item_amount($item[reassembled blackbird]) == 0)
-        set_property("famOverride","reassembled blackbird");
-    else 
-        swordPrep();
-    if (item_amount($item[sunken eyes]) == 1 && item_amount($item[broken wings]) == 1)
-        cli_execute("acquire reassembled blackbird");
-    if ((item_amount($item[sunken eyes]) == 1 && item_amount($item[broken wings]) == 0) || (item_amount($item[sunken eyes]) == 0 && item_amount($item[broken wings]) == 1))
-        set_property("acc2Override",", equip peridot of peril");
-    if ($location[the black forest].last_noncombat_turns_spent == 4)
-        set_property("mainOverride",", equip candy cane sword cane");
-    adv1($location[the black forest]);
-    clearOverrides();
-}
-
-// Free-run with the Stomping Boots while bander runaways remain, otherwise fall
-// back to the sword of s words.
-void runawayOrSword(){
-    if (get_property("_banderRunaways").to_int() < (my_familiar().familiar_weight() + weight_adjustment( ))/5)
-        altFam($familiar[Pair of Stomping Boots]);
-    else
-        swordPrep();
-}
-
-// Finish the Guild muscle challenge (Cobb's Knob outskirts). No-op once finished.
-void outskirts() {
-    print("Farto: Outskirts");
-    if (get_property("questG09Muscle") == "finished" && get_property("questL05Goblin") != "started")
-        return;
-    runawayOrSword();
-    set_property("unconditionalOverride", get_property("famOverride") != "sword of s words" && get_property("_spikolodonSpikeUses").to_int() < 5
-        ? "familiar weight,equip parka (spikolodon)" : "");
-    if (get_property("questG09Muscle") == "unstarted")
-        visit_url("guild.php?place=challenge");
-    if (get_property("questG09Muscle") == "started")
-        adv1($location[The Outskirts of Cobb's Knob]);
-    else if (get_property("questL05Goblin") == "started"){
-        if (available_amount($item[Knob Goblin Encryption Key]) > 0)
-            use ($item[Cobb's Knob map]);
-        else
-            adv1($location[The Outskirts of Cobb's Knob]);
-    }
-    visit_url("guild.php?place=challenge");
-    visit_url("guild.php?place=paco");
-    run_choice(1);
-    set_property("unconditionalOverride","");
-    set_property("famOverride","");
-}
-
-// Drive the Hidden Temple unlock: the choiceAdventure props select tree-holed
-// coin -> temple map -> sapling -> plant, then adventure the Spooky Forest.
-void findHiddenTemple(){
-    print("Farto: findHiddenTemple");
-    if (get_property("questM16Temple") == "finished")
-        return;
-    uneffectDebuffs();
-    runawayOrSword();
-    set_property("maxOverride","-combat");
-    if (item_amount($item[Spooky-Gro fertilizer]) == 0)
-        cli_execute("acquire Spooky-Gro fertilizer");
-    if (item_amount($item[tree-holed coin]) == 0 && item_amount($item[Spooky Temple map]) == 0){
-        set_property("choiceAdventure502","2");
-        set_property("choiceAdventure505","2");
-    } else if (item_amount($item[Spooky Temple map]) == 0){
-        set_property("choiceAdventure502","3");
-        set_property("choiceAdventure506","3");
-        set_property("choiceAdventure507","1");
-    } else if (item_amount($item[spooky sapling]) == 0){
-        set_property("choiceAdventure502","1");
-        set_property("choiceAdventure503","3");
-        set_property("choiceAdventure504","3");
-    } else {
-        use($item[Spooky Temple map]);
-    }
-    adv1($location[the spooky forest]);
-    set_property("maxOverride","");
-}
-
-// One Friars turn toward the next missing infernal item (dodecagram / candles / butterknife).
-void friars(){
-    if (item_amount($item[dodecagram]) == 0){
-        adv1($location[the dark neck of the woods],0,"");
-    } else if (item_amount($item[box of birthday candles]) == 0){
-        adv1($location[the dark heart of the woods],0,"");
-    } else if (item_amount($item[eldritch butterknife]) == 0)
-        adv1($location[the dark elbow of the woods],0,"");
-}
-
-// Burn the day's Law of Averages on a farming day (dayType 1) once under 98 adventures.
-void lawOfAverages(){
-    if (my_adventures() < 98 && get_property("_lawOfAveragesUsed") == "0" && dayType() == 1 && have_item($item[law of averages]))
-        use($item[law of averages]);
-}
-
-// Spend built-up sweat: booze first (also clears inebriety), otherwise Sweat-Ade
-// once pantsgiving is maxed and it is worth the turn.
-void sweatpants(){
-    if (get_property("_sweatOutSomeBoozeUsed").to_int() < 3 && my_inebriety() > 3 && get_property("sweat").to_int() >= 25)
-        use_skill($skill[sweat out some booze]);
-    else if (to_int(get_property("_pantsgivingCount")) >= 500 && ((dayType() == 0 && my_adventures() > 100) || dayType() == 1) && get_property("sweat").to_int() >= 50){
-        use_skill($skill[Make Sweat-Ade]);
-    }
-}
-
-// Spend a Book of Facts wish by adventuring a class-specific zone with a peridot
-// bandersnatch onto the mapped monster id; the patriotic eagle carries an RWB
-// wish when Everything Looks Red White and Blue is down.
-void BoFaWish(){
-    int [string] wish_map;
-    if (my_class() == $class[accordion thief]){
-        wish_map = {
-            "280":	1160,
-            "242":	981,
-            "441":	1751,
-            "389":	375,
-            "243":	977
-        };
-    } else if (my_class() == $class[pastamancer]){
-        wish_map = {
-            "33":	48,
-            "58":	185,
-            "264":	185
-        };
-    } else if (my_class() == $class[seal clubber]){
-        wish_map = {
-            "260":	1063,
-            "441":	1754,
-            "384":	1529
-        };
-    } else {
-        abort();
-    }
-    foreach loc in wish_map{
-        if ((!contains_text(get_property("_perilLocations"),loc) || get_property("rwbLocation") == to_location(to_int(loc))) && can_adventure(to_location(to_int(loc)))){
-            set_property("acc1Override",", equip peridot of peril");
-            set_property("choiceAdventureScript","");
-            set_property("choiceAdventure1557","1&bandersnatch=" + wish_map[loc]);
-            try{
-                adv1(to_location(to_int(loc)));
-            } finally {
-                set_property("famOverride","");
-                set_property("acc1Override","");
-                set_property("choiceAdventureScript","generalChoice.ash");
-                set_property("BoFaWishRWB","false");
-            }
-            return;
-        }
-    }
-}
-
-void shrunkenDoughbat(){
-    if (get_property("shrunkenHeadZombieMonster") != "" || !have_item($item[shrunken head]))
-        return;
-    if (!(periledLocations() contains $location[Guano Junction])){
-        set_property("acc2Override",", equip peridot of peril");
-    }
-    if (!can_adventure($location[Guano Junction]))
-        abort("Can't adventure in Guano Junction.");
-    set_property("maxOverride","monster level");
-    set_property("offOverride",", equip shrunken head");
-    set_property("famOverride","sword of s words");
-    adv1($location[Guano Junction]);
-    clearOverrides();
-}
-
-boolean setupVykea(){
-    if (get_property("_VYKEACompanionLevel").to_int() > 0)
-        return true;
-
-    if (!retrieve_item(1,$item[VYKEA hex key]))
-        return false;
-
-    return cli_execute("create level 5 couch");
-}
-
-// Send the autumn-aton to the next zone that still grants an upgrade (parsing the
-// use page for the option ids), preferring anything but the Shadow Rift, then the
-// Shadow Rift, then noob cave as a fallback.
-void upgradeAutumnaton(){
-    use($item[autumn-aton]);
-    string [string] upgradeLocation = {
-        "mid indoor":"rightleg1",
-        "low underground":"leftleg1",
-        "mid outdoor":"rightarm1",
-        "low indoor":"leftarm1",
-        "high underground":"collectionprow1"
-    };
-
-    string autumnOptions = visit_url("inv_use.php?" + my_hash() + "&which=3&whichitem=10954");
-
-    location [int] offered;
-    boolean riftOffered;
-    matcher m = create_matcher(
-        "<option\\s+value=\"([0-9]+)\">\\s*([^<]+?)\\s*</option>",
-        autumnOptions
-    );
-    while (m.find()) {
-        location loc = to_location(to_int(m.group(1)));
-        offered[count(offered)] = loc;
-        if (loc == $location[Shadow Rift (The Misspelled Cemetary)])
-            riftOffered = true;
-    }
-
-    foreach i, loc in offered {
-        string part = upgradeLocation[loc.difficulty_level + " " + loc.environment];
-        if (part == "" || contains_text(get_property("autumnatonUpgrades"), part) || contains_text(loc.to_string(), "Shadow Rift"))
-            continue;
-        cli_execute("autumnaton send " + loc);
-        return;
-    }
-    cli_execute("autumnaton send " + (riftOffered ? "Shadow Rift" : "noob cave"));
-}
-
-// Grind Zeppelin Protesters up to step2: mood sleaze, keep Lucky! going while
-// under 80 protesters, and abort if sleaze damage can't one-shot them.
-void unlock_zeppelin(){
-    string ron = get_property("questL11Ron");
-    if (ron == "step2" || ron == "step3" || ron == "step4" || ron == "finished"
-        || !can_adventure($location[A Mob of Zeppelin Protesters]))
-        return;
-    foreach ef in $effects[Bendin' Hell,Belch the Rainbow&trade;,Amorous,Blood-Gorged,Sleazy Hands,Benetton's Medley of Diversity,Greasy Peasy,Takin' It Greasy,Cuts Like a Lightly-Buttered Knife,Colorful Gratitude,Sleazy Weapon,Stained,Crud&eacute;,Why So Serious?,Improprie Tea,Boschface,All Glory To the Toad,Herder\, Bitter\, Fester\, Stranger,Yoloswagyoloswag]{
-        if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
-            continue;
-        if (have_effect(ef) == 0)
-            cli_execute(ef.default);
-    }
-    while(get_property("questL11Ron") != "step2"){
-        cli_execute("maximize sleaze damage, sleaze spell damage, equip candy cane sword cane");
-        set_property("unconditionalOverride","sleaze damage, sleaze spell damage, equip candy cane sword cane");
-        if ((numeric_modifier("sleaze damage")+numeric_modifier("sleaze spell damage")) < 1596 && to_int(get_property("zeppelinProtestors")) < 80)
-            abort("Buff up to 1600 sleaze damage to unlock zeppelin");
-        if (to_int(get_property("zeppelinProtestors")) < 80 && have_effect($effect[lucky!]) == 0)
-            getLucky();
-        adv1($location[A Mob of Zeppelin Protesters]);
-    }
-    set_property("unconditionalOverride","");
-}
+// ─── SCREECH / PHYLUM BANISHES ───────────────────────────────────────────────
 
 // Banish all three pygmy types out of the Hidden Bowling Alley (11 drunk-pygmy
 // banishes), swapping in the middle-finger ring / spring shoes as each is needed.
@@ -462,7 +431,6 @@ void lianas(){
     set_property("famOverride","");
     set_property("mainOverride","");
 }
-
 
 void screechRefresh(){
     if (!can_adventure($location[An Overgrown Shrine (Northeast)]))
@@ -565,6 +533,260 @@ void banishFish(){
     screechDone();
 }
 
+// ─── TURN SPENDERS (spendAdv) ────────────────────────────────────────────────
+
+void ELKPrep(){
+    if (have_effect($effect[everything looks yellow]) == 0)
+        set_property("shirtOverride",",equip parka (dilophosaur)");
+    else if (have_effect($effect[everything looks red]) == 0)
+        set_property("acc1Override",", equip everfull dart holster");
+}
+
+// Fight the cookbookbat quest monster. Route depends on which free banish is up
+// (spring shoes / june cleaver / peridot bander); the CCS is always restored on exit.
+void cookbookbat(){
+    if (get_property("_cookbookbatQuestMonster") != ""){
+        set_property("famOverride","cookbookbat");
+        location CBBLoc = to_location(get_property("_cookbookbatQuestLastLocation"));
+        if (CBBLoc.zone == "Memories")
+            return;
+        monster CBBMon = to_monster(get_property("_cookbookbatQuestMonster"));
+        if (have_effect($effect[everything looks green]) == 0 && have_effect($effect[Everything looks Beige]) == 0 && have_item($item[Crepe paper parachute cape])){
+            set_property("acc1Override",", equip spring shoes");
+            equip($slot[acc2],$item[spring shoes]);
+            set_property("battleAction", "skill spring away");
+            visit_url("adventure.php?snarfblat=" + to_int(CBBLoc));
+            if (get_property("lastEncounter") == get_property("_cookbookbatQuestMonster")){
+                set_property("battleAction", "skill saucegeyser");
+                run_combat();
+            } else {
+                run_combat();
+                set_property("battleAction", "attack with weapon");
+                parachuteTo(to_int(CBBMon));
+                run_combat();
+                set_property("battleAction", "custom combat script");
+            }
+        } else if (get_property("_juneCleaverFightsLeft") == 0 && have_effect($effect[Everything looks Beige]) == 0 && have_item($item[Crepe paper parachute cape])){
+            set_property("mainOverride",", equip june cleaver");
+            adv1(CBBLoc);
+            parachuteTo(to_int(CBBMon));
+            run_combat();
+            set_property("battleAction", "custom combat script");
+        } else if (!contains_text(get_property("_perilLocations"), to_string(to_int(CBBLoc))) && CBBLoc!= $location[the primordial soup]){
+            set_property("acc1Override",", equip peridot of peril");
+            set_property("choiceAdventure1557","1&bandersnatch=" + to_int(CBBMon));
+            adv1(CBBLoc,0,"");
+        }
+    }
+    set_property("battleAction", "custom combat script");
+    set_property("mainOverride","");
+    set_property("famOverride","");
+    set_property("acc1Override","");
+}
+
+// Spend a Book of Facts wish by adventuring a class-specific zone with a peridot
+// bandersnatch onto the mapped monster id; the patriotic eagle carries an RWB
+// wish when Everything Looks Red White and Blue is down.
+void BoFaWish(){
+    int [string] wish_map;
+    if (my_class() == $class[accordion thief]){
+        wish_map = {
+            "280":	1160,
+            "242":	981,
+            "441":	1751,
+            "389":	375,
+            "243":	977
+        };
+    } else if (my_class() == $class[pastamancer]){
+        wish_map = {
+            "33":	48,
+            "58":	185,
+            "264":	185
+        };
+    } else if (my_class() == $class[seal clubber]){
+        wish_map = {
+            "260":	1063,
+            "441":	1754,
+            "384":	1529
+        };
+    } else {
+        abort();
+    }
+    foreach loc in wish_map{
+        if ((!contains_text(get_property("_perilLocations"),loc) || get_property("rwbLocation") == to_location(to_int(loc))) && can_adventure(to_location(to_int(loc)))){
+            set_property("acc1Override",", equip peridot of peril");
+            set_property("choiceAdventureScript","");
+            set_property("choiceAdventure1557","1&bandersnatch=" + wish_map[loc]);
+            try{
+                adv1(to_location(to_int(loc)));
+            } finally {
+                set_property("famOverride","");
+                set_property("acc1Override","");
+                set_property("choiceAdventureScript","generalChoice.ash");
+                set_property("BoFaWishRWB","false");
+            }
+            return;
+        }
+    }
+}
+
+void shrunkenDoughbat(){
+    if (get_property("shrunkenHeadZombieMonster") != "" || !have_item($item[shrunken head]))
+        return;
+    if (!(periledLocations() contains $location[Guano Junction])){
+        set_property("acc2Override",", equip peridot of peril");
+    }
+    if (!can_adventure($location[Guano Junction]))
+        abort("Can't adventure in Guano Junction.");
+    set_property("maxOverride","monster level");
+    set_property("offOverride",", equip shrunken head");
+    set_property("famOverride","sword of s words");
+    adv1($location[Guano Junction]);
+    clearOverrides();
+}
+
+familiar bonusFam(){ //add CBB
+    if (get_property("_mapToACandyRichBlockDrops").to_int() < 1)
+        return $familiar[jill-of-all-trades];
+    return $familiar[mini kiwi];
+}
+
+void chargeFams(){
+    if (!can_adventure($location[An Overgrown Shrine (Southeast)]))
+        return;
+    set_property("maxOverride","familiar weight");
+    adv1($location[An Overgrown Shrine (Southeast)]);
+    use_familiar(bonusFam());
+    equip($item[antique machete]);
+    parachuteTo(1426);
+    if (my_spleen_use() > 15)
+        equip($item[angelbone totem]);
+}
+
+record lowDropTarget {
+    monster mon;
+    item drop;
+    float value;
+};
+
+monster lowDrop(){
+    lowDropTarget[int] targets;
+    foreach mon in $monsters[Gurgle the Turgle, nutmeg anemone, kelpie (lady form),
+            kelpie (horse form), Yuleviathan, peppermint eel, Crimbylow, Tin of Submardines,
+            gingerbread maw, icingfish, giant potato, moai, messenger RNA, Section 11, Norwhal]{
+        lowDropTarget best = new lowDropTarget(mon, $item[none], -1);
+        foreach idx, rec in item_drops_array(mon){
+            // rec.rate is a float; 0 means mafia doesn't know the rate, not a rare drop.
+            if (rec.rate <= 0 || rec.rate >= 1 || !rec.drop.tradeable)
+                continue;
+            float value = max(0, mall_price(rec.drop)) * rec.rate / 100.0;
+            if (value > best.value)
+                best = new lowDropTarget(mon, rec.drop, value);
+        }
+        if (best.drop != $item[none])
+            targets[count(targets)] = best;
+    }
+    if (count(targets) == 0)
+        abort("lowDrop(): none of the target monsters are in the locket");
+    sort targets by -value.value;
+    foreach idx, t in targets{
+        print("lowDrop: " + t.mon + " -> " + t.drop + " (" + t.value.to_int()
+            + " per fight, " + shop_amount(t.drop) + " in store)", "blue");
+    }
+    foreach idx, t in targets{
+        if (shop_amount(t.drop) > 0)
+            continue;
+        return t.mon;
+    }
+    return targets[0].mon;
+}
+
+void forceNoncombats(){
+    uneffectDebuffs();
+    NCforce(true);
+    if (get_property("questM16Temple") != "finished" && get_property("seaAftercore") == "true"){
+        while (get_property("noncombatForcerActive") == "true" && get_property("questM16Temple") != "finished")
+            findHiddenTemple();
+    } else if ((get_property("questL06Friar") == "started" || get_property("questL06Friar") == "step1") && dayType() == 0 && get_property("seaAftercore") == "true"){
+        if (get_property("questL06Friar") == "started")
+            visit_url("friars.php?action=friars");
+        while (get_property("noncombatForcerActive") == "true" && (get_property("questL06Friar") == "started" || get_property("questL06Friar") == "step1")){
+            friars();
+        }
+    } else if (get_property("noncombatForcerActive") == "true"){
+        if (dayType() == 1)
+            cli_execute("ash import farto;shadowRealmNCForce()");
+        else   
+            abort("Have NCForces that should have been spent. This is a bug. Let FS know");
+    }
+}
+
+// ─── PER-TURN UPKEEP (postAdv) ───────────────────────────────────────────────
+
+// Burn the day's Law of Averages on a farming day (dayType 1) once under 98 adventures.
+void lawOfAverages(){
+    if (my_adventures() < 98 && get_property("_lawOfAveragesUsed") == "0" && dayType() == 1 && have_item($item[law of averages]))
+        use($item[law of averages]);
+}
+
+// Spend built-up sweat: booze first (also clears inebriety), otherwise Sweat-Ade
+// once pantsgiving is maxed and it is worth the turn.
+void sweatpants(){
+    if (get_property("_sweatOutSomeBoozeUsed").to_int() < 3 && my_inebriety() > 3 && get_property("sweat").to_int() >= 25)
+        use_skill($skill[sweat out some booze]);
+    else if (to_int(get_property("_pantsgivingCount")) >= 500 && ((dayType() == 0 && my_adventures() > 100) || dayType() == 1) && get_property("sweat").to_int() >= 50){
+        use_skill($skill[Make Sweat-Ade]);
+    }
+}
+
+boolean setupVykea(){
+    if (get_property("_VYKEACompanionLevel").to_int() > 0)
+        return true;
+
+    if (!retrieve_item(1,$item[VYKEA hex key]))
+        return false;
+
+    return cli_execute("create level 5 couch");
+}
+
+// Send the autumn-aton to the next zone that still grants an upgrade (parsing the
+// use page for the option ids), preferring anything but the Shadow Rift, then the
+// Shadow Rift, then noob cave as a fallback.
+void upgradeAutumnaton(){
+    use($item[autumn-aton]);
+    string [string] upgradeLocation = {
+        "mid indoor":"rightleg1",
+        "low underground":"leftleg1",
+        "mid outdoor":"rightarm1",
+        "low indoor":"leftarm1",
+        "high underground":"collectionprow1"
+    };
+
+    string autumnOptions = visit_url("inv_use.php?" + my_hash() + "&which=3&whichitem=10954");
+
+    location [int] offered;
+    boolean riftOffered;
+    matcher m = create_matcher(
+        "<option\\s+value=\"([0-9]+)\">\\s*([^<]+?)\\s*</option>",
+        autumnOptions
+    );
+    while (m.find()) {
+        location loc = to_location(to_int(m.group(1)));
+        offered[count(offered)] = loc;
+        if (loc == $location[Shadow Rift (The Misspelled Cemetary)])
+            riftOffered = true;
+    }
+
+    foreach i, loc in offered {
+        string part = upgradeLocation[loc.difficulty_level + " " + loc.environment];
+        if (part == "" || contains_text(get_property("autumnatonUpgrades"), part) || contains_text(loc.to_string(), "Shadow Rift"))
+            continue;
+        cli_execute("autumnaton send " + loc);
+        return;
+    }
+    cli_execute("autumnaton send " + (riftOffered ? "Shadow Rift" : "noob cave"));
+}
+
 void freeKillTurnGuard(){
     if (get_property("script") != "FreeKill" || my_location() == $location[the hidden temple])
         return;
@@ -574,6 +796,16 @@ void freeKillTurnGuard(){
         set_property("LastFKTurn",total_turns_played());
         abort("accidental turn spent during free kill");
     }
+}
+
+int pantsgivingAvailable(){
+    if (dayType() == 0)
+        return -1;
+    int count = get_property("_pantsgivingCount").to_int();
+    if (count >= 500) return 3;
+    if (count >= 50)  return 2;
+    if (count >= 5)   return 1;
+    return -1;
 }
 
 record boneStep {
@@ -622,16 +854,6 @@ void endOfDayHandling(){
         cli_execute("CONSUME NIGHTCAP");
         cli_execute("equip drunkula's wineglass; unequip devilbone rosary; unequip angelbone dice; familiar cookbookbat");
     }
-}
-
-int pantsgivingAvailable(){
-    if (dayType() == 0)
-        return -1;
-    int count = get_property("_pantsgivingCount").to_int();
-    if (count >= 500) return 3;
-    if (count >= 50)  return 2;
-    if (count >= 5)   return 1;
-    return -1;
 }
 
 void postAdv(){
@@ -728,214 +950,7 @@ void postAdv(){
     }
 }
 
-void forceNoncombats(){
-    uneffectDebuffs();
-    NCforce(true);
-    if (get_property("questM16Temple") != "finished" && get_property("seaAftercore") == "true"){
-        while (get_property("noncombatForcerActive") == "true" && get_property("questM16Temple") != "finished")
-            findHiddenTemple();
-    } else if ((get_property("questL06Friar") == "started" || get_property("questL06Friar") == "step1") && dayType() == 0 && get_property("seaAftercore") == "true"){
-        if (get_property("questL06Friar") == "started")
-            visit_url("friars.php?action=friars");
-        while (get_property("noncombatForcerActive") == "true" && (get_property("questL06Friar") == "started" || get_property("questL06Friar") == "step1")){
-            friars();
-        }
-    } else if (get_property("noncombatForcerActive") == "true"){
-        if (dayType() == 1)
-            cli_execute("ash import farto;shadowRealmNCForce()");
-        else   
-            abort("Have NCForces that should have been spent. This is a bug. Let FS know");
-    }
-}
-
-int backstageCount(int side){
-    boolean [item] gifts = $items[gin-soaked blotter paper, beer-scented teddy bear, giant marshmallow];
-    if (side == 2)
-        gifts = $items[booze-soaked cherry, comfy pillow, sponge cake];
-    int n;
-    foreach it in gifts
-        n += item_amount(it);
-    return n;
-}
-
-record svenGift {
-    string member;
-    item fallback;
-};
-
-svenGift [item] svenGifts = {
-    $item[beer-scented teddy bear]: new svenGift("Stinkface", $item[gin-soaked blotter paper]),
-    $item[booze-soaked cherry]:     new svenGift("Flargwurm", $item[sponge cake]),
-    $item[comfy pillow]:            new svenGift("Jim",       $item[sponge cake]),
-    $item[giant marshmallow]:       new svenGift("Bognort",   $item[gin-soaked blotter paper])
-};
-
-void azazelUnicornQuest(){
-    print("Farto: Azazel Quest");
-    if (get_property("questM10Azazel") != "finished"){
-        uneffectDebuffs();
-        if (get_property("questL06Friar") == "started")
-            visit_url("friars.php?action=friars");
-        location [item] friarItemLocations = {
-            $item[dodecagram]: $location[the dark neck of the woods],
-            $item[box of birthday candles]: $location[the dark heart of the woods],
-            $item[eldritch butterknife]: $location[the dark elbow of the woods]
-        };
-        foreach friarItem in friarItemLocations {
-            while (item_amount(friarItem) == 0 && get_property("questL06Friar") == "step1"){
-                if (get_property("questL05Goblin") == "started" && get_property("noncombatForcerActive") == false && get_property("_spikolodonSpikeUses").to_int() < 5) {
-                    outskirts();
-                } else {
-                    set_property("maxOverride","-combat");
-                    if (get_property("noncombatForcerActive") == false)
-                        swordPrep();
-                    adv1(friarItemLocations[friarItem],0,"");
-                }
-            }
-        }
-        if (get_property("questL06Friar") == "step2")
-            visit_url("friars.php?action=ritual");
-        if (get_property("questL06Friar") == "finished"){
-            //BC of the combat buffs, which is unusual, doing all at once
-            while (item_amount($item[observational glasses]) == 0){
-                set_property("maxOverride","combat");
-                swordPrep();
-                if (numeric_modifier("combat rate") < 35)
-                    cli_execute("gain 35 combat rate 100 spendperturn");
-                if (have_effect($effect[Apriling Band Battle Cadence]) == 0 && total_turns_played() >= get_property("nextAprilBandTurn").to_int())
-                    cli_execute("aprilband effect c");
-                adv1($location[The Laugh Floor],0,"");
-            }
-            if ((backstageCount(1) < 2 || backstageCount(2) < 2) && item_amount($item[Azazel's unicorn]) == 0){
-                if (have_effect($effect[Patent Aggression]) == 0){
-                    set_property("maxOverride","-combat");
-                    swordPrep();
-                    adv1($location[Infernal Rackets Backstage],0,"");
-                }
-            }
-        }
-    }
-    if (backstageCount(1) > 1 && backstageCount(2) > 1 && item_amount($item[observational glasses]) > 0){
-        cli_execute("equip acc3 observational glasses; acquire 5 bus pass; acquire 5 imp air");
-        visit_url("pandamonium.php?action=moan");
-        visit_url("pandamonium.php?action=moan");
-        visit_url("pandamonium.php?action=mourn");
-        visit_url("pandamonium.php?action=mourn&preaction=observe");
-        visit_url("pandamonium.php?action=sven");
-        foreach gift, sg in svenGifts {
-            visit_url("pandamonium.php?action=sven");
-            item give = item_amount(gift) > 0 ? gift : sg.fallback;
-            visit_url("pandamonium.php?action=sven&bandmember=" + sg.member + "&togive=" + to_int(give) + "&preaction=try");
-        }
-        visit_url("pandamonium.php?action=temp");
-        if (item_amount($item[steel margarita]) > 0)
-            drink($item[steel margarita]);
-    }
-}
-
-familiar bonusFam(){ //add CBB
-    if (get_property("_mapToACandyRichBlockDrops").to_int() < 1)
-        return $familiar[jill-of-all-trades];
-    return $familiar[mini kiwi];
-}
-
-void chargeFams(){
-    if (!can_adventure($location[An Overgrown Shrine (Southeast)]))
-        return;
-    set_property("maxOverride","familiar weight");
-    adv1($location[An Overgrown Shrine (Southeast)]);
-    use_familiar(bonusFam());
-    equip($item[antique machete]);
-    parachuteTo(1426);
-    if (my_spleen_use() > 15)
-        equip($item[angelbone totem]);
-}
-
-void level11Sprint(){
-    boolean allLooksUp = have_effect($effect[everything looks red]) > 3 && have_effect($effect[everything looks yellow]) > 3 && have_effect($effect[everything looks green]) > 3;
-    if (!allLooksUp && my_adventures() >= 60)
-        return;
-    if (get_property("questM16Temple") != "finished")
-        return;
-    if (get_property("questL11Black") == "step2"){
-        retrieve_item($item[forged identification documents]);
-        if (item_amount($item[bitchin' meatcar]) == 0)
-            retrieve_item($item[bitchin' meatcar]);
-        adv1($location[The Shore, Inc. Travel Agency]);
-    } else if (get_property("questL11Worship") == "step1" || get_property("questL11Worship") == "step2"){
-        use($item[stone wool]);
-        if (item_amount($item[the Nostril of the Serpent]) == 0 && get_property("questL11Worship") != "step2"){
-            set_property("choiceAdventure582","1");
-            set_property("choiceAdventure579","2");
-            while (have_effect($effect[Stone-Faced]) > 0)
-                adv1($location[the hidden temple]);
-        } else {
-            set_property("choiceAdventure582","2");
-            while (have_effect($effect[Stone-Faced]) > 0){
-                adv1($location[the hidden temple]);
-                visit_url("main.php");
-                run_choice(-1);
-            }
-        }
-    }
-    unlock_zeppelin();
-    if (get_property("questL11Worship") == "step3" && get_property("questL11Spare") == "unstarted"){
-        while(get_property("questL11Spare") == "unstarted"){
-            cli_execute("acquire antique machete;equip weapon antique machete");
-            set_property("maxOverride","familiar exp, -weapon");
-            set_property("mainOverride"," ");
-            set_property("famOverride","chest mimic");
-            adv1($location[An Overgrown Shrine (Southeast)]);
-        }
-        set_property("maxOverride","");
-        set_property("mainOverride","");
-    }
-}
-
-void ELKPrep(){
-    if (have_effect($effect[everything looks yellow]) == 0)
-        set_property("shirtOverride",",equip parka (dilophosaur)");
-    else if (have_effect($effect[everything looks red]) == 0)
-        set_property("acc1Override",", equip everfull dart holster");
-}
-
-record lowDropTarget {
-    monster mon;
-    item drop;
-    float value;
-};
-
-monster lowDrop(){
-    lowDropTarget[int] targets;
-    foreach mon in $monsters[Gurgle the Turgle, nutmeg anemone, kelpie (lady form),
-            kelpie (horse form), Yuleviathan, peppermint eel, Crimbylow, Tin of Submardines,
-            gingerbread maw, icingfish, giant potato, moai, messenger RNA, Section 11, Norwhal]{
-        lowDropTarget best = new lowDropTarget(mon, $item[none], -1);
-        foreach idx, rec in item_drops_array(mon){
-            // rec.rate is a float; 0 means mafia doesn't know the rate, not a rare drop.
-            if (rec.rate <= 0 || rec.rate >= 1 || !rec.drop.tradeable)
-                continue;
-            float value = max(0, mall_price(rec.drop)) * rec.rate / 100.0;
-            if (value > best.value)
-                best = new lowDropTarget(mon, rec.drop, value);
-        }
-        if (best.drop != $item[none])
-            targets[count(targets)] = best;
-    }
-    if (count(targets) == 0)
-        abort("lowDrop(): none of the target monsters are in the locket");
-    sort targets by -value.value;
-    foreach idx, t in targets{
-        print("lowDrop: " + t.mon + " -> " + t.drop + " (" + t.value.to_int()
-            + " per fight, " + shop_amount(t.drop) + " in store)", "blue");
-    }
-    foreach idx, t in targets{
-        if (shop_amount(t.drop) > 0)
-            continue;
-        return t.mon;
-    }
-    return targets[0].mon;
-}
+// ─── SPEND ADVENTURE ─────────────────────────────────────────────────────────
 
 void spendAdv(){
     set_property("inSpendAdv","true");
@@ -1086,6 +1101,8 @@ void spendAdv(){
     }
     level11Sprint();
 }
+
+// ─── ENTRY ───────────────────────────────────────────────────────────────────
 
 void main(){
     string boof = get_property("betweenBattleScript");
