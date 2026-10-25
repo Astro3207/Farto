@@ -439,17 +439,20 @@ void preAdv(){
         else if (have_item($item[protonic accelerator pack]) && get_property("questPAGhost") == "unstarted")
             append(maximize, ", equip protonic accelerator pack");
         // Shirt
-        append(maximize, boneOr($item[devilbone corset], get_property("shirtOverride")));
+        append(maximize, get_property("shirtOverride"));
         // Pants
-        string pants = boneOr($item[devilbone greaves], get_property("pantsOverride"));
+        string pants = get_property("pantsOverride");
         if (pants != "")
             append(maximize, pants);
         else if (my_fullness() == fullness_limit() && get_property("_pantsgivingFullness").to_int() < 2 && get_property("_pantsgivingCount").to_int() >= 50)
             append(maximize, ", equip pantsgiving");
         // Accessories
-        append(maximize, boneOr($item[angelbone dice], get_property("acc1Override")));
-        append(maximize, boneOr($item[angelbone chopsticks], get_property("acc2Override")));
-        append(maximize, boneOr($item[devilbone rosary], get_property("acc3Override")));
+        append(maximize, get_property("acc1Override"));
+        if (get_property("acc2Override") != "")
+            append(maximize, get_property("acc2Override"));
+        else if (MobiusNCReady())
+            append(maximize, ", equip mobius ring");
+        append(maximize, get_property("acc3Override"));
         // Fam equip
         append(maximize, famEquip());
     } else {

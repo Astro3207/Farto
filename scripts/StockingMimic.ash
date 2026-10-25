@@ -1092,7 +1092,7 @@ boolean looseFK(){
         set_property("maxOverride","familiar weight");
         set_property("offOverride",", equip sheriff pistol");
         set_property("acc1Override",", equip sheriff moustache");
-        set_property("acc3Override",", equip sheriff badge");
+        set_property("acc2Override",", equip sheriff badge");
         return true;
     }
     return false;
