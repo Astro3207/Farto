@@ -872,7 +872,7 @@ void postAdv(){
     if (get_property("_seadentWaveUsed") == "false"){
         if (dayType() == 0 && contains_text(get_property("lastEncounter"),"gingerbread")){
             use_skill($skill[Sea *dent: Summon a Wave]);
-        } else if (dayType() == 1 && contains_text(my_location().to_string(),"shadow")){
+        } else if (dayType() == 1 && contains_text(my_location().to_string(),"Shadow")){
             location flooded = my_location();
             use_skill($skill[Sea *dent: Summon a Wave]);
             if (get_property("_seadentWaveZone") == "Shadow Rift")
