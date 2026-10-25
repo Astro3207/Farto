@@ -901,10 +901,6 @@ void shadowRealmFK(){
         use($item[closed-circuit pay phone]);
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
     }
-    if ($monster[shadow slab].elemental_resistance > 85){
-        if (have_item($item[Congressional Medal of Insanity]))
-            set_property("acc3Override",",equip congressional medal of");
-    }
     if (get_property("questRufus") == "unstarted")
         use($item[closed-circuit pay phone]);
     if (get_property("questRufus") == "started" && get_property("rufusQuestType") == "items"){
@@ -1091,7 +1087,7 @@ boolean looseFK(){
         set_property("maxOverride","familiar weight");
         set_property("offOverride",", equip sheriff pistol");
         set_property("acc1Override",", equip sheriff moustache");
-        set_property("acc2Override",", equip sheriff badge");
+        set_property("acc3Override",", equip sheriff badge");
         return true;
     }
     return false;
@@ -2421,7 +2417,10 @@ void bulkFKD2(){
     if (looseFK()){
         set_property("FKRunEligible","true");
         while (have_effect($effect[shadow affinity]) > 0){
-            set_property("acc1Override",", equip congressional medal of insanity");
+            if ($monster[shadow slab].elemental_resistance > 85){
+                if (have_item($item[Congressional Medal of Insanity]))
+                    set_property("acc3Override",",equip congressional medal of");
+            }
             shadowRealmFK();
         }
         set_property("FKRunEligible","false");
