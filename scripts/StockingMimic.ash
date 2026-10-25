@@ -1562,7 +1562,6 @@ void snowman(){
     try {
         step("phase: weakMonsters snowman");
         set_property("subscript","weakling");
-        set_property("acc1Override",", equip congressional medal of insanity");
         if (get_property("snojoSetting") == "NONE"){
             int mode = 1;
             if (mall_price($item[ice rice]) >= max(mall_price($item[ancient medicinal herbs]),mall_price($item[iced plum wine])))
@@ -2422,6 +2421,7 @@ void bulkFKD2(){
     if (looseFK()){
         set_property("FKRunEligible","true");
         while (have_effect($effect[shadow affinity]) > 0){
+            set_property("acc1Override",", equip congressional medal of insanity");
             shadowRealmFK();
         }
         set_property("FKRunEligible","false");
@@ -2429,6 +2429,7 @@ void bulkFKD2(){
     step("phase: bulkFK NC force");
     NCforce(false);
     while (get_property("noncombatForcerActive") == true || get_property("encountersUntilSRChoice").to_int() == 0){
+        set_property("acc1Override",", equip congressional medal of insanity");
         shadowRealmFK();
         NCforce(false);
     }
