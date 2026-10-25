@@ -2,87 +2,32 @@ import iotm.ash;
 
 void astral(){
     //get salty mouth the night before
-    if (item_amount($item[astral six-pack])>0){
+    if (item_amount($item[astral six-pack])>0)
         use($item[astral six-pack]);
-    }
     if (item_amount($item[astral pilsner]) > 0){
         cli_execute("cast ode");
         drink(item_amount($item[astral pilsner]), $item[astral pilsner]);
     }
 }
 void timeArrow(){
-    if (to_int(get_property("valueOfAdventure"))*5 > mall_price($item[time's arrow]) || my_adventures() < 3){
+    if (to_int(get_property("valueOfAdventure"))*5 > mall_price($item[time's arrow])){
         retrieve_item($item[time's arrow]);
         cli_execute("csend time's arrow to botticelli");
     }
 }
 void clanAdv(){
     if (to_int(get_property("valueOfAdventure")) > 10000){
-        cli_execute("/whitelist fart sauce annex");
-        int n;
-        repeat {
+        whitelist("Fart Sauce Annex");
+        for i from 1 to 15
             visit_url("clan_buytraining.php?action=buyround&members=1&size=1&whichgift=9");
-            n += 1;
-        } until (n>=15);
     }
 }
+// Day-2 Cup of 13s: same Runneth picks as the free-kill run, but each adventure
+// an ingredient adds is also worth valueOfAdventure.
 void cupOf13s(){
     if (my_inebriety() >= inebriety_limit())
         return;
-    if (get_property("_cupOf13sJewels") == 13){
-        if (to_int(get_property("valueOfAdventure")) > 10000){
-            if (closet_amount($item[eelskin shield]) > 2){
-                take_closet($item[eelskin shield]);
-            }
-            cli_execute("acquire 2 WA");
-            visit_url("inventory.php?action=cupof13s");
-            visit_url("choice.php?option=1&whichchoice=1601&"+my_hash()+"&whichitem1=3519&whichitem2=623&whichitem3=623");
-        } else {
-            cli_execute("make 6 asbestos meat stack");
-            visit_url("inventory.php?action=cupof13s");
-            visit_url("choice.php?option=1&whichchoice=1601&"+my_hash()+"&whichitem1=376&whichitem2=376&whichitem3=376");
-            visit_url("inventory.php?action=cupof13s");
-            visit_url("choice.php?option=1&whichchoice=1601&"+my_hash()+"&whichitem1=376&whichitem2=376&whichitem3=376");
-        }
-    }
-}
-
-void legendaryPasta(){
-    if (get_property("_legendaryNoodlesSpleen") == false){
-        set_property("choiceAdventure1599","1");
-        item [item] pastaIngredient = {
-            $item[hot honey ant]:$item[Formica e Pepe],
-            $item[tomb aspic]:$item[Tubetto Gelatto],
-            $item[later tots]:$item[Gnocci Domani]
-        };
-        item cheap_pasta;
-        int lowest_value = 999999999;
-
-        foreach it in pastaIngredient {
-            if (it.mall_price() < lowest_value) {
-                lowest_value = it.mall_price();
-                cheap_pasta = pastaIngredient[it];
-            }
-        }
-        use($item[mini kiwi aioli]);
-        eat(cheap_pasta);
-    }
-}
-
-int baseMeat(){
-    if (get_property("baseMeat") == "")
-        return 300;
-    else
-        return get_property("baseMeat").to_int();
-}
-
-// meat you'd expect to gain from an item's granted effect's Meat Drop bonus alone,
-// on top of whatever CONSUME already values the item's adventures/organ fill at
-int total_meat_value(item it){
-    if (numeric_modifier(itemEffectNotes(it).ef,"meat drop") > 0)
-        return (numeric_modifier(itemEffectNotes(it).ef,"meat drop")/100) * baseMeat() * itemEffectNotes(it).turns;
-    else
-        return 0;
+    drinkCupOf13s(get_property("valueOfAdventure").to_float());
 }
 
 void partialConsume(int leaveStomach, int leaveLiver, int leaveSpleen){
@@ -99,32 +44,28 @@ void yeti(){
         retrieve_item($item[doc clock's thyme cocktail]);
         drink($item[doc clock's thyme cocktail]);
     }
-    if ($familiar[cooler yeti].experience > 400 && get_property("_coolerYetiAdventures") == "false"){
-        if (get_property("_docClocksThymeCocktailDrunk") == "false"){
-            if (my_fullness() < 2)
-                cli_execute("CONSUME ORGANS 2 3 0");
-            use_familiar($familiar[cooler yeti]);
-            visit_url("main.php?talktoyeti=1", false);    
-            run_choice(2);
-            cli_execute("drink doc clock's t");
-        } else {
-            use_familiar($familiar[cooler yeti]);
-            visit_url("main.php?talktoyeti=1", false);    
-            run_choice(2);
-            retrieve_item($item[Hodgman's blanket]);
-            drink($item[Hodgman's blanket]);
-        }
+    if ($familiar[cooler yeti].experience <= 400 || get_property("_coolerYetiAdventures") != "false")
+        return;
+    boolean thymeLeft = get_property("_docClocksThymeCocktailDrunk") == "false";
+    if (thymeLeft && my_fullness() < 2)
+        cli_execute("CONSUME ORGANS 2 3 0");
+    yetiTalk();
+    if (thymeLeft)
+        drink($item[doc clock's thyme cocktail]);
+    else {
+        retrieve_item($item[Hodgman's blanket]);
+        drink($item[Hodgman's blanket]);
     }
 }
 
-// savedResources() marks these four dailies as already-used so nothing else
-// tries to spend them mid-run. unsaveResources() is supposed to give them
-// back afterward, but resetting straight to a fixed "unused" value is only
-// correct if they actually were unused before savedResources() ran -- if
-// e.g. _aug16Cast was already "true" for the day, blindly clearing it back
-// to "false" would lie about that resource being available again. Record
-// the real prior value in a backup pref before overwriting, and restore
-// that instead of a fixed default.
+// Clear the song / buff effects that shouldn't ride along into the organ fill.
+void dropOrganBuffs(){
+    foreach ef in $effects[dirge of dreadfulness, Ur-Kel's Aria of Annoyance,Inigo's Incantation of Inspiration]{
+        if (have_effect(ef) > 0)
+            cli_execute("uneffect "+ef);
+    }
+}
+
 string [string] saveResourceBackupProp = {
     "_docClocksThymeCocktailDrunk": "pcBackup_docClocksThymeCocktailDrunk",
     "currentMojoFilters": "pcBackup_currentMojoFilters",
@@ -150,23 +91,31 @@ void unsaveResources(){
         set_property(prop, get_property(backup));
 }
 
-boolean oneMore(){
-    savedResources();
-    foreach ef in $effects[dirge of dreadfulness, Ur-Kel's Aria of Annoyance,Inigo's Incantation of Inspiration]{
-        if (have_effect(ef) > 0)
-            cli_execute("uneffect "+ef);
-    }
-    cli_execute("CONSUME ORGANS 0 1 0");
-    unsaveResources();
-    return true;
-}
-
 void eatSausage(){
     while (get_property("_sausagesEaten").to_int() < 23){
-        eat(1,$item[magical sausage]);
+        if (!eat(1,$item[magical sausage]))
+            break;
         manaBurn(700);
     }
 }
+
+// Day-1 organ expanders, used once each when their daily pref is still "false".
+// onlyIfHave: don't buy it, just skip; needsDrunk: only once inebriety > 0.
+record dailyUse {
+    string pref;
+    item it;
+    boolean onlyIfHave;
+    boolean needsDrunk;
+};
+
+dailyUse [int] organExpanders = {
+    0: new dailyUse("_borrowedTimeUsed",         $item[borrowed time],           false, false),
+    1: new dailyUse("_syntheticDogHairPillUsed", $item[synthetic dog hair pill], true,  false),
+    2: new dailyUse("_distentionPillUsed",       $item[distention pill],         true,  true),
+    3: new dailyUse("_sweetToothUsed",           $item[sweet tooth],             false, false),
+    4: new dailyUse("_voraciTeaUsed",            $item[Cuppa Voraci tea],        false, false),
+    5: new dailyUse("_sobrieTeaUsed",            $item[Cuppa Sobrie tea],        false, true)
+};
 
 void main(){
     if (dayType() == 0 && get_campground() contains $item[Source Terminal])
@@ -175,49 +124,33 @@ void main(){
         return;
     if (item_amount($item[Mayo Minder&trade;]) > 0 && get_property("mayoMinderSetting") != "")
         use($item[Mayo Minder&trade;]);
- //   legendaryPasta();
     timeArrow();
     clanAdv();
     eatSausage();
     if (dayType() == 1){
         cupOf13s();
-        cli_execute("uneffect ur-kel");
+        dropOrganBuffs();
         yeti();
         astral();
-        if (get_property("_borrowedTimeUsed") == false){
-        //    use($item[borrowed time]);
-        }
-        foreach ef in $effects[dirge of dreadfulness, Ur-Kel's Aria of Annoyance,Inigo's Incantation of Inspiration]{
-            if (have_effect(ef) > 0)
-                cli_execute("uneffect "+ef);
-        }
         if (isFartScauce())
             set_property("valueOfAdventure","9000");
-   //     abort();
         partialConsume(0,2,0);
     } else {
         savedResources();
-        if (get_property("_borrowedTimeUsed") == "false")
-            use($item[borrowed time]);
-        if (get_property("_syntheticDogHairPillUsed") == "false" && item_amount($item[synthetic dog hair pill]) > 0)
-            use($item[synthetic dog hair pill]);
-        if (get_property("_distentionPillUsed") == "false" && item_amount($item[distention pill]) > 0 && my_inebriety() > 0)
-            use($item[distention pill]);
-        if (get_property("_sweetToothUsed") == "false")
-            use($item[sweet tooth]);
-        if (get_property("_voraciTeaUsed") == "false")
-            use($item[Cuppa Voraci tea]);
-        if (get_property("_sobrieTeaUsed") == "false" && my_inebriety() > 0)
-            use($item[Cuppa Sobrie tea]);
-        foreach ef in $effects[dirge of dreadfulness, Ur-Kel's Aria of Annoyance,Inigo's Incantation of Inspiration]{
-            if (have_effect(ef) > 0)
-                cli_execute("uneffect "+ef);
+        foreach i, u in organExpanders {
+            if (get_property(u.pref) != "false")
+                continue;
+            if (u.onlyIfHave && item_amount(u.it) == 0)
+                continue;
+            if (u.needsDrunk && my_inebriety() == 0)
+                continue;
+            use(u.it);
         }
+        dropOrganBuffs();
         if (isFartScauce())
             set_property("valueOfAdventure","5400");
         if (get_property("_milkOfMagnesiumUsed") == "false")
             cli_execute("CONSUME ORGANS 0 0 0");
-    //    partialConsume(10,10,15);
         unsaveResources();
     }
 }

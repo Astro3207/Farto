@@ -1,51 +1,76 @@
 import iotm.ash;
+import StockingMimic.ash;
 
 // ═══ Dinner.ash ══════════════════════════════════════════════════════════════
-// End-of-day wind-down chores. This pass is a pure reshape of the old flat
-// top-to-bottom script into named phases -- every condition and cli_execute
-// string is unchanged, just pulled into functions and called in the same
-// order from main().
-
-void step(string msg){
-    print("DN: " + msg, "blue");
-}
+// End-of-day wind-down chores.
 
 // ─── PHASES ──────────────────────────────────────────────────────────────────
 
-// Heavy familiar weight (>350): top off spleen with Extrovermectin/mojo
-// filters, then fill the last few booze slots (hot socks at 3-from-limit,
-// vintage smart drink once maxed).
-void heavyWeightBooze(){
-    int n = fullness_limit() - my_fullness() + to_int(!have_equipped($item[devilbone corset])) + to_int(!have_equipped($item[angelbone chopsticks]));
-    if (n == 3){
+void fillOrgans(){
+    int availableLiver = inebriety_limit() - my_inebriety() + to_int(!have_equipped($item[angelbone dice])) + to_int(!have_equipped($item[devilbone rosary])) + to_int((my_familiar() != $familiar[stooper]));
+    if (availableLiver > 0)
+        dinnerLiverSpleen();
+    int availableStomach = fullness_limit() - my_fullness() + to_int(!have_equipped($item[devilbone corset])) + to_int(!have_equipped($item[angelbone chopsticks]));
+    if (availableStomach >= 3){
         equip($item[devilbone corset]);
         equip($item[angelbone chopsticks]);
+        eat($item[eldritch mushroom pizza]);
     }
-    if (my_inebriety() <= inebriety_limit()){
-        equip($slot[acc3],$item[devilbone rosary]);
-        equip($slot[acc2],$item[angelbone dice]);
-        use_familiar($familiar[stooper]);
-        cli_execute("uneffect ur-kel; cast 2 ode");
-        cli_execute("/whitelist hyrule");
-        cli_execute("drink hot socks");
-        drink($item[vintage smart drink]);
+}
+
+void augSkills(){
+    if (get_property("_augSkillsCast").to_int() < 5){
+        cli_execute("cast Aug. 13th");
+        if (get_property("_augSkillsCast").to_int() < 5)
+            cli_execute("cast Aug. 7th");
     }
-    if (my_spleen_use() < spleen_limit()){
-        equip($item[devilbone greaves]);
-        equip($item[angelbone totem]);
-        int toChew = floor((spleen_limit()-my_spleen_use())/2);
-        chew (toChew,$item[Extrovermectin&trade;]);
-        int mojo = 3-get_property("currentMojoFilters").to_int();
-        use(mojo,$item[mojo filter]);
-        toChew = floor((spleen_limit()-my_spleen_use())/2);
-        chew (toChew,$item[Extrovermectin&trade;]);
+}
+
+void certificates(){
+    while (item_amount($item[Stock Certificate]) > 0){
+        string turns = get_property("stockCertificateTurns");
+        string[int] stocks = split_string(turns, ",");
+        if (stocks[0] == "" || total_turns_played() - stocks[0].to_int() < 500)
+            break;
+        if (!use(1, $item[Stock Certificate]))
+            break;
+        // mafia didn't drop the used certificate's turn -- stop rather than loop
+        if (get_property("stockCertificateTurns") == turns)
+            break;
     }
+}
+
+void YetiRO(){
+    if ($familiar[cooler yeti].experience > 400 && get_property("_coolerYetiAdventures") == "false")
+        yetiTalk();
 }
 
 void pvpCombat(){
     int peevp = pvp_attacks_left();
-    if (peevp > 70) {
-        cli_execute("pvpcombat");
+    if (peevp > 70)
+        cli_execute("PVP_MAB");
+}
+
+void takerspaceStart(){
+    if (get_property("_workshedItemUsed") == "false" && get_workshed( ) != $item[TakerSpace letter of Marque])
+        cli_execute("use takerspace");
+}
+
+void finalOutfit(){
+    if (numeric_modifier("familiar weight") > 350)
+        cli_execute("maximize pvp fights, equip spacegate military insignia, equip ratskin pajama pants");
+    else
+        cli_execute("familiar jill; maximize adv");
+}
+
+void closingMeatChores(){
+    if (get_property("_universalSeasoningsUsed").to_int() == 0)
+        use($item[universal seasoning]);
+    take_closet(closet_amount($item[sand dollar]),$item[sand dollar]);
+    cli_execute("philter");
+    if (my_meat() - 3000000 > 0){
+        int new_meat = my_meat() - 3000000;
+        visit_url("closet.php?addtake=add&action=addtakeclosetmeat&quantity=" + new_meat);
     }
 }
 
@@ -69,94 +94,11 @@ void pvpCleanup(){
     batch_close();
 }
 
-// Cash in Stock Certificates that have matured (500+ turns old).
-// stockCertificateTurns is the acquisition turn of each held certificate,
-// oldest first; re-read it every pass since using one changes the list.
-void certificates(){
-    while (item_amount($item[Stock Certificate]) > 0){
-        string turns = get_property("stockCertificateTurns");
-        string[int] stocks = split_string(turns, ",");
-        if (stocks[0] == "" || total_turns_played() - stocks[0].to_int() < 500)
-            break;
-        if (!use(1, $item[Stock Certificate]))
-            break;
-        // mafia didn't drop the used certificate's turn -- stop rather than loop
-        if (get_property("stockCertificateTurns") == turns)
-            break;
-    }
-}
-
-void takerspaceStart(){
-    if (get_property("_workshedItemUsed") == "false" && get_workshed( ) != $item[TakerSpace letter of Marque]){
-        cli_execute("use takerspace");
-    }
-}
-
-void augSkills(){
-    if (get_property("_augSkillsCast") < 5){
-        cli_execute("cast Aug. 13th");
-        if (get_property("_augSkillsCast") < 5)
-            cli_execute("cast Aug. 7th");
-    }
-    if (get_property("_heartstoneLuckUsed") == "false"){
-        use_skill($skill[heartstone: %LUCK]);
-    }
-}
-
-void clockworkMaid(){
-    if (!contains_text(visit_url("campground.php?action=inspectdwelling"),"maid2"))
-        cli_execute("use clockwork maid");
-}
-
-// Weight-gated closing outfit, then refresh inventory.
-void finalOutfit(){
-    if (numeric_modifier("familiar weight") > 350){
-        cli_execute("maximize pvp fights, equip spacegate military insignia, equip ratskin pajama pants");
-    }else
-        cli_execute("familiar jill;maximize adv");
-}
-
-// If more adventures are already banked/incoming than the day can plausibly
-// spend, offer to burn day shorteners on the overflow.
-void dayShorteners(){
-    float wastedAdv = to_float(my_adventures()) + to_float(numeric_modifier("Adventures")) + 40 - 200;
-    if (wastedAdv > 0){
-        if (user_confirm("Use "+ (wastedAdv/5) + " day shorteners?")){
-            use(ceil(wastedAdv/5),$item[day shortener]);
-        }
-    }
-}
-
-// Philter the day's booze, then park anything over 3M meat in the closet.
-void closingMeatChores(){
-    if (get_property("_universalSeasoningsUsed").to_int() == 0)
-        use($item[universal seasoning]);
-    take_closet(closet_amount($item[sand dollar]),$item[sand dollar]);
-    cli_execute("philter");
-    if (my_meat() - 3000000 > 0){
-        int new_meat = my_meat() - 3000000;
-        visit_url("closet.php?addtake=add&action=addtakeclosetmeat&quantity=" + new_meat);
-    }
-}
-
+// ── Fart Scauce only ────────────────────────────────────────────────────────
 string messages(){
     return visit_url("messages.php");
 }
 
-void YetiRO(){
-    if ($familiar[cooler yeti].experience > 400 && get_property("_coolerYetiAdventures") == "false"){
-        use_familiar($familiar[cooler yeti]);
-        visit_url("main.php?talktoyeti=1", false);    
-        run_choice(2);
-    }
-}
-
-// ── Fart Scauce only ────────────────────────────────────────────────────────
-// Personal inbox housekeeping: deletes kmails from a handful of trade bots and
-// every "Loathing Postal Service" package notice on each run. The sender ids are
-// account-specific and the Postal Service sweep is destructive with no prompt
-// (it would eat gift packages, IOTM deliveries, etc.), so it only runs for this
-// character. Every other account skips the whole block.
 void fartScauceInboxCleanup(){
     if (!isFartScauce())
         return;
@@ -177,35 +119,53 @@ void fartScauceInboxCleanup(){
     print( deleted + " messages deleted");
 }
 
+// ─── NOT CALLED ──────────────────────────────────────────────────────────────
+
+void dayShorteners(){
+    float wastedAdv = to_float(my_adventures()) + to_float(numeric_modifier("Adventures")) + 40 - 200;
+    if (wastedAdv > 0){
+        if (user_confirm("Use "+ (wastedAdv/5) + " day shorteners?")){
+            use(ceil(wastedAdv/5),$item[day shortener]);
+        }
+    }
+}
+
+void clockworkMaid(){
+    if (!contains_text(visit_url("campground.php?action=inspectdwelling"),"maid2"))
+        cli_execute("use clockwork maid");
+}
+
 // ─── ENTRY ───────────────────────────────────────────────────────────────────
 
 void main(){
-    step("phase: heavy weight booze");
-    heavyWeightBooze();
-    step("phase: pvp");
-    pvpCombat();
-    step("phase: takerspace");
-    takerspaceStart();
-    step("phase: aug skills");
+    step("phase: nightcap");
+    fillOrgans();
+
+    step("phase: leftover charges");
     augSkills();
-    step("phase: stock certificates");
     certificates();
-    cli_execute ("maximize adv; av-snapshot.ash");
-    YetiRO();
     while ((my_basestat($stat[submoxie]) - 118881) > BCZcost("SweatEquityCasts"))
         use_skill($skill[BCZ: Sweat Equity]);
+    YetiRO();
+
+    step("phase: pvp");
+    pvpCombat();
+
+    step("phase: tomorrow setup");
+    takerspaceStart();
     set_property("banishedPhylaSaved",get_property("banishedPhyla"));
- //   step("phase: clockwork maid");
-   // clockworkMaid();
+
+    step("phase: snapshot");
+    cli_execute ("av-snapshot.ash");
+
     step("phase: final outfit");
     finalOutfit();
-  //  step("phase: day shorteners");
-  //  dayShorteners();
+
     step("phase: closing meat chores");
     closingMeatChores();
     pvpCleanup();
-    if (!contains_text(get_property("thoth19_event_list"),"postFarmD1"))
-        cli_execute("ptrack add postFarmD1");
+    ptrackOnce("postFarmD1");
+
     step("phase: inbox cleanup");
     fartScauceInboxCleanup();
 }
