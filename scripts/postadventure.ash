@@ -945,9 +945,6 @@ void postAdv(){
         set_property("acc1Override", ", equip spring shoes");
         set_auto_attack(0);
         set_location($location[Cobb's Knob Treasury]);
-        if (!cli_execute("preadventure.ash") || my_familiar() != $familiar[peace turkey]
-            || !have_equipped($item[spring shoes]) || !have_skill($skill[Bowl a Curveball]))
-            abort("I don't think we're ready for that treasury - we didn't prep free run properly!");
         adv1($location[cobb's knob treasury]);
         clearOverrides();
     }
