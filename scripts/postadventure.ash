@@ -947,6 +947,10 @@ void postAdv(){
         set_location($location[Cobb's Knob Treasury]);
         adv1($location[cobb's knob treasury]);
         clearOverrides();
+        if (get_property("subscript") == "weakling");{
+            equip($slot[acc3],timeBadge());
+            set_property("acc3Override",", equip " + timeBadge());
+        }
     }
 }
 
