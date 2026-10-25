@@ -41,7 +41,7 @@ void certificates(){
 }
 
 void YetiRO(){
-    if ($familiar[cooler yeti].experience > 400 && get_property("_coolerYetiAdventures") == "false")
+    if ($familiar[cooler yeti].experience >= 400 && get_property("_coolerYetiAdventures") == "false")
         yetiTalk();
 }
 
