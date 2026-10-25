@@ -1015,7 +1015,7 @@ boolean uneffectBuff(){
     effect toRemove;
     int statBuff;
     foreach ef in my_effects( ){
-        if ($effects[wine-befouled, Spiced Out, Chorale of Companionship,Cold Hearted,Heart of Green,In the Depths,Video... Games?,ChibiChanged&trade;] contains ef)
+        if (numeric_modifier(ef,"familiar weight") > 0)
             continue;
         if ((numeric_modifier(ef, to_string(st) + " Percent")/100)*adjBase_Stat[st] > statBuff){
             statBuff = (numeric_modifier(ef, to_string(st) + " Percent")/100)*adjBase_Stat[st];
@@ -1023,7 +1023,7 @@ boolean uneffectBuff(){
         }
     }
     foreach ef in my_effects( ){
-        if ($effects[wine-befouled, Spiced Out, Chorale of Companionship,Cold Hearted,Heart of Green,In the Depths,Video... Games?,ChibiChanged&trade;] contains ef)
+        if (numeric_modifier(ef,"familiar weight") > 0)
             continue;
         if (numeric_modifier(ef, to_string(st)) > statBuff){
             statBuff = numeric_modifier(ef, to_string(st));
