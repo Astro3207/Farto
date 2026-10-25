@@ -1871,7 +1871,7 @@ void locationBasedWeakMonsters(){
     if (looseFK()){
         set_property("FKRunEligible","true");
         while (looseFK()){
-            LBMWPrep (true);
+            LBMWPrep (false);
             pearloP1();
         }
         set_property("FKRunEligible","false");

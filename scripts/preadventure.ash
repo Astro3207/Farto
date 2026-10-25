@@ -254,17 +254,6 @@ string bonusGear(){
 
 // ─── MAXIMIZER SLOT HELPERS ──────────────────────────────────────────────────
 
-// acc2Override as the maximizer should see it. mimicPrep() parks the eternity
-// codpiece there and its callers don't clear it, so it only counts while the
-// fight is still a mimic setup (maxOverride starts with "familiar weight");
-// otherwise acc2 falls through to its normal choices.
-string acc2Override(){
-    string acc2 = get_property("acc2Override");
-    if (contains_text(acc2, "eternity codpiece") && !get_property("maxOverride").starts_with("familiar weight"))
-        return "";
-    return acc2;
-}
-
 string famEquip(){
     if (get_property("famEquipOverride") != "") return get_property("famEquipOverride");
     cli_execute("unequip familiar equipment");
@@ -459,7 +448,7 @@ void preAdv(){
             append(maximize, ", equip pantsgiving");
         // Accessories
         append(maximize, boneOr($item[angelbone dice], get_property("acc1Override")));
-        append(maximize, boneOr($item[angelbone chopsticks], acc2Override()));
+        append(maximize, boneOr($item[angelbone chopsticks], get_property("acc2Override")));
         append(maximize, boneOr($item[devilbone rosary], get_property("acc3Override")));
         // Fam equip
         append(maximize, famEquip());
@@ -532,7 +521,7 @@ void preAdv(){
             else if (vote)
                 append(maximize, ", equip &quot;I Voted!&quot; sticker");
             // Acc2
-            string acc2 = boneOr($item[angelbone chopsticks], acc2Override());
+            string acc2 = boneOr($item[angelbone chopsticks], get_property("acc1Override"));
             if (acc2 != "")
                 append(maximize, acc2);
             else if (have_equipped($item[angelbone dice]))
