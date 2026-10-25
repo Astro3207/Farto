@@ -100,7 +100,7 @@ void bladdering(){
     set_property("maxOverride","combat,-equip drunkula's wineglass");
     set_property("famOverride", "peace turkey");
     set_property("mainOverride",", equip june cleaver");
-    set_property("acc3Override",", equip Ass-Stompers of Violence");
+    set_property("acc3Override",", equip mafia thumb ring");
     if (have_effect($effect[Apriling Band Battle Cadence]) == 0 && total_turns_played() >= get_property("nextAprilBandTurn").to_int())
         cli_execute("aprilband effect c");
     adv1($location[cobb's knob treasury]);
