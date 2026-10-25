@@ -448,10 +448,11 @@ void preAdv(){
             append(maximize, ", equip pantsgiving");
         // Accessories
         append(maximize, get_property("acc1Override"));
-        if (get_property("acc2Override") != "")
-            append(maximize, get_property("acc2Override"));
-        else if (MobiusNCReady())
-            append(maximize, ", equip mobius ring");
+        append(maximize, get_property("acc2Override"));
+    //    if (get_property("acc2Override") != "")
+      //      append(maximize, get_property("acc2Override"));
+        //else if (MobiusNCReady())
+          //  append(maximize, ", equip mobius ring");
         append(maximize, get_property("acc3Override"));
         // Fam equip
         append(maximize, famEquip());
