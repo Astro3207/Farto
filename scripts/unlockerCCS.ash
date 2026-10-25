@@ -590,7 +590,7 @@ void main(int round, monster mob, string page_text) {
     }
 
     if (my_location() == $location[The Laugh Floor] || my_location() == $location[Infernal Rackets Backstage] || my_location() == $location[The Dark Elbow of the Woods]){
-        if (dayType() == 0 && my_class() == $class[seal clubber]){
+        if (dayType() == 0 && my_class() == $class[seal clubber] && have_effect($effect[fishy]) < my_adventures()){
             use_skill($skill[Sea *dent: Talk to Some Fish]);
         }
     }
