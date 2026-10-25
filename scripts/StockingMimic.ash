@@ -998,9 +998,9 @@ void archaeologist(){
 // when there was nothing to shrug or the shrug failed.
 boolean uneffectBuff(){
     float [stat] adjBase_Stat = {
-        $stat[muscle]:30,
+        $stat[muscle]:0,
         $stat[mysticality]:50,
-        $stat[moxie]:30
+        $stat[moxie]:50
     };
     stat st = $stat[muscle];
     foreach sta in $stats[mysticality, moxie]{
@@ -1010,7 +1010,7 @@ boolean uneffectBuff(){
     effect toRemove;
     int statBuff;
     foreach ef in my_effects( ){
-        if ($effects[wine-befouled, Spiced Out, Chorale of Companionship,Cold Hearted,Heart of Green] contains ef)
+        if ($effects[wine-befouled, Spiced Out, Chorale of Companionship,Cold Hearted,Heart of Green,In the Depths,Video... Games?,ChibiChanged&trade;] contains ef)
             continue;
         if ((numeric_modifier(ef, to_string(st) + " Percent")/100)*adjBase_Stat[st] > statBuff){
             statBuff = (numeric_modifier(ef, to_string(st) + " Percent")/100)*adjBase_Stat[st];
@@ -1018,7 +1018,7 @@ boolean uneffectBuff(){
         }
     }
     foreach ef in my_effects( ){
-        if ($effects[wine-befouled, Spiced Out, Chorale of Companionship,Cold Hearted,Heart of Green] contains ef)
+        if ($effects[wine-befouled, Spiced Out, Chorale of Companionship,Cold Hearted,Heart of Green,In the Depths,Video... Games?,ChibiChanged&trade;] contains ef)
             continue;
         if (numeric_modifier(ef, to_string(st)) > statBuff){
             statBuff = numeric_modifier(ef, to_string(st));
