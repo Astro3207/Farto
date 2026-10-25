@@ -921,7 +921,7 @@
             (pos + 3) % 8: 20,
             (pos + 4) % 8: 3,
             (pos + 5) % 8: 7,
-            (pos + 6) % 8: 2,
+            (pos + 6) % 8: 14,
             (pos + 7) % 8: 19
         };
         visit_url("choice.php?forceoption=0&whichchoice=1485&option=1"
