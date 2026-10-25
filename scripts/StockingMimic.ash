@@ -1536,7 +1536,7 @@ string fightPicker(){
 
     if (to_int(get_property("_gingerbreadCityTurns")) < 30)
         return "gingerbread";
-
+    set_property("backOverride",", equip retrocape (heck kill)");
     return pickWeakling(false);
 }
 
