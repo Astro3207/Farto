@@ -633,7 +633,7 @@ void preAdv(){
         retrieve_item(2,$item[ink bladder]);
     }
 
-    if (contains_text(get_property("shrunkenHeadZombieAbilities"),"Meat Drop") && have_effect($effect[Juiced]) == 0 && my_buffedstat($stat[moxie]) < $monster[giant squid].base_attack){
+    if (contains_text(get_property("shrunkenHeadZombieAbilities"),"Meat Drop") && have_effect($effect[Juiced]) == 0 && my_buffedstat($stat[moxie]) < $monster[giant squid].base_attack && numeric_modifier("familiar weight") < 200){
         use($item[mer-kin cooljuice]);
     }
     // Combat consumables: when under min, retrieve up to target.

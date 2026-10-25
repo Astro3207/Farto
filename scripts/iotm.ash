@@ -239,8 +239,8 @@
     }
 
     boolean [effect] manaBurnEffects = $effects[Only Dogs Love a Drunken Sailor, Legendary Pasta Eyeball,disco fever,Mariachi Mood,Blubbered Up,
-        Singer's Faithful Ocelot, Leash of Linguini, Empathy, Thoughtful Empathy,Slippery as a Seal,Big,
-        Polka of Plenty, Tubes of Universal Meat, Lubricating Sauce, Strength of the Tortoise,Musk of the Moose,Attracting Snakes];
+        Singer's Faithful Ocelot, Leash of Linguini, Empathy, Thoughtful Empathy,Slippery as a Seal,
+        Polka of Plenty, Tubes of Universal Meat, Lubricating Sauce, Musk of the Moose,Attracting Snakes];
 
     boolean [effect] manaBurnEffectsD1 = $effects[Only Dogs Love a Drunken Sailor,
         Singer's Faithful Ocelot, Leash of Linguini, Empathy, Thoughtful Empathy,

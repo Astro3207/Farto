@@ -1014,13 +1014,15 @@ boolean uneffectBuff(){
     effect toRemove;
     int statBuff;
     foreach ef in my_effects( ){
+        if ($effects[wine-befouled, Spiced Out, Chorale of Companionship,Cold Hearted] contains ef)
+            continue;
         if ((numeric_modifier(ef, to_string(st) + " Percent")/100)*adjBase_Stat[st] > statBuff){
             statBuff = (numeric_modifier(ef, to_string(st) + " Percent")/100)*adjBase_Stat[st];
             toRemove = ef;
         }
     }
     foreach ef in my_effects( ){
-        if ($effects[wine-befouled, spiced out, Chorale of Companionship] contains ef)
+        if ($effects[wine-befouled, Spiced Out, Chorale of Companionship,Cold Hearted] contains ef)
             continue;
         if (numeric_modifier(ef, to_string(st)) > statBuff){
             statBuff = numeric_modifier(ef, to_string(st));
