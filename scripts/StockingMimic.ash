@@ -998,7 +998,7 @@ void archaeologist(){
 // when there was nothing to shrug or the shrug failed.
 boolean uneffectBuff(){
     float [stat] adjBase_Stat = {
-        $stat[muscle]:0,
+        $stat[muscle]:50,
         $stat[mysticality]:50,
         $stat[moxie]:50
     };
