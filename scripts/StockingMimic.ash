@@ -453,6 +453,16 @@ boolean vintnerWineReady(){
     return get_property("vintnerWineEffect") == "Wine-Befouled" && item_amount($item[1950 Vampire Vintner wine]) > 0;
 }
 
+void stripAllBuffs(){
+    foreach ef in my_effects(){
+        if ($effects[Shadow Affinity, On the Trail, Lucky!, Apriling Band Battle Cadence,
+            Everything Looks Red, Everything Looks Yellow, Everything Looks Green,
+            Apriling Band Patrol Beat] contains ef)
+            continue;
+        cli_execute("uneffect " + ef);
+    }
+}
+
 // Effect extenders on day 1 of ascensions, some nohookah food on day 2
 void dieting(){
 	if (dayType() == 0){
@@ -461,13 +471,7 @@ void dieting(){
             put_closet($item[Bowl of Infinite Jelly]);
         if (have_effect($effect[Marked by the Don]) > 0 && have_skill($skill[disco nap]))
             use_skill($skill[disco nap]);
-		foreach ef in my_effects(){
-			if ($effects[Shadow Affinity, On the Trail, Lucky!, Apriling Band Battle Cadence,
-				Everything Looks Red, Everything Looks Yellow, Everything Looks Green,
-				Apriling Band Patrol Beat] contains ef)
-				continue;
-			cli_execute("uneffect " + ef);
-		}
+		stripAllBuffs();
 		if (have_effect($effect[Shadow Affinity]) == 0)
 			if (!user_confirm("dieting: Shadow Affinity fell off before the rollover-day binge. Continue?"))
                 abort();
@@ -501,6 +505,7 @@ void dieting(){
                 visit_url("inv_use.php?which=3&whichitem=9908");
                 run_combat();
                 run_choice(-1);
+                stripAllBuffs();
                 if (my_fullness() < fullness_limit())
                     eat(1,$item[thyme jelly donut]);
             }
