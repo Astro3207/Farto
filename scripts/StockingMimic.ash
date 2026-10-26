@@ -900,7 +900,9 @@ void shadowRealmFK(){
         set_property("maxOverride","familiar weight");
     if ((get_property("_baseballInnings").to_int() < 3 && baseballPlayers() < 9) || contains_text(get_property("baseballTeam"),"768"))
         set_property("acc2Override",", equip eternity codpiece");
-    else
+    else if (get_property("acc2Override") == ", equip sheriff badge"){
+
+    } else
         set_property("acc2Override","");
     if (get_property("questRufus") == "step1") {
         use($item[closed-circuit pay phone]);
@@ -967,6 +969,7 @@ void sandworm(){
         cli_execute("breakfast.ash");
     if (get_property("_aprilBandTomUses").to_int() < 3){
         while (to_int(get_property("_aprilBandTomUses")) < 3 && available_amount($item[Apriling band quad tom]) > 0){
+            mimicPrep();
             main@preadventure( );
             cli_execute("aprilband play quad tom");
             run_combat();
@@ -2284,7 +2287,7 @@ void peridotFishing(){
                 mimicPrep();
                 set_property("offOverride",", equip Kramco Sausage-o-Matic");
                 set_property("acc2Override",", equip eternity codpiece");
-                set_property("acc3Override",",bonus mafia pointer");
+                set_property("acc3Override",", bonus mafia pointer");
                 if (loc == $location[The Unquiet Garves]){
                     put_closet(item_amount($item[grave robbing shovel]),$item[grave robbing shovel]);
                     put_closet(item_amount($item[rusty grave robbing shovel]),$item[rusty grave robbing shovel]);
@@ -2304,11 +2307,12 @@ void peridotFishing(){
                 }
 
                 adv1(loc);
-                set_property("acc2Override","");
-                set_property("acc3Override","");
                 set_property("hatOverride","");
                 set_property("pantsOverride","");
             }
+            set_property("offOverride","");
+            set_property("acc2Override","");
+            set_property("acc3Override","");
         }
     } until (perilLocations == get_property("_perilLocations"));
     whitelist("homeclan");
