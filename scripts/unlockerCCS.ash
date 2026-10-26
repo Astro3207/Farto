@@ -403,7 +403,7 @@ void main(int round, monster mob, string page_text) {
         if (my_primestat( ) == $stat[moxie] || have_equipped($item[mime army infiltration glove])) steal( );
         if (have_skill($skill[sing along]) && my_familiar() != $familiar[peace turkey] && my_familiar() != $familiar[pair of stomping boots] && chameleon() != $familiar[pair of stomping boots] && my_location() != $location[guano junction] && my_location() != $location[The Defiled Cranny])      use_skill($skill[sing along]);
         if (have_skill($skill[Prepare to reanimate your Foe])) use_skill($skill[Prepare to reanimate your Foe]);
-        if (item_amount($item[cosmic bowling ball]) > 0 && (have_effect($effect[Cosmic Ball in the Air]) < 22 || dayType() == 0 || have_equipped($item[backup camera]))){
+        if (item_amount($item[cosmic bowling ball]) > 0 && (have_effect($effect[Cosmic Ball in the Air]) < 22 || dayType() == 0 || have_equipped($item[backup camera])) && my_location() != $location[Cobb's Knob Treasury]){
             use_skill($skill[Bowl Straight Up]);
         }
         if (to_int(last_monster()) == to_int(get_property("killThisGuy")) && get_property("swordSniff") == true)
