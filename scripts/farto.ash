@@ -233,6 +233,8 @@ void main(){
                 garbo();
             }
         }
+        if (my_adventures() == 0 && dayType() == 1)
+            ptrackOnce("InkoD2End");
     } finally {
         visit_url("account.php?am=1&pwd="+my_hash()+"&action=flag_disablefacts&value=0&ajax=1");
         finisher();

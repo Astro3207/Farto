@@ -134,6 +134,8 @@ void main(){
         astral();
         if (isFartScauce())
             set_property("valueOfAdventure","9000");
+        if (get_property("_borrowedTimeUsed") == "false")
+            use($item[borrowed time]);
         partialConsume(0,2,0);
     } else {
         savedResources();

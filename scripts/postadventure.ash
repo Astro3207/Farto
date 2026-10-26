@@ -228,10 +228,10 @@ void azazelUnicornQuest(){
             while (item_amount($item[observational glasses]) == 0){
                 set_property("maxOverride","combat");
                 swordPrep();
-                if (numeric_modifier("combat rate") < 35)
-                    cli_execute("gain 35 combat rate 100 spendperturn");
                 if (have_effect($effect[Apriling Band Battle Cadence]) == 0 && total_turns_played() >= get_property("nextAprilBandTurn").to_int())
                     cli_execute("aprilband effect c");
+                if (numeric_modifier("combat rate") < 35)
+                    cli_execute("gain 30 combat rate 100 spendperturn");
                 adv1($location[The Laugh Floor],0,"");
             }
             if ((backstageCount(1) < 2 || backstageCount(2) < 2) && item_amount($item[Azazel's unicorn]) == 0){
