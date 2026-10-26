@@ -219,10 +219,10 @@ void main(){
             } else if (dayType() == 0 && get_property("bladderMax").to_boolean() == true && have_effect($effect[fishy]) > 0){
                 bladdering();
             } else if ((my_class() == $class[accordion thief] || have_effect($effect[fishy]) > 0) || dayType() == 0){
-                if (dayType == 0){
+                if (dayType() == 0){
                     ptrackOnce("InkoD1");
-                    if (my_class == $class[seal clubber] && have_effect($effect[imagining guts]) > my_adventures())
-                        visit_url("account.php?am=1&pwd="+my_hash()+"&action=flag_disablefacts&value=1&ajax=1")
+                    if (my_class() == $class[seal clubber] && have_effect($effect[imagining guts]) > my_adventures())
+                        visit_url("account.php?am=1&pwd="+my_hash()+"&action=flag_disablefacts&value=1&ajax=1");
                 }
                 inko();
             } else if (my_class() == $class[pastamancer] && numeric_modifier($modifier[meat drop]) > 1700){
@@ -234,7 +234,7 @@ void main(){
             }
         }
     } finally {
-        visit_url("account.php?am=1&pwd="+my_hash()+"&action=flag_disablefacts&value=0&ajax=1")
+        visit_url("account.php?am=1&pwd="+my_hash()+"&action=flag_disablefacts&value=0&ajax=1");
         finisher();
     }
 }
