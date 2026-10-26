@@ -928,7 +928,7 @@ void postAdv(){
     }
     endOfDayHandling();
     if (get_property("script") == "FreeKill" && get_property("cursedMagnifyingGlassCount").to_int() == 13){
-        cli_execute("/aa facsimile");
+        aa("facsimile");
         set_property("maxOverride","familiar weight");
         set_property("offOverride",", equip cursed magnifying glass");
         set_property("acc3Override",", equip " + timeBadge().to_string());

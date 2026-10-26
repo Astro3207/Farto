@@ -2465,8 +2465,11 @@ void bulkFKD2(){
     set_property("hatOverride","");
     step("phase: bulkFK god lobster");
     godLobster();
-    if (get_property("_molehillMountainUsed") == false)
+    if (get_property("_molehillMountainUsed") == false){
+        mimicPrep();
+        main@preadventure( );
         use($item[molehill mountain]);
+    }
     step("phase: bulkFK mimic egg");
     mimicEgg();
     step("phase: bulkFK faxing");
@@ -2582,8 +2585,11 @@ void bulkFKD1(){
     set_property("hatOverride","");
     step("phase: bulkFK god lobster");
     godLobster();
-    if (get_property("_molehillMountainUsed") == false)
+    if (get_property("_molehillMountainUsed") == false){
+        mimicPrep();
+        main@preadventure( );
         use($item[molehill mountain]);
+    }
     step("phase: bulkFK mimic egg");
     mimicEgg();
     step("phase: bulkFK faxing");
