@@ -1083,11 +1083,10 @@ void spendAdv(){
     if (free_run() && my_inebriety() <= inebriety_limit() && dayType() == 1){
         if (have_effect($effect[citizen of a zone]) == 0 && numeric_modifier("familiar weight") < 100){
             set_property("subscript","citizen");
-            set_property("maxOverride","combat,-equip drunkula's wineglass");
+            set_property("unconditionalOverride","monster level, equip little bitty bathysphere, equip spring shoes");
             set_property("famOverride", "patriotic eagle");
-            set_property("mainOverride",", equip june cleaver");
-            set_property("acc1Override", ", equip spring shoes");
             adv1($location[The Defiled Cranny]);
+            set_property("unconditionalOverride","");
             set_property("subscript","");
         } else if (nextTrainStation() != "meat_mine"){
             set_property("maxOverride","combat,-equip drunkula's wineglass");
