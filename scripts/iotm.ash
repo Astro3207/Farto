@@ -444,6 +444,26 @@
             abort();
     }
 
+    boolean buffML(monster m){
+        foreach ef in $effects[Ur-Kel's Aria of Annoyance,Pride of the Puffin,Bloodbathed,Misplaced Rage,Manbait,Sweetbreads Flamb&eacute;,Red Lettered,Spangled Star,Tortious,Litterbug,Not Sharing,Para-lyzed Jaw,Contemptible Emanations,Lapdog,Ashen Burps,The Cupcake of Wrath,Gelded,Mysteriously Handsome]{
+            if (m.base_hp > lowHPTarget())
+                break;
+            if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
+                continue;
+            if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
+                continue;
+            if (have_effect(ef) != 0)
+                continue;
+            if (ef == $effect[Ur-Kel's Aria of Annoyance])
+                cli_execute("uneffect ode");
+            cli_execute(ef.default);
+        }
+        if (m.base_hp <= lowHPTarget() && mcd_max() > current_mcd()
+            && (dayType() != 0 || user_confirm(`MCD will add {mcd_max() - current_mcd()} ML (currently {numeric_modifier("Monster Level")}, {m} HP {m.base_hp} vs target {lowHPTarget()}). Continue?`)))
+            change_mcd(mcd_max());
+        return m.base_hp > lowHPTarget();
+    }
+
 // ─── 5. VALUATION ────────────────────────────────────────────────────────────
 
     // Meat value of one item: mafia's saved mall price (no live search, so it's
