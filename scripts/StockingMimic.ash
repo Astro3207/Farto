@@ -1353,45 +1353,6 @@ void seals(){
     set_property("mainOverride","");
 }
 
-// += 1 for every active effect that deals automatic per-round damage (mafia's
-// "Damage Aura" / "Sporadic Damage Aura" modifiers -- Cowrruption, Boxing Day
-// Glow, Spiky Hair, Simmering, Frostbeard, and so on). fightPicker() adds this
-// to the double-ice estimate so chip damage doesn't kill a weak monster before
-// the free kill lands.
-int passiveDamage(){
-	int n = 2;
-	foreach ef in my_effects(){
-		if (numeric_modifier(ef, "Damage Aura") != 0
-			|| numeric_modifier(ef, "Sporadic Damage Aura") != 0
-            || numeric_modifier(ef, "Thorns") != 0)
-			n += 1;
-	}
-	return n;
-}
-
-float MLDamageReduction()
-	return max(0.50,(1-(numeric_modifier($modifier[monster level])*0.004)));
-
-// -- HP-headroom math for fightPicker() ----------------------------------------
-// The double-ice build chips every monster each round (coldform proc plus the
-// passive-damage auras counted by passiveDamage()). If that chip damage kills a
-// weakling before the free kill lands, the free kill is wasted -- so fightPicker()
-// only hands back a monster whose HP clears the relevant target below, buffing
-// Monster Level to pad the monster's HP when it doesn't.
-
-int estimatedIceDamage(){
-    int highStat = max(my_buffedstat($stat[muscle]),
-                       my_buffedstat($stat[mysticality]),
-                       my_buffedstat($stat[moxie]));
-    return to_int(highStat * MLDamageReduction());
-}
-// lowHPTarget: chip damage across a fast (~9-round) free kill.
-// highHPTarget: chip damage across a slow (~29-round) one.
-int lowHPTarget()
-    return (9 * passiveDamage()) + estimatedIceDamage();
-int highHPTarget()
-    return (23 * passiveDamage()) + estimatedIceDamage();
-
 boolean safeToFK(monster m){
     print(m + " HP will be " + m.base_hp);
     print("Icicle damage is " + estimatedIceDamage());

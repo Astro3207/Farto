@@ -444,6 +444,32 @@
             abort();
     }
 
+    int passiveDamage(){
+        int n = 2;
+        foreach ef in my_effects(){
+            if (numeric_modifier(ef, "Damage Aura") != 0
+                || numeric_modifier(ef, "Sporadic Damage Aura") != 0
+                || numeric_modifier(ef, "Thorns") != 0)
+                n += 1;
+        }
+        return n;
+    }
+
+    float MLDamageReduction()
+        return max(0.50,(1-(numeric_modifier($modifier[monster level])*0.004)));
+
+    int estimatedIceDamage(){
+        int highStat = max(my_buffedstat($stat[muscle]),
+                        my_buffedstat($stat[mysticality]),
+                        my_buffedstat($stat[moxie]));
+        return to_int(highStat * MLDamageReduction());
+    }
+
+    int lowHPTarget()
+        return (9 * passiveDamage()) + estimatedIceDamage();
+    int highHPTarget()
+        return (23 * passiveDamage()) + estimatedIceDamage();
+
     boolean buffML(monster m){
         foreach ef in $effects[Ur-Kel's Aria of Annoyance,Pride of the Puffin,Bloodbathed,Misplaced Rage,Manbait,Sweetbreads Flamb&eacute;,Red Lettered,Spangled Star,Tortious,Litterbug,Not Sharing,Para-lyzed Jaw,Contemptible Emanations,Lapdog,Ashen Burps,The Cupcake of Wrath,Gelded,Mysteriously Handsome]{
             if (m.base_hp > lowHPTarget())
