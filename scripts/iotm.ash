@@ -582,7 +582,7 @@
                 true),
             1: new ban($item[monodent of the sea], "Sea *dent",          $skill[Sea *dent: Throw a Lightning Bolt],
                 get_property("_seadentLightningUsed").to_int() < 11),
-            2: new ban($item[adobe adze],          "batter up!",             $skill[batter up!],
+            2: new ban($item[gnawed-up dog bone],          "batter up!",             $skill[batter up!],
                 my_class() == $class[seal clubber] && my_fury() >= 5),
             3: new ban($item[Heartstone],          "Heartstone %banish", $skill[Heartstone: %banish],
                 get_property("heartstoneBanishUnlocked").to_boolean()
