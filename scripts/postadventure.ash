@@ -27,6 +27,8 @@ string [string] adventureAbortMessages = {
 void swordPrep(){
     if (item_amount($item[1950 Vampire Vintner wine]) == 0 && get_property("vintnerCharge").to_int() > 0){
         altFam($familiar[vampire vintner]);
+    }else if (get_property("_mapToACandyRichBlockDrops").to_int() == 0){
+        altFam($familiar[jill-of-all-trades]);
     } else {
         set_property("famOverride","sword of s words");
         use_familiar($familiar[sword of s words]);
