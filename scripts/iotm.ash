@@ -776,15 +776,15 @@
 
     // ── Everfull Dart Holster ────────────────────────────────────────────────────
     string perks = get_property("everfullDartPerks");
-    boolean bullseyeReady() {
+    int bullseyeReady() {
         perks = get_property("everfullDartPerks");
         int n = count_substring(perks, "25% Better bullseye targeting") + count_substring(perks, "25% better chance to hit bullseyes") + count_substring(perks, "25% More Accurate bullseye targeting");
-        return (n >= 2);
+        return n;
     }
 
     boolean everfullReady(){
         perks = get_property("everfullDartPerks");
-        if (!bullseyeReady())
+        if (bullseyeReady() < 2)
             return false;
         return (contains_text(perks, "You are less impressed by bullseyes")
                 && contains_text(perks, "Bullseyes do not impress you much"))
@@ -1624,7 +1624,7 @@
     boolean free_Kill(){
         if (my_inebriety() > inebriety_limit())
             return false;
-        if (have_effect($effect[everything looks red]) == 0 && bullseyeReady() && (my_adventures() > bullseyeCooldown() || dayType() == 1))
+        if (have_effect($effect[everything looks red]) == 0 && (bullseyeReady() + get_property("_dartsLeft").to_int()) >= 3 && (my_adventures() > bullseyeCooldown() || dayType() == 1))
             return true;
         if (have_effect($effect[everything looks yellow]) == 0 && (my_adventures() > 100 || dayType() == 1))
             return true;
