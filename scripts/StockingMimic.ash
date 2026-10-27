@@ -828,6 +828,7 @@ void augustCat(){
 void augustGolem(){
     if (get_property("_aug22Cast") == false && to_int(get_property("_augSkillsCast")) < 5) {
         main@preadventure( );
+        buffML($monster[tooth golem]);
         use_skill($skill[Aug. 22nd: Tooth Fairy Day!]);
         main@postadventure( );
         set_property("_aug22Cast","true");
@@ -1923,6 +1924,7 @@ void nonlocationBasedWeakMonsters(){
     }
     if (get_property("_cargoPocketEmptied") != "true"){
         step("phase: weakMonsters cargo shorts (haxx0r)");
+        buffML($monster[1335 HaXx0r]);
         shorts();
     }
     step("phase: weakMonsters lynyrd snare");
@@ -1937,6 +1939,7 @@ void nonlocationBasedWeakMonsters(){
         LBMWPrep (true);
         set_property("hatOverride",", equip beholed bedsheet");
         main@preadventure( );
+        buffML($monster[vandal kid]);
         candy("fight");
         main@postadventure( );
         set_property("hatOverride","");
@@ -1957,6 +1960,7 @@ void nonlocationBasedWeakMonsters(){
         step("phase: weakMonsters flaming leaflets");
         LBMWPrep (true);
         main@preadventure( );
+        buffML($monster[flaming leaflet]);
         if (get_property("_tiedUpFlamingLeafletFought") == "false"){
             use($item[tied-up flaming leaflet]);
         } else {
