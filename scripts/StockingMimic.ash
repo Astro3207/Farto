@@ -1765,7 +1765,8 @@ void roseGarden(){
         if (misc >= 0 && dayType() == 0
             && mall_price($item[black rose pentacle]) < mall_price($item[pocket wish])
             && have_effect($effect[Lucky!]) == 0 && have_effect($effect[One Coin In a Fountain]) == 0){
-            page = roseInteract(misc);
+            roseInteract(misc);
+            page = visit_url(garden);   // drinking leaves the garden page
             continue;
         }
 
