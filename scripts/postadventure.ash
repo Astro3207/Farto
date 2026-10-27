@@ -80,9 +80,11 @@ void delayPrep(){
         set_property("famOverride","sword of s words");
     } else if (item_amount($item[&quot;I Voted!&quot; sticker]) > 0 && total_turns_played()%11 == 1 && get_property("_voteFreeFights").to_int() < 3)
         set_property("acc3Override",", equip I voted");
-    else if (have_effect($effect[everything looks green]) == 0 && dayType() == 0)
+    else if (have_effect($effect[everything looks green]) == 0 && dayType() == 0){
+        if (get_property("_dartsLeft").to_int() == 0)
+            set_property("acc1Override",", equip everfull dart holster");
         set_property("acc3Override",", equip spring shoes");
-    else if (get_property("cursedMagnifyingGlassCount").to_int() == 13 && get_property("_voidFreeFights").to_int() < 5){
+    } else if (get_property("cursedMagnifyingGlassCount").to_int() == 13 && get_property("_voidFreeFights").to_int() < 5){
         set_property("offOverride",", equip cursed magnifying glass");
         set_property("maxOverride","item drop");
         if (dayType() == 0)
