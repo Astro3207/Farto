@@ -2354,6 +2354,8 @@ void bulkFKD2(){
     if (get_campground() contains $item[Witchess Set] && !get_property("_witchessBuff").to_boolean())
         cli_execute("witchess buff");
     campawayBuffs();
+    step ("phase: use up hidden city");
+    restOfHiddenCity();
     if (weakMonstersLeft())
         weakMonsters();
     step("phase: August Golem");
@@ -2374,8 +2376,6 @@ void bulkFKD2(){
     }
     if (dayType() == 1 && get_property("_backUpUses").to_int() < 11 && !contains_text(get_property("banishedPhyla"),"fish"))
         banishFish();
-    step ("phase: use up hidden city");
-    restOfHiddenCity();
     step ("phase: rose garden");
     roseGarden();
     neverendingParty();
