@@ -452,6 +452,7 @@
                 || numeric_modifier(ef, "Thorns") != 0)
                 n += 1;
         }
+        n += count_substring(get_property("shrunkenHeadZombieAbilities"),"Attack") * 1.5;
         return n;
     }
 
