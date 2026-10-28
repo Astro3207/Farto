@@ -533,9 +533,11 @@ void main(int round, monster mob, string page_text) {
             if (last_monster() == copyTarget){
                 if (item_amount($item[pulled green taffy]) > 0 && item_amount($item[envyfish egg]) == 0 && get_property("_envyfishEggUsed") == "false")
                     throw_item($item[pulled green taffy]);
-                if (item_amount($item[4-d camera]) > 0 && item_amount($item[shaking 4-d camera]) == 0 && get_property("_cameraUsed") == "false")
+                if (item_amount($item[4-d camera]) > 0 && item_amount($item[shaking 4-d camera]) == 0 && get_property("_cameraUsed") == "false" && dayType() == 1)
                     throw_item($item[4-d camera]);
             }
+            if (item_amount($item[4-d camera]) > 0 && item_amount($item[shaking 4-d camera]) == 0 && get_property("_cameraUsed") == "false" && dayType() == 0 && last_monster() == $monster[Frozen Bag of Tortellini])
+                throw_item($item[4-d camera]);
             if ((my_location().environment == "underwater" || my_location() == to_location(get_property("_seadentWaveZone"))) && !contains_text(get_property("_lastCombatActions"),"it6367")){
                 if (item_amount($item[pulled red taffy]) > 0)
                     throw_item($item[pulled red taffy]);
