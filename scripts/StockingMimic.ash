@@ -1361,7 +1361,7 @@ void mimicEgg(){
 }
 void faxing(){
     if (get_property("_photocopyUsed") == false){
-        cli_execute("/whitelist fart sauce annex");
+        whitelist("Temporary");
         visit_url("clan_viplounge.php?action=faxmachine&whichfloor=2");
         visit_url("clan_viplounge.php?preaction=receivefax&whichfloor=2");
         if (get_property("clubEmNextWeekMonster") == "")
