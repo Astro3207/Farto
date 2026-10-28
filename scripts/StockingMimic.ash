@@ -2363,12 +2363,12 @@ void bulkFKD2(){
     if (get_campground() contains $item[Witchess Set] && !get_property("_witchessBuff").to_boolean())
         cli_execute("witchess buff");
     campawayBuffs();
-    step ("phase: use up hidden city");
-    restOfHiddenCity();
     if (weakMonstersLeft())
         weakMonsters();
     step("phase: August Golem");
     augustGolem();
+    step ("phase: use up hidden city");
+    restOfHiddenCity();
     step("phase: bulkFK spleen (Extrovermectin)");
     if (my_spleen_use() < spleen_limit()){
         int toChew = floor((spleen_limit()-my_spleen_use())/2);

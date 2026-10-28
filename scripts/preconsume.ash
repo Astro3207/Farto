@@ -133,7 +133,7 @@ void main(){
         yeti();
         astral();
         if (isFartScauce())
-            set_property("valueOfAdventure","9000");
+            set_property("valueOfAdventure","9500");
         if (get_property("_borrowedTimeUsed") == "false")
             use($item[borrowed time]);
         partialConsume(0,2,0);

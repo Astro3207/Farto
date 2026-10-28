@@ -218,14 +218,14 @@ void main(){
     starter();
     step("phase: Organ phase 1");
     if (isFartScauce())
-        set_property("valueOfAdventure","7900");
+        set_property("valueOfAdventure","7600");
     step("phase: nightcap");
     Nightcap();
     ptrackOnce("overdrunkStart");
     drunkInko();
     ptrackOnce("overdrunkEnd");
     if (isFartScauce())
-        set_property("valueOfAdventure","7600");
+        set_property("valueOfAdventure","4000");
     equipBonesAndConsume();
     ptrackOnce("overorganStart");
     try {
