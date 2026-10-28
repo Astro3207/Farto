@@ -1079,6 +1079,13 @@ boolean looseFK(){
         set_property("maxOverride","familiar weight, equip legendary seal-clubbing");
         return true;
     }
+    if (get_property("_partialTombstonesUsed").to_int() < 11 && mall_price($item[statuary chunk]) < 4000){
+        print ("FK is partial tombstone");
+        set_property("maxOverride","familiar weight");
+        int n = 11 - get_property("_partialTombstonesUsed").to_int();
+        retrieve_item(n,$item[partial tombstone]);
+        return true;
+    }
     if (get_property("_shadowBricksUsed").to_int() < 13){
         print ("FK is shadow brick");
         set_property("maxOverride","familiar weight");

@@ -77,6 +77,8 @@ void free_kill(string ptext) {
         while (get_property("_interestingCoinHeads") == "false" && current_round() > 0 && current_round() < 30)
             throw_item($item[interesting coin]);
     }
+    if (available_amount($item[partial tombstone]) > 0 && get_property("_partialTombstonesUsed").to_int() < 11)
+        throw_item($item[partial tombstone]);
     if (available_amount($item[shadow brick]) > 0 && get_property("_shadowBricksUsed").to_int() < 13)
         throw_item($item[shadow brick]);
 }
