@@ -2525,6 +2525,11 @@ void locationBasedAdventuring(){
         peridotFishing();
     }
     locationBasedWeakMonsters();
+    if (item_amount($item[envyfish egg]) > 0 && get_property("_envyfishEggUsed") == "false"){
+        mimicPrep();
+        main@preadventure( );
+        use($item[envyfish egg]);
+    }
 }
 void dinnerLiverSpleen(){
     use_familiar($familiar[stooper]);
@@ -2588,11 +2593,6 @@ void bulkFKD1(){
         mimicPrep();
         main@preadventure( );
         use($item[shaking 4-D camera]);
-    }
-    if (item_amount($item[envyfish egg]) > 0){
-        mimicPrep();
-        main@preadventure( );
-        use($item[envyfish egg]);
     }
     if (my_class() == $class[seal clubber]){
         if (dayType() == 0 && fullness_limit() - my_fullness() >= 1){
