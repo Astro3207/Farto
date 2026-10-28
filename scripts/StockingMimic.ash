@@ -1780,6 +1780,7 @@ void roseGarden(){
         roseInteract(mob);
         if (current_round() > 0)
             run_combat();
+        run_choice(2);
         main@postadventure();
         page = visit_url(garden);
     }
