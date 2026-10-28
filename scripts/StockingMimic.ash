@@ -1278,6 +1278,7 @@ void gingerbread(){
 void habitatRecall(){
     while (to_int(get_property("_monsterHabitatsRecalled")) < 3 || to_int(get_property("_monsterHabitatsFightsLeft")) > 0 || get_property("beGregariousFightsLeft").to_int() > 0){
         banishFish();
+        set_property("subscript","replacing");
         if (copyTarget == $monster[sausage goblin] && to_int(get_property("_monsterHabitatsFightsLeft")) == 0 && to_int(get_property("_monsterHabitatsRecalled")) < 3){
             mimicPrep();
             set_property("offOverride",", equip kramco");
@@ -1307,9 +1308,11 @@ void habitatRecall(){
         set_property("offOverride","");
         set_property("acc1Override","");
     }
+    set_property("subscript","");
 }
 void backup(){
     while (to_int(get_property("_backUpUses")) < 11){
+        set_property("subscript","replacing");
         if (have_effect($effect[driving waterproofly]) == 0)
             set_property("pantsOverride",", equip really nice swim");
         if (to_monster(get_property("lastCopyableMonster")) != copyTarget){
@@ -1349,6 +1352,7 @@ void backup(){
         }
     }
     set_property("acc3Override","");
+    set_property("subscript","");
 }
 void mimicEgg(){
     while (item_amount($item[mimic egg]) > 0 && dayType() == 1 && contains_text(get_property("mimicEggMonsters"),copyTarget.to_int().to_string())){

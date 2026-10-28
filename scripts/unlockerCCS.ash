@@ -408,6 +408,8 @@ void main(int round, monster mob, string page_text) {
         if (item_amount($item[cosmic bowling ball]) > 0 && (have_effect($effect[Cosmic Ball in the Air]) < 22 || dayType() == 0 || have_equipped($item[backup camera])) && my_location() != $location[Cobb's Knob Treasury]){
             use_skill($skill[Bowl Straight Up]);
         }
+        if (item_amount($item[cosmic bowling ball]) > 0 && get_property("subscript") == "replacing"){
+            use_skill($skill[Bowl Straight Up]);
         if (to_int(last_monster()) == to_int(get_property("killThisGuy")) && get_property("swordSniff") == true)
             use_skill($skill[%fn, kill a lot of these guys]);
     } else if (last_monster() == $monster[shadow spire]){
