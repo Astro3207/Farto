@@ -2395,6 +2395,8 @@ void bulkFKD2(){
                 baseballD();
             shadowRealmFK();
         }
+        if (get_property("encountersUntilSRChoice").to_int() == 0)
+            shadowRealmFK();
         set_property("FKRunEligible","false");
     }
     set_property("subscript","");
