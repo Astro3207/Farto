@@ -722,7 +722,7 @@ void mood(string function){
             cli_execute("gain " + targetInit + " initiative");
         if (have_effect($effect[chilled to the bone]) > 0 && have_effect($effect[Touched by a Ghost]) > 0 && my_maxhp() < 1000 && get_property("subscript") == "village")
             use($item[hot Dreadsylvanian cocoa]);
-        if (get_property("_monkeyPawWishesUsed").to_int() > 0 || !bullseyeReady()){
+        if (get_property("_monkeyPawWishesUsed").to_int() > 0 || (bullseyeReady() < 3)){
             if (numeric_modifier("item drop") < 500)
                 cli_execute("gain 500 item drop 100 maxmeatspent");
             if (get_property("subscript") == "castle" && item_amount($item[shadow brick]) == 0)
