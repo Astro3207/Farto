@@ -944,7 +944,7 @@ void postAdv(){
         set_property("subscript","");
         clearOverrides();
     }
-    if (have_item($item[cosmic bowling ball]) && dayType() == 1 && get_property("script") == "FreeKill" 
+    if (have_item($item[cosmic bowling ball]) && dayType() == 1 && get_property("script") == "FreeKill" && nextTrainStation() != "meat_mine"
         && my_inebriety() <= inebriety_limit() && !choice_follows_fight() && !handling_choice() && get_property("noncombatForcerActive").to_boolean() == false){
         set_property("maxOverride","combat,-equip drunkula's wineglass");
         set_property("famOverride", "peace turkey");

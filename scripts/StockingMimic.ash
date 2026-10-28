@@ -2181,6 +2181,10 @@ void miscellaneousFams(){
         if (have_effect($effect[Apriling Band Battle Cadence]) == 0 && total_turns_played() >= get_property("nextAprilBandTurn").to_int())
             cli_execute("aprilband effect c");
         while (get_property("_banderRunaways").to_int() < (my_familiar().familiar_weight() + weight_adjustment() - (my_familiar() == $familiar[comma chameleon] ? 5 : 0)) / 5){
+            if (nextTrainStation() == "meat_mine" && get_property("_godLobsterFights").to_int() < 3){
+                godLobster();
+                continue;
+            }
             if ($location[Cobb's Knob Treasury].combat_percent < 100)
                 cli_execute("gain 15 combat");
             set_property("subscript","stompingBoots");
