@@ -614,6 +614,51 @@ void volcanoBuff(){
     }
 }
 
+// -- Black Rose Garden (choice 1637) -------------------------------------------
+// Every thing in the garden is a choice.php form: option 1 plus rgpoi/rgx/rgy/rgf.
+// Walking around is client-side only, so posting a point's form interacts
+// with it from anywhere. rgpoi indexes are renumbered after each action, so
+// mafia's available_choice_extras() is re-read before every interaction.
+
+string [int] roseLoot     = {0: "wine", 1: "bowl", 2: "incense"};
+string [int] roseMonsters = {0: "flamingo", 1: "golem", 2: "ghost", 3: "angel", 4: "gnome"};
+string [int] roseMisc     = {0: "fountain", 1: "chest"};
+
+boolean inRoseGarden(string page){
+    return contains_text(page, "name=whichchoice value=\"1637\"");
+}
+
+// Index into available_choice_extras() of the first point whose label starts
+// with verb and names one of keys; -1 when there is none.
+int roseFind(string verb, string [int] keys){
+    foreach i, ce in available_choice_extras(){
+        if (!ce.label.starts_with(verb)) continue;
+        foreach k, key in keys
+            if (contains_text(ce.label.to_lower_case(), key))
+                return i;
+    }
+    return -1;
+}
+
+string roseInteract(int i){
+    print("Rose garden: " + available_choice_extras()[i].label, "blue");
+    return run_choice(available_choice_extras()[i].decision, available_choice_extras()[i].extras_joined);
+}
+
+boolean roseFountain(){
+    string page = visit_url("campground.php?action=rosegarden");
+    int misc = roseFind("Drink", roseMisc);
+    if (misc < 0 || dayType() != 0)
+        return false;
+    if (mall_price($item[black rose pentacle]) >= mall_price($item[pocket wish]))
+        return false;
+    if (have_effect($effect[Lucky!]) > 0 || have_effect($effect[One Coin In a Fountain]) > 0)
+        return false;
+    roseInteract(misc);
+    run_choice(3);
+    return true;
+}
+
 void FKPrep(){
 	step("phase: FKPrep start");
     if (dayType() == 0 && have_effect($effect[shadow affinity]) == 0){
@@ -1716,51 +1761,6 @@ void LBMWPrep(boolean lantern){
     set_property("acc3Override",", equip " + timeBadge());
     retrieve_item($item[shard of double-ice]);
     mimicPrep();
-}
-
-// -- Black Rose Garden (choice 1637) -------------------------------------------
-// Every thing in the garden is a choice.php form: option 1 plus rgpoi/rgx/rgy/rgf.
-// Walking around is client-side only, so posting a point's form interacts
-// with it from anywhere. rgpoi indexes are renumbered after each action, so
-// mafia's available_choice_extras() is re-read before every interaction.
-
-string [int] roseLoot     = {0: "wine", 1: "bowl", 2: "incense"};
-string [int] roseMonsters = {0: "flamingo", 1: "golem", 2: "ghost", 3: "angel", 4: "gnome"};
-string [int] roseMisc     = {0: "fountain", 1: "chest"};
-
-boolean inRoseGarden(string page){
-    return contains_text(page, "name=whichchoice value=\"1637\"");
-}
-
-// Index into available_choice_extras() of the first point whose label starts
-// with verb and names one of keys; -1 when there is none.
-int roseFind(string verb, string [int] keys){
-    foreach i, ce in available_choice_extras(){
-        if (!ce.label.starts_with(verb)) continue;
-        foreach k, key in keys
-            if (contains_text(ce.label.to_lower_case(), key))
-                return i;
-    }
-    return -1;
-}
-
-string roseInteract(int i){
-    print("Rose garden: " + available_choice_extras()[i].label, "blue");
-    return run_choice(available_choice_extras()[i].decision, available_choice_extras()[i].extras_joined);
-}
-
-boolean roseFountain(){
-    string page = visit_url("campground.php?action=rosegarden");
-    int misc = roseFind("Drink", roseMisc);
-    if (misc < 0 || dayType() != 0)
-        return false;
-    if (mall_price($item[black rose pentacle]) >= mall_price($item[pocket wish]))
-        return false;
-    if (have_effect($effect[Lucky!]) > 0 || have_effect($effect[One Coin In a Fountain]) > 0)
-        return false;
-    roseInteract(misc);
-    run_choice(3);
-    return true;
 }
 
 // Loot every wine / bowl / incense first, then fight every listed monster, then
