@@ -730,11 +730,13 @@ void FKPrep(){
 	foreach ef in $effects[Flapper Dancin', Polka Face, Polka of Plenty,
 		The Ballad of Richie Thingfinder, Earning Interest, Bet Your Autumn Dollar,
 		Sweat Equity, Legendary Pasta Eyeball, Heart of Pink, Tingling Feeling,
-		Disco Leer,Serendipity,Heart of White,Curiosity of Br'er Tarrypin]{
+		Disco Leer,Heart of White,Curiosity of Br'er Tarrypin,One Coin In a Fountain]{
 		if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
 			continue;
-        if (ef == $effect[Serendipity] && get_property("_augSkillsCast").to_int() >= 3)
+        if (ef == $effect[One Coin In a Fountain]){
+            roseFountain();
             continue;
+        }
 		if (have_effect(ef) == 0)
 			cli_execute(ef.default);
 	}
@@ -1747,6 +1749,20 @@ string roseInteract(int i){
     return run_choice(available_choice_extras()[i].decision, available_choice_extras()[i].extras_joined);
 }
 
+boolean roseFountain(){
+    string page = visit_url("campground.php?action=rosegarden");
+    int misc = roseFind("Drink", roseMisc);
+    if (misc < 0 || dayType() != 0)
+        return false;
+    if (mall_price($item[black rose pentacle]) >= mall_price($item[pocket wish]))
+        return false;
+    if (have_effect($effect[Lucky!]) > 0 || have_effect($effect[One Coin In a Fountain]) > 0)
+        return false;
+    roseInteract(misc);
+    run_choice(3);
+    return true;
+}
+
 // Loot every wine / bowl / incense first, then fight every listed monster, then
 // leave. Fights get the usual mimic prep and pre/post-adventure hooks, which
 // means re-entering the garden afterwards, because the maximize can't run
@@ -1768,11 +1784,7 @@ void roseGarden(){
             continue;
         }
 
-        int misc = roseFind("Drink", roseMisc);
-        if (misc >= 0 && dayType() == 0
-            && mall_price($item[black rose pentacle]) < mall_price($item[pocket wish])
-            && have_effect($effect[Lucky!]) == 0 && have_effect($effect[One Coin In a Fountain]) == 0){
-            roseInteract(misc);
+        if (roseFountain()){
             page = visit_url(garden);   // drinking leaves the garden page
             continue;
         }
@@ -2019,6 +2031,25 @@ void embezzler(){
         }
         adv1($location[Cobb's knob treasury]);
     }
+}
+
+void embezzlerD1(){
+    repeat {
+        if (have_effect($effect[Lucky!]) > 0){
+            if (have_familiar($familiar[robortender]) && contains_text(get_property("_roboDrinks"), "drive-by shooting"))
+                set_property("famOverride","robortender");
+            else
+                set_property("famOverride","jill-of-all-trades");
+            set_property("script","embezzler");
+            set_property("unconditionalOverride","meat drop, equip mafia pointer finger");
+            adv1($location[Cobb's knob treasury]);
+        }
+        if (have_skill($skill[Aug. 2nd: Find an Eleven-Leaf Clover Day])
+            && get_property("_aug2Cast") == "false"
+            && to_int(get_property("_augSkillsCast")) < 3)
+            use_skill($skill[Aug. 2nd: Find an Eleven-Leaf Clover Day]);
+        clearOverrides();
+    } until (have_effect($effect[Lucky!]) == 0);
 }
 
 // ─── familiar XP budget ──────────────────────────────────────────────────────
@@ -2516,6 +2547,7 @@ void dinnerLiverSpleen(){
 
 void bulkFKD1(){
     set_property("inSpendAdv","true");
+    embezzlerD1();
     set_property("script","FreeKill");
     equip($slot[acc3],timeBadge());
     buffML($monster[Flaming leaflet]);
