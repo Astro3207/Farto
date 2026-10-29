@@ -2087,7 +2087,7 @@ familiar famXpTarget(){
 // whichever familiar still needs XP; once both targets are met the fights run
 // in whatever stance the caller left, as before.
 void godLobster(){
-    while (get_property("_godLobsterFights").to_int() < 3){
+    if (get_property("_godLobsterFights").to_int() < 3){
         familiar fam = famXpTarget();
         if (fam != $familiar[none]){
             set_property("famOverride",fam.to_string().to_lower_case());
