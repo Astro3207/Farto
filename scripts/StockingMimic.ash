@@ -1786,11 +1786,6 @@ void roseGarden(){
             continue;
         }
 
-        if (roseFountain()){
-            page = visit_url(garden);   // drinking leaves the garden page
-            continue;
-        }
-
         if (roseFind("Fight", roseMonsters) < 0) break;
         run_choice(2);   // step out so the maximizer can change gear
         mimicPrep();
