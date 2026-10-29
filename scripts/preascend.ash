@@ -224,9 +224,14 @@ void main(){
     ptrackOnce("overdrunkStart");
     drunkInko();
     ptrackOnce("overdrunkEnd");
-    if (isFartScauce())
+    if (isFartScauce()){
         set_property("valueOfAdventure","4000");
+        set_property("CONSUME.BASEMEAT","0");
+    }
     equipBonesAndConsume();
+    if (isFartScauce()){
+        set_property("CONSUME.BASEMEAT","325");
+    }
     ptrackOnce("overorganStart");
     try {
         step("phase: over Organed");
