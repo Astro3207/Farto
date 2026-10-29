@@ -1044,7 +1044,7 @@ void spendAdv(){
             return;
         ELKPrep();
 
-        if (to_int(get_property("blackForestProgress")) < 5)
+        if (to_int(get_property("blackForestProgress")) < 5 && numeric_modifier("combat rate") > -15)
             blackForest();
         else if ((get_property("questG09Muscle") != "finished" && my_class() == $class[seal clubber]) || get_property("questL05Goblin") == "started")
             outskirts();
