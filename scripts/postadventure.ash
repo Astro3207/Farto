@@ -229,6 +229,13 @@ void azazelUnicornQuest(){
             visit_url("friars.php?action=ritual");
         if (get_property("questL06Friar") == "finished"){
             //BC of the combat buffs, which is unusual, doing all at once
+            if ((backstageCount(1) < 2 || backstageCount(2) < 2) && item_amount($item[Azazel's unicorn]) == 0){
+                if (have_effect($effect[Patent Aggression]) == 0){
+                    set_property("maxOverride","-combat");
+                    swordPrep();
+                    adv1($location[Infernal Rackets Backstage],0,"");
+                }
+            }
             while (item_amount($item[observational glasses]) == 0){
                 set_property("maxOverride","combat");
                 swordPrep();
@@ -237,13 +244,6 @@ void azazelUnicornQuest(){
                 if (numeric_modifier("combat rate") < 35)
                     cli_execute("gain 30 combat rate 100 spendperturn");
                 adv1($location[The Laugh Floor],0,"");
-            }
-            if ((backstageCount(1) < 2 || backstageCount(2) < 2) && item_amount($item[Azazel's unicorn]) == 0){
-                if (have_effect($effect[Patent Aggression]) == 0){
-                    set_property("maxOverride","-combat");
-                    swordPrep();
-                    adv1($location[Infernal Rackets Backstage],0,"");
-                }
             }
         }
     }
