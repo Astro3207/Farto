@@ -935,10 +935,10 @@ void postAdv(){
         set_property("offOverride",", equip cursed magnifying glass");
         set_property("acc3Override",", equip " + timeBadge().to_string());
         equip(timeBadge());
-        buffML($monster[void spider]);
         set_property("subscript","weakling");
         altFam($familiar[stocking mimic]);
-        abort("figure out why void people are dying so fast");
+        cli_execute("preadventure.ash");
+        buffML($monster[void spider]);
         adv1($location[cobb's knob treasury]);
         set_property("subscript","");
         clearOverrides();

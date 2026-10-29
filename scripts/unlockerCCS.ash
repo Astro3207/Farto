@@ -360,6 +360,9 @@ void main(int round, monster mob, string page_text) {
     if (get_property("subscript") == "stompingBoots"){
         if (last_monster() == $monster[infinite meat bug])
             abort();
+        if (last_monster() == $monster[God Lobster]){
+            sauce(4);
+        }
         if (last_monster() != copyTarget && have_skill($skill[Bowl a Curveball]))
             use_skill($skill[Bowl a Curveball]);
         runaway();
