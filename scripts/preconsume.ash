@@ -5,7 +5,7 @@ void astral(){
     if (item_amount($item[astral six-pack])>0)
         use($item[astral six-pack]);
     if (item_amount($item[astral pilsner]) > 0){
-        cli_execute("cast ode");
+        castATSong($skill[The Ode to Booze]);
         drink(item_amount($item[astral pilsner]), $item[astral pilsner]);
     }
 }

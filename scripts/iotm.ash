@@ -238,6 +238,53 @@
         return periled;
     }
 
+    // Active Accordion Thief songs, i.e. the effects counting against the song limit.
+    int atSongsActive(){
+        int songs;
+        foreach ef in my_effects(){
+            skill sk = to_skill(ef);
+            if (sk != $skill[none] && sk.song)
+                songs++;
+        }
+        return songs;
+    }
+
+    // True if sk can be cast without going over the song limit. Base limit is 3;
+    // the super-sweet boom box (Four Songs) and Mariachi Memory each add one.
+    // Refreshing a song that's already active doesn't take a slot.
+    boolean songFits(skill sk){
+        if (have_effect(to_effect(sk)) > 0)
+            return true;
+        int extra = (available_amount($item[super-sweet boom box]) > 0 ? 1 : 0)
+            + (have_skill($skill[Mariachi Memory]) ? 1 : 0);
+        return atSongsActive() < 3 + extra;
+    }
+
+    // Cast an AT song only if there's room for it; the boom box is only equipped
+    // when the extra slot is actually needed.
+    boolean castATSong(skill sk, int casts){
+        if (!have_skill(sk) || !songFits(sk))
+            return false;
+        if (have_effect(to_effect(sk)) == 0
+            && atSongsActive() >= (have_skill($skill[Mariachi Memory]) ? 4 : 3)
+            && !have_equipped($item[super-sweet boom box]))
+            equip($item[super-sweet boom box]);
+        return use_skill(casts, sk);
+    }
+
+    boolean castATSong(skill sk){
+        return castATSong(sk, 1);
+    }
+
+    // Cast ef from its default action, routing AT songs through castATSong() so
+    // they respect the song limit. False when the song had no slot or the cast failed.
+    boolean castEffect(effect ef){
+        skill sk = to_skill(ef);
+        if (sk != $skill[none] && sk.song && have_skill(sk))
+            return castATSong(sk);
+        return cli_execute(ef.default);
+    }
+
     boolean [effect] manaBurnEffects = $effects[Only Dogs Love a Drunken Sailor, Legendary Pasta Eyeball,disco fever,Mariachi Mood,Blubbered Up,
         Singer's Faithful Ocelot, Leash of Linguini, Empathy, Thoughtful Empathy,Slippery as a Seal,
         Polka of Plenty, Tubes of Universal Meat, Lubricating Sauce, Musk of the Moose,Attracting Snakes];
@@ -258,7 +305,7 @@
                         continue;
                     skill sk = to_skill(ef);
                     int turns = have_effect(ef);
-                    if (!have_skill(sk))
+                    if (!have_skill(sk) || (sk.song && !songFits(sk)))
                         continue;
                     if (turns >= my_adventures() || my_mp() - mp_cost(sk) < reserve)
                         continue;
@@ -272,7 +319,10 @@
                 int needed = ceil((my_adventures() - have_effect(best)) / to_float(perCast));
                 int casts = max(1, min(needed, (my_mp() - reserve) / mp_cost(burnSkill)));
                 int before = have_effect(best);
-                cli_execute(best.default.replace_string("cast 1 ", "cast " + casts + " "));
+                if (burnSkill.song)
+                    castATSong(burnSkill, casts);
+                else
+                    cli_execute(best.default.replace_string("cast 1 ", "cast " + casts + " "));
                 if (have_effect(best) <= before)
                     return;
             }
@@ -283,7 +333,7 @@
                 foreach ef in manaBurnEffects {
                     skill sk = to_skill(ef);
                     int turns = have_effect(ef);
-                    if (!have_skill(sk))
+                    if (!have_skill(sk) || (sk.song && !songFits(sk)))
                         continue;
                     if (turns >= turnEst || my_mp() - mp_cost(sk) < reserve)
                         continue;
@@ -297,7 +347,10 @@
                 int needed = ceil((turnEst - have_effect(best)) / to_float(perCast));
                 int casts = max(1, min(needed, (my_mp() - reserve) / mp_cost(burnSkill)));
                 int before = have_effect(best);
-                cli_execute(best.default.replace_string("cast 1 ", "cast " + casts + " "));
+                if (burnSkill.song)
+                    castATSong(burnSkill, casts);
+                else
+                    cli_execute(best.default.replace_string("cast 1 ", "cast " + casts + " "));
                 if (have_effect(best) <= before)
                     return;
             }
@@ -424,7 +477,7 @@
             if (bestIsShrug)
                 cli_execute("shrug " + best);
             else
-                cli_execute(best.default);
+                castEffect(best);
             base = numeric_modifier("monster level").to_int() - current_mcd();
         }
 
@@ -483,7 +536,7 @@
                 continue;
             if (ef == $effect[Ur-Kel's Aria of Annoyance])
                 cli_execute("uneffect ode");
-            cli_execute(ef.default);
+            castEffect(ef);
         }
         if (m.base_hp <= lowHPTarget() && mcd_max() > current_mcd()
             && (dayType() != 0 || user_confirm(`MCD will add {mcd_max() - current_mcd()} ML (currently {numeric_modifier("Monster Level")}, {m} HP {m.base_hp} vs target {lowHPTarget()}). Continue?`)))

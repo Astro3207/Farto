@@ -276,7 +276,7 @@ void unlock_zeppelin(){
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
             continue;
         if (have_effect(ef) == 0)
-            cli_execute(ef.default);
+            castEffect(ef);
     }
     while(get_property("questL11Ron") != "step2"){
         cli_execute("maximize sleaze damage, sleaze spell damage, equip candy cane sword cane");

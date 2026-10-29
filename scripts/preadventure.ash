@@ -653,7 +653,7 @@ void preAdv(){
 
     if (contains_text(get_property("maxOverride"),"combat") && !contains_text(get_property("maxOverride"),"-combat")){
         if (have_effect($effect[Carlweather's Cantata of Confrontation]) == 0 && dayType() == 1)
-            use_skill($skill[Carlweather's Cantata of Confrontation]);
+            castATSong($skill[Carlweather's Cantata of Confrontation]);
         if (numeric_modifier("combat rate") < 15)
             cli_execute("equip little bitty bath");
         if (numeric_modifier("combat rate") < 15)
@@ -759,8 +759,8 @@ void mood(string function){
                 continue;
             if (have_effect(ef) == 0 && !buffWorthBuying(ef))
                 continue;
-            if (have_effect(ef) == 0)
-                cli_execute(ef.default);
+            if (have_effect(ef) == 0 && !castEffect(ef) && to_skill(ef).song)
+                continue;   // no free song slot
             if (have_effect(ef) == 0)
                 abort(ef + " did not increase");
         }

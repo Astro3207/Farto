@@ -198,7 +198,7 @@ void prepBuffs(){
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
             continue;
         if (have_effect(ef) == 0)
-            cli_execute(ef.default);
+            castEffect(ef);
     }
     if (have_effect($effect[Happy Salamander]) == 0){
         visit_url("showclan.php?whichclan=2047010939&action=joinclan&confirm=on");
@@ -223,7 +223,7 @@ void prepBuffs(){
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
             continue;
         if (have_effect(ef) == 0)
-            cli_execute(ef.default);
+            castEffect(ef);
     }
     cli_execute("gain meat drop 7 eff 12 turns");
     //item drop
@@ -781,7 +781,7 @@ void FKPrep(){
         if (ef == $effect[Serendipity] && get_property("_augSkillsCast").to_int() >= 3)
             continue;
 		if (have_effect(ef) == 0)
-			cli_execute(ef.default);
+			castEffect(ef);
 	}
 
 	if (have_effect($effect[Do I Know You From Somewhere?]) == 0){
@@ -2380,9 +2380,11 @@ void bulkFKD2(){
         int mojo = 3-get_property("currentMojoFilters").to_int();
         use(mojo,$item[mojo filter]);
         if (get_property("coolerYetiMode") == "adventures" && mall_price($item[jar of fermented pickle juice]) < (251000 + mall_price($item[Hodgman's blanket]))){
-            cli_execute("uneffect ur-kel; cast ode");
+            cli_execute("uneffect ur-kel");
+            castATSong($skill[The Ode to Booze]);
             drink($item[jar of fermented pickle juice]);
-            cli_execute("uneffect ode; cast ur-kel");
+            cli_execute("uneffect ode");
+            castATSong($skill[Ur-Kel's Aria of Annoyance]);
         }
         toChew = floor((spleen_limit()-my_spleen_use())/2);
         chew (toChew,$item[Extrovermectin&trade;]);
