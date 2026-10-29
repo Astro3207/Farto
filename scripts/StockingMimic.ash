@@ -775,13 +775,11 @@ void FKPrep(){
 	foreach ef in $effects[Flapper Dancin', Polka Face, Polka of Plenty,
 		The Ballad of Richie Thingfinder, Earning Interest, Bet Your Autumn Dollar,
 		Sweat Equity, Legendary Pasta Eyeball, Heart of Pink, Tingling Feeling,
-		Disco Leer,Heart of White,Curiosity of Br'er Tarrypin,One Coin In a Fountain]{
+		Disco Leer,Serendipity,Heart of White,Curiosity of Br'er Tarrypin]{
 		if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
 			continue;
-        if (ef == $effect[One Coin In a Fountain]){
-            roseFountain();
+        if (ef == $effect[Serendipity] && get_property("_augSkillsCast").to_int() >= 3)
             continue;
-        }
 		if (have_effect(ef) == 0)
 			cli_execute(ef.default);
 	}
@@ -2040,18 +2038,19 @@ void embezzler(){
 void embezzlerD1(){
     repeat {
         if (have_effect($effect[Lucky!]) > 0){
-            if (have_familiar($familiar[robortender]) && contains_text(get_property("_roboDrinks"), "drive-by shooting"))
+            if (have_familiar($familiar[robortender])){
+                use_familiar($familiar[Robortender]);
                 set_property("famOverride","robortender");
-            else
+                if (!contains_text(get_property("_roboDrinks"), "drive-by shooting")){
+                    retrieve_item($item[drive-by shooting]);
+                    visit_url("inventory.php?action=robooze&which=1&whichitem=9396");
+                }
+            }else
                 set_property("famOverride","jill-of-all-trades");
             set_property("script","embezzler");
             set_property("unconditionalOverride","meat drop, equip mafia pointer finger");
             adv1($location[Cobb's knob treasury]);
         }
-        if (have_skill($skill[Aug. 2nd: Find an Eleven-Leaf Clover Day])
-            && get_property("_aug2Cast") == "false"
-            && to_int(get_property("_augSkillsCast")) < 3)
-            use_skill($skill[Aug. 2nd: Find an Eleven-Leaf Clover Day]);
         clearOverrides();
     } until (have_effect($effect[Lucky!]) == 0);
 }
@@ -2371,6 +2370,7 @@ void bulkFKD2(){
         weakMonsters();
     step("phase: August Golem");
     augustGolem();
+    embezzlerD1();
     step ("phase: use up hidden city");
     restOfHiddenCity();
     step("phase: bulkFK spleen (Extrovermectin)");
@@ -2560,7 +2560,6 @@ void dinnerLiverSpleen(){
 
 void bulkFKD1(){
     set_property("inSpendAdv","true");
-    embezzlerD1();
     set_property("script","FreeKill");
     equip($slot[acc3],timeBadge());
     buffML($monster[Flaming leaflet]);
@@ -2570,6 +2569,8 @@ void bulkFKD1(){
         use_familiar($familiar[comma chameleon]);
         cli_execute("maximize familiar weight");
     }
+    if (have_effect($effect[One Coin In a Fountain]) == 0)
+        roseFountain();
     nonlocationBasedWeakMonsters();
     step("phase: August Golem");
     augustGolem();

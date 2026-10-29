@@ -636,13 +636,11 @@ void BoFaWish(){
 void shrunkenDoughbat(){
     if (get_property("shrunkenHeadZombieMonster") != "" || !have_item($item[shrunken head]))
         return;
-    if (!(periledLocations() contains $location[Guano Junction])){
-        set_property("acc2Override",", equip peridot of peril");
-    }
     if (!can_adventure($location[Guano Junction]))
         abort("Can't adventure in Guano Junction.");
-    set_property("maxOverride","monster level");
-    set_property("offOverride",", equip shrunken head");
+    set_property("unconditionalOverride","monster level, equip shrunken head");
+    if (!(periledLocations() contains $location[Guano Junction]))
+        set_property("unconditionalOverride",get_property("unconditionalOverride") + ", equip peridot of peril");
     set_property("famOverride","sword of s words");
     adv1($location[Guano Junction]);
     clearOverrides();
@@ -940,6 +938,7 @@ void postAdv(){
         buffML($monster[void spider]);
         set_property("subscript","weakling");
         altFam($familiar[stocking mimic]);
+        abort("figure out why void people are dying so fast");
         adv1($location[cobb's knob treasury]);
         set_property("subscript","");
         clearOverrides();
