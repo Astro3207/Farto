@@ -99,7 +99,10 @@ void bladdering(){
     set_property("bonusOverride"," ");
     set_property("maxOverride","combat,-equip drunkula's wineglass");
     set_property("famOverride", "peace turkey");
-    set_property("mainOverride",", equip june cleaver");
+    if (have_effect($effect[fishy]) == 0)
+        set_property("mainOverride",", equip monodent of the sea");
+    else
+        set_property("mainOverride",", equip june cleaver");
     set_property("acc3Override",", equip mafia thumb ring");
     if (have_effect($effect[Apriling Band Battle Cadence]) == 0 && total_turns_played() >= get_property("nextAprilBandTurn").to_int())
         cli_execute("aprilband effect c");
@@ -216,7 +219,7 @@ void main(){
                 unlock_zeppelin();
             if (dayType() == 0 && (get_property("questM16Temple") != "finished" || get_property("questM10Azazel") != "finished" || to_int(get_property("blackForestProgress")) < 5 || get_property("questL05Goblin") == "started")){
                 dayOneUnlocks();
-            } else if (dayType() == 0 && get_property("bladderMax").to_boolean() == true && have_effect($effect[fishy]) > 0){
+            } else if (dayType() == 0 && get_property("bladderMax").to_boolean() == true){
                 bladdering();
             } else if ((my_class() == $class[accordion thief] || have_effect($effect[fishy]) > 0) || dayType() == 0){
                 if (dayType() == 0){
