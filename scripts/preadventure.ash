@@ -759,7 +759,7 @@ void mood(string function){
                 continue;
             if (have_effect(ef) == 0 && !buffWorthBuying(ef))
                 continue;
-            if (have_effect(ef) == 0 && !castEffect(ef) && to_skill(ef).song)
+            if (have_effect(ef) == 0 && !castEffect(ef) && isSong(ef))
                 continue;   // no free song slot
             if (have_effect(ef) == 0)
                 abort(ef + " did not increase");

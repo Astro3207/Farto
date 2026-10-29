@@ -238,12 +238,34 @@
         return periled;
     }
 
-    // Active Accordion Thief songs, i.e. the effects counting against the song limit.
+    // Every effect that counts against the AT song limit (data-of-loathing's song
+    // flag). Listed explicitly because mafia's skill.song misses some of them,
+    // e.g. Polka of Plenty and Fat Leon's.
+    boolean [effect] atSongs = $effects[Aloysius' Antiphon of Aptitude, The Moxious Madrigal,
+        Cletus's Canticle of Celerity, Polka of Plenty, The Magical Mojomuscular Melody,
+        Power Ballad of the Arrowsmith, Brawnee's Anthem of Absorption, Fat Leon's Phat Loot Lyric,
+        Psalm of Pointiness, Jackasses' Symphony of Destruction, Stevedave's Shanty of Superiority,
+        Ode to Booze, The Sonata of Sneakiness, Carlweather's Cantata of Confrontation,
+        Ur-Kel's Aria of Annoyance, Dirge of Dreadfulness, Dirge of Dreadfulness (Remastered),
+        The Ballad of Richie Thingfinder, Benetton's Medley of Diversity, Elron's Explosive Etude,
+        Chorale of Companionship, Prelude of Precision, Donho's Bubbly Ballad,
+        Cringle's Curative Carol, Inigo's Incantation of Inspiration, Rolando's Rondo of Resisto,
+        Paul's Passionate Pop Song, Bram's Bloody Bagatelle];
+
+    boolean isSong(effect ef){
+        return atSongs contains ef || to_skill(ef).song;
+    }
+
+    boolean isSong(skill sk){
+        return isSong(to_effect(sk));
+    }
+
+    // Active AT songs, i.e. the effects counting against the song limit. Counts
+    // effects rather than skills, so songs from recordings are included too.
     int atSongsActive(){
         int songs;
         foreach ef in my_effects(){
-            skill sk = to_skill(ef);
-            if (sk != $skill[none] && sk.song)
+            if (isSong(ef))
                 songs++;
         }
         return songs;
@@ -280,7 +302,7 @@
     // they respect the song limit. False when the song had no slot or the cast failed.
     boolean castEffect(effect ef){
         skill sk = to_skill(ef);
-        if (sk != $skill[none] && sk.song && have_skill(sk))
+        if (sk != $skill[none] && isSong(ef) && have_skill(sk))
             return castATSong(sk);
         return cli_execute(ef.default);
     }
@@ -305,7 +327,7 @@
                         continue;
                     skill sk = to_skill(ef);
                     int turns = have_effect(ef);
-                    if (!have_skill(sk) || (sk.song && !songFits(sk)))
+                    if (!have_skill(sk) || (isSong(ef) && !songFits(sk)))
                         continue;
                     if (turns >= my_adventures() || my_mp() - mp_cost(sk) < reserve)
                         continue;
@@ -319,7 +341,7 @@
                 int needed = ceil((my_adventures() - have_effect(best)) / to_float(perCast));
                 int casts = max(1, min(needed, (my_mp() - reserve) / mp_cost(burnSkill)));
                 int before = have_effect(best);
-                if (burnSkill.song)
+                if (isSong(best))
                     castATSong(burnSkill, casts);
                 else
                     cli_execute(best.default.replace_string("cast 1 ", "cast " + casts + " "));
@@ -333,7 +355,7 @@
                 foreach ef in manaBurnEffects {
                     skill sk = to_skill(ef);
                     int turns = have_effect(ef);
-                    if (!have_skill(sk) || (sk.song && !songFits(sk)))
+                    if (!have_skill(sk) || (isSong(ef) && !songFits(sk)))
                         continue;
                     if (turns >= turnEst || my_mp() - mp_cost(sk) < reserve)
                         continue;
@@ -347,7 +369,7 @@
                 int needed = ceil((turnEst - have_effect(best)) / to_float(perCast));
                 int casts = max(1, min(needed, (my_mp() - reserve) / mp_cost(burnSkill)));
                 int before = have_effect(best);
-                if (burnSkill.song)
+                if (isSong(best))
                     castATSong(burnSkill, casts);
                 else
                     cli_execute(best.default.replace_string("cast 1 ", "cast " + casts + " "));
