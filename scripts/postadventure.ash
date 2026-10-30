@@ -33,7 +33,7 @@ void swordPrep(){
         set_property("famOverride","sword of s words");
         use_familiar($familiar[sword of s words]);
         // Under 10 dog hair pills: grizzled survivor (1085); otherwise Sloppy Seconds Burger (1566).
-        boolean survivor = item_amount($item[synthetic dog hair pill]) < 10;
+        boolean survivor = item_amount($item[synthetic dog hair pill]) < 30;
         string targetId = survivor ? "1085" : "1566";
         string targetName = survivor ? "grizzled survivor" : "Sloppy Seconds Burger";
         int loopCount = 0;

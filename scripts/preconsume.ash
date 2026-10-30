@@ -149,8 +149,12 @@ void main(){
             use(u.it);
         }
         dropOrganBuffs();
-        if (isFartScauce())
-            set_property("valueOfAdventure","5400");
+        if (isFartScauce()){
+            if (get_property("bladderMax") == "true")
+                set_property("valueOfAdventure","20000");
+            else
+                set_property("valueOfAdventure","5400");
+        }
         if (get_property("_milkOfMagnesiumUsed") == "false")
             cli_execute("CONSUME ORGANS 0 0 0");
         unsaveResources();

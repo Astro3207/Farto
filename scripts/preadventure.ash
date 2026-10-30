@@ -516,7 +516,7 @@ void preAdv(){
             string acc1 = boneOr($item[angelbone dice], get_property("acc1Override"));
             if (acc1 != "")
                 append(maximize, acc1);
-            else if (dartReady && (my_adventures() > 40 || dayType() == 1))
+            else if (dartReady && (my_adventures() > 40 || dayType() == 1) && !have_equipped($item[drunkula's wineglass]))
                 append(maximize, ", equip everfull dart holster");
             else if (greenReady && (my_adventures() > 30 || dayType() == 1))
                 append(maximize, ", equip spring shoes");
