@@ -78,7 +78,8 @@ void delayPrep(){
     if (get_property("clubEmNextWeekMonster") != "" && total_turns_played() >= get_property("clubEmNextWeekMonsterTurn").to_int() + 8){
         set_property("mainOverride",", equip legendary seal-clubbing club");
         set_property("famOverride","sword of s words");
-    } else if (item_amount($item[&quot;I Voted!&quot; sticker]) > 0 && total_turns_played()%11 == 1 && get_property("_voteFreeFights").to_int() < 3)
+    } else if (item_amount($item[&quot;I Voted!&quot; sticker]) > 0 && total_turns_played()%11 == 1
+        && get_property("lastVoteMonsterTurn").to_int() < total_turns_played() && get_property("_voteFreeFights").to_int() < 3)
         set_property("acc3Override",", equip I voted");
     else if (have_effect($effect[everything looks green]) == 0 && dayType() == 0){
         if (get_property("_dartsLeft").to_int() == 0)

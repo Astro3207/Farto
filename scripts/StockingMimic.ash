@@ -1039,6 +1039,7 @@ void archaeologist(){
             set_property("acc1Override","");
             set_property("backOverride","");
         }
+        mimicPrep();
         main@preadventure( );
         use($item[Archaeologist's Spade]);
         main@postadventure( );

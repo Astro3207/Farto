@@ -1718,6 +1718,7 @@
             return true;
         if (item_amount($item[&quot;I Voted!&quot; sticker]) > 0
             && total_turns_played() % 11 == 1
+            && to_int(get_property("lastVoteMonsterTurn")) < total_turns_played()
             && to_int(get_property("_voteFreeFights")) < 3)
             return true;
         if (get_property("cursedMagnifyingGlassCount").to_int() == 13 && get_property("_voidFreeFights").to_int() < 5)

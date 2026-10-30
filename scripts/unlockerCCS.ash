@@ -369,6 +369,8 @@ void main(int round, monster mob, string page_text) {
     }
 
     if (get_property("script") == "FreeKill"){
+        if (contains_text(last_monster().to_string(),"void"))
+            throw_item($item[shard of double-ice]);
         if (last_monster() == $monster[shadow spire] || last_monster() == $monster[shadow scythe]){
             if (have_equipped($item[wicker slicker])){
                 while (current_round() > 0 && current_round() < 10)
