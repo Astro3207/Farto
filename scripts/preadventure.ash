@@ -705,7 +705,7 @@ boolean skipMoodBuff(effect ef){
         case $effect[party soundtrack]:        return dayType() == 0 || get_property("_cinchUsed").to_int() > 85;
         case $effect[sweat equity]:            return (my_basestat($stat[submoxie]) - 118881) < BCZcost("SweatEquityCasts");
         case $effect[Legendary Pasta Eyeball]: return my_class() == $class[pastamancer];
-        case $effect[Incredibly Well Lit]:     return get_property("_aug7Cast").to_boolean() || get_property("_augSkillsCast").to_int() == 5;
+        case $effect[Incredibly Well Lit]:     return get_property("_aug7Cast").to_boolean() || get_property("_augSkillsCast").to_int() == 5 || dayType() == 0;
     }
     return false;
 }
@@ -744,7 +744,7 @@ void mood(string function){
             if (have_effect(ef) > 0)
                 cli_execute("uneffect " + ef);
         foreach ef in $effects[Only Dogs Love a Drunken Sailor,Best Pals,Sweat equity, Flapper Dancin',Legendary Pasta Eyeball,material witness,
-            Singer's Faithful Ocelot, Leash of Linguini, empathy,Thoughtful Empathy,Blood Bond,Bet Your Autumn Dollar,Incredibly Well Lit,Fat Leon's Phat Loot Lyric,
+            Singer's Faithful Ocelot, Leash of Linguini, empathy,Thoughtful Empathy,Blood Bond,Incredibly Well Lit,Fat Leon's Phat Loot Lyric,
             Disco Leer,Polka of Plenty,Tubes of Universal Meat,Lubricating Sauce,Strength of the Tortoise, party soundtrack]{
             if (skipMoodBuff(ef))
                 continue;
@@ -764,9 +764,11 @@ void mood(string function){
             if (have_effect(ef) == 0)
                 abort(ef + " did not increase");
         }
-        cli_execute("gain meat drop 3 eff");
-        if (my_location().environment == "underwater")
-            cli_execute("gain better diver 3 eff");
+        if (my_location() == $location[marinara trench]){
+            cli_execute("gain meat drop 3 eff");
+            if (my_location().environment == "underwater")
+                cli_execute("gain better diver 3 eff");
+        }
         setAutoRecovery();
     }
     if (function == "")
