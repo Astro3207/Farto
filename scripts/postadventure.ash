@@ -643,6 +643,10 @@ void shrunkenDoughbat(){
     set_property("unconditionalOverride","monster level, equip shrunken head");
     if (!(periledLocations() contains $location[Guano Junction]))
         set_property("unconditionalOverride",get_property("unconditionalOverride") + ", equip peridot of peril");
+    if (have_effect($effect[everything looks yellow]) == 0)
+        set_property("unconditionalOverride",get_property("unconditionalOverride") + ",equip parka (dilophosaur)");
+    else if (have_effect($effect[everything looks red]) == 0)
+        set_property("unconditionalOverride",get_property("unconditionalOverride") + ", equip everfull dart holster");
     set_property("famOverride","sword of s words");
     adv1($location[Guano Junction]);
     clearOverrides();

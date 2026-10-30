@@ -890,12 +890,9 @@ void cyberzone() {
         if (!contains_text(get_property("banishedPhyla"), "construct")) {
             set_property("hpAutoRecoveryTarget","0.25");
             cli_execute("recover hp");
-            foreach mon in $monsters[greyhat hacker,greenhat hacker,redhat hacker,purplehat hacker,bluehat hacker] {
-                if (hackerZone contains mon && hackerZone[mon] != $location[cyberzone 1]) {
-                    adv1(hackerZone[mon], 0, "");
-                    break;
-                }
-            }
+            if (have_effect($effect[Coldform]) > 0)
+                abort("Coldform not compatible with bluehat hacker, add contingincies");
+            adv1($location[cyberzone 3], 0, "");
             continue;
         }
         // Adventure in whichever zone has the target hacker
@@ -1864,7 +1861,7 @@ void locationBasedWeakMonsters(){
         else
             set_property("mainOverride","");
         LBMWPrep (true);
-        if (to_int(get_property("_glarkCableUses")) == 4){
+        if (to_int(get_property("_glarkCableUses")) == 4 && get_property("shrunkenHeadZombieMonster") == ""){
             set_property("mainOverride",", equip angelbone totem");
             equip($slot[off-hand],$item[angelbone totem]);
             equip($slot[off-hand],$item[shrunken head]);
