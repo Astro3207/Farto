@@ -945,6 +945,7 @@ void postAdv(){
         altFam($familiar[stocking mimic]);
         cli_execute("preadventure.ash");
         buffML($monster[void spider]);
+        set_auto_attack(0);
         adv1($location[cobb's knob treasury]);
         set_property("subscript","");
         clearOverrides();

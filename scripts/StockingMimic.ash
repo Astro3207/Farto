@@ -1253,10 +1253,6 @@ void pearloP3(){
     }
 }
 void gingerbread(){
-    if (my_name().to_lower_case() == "the great white hunter"){
-        set_property("_gingerbreadCityTurns","30");
-        return;
-    }
     if (get_property("gingerbreadCityAvailable") == false){
         if (get_property("_gingerbreadCityToday") == false)
             use($item[counterfeit city]);
@@ -1264,10 +1260,13 @@ void gingerbread(){
     retrieve_item(29,$item[gingerbread cigarette]);
     if (get_property("_gingerbreadCityTurns").to_int() < 30){
         mimicPrep(", -equip mobius ring");
+        if (dayType() == 1)
+        set_property("offOverride",", equip april shower thoughts shield");
         adv1($location[Gingerbread Upscale Retail District]);
     }
     if (contains_text(LastAdvTxt(),"almost midnight") || get_property("_gingerbreadCityTurns").to_int() == 19)
         adv1($location[Gingerbread Civic Center]);
+    set_property("offOverride","");
 }
 
 void habitatRecall(){
@@ -2525,6 +2524,7 @@ void locationBasedAdventuring(){
     }
     locationBasedWeakMonsters();
     if (item_amount($item[envyfish egg]) > 0 && get_property("_envyfishEggUsed") == "false"){
+        set_property("subscript","");
         mimicPrep();
         main@preadventure( );
         use($item[envyfish egg]);

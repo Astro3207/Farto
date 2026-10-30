@@ -563,6 +563,7 @@
         if (m.base_hp <= lowHPTarget() && mcd_max() > current_mcd()
             && (dayType() != 0 || user_confirm(`MCD will add {mcd_max() - current_mcd()} ML (currently {numeric_modifier("Monster Level")}, {m} HP {m.base_hp} vs target {lowHPTarget()}). Continue?`)))
             change_mcd(mcd_max());
+        print("monster level is " + numeric_modifier("monster level"));
         return m.base_hp > lowHPTarget();
     }
 
