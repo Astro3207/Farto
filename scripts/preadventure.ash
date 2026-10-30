@@ -764,7 +764,7 @@ void mood(string function){
             if (have_effect(ef) == 0)
                 abort(ef + " did not increase");
         }
-        if (my_location() == $location[marinara trench]){
+        if (my_location() == $location[the marinara trench]){
             cli_execute("gain meat drop 3 eff");
             if (my_location().environment == "underwater")
                 cli_execute("gain better diver 3 eff");

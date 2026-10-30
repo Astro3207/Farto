@@ -1784,7 +1784,7 @@ void roseGarden(){
 
         if (roseFind("Fight", roseMonsters) < 0) break;
         run_choice(2);   // step out so the maximizer can change gear
-        mimicPrep();
+        LBMWPrep(true);
         main@preadventure();
         page = visit_url(garden);
         int mob = roseFind("Fight", roseMonsters);

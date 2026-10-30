@@ -94,6 +94,8 @@ void dayOneUnlocks(){
 
 void bladdering(){
     set_property("subscript","bladdering");
+    if (available_amount($item[pantsgiving]) == 0)
+        stashgrab($item[pantsgiving]);
     set_property("bonusOverride"," ");
     set_property("maxOverride","combat,-equip drunkula's wineglass");
     set_property("famOverride", "peace turkey");
@@ -101,9 +103,12 @@ void bladdering(){
         set_property("mainOverride",", equip monodent of the sea");
     else
         set_property("mainOverride",", equip june cleaver");
+    if (available_amount($item[pantsgiving]) > 0)
+        set_property("pantsOverride",", equip pantsgiving");
     if (have_item($item[mime army infiltration glove]) && my_primestat() != $stat[moxie])
         set_property("acc2Override", ", equip mime army infiltration glove");
     set_property("acc3Override",", equip mafia thumb ring");
+    set_property("offOverride",", equip carnivorous potted plant");
     if (have_effect($effect[Apriling Band Battle Cadence]) == 0 && total_turns_played() >= get_property("nextAprilBandTurn").to_int())
         cli_execute("aprilband effect c");
     adv1($location[cobb's knob treasury]);
@@ -220,6 +225,8 @@ void main(){
             if (dayType() == 0 && (get_property("questM16Temple") != "finished" || get_property("questM10Azazel") != "finished" || to_int(get_property("blackForestProgress")) < 5 || get_property("questL05Goblin") == "started")){
                 dayOneUnlocks();
             } else if (dayType() == 0 && get_property("bladderMax").to_boolean() == true){
+                if (my_class() == $class[seal clubber] && have_effect($effect[shamed]) > my_adventures())
+                    visit_url("account.php?am=1&pwd="+my_hash()+"&action=flag_disablefacts&value=1&ajax=1");
                 bladdering();
             } else if ((my_class() == $class[accordion thief] || have_effect($effect[fishy]) > 0) || dayType() == 0){
                 if (dayType() == 0){
