@@ -22,6 +22,11 @@ void clanAdv(){
             visit_url("clan_buytraining.php?action=buyround&members=1&size=1&whichgift=9");
     }
 }
+void TNE(){
+    if (to_int(get_property("valueOfAdventure")) > mall_price($item[Twelve Night Energy]) && get_property("_twelveNightEnergyUsed") == "false"){
+        use($item[twelve night energy]);
+    }
+}
 // Day-2 Cup of 13s: same Runneth picks as the free-kill run, but each adventure
 // an ingredient adds is also worth valueOfAdventure.
 void cupOf13s(){
@@ -126,6 +131,7 @@ void main(){
         use($item[Mayo Minder&trade;]);
     timeArrow();
     clanAdv();
+    TNE();
     eatSausage();
     if (dayType() == 1){
         cupOf13s();

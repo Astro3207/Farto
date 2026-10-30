@@ -235,8 +235,7 @@ void azazelUnicornQuest(){
                     swordPrep();
                     adv1($location[Infernal Rackets Backstage],0,"");
                 }
-            }
-            while (item_amount($item[observational glasses]) == 0){
+            } else if (item_amount($item[observational glasses]) == 0){
                 set_property("maxOverride","combat");
                 swordPrep();
                 if (have_effect($effect[Apriling Band Battle Cadence]) == 0 && total_turns_played() >= get_property("nextAprilBandTurn").to_int())
@@ -1062,7 +1061,7 @@ void spendAdv(){
         
         if (dayType() == 1 && get_property("shrunkenHeadZombieMonster") == ""){
             shrunkenDoughbat();
-        } else if (!pearlsDone()){
+        } else if (!pearlsDone() && dayType() == 1){
             foreach str in $strings[anemone,bar,reef,deepests,trench]{
                 if (get_property(pearls[str].donePref) == "false"){
                     set_property("famOverride","sword of s words");
@@ -1076,6 +1075,11 @@ void spendAdv(){
             set_property("maxOverride","item drop,sea,-tie");
             set_property("famOverride","sword of s words");
             adv1($location[the marinara trench]);
+            set_property("famOverride","");
+        } else {
+            set_property("maxOverride","item drop,");
+            set_property("famOverride","sword of s words");
+            adv1($location[cobb's knob treasury]);
             set_property("famOverride","");
         }
         set_property("shirtOverride","");

@@ -525,7 +525,7 @@ void preAdv(){
             else if (vote)
                 append(maximize, ", equip &quot;I Voted!&quot; sticker");
             // Acc2
-            string acc2 = boneOr($item[angelbone chopsticks], get_property("acc1Override"));
+            string acc2 = boneOr($item[angelbone chopsticks], get_property("acc2Override"));
             if (acc2 != "")
                 append(maximize, acc2);
             else if (have_equipped($item[angelbone dice]))
@@ -622,7 +622,7 @@ void preAdv(){
                 cli_execute("uneffect " + ef);
         }
     }
-    if (get_property("script") == "bladdering"){
+    if (get_property("subscript") == "bladdering"){
         retrieve_item(2,$item[ink bladder]);
     }
 
@@ -651,7 +651,7 @@ void preAdv(){
     put_closet(item_amount($item[sand dollar]),$item[sand dollar]);
     put_closet(item_amount($item[hobo nickel]),$item[hobo nickel]);
 
-    if (contains_text(get_property("maxOverride"),"combat") && !contains_text(get_property("maxOverride"),"-combat")){
+    if (contains_text(maximize.to_string(),"combat") && !contains_text(maximize.to_string(),"-combat")){
         if (have_effect($effect[Carlweather's Cantata of Confrontation]) == 0 && dayType() == 1)
             castATSong($skill[Carlweather's Cantata of Confrontation]);
         if (numeric_modifier("combat rate") < 15)
