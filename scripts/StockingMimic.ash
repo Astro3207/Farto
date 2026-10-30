@@ -964,7 +964,7 @@ void shadowRealmFK(){
             set_property("acc3Override","");
         if (to_int(get_property("_batWingsSwoopUsed")) < 11)
             set_property("backOverride",", equip bat wings");
-        if (have_effect($effect[fishy]) < 1000 && my_class() == $class[seal clubber])
+        if (have_effect($effect[fishy]) < 1010 && my_class() == $class[seal clubber])
             set_property("mainOverride",", equip monodent");
         else
             set_property("mainOverride","");
