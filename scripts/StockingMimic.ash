@@ -2522,13 +2522,13 @@ void locationBasedAdventuring(){
         step("phase: peridot fishing");
         peridotFishing();
     }
-    locationBasedWeakMonsters();
     if (item_amount($item[envyfish egg]) > 0 && get_property("_envyfishEggUsed") == "false"){
         set_property("subscript","");
         mimicPrep();
         main@preadventure( );
         use($item[envyfish egg]);
     }
+    locationBasedWeakMonsters();
 }
 void dinnerLiverSpleen(){
     use_familiar($familiar[stooper]);

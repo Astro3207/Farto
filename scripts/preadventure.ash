@@ -607,7 +607,7 @@ void preAdv(){
 
         //initiative
         if (jump_chance($monster[killer clownfish]) - numeric_modifier("Initiative Penalty") < 100){
-            foreach ef in $effects[Bow-Legged Swagger,Natural 1,Patent Alacrity,Silent Hunting,Clear Ears\, Can't Lose,Poppy Performance,Hiding in Plain Sight,Digitalis\, Dig It,Ass Over Teakettle,Song of Slowness,Synthetic Buzz,Seal Clubbing Frenzy,Springy Fusilli]{
+            foreach ef in $effects[Bow-Legged Swagger,Patent Alacrity,Silent Hunting,Clear Ears\, Can't Lose,Poppy Performance,Hiding in Plain Sight,Digitalis\, Dig It,Ass Over Teakettle,Song of Slowness,Synthetic Buzz,Seal Clubbing Frenzy,Springy Fusilli]{
                 if (!buffAvailable(ef))
                     continue;
                 if (jump_chance($monster[flaming monstera]) >= 100)
