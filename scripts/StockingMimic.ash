@@ -1026,9 +1026,12 @@ void archaeologist(){
         if (my_location() != $location[the red zeppelin]){
             if (get_property("zeppelinProgress").to_int() >= 6){
                 set_property("mainOverride",", equip legendary seal-clubbing club");
-                set_property("backOverride",", equip retrocape (heck kill)");
-            } else 
+                if ($monster[ron "The Weasel" copperhead].base_hp > highHPTarget())
+                    set_property("backOverride",", equip retrocape (heck kill)");
+            } else {
                 set_property("mainOverride","");
+                set_property("backOverride","");
+            }
             set_property("acc1Override",",bonus mafia pointer");
             if (to_int(get_property("_glarkCableUses")) < 5) {
                 retrieve_item(5,$item[glark cable]);
@@ -1283,6 +1286,8 @@ void habitatRecall(){
                 use($item[willyweed]);
             if (have_effect($effect[driving waterproofly]) == 0)
                 set_property("pantsOverride", ", equip really nice swim");
+            cli_execute("preadventure");
+            abort("prepare putty");
             adv1($location[The Briniest Deepests]);
             set_property("offOverride","");
             set_property("acc1Override","");
@@ -1701,10 +1706,13 @@ void weakMonsters(){
                 set_property("archSkeleton","false");
             } else if (to_int(get_property("_glarkCableUses")) < 5 && can_adventure($location[A Mob of Zeppelin Protesters])){
                 set_property("FKRunEligible","true");
-                if (get_property("questL11Ron") == "step4")
+                if (get_property("questL11Ron") == "step4") {
                     set_property("mainOverride",", equip legendary seal-clubbing club");
-                else
+                    set_property("backOverride",", equip retrocape (heck kill)");
+                } else {
                     set_property("mainOverride","");
+                    set_property("backOverride","");
+                }
                 mimicPrep();
                 retrieve_item(5,$item[glark cable]);
                 adv1($location[the red zeppelin]);
