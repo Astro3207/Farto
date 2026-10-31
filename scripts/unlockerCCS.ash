@@ -310,6 +310,8 @@ void main(int round, monster mob, string page_text) {
             use_skill($skill[RECALL FACTS: %PHYLUM CIRCADIAN RHYTHMS]);
         if (have_equipped($item[roman candelabra]))
             use_skill($skill[blow the purple candle!]);
+        if (have_item($item[spooky putty sheet]) && get_property("spookyPuttyCopiesMade").to_int() < 5)
+            throw_item($item[spooky putty sheet]);
     }
     if (to_monster(get_property("beGregariousMonster")) == copyTarget && get_property("beGregariousFightsLeft").to_int() > 0 && my_location() == $location[the dive bar])
         replace();

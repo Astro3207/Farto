@@ -1228,7 +1228,7 @@ void pearloP2(){
     banishFish();
     foreach str in $strings[deepests,reef]{
         if (have_effect($effect[driving waterproofly]) == 0)
-            set_property("pantsOverride", ", equip really nice swim");
+            set_property("backOverride", ", equip Elf Guard SCUBA tank");
         altFam($familiar[stocking mimic]);
         if (get_property(pearls[str].donePref) == "false" || str == "reef"){
             resCheck(str);
@@ -1236,7 +1236,7 @@ void pearloP2(){
             break;
         }
     }
-    set_property("pantsOverride","");
+    set_property("backOverride","");
 }
 void pearloP3(){
     if (get_property("_fishyPipeUsed") == "false")
@@ -1285,13 +1285,14 @@ void habitatRecall(){
             if (have_effect($effect[Wet Willied]) == 0)
                 use($item[willyweed]);
             if (have_effect($effect[driving waterproofly]) == 0)
-                set_property("pantsOverride", ", equip really nice swim");
+                set_property("backOverride", ", equip Elf Guard SCUBA tank");
             cli_execute("preadventure");
-            abort("prepare putty");
+            if (item_amount($item[spooky putty sheet]) == 0 && get_property("spookyPuttyCopiesMade").to_int() <5)
+                stashgrab($item[spooky putty sheet]);
             adv1($location[The Briniest Deepests]);
             set_property("offOverride","");
             set_property("acc1Override","");
-            set_property("pantsOverride", "");
+            set_property("backOverride", "");
         } else if (to_int(get_property("_monsterHabitatsFightsLeft")) == 0 && to_int(get_property("_monsterHabitatsRecalled")) < 3){
             mimicPrep();
             main@preadventure();
@@ -1303,17 +1304,24 @@ void habitatRecall(){
             if (get_auto_attack() == 0)
                 aa("facsimile");
             pearloP2();
+            if (item_amount($item[Spooky Putty monster]) > 0){
+                main@preadventure();
+                use($item[Spooky Putty monster]);
+                main@postadventure();
+            }
         }
         set_property("offOverride","");
         set_property("acc1Override","");
     }
+    if (item_amount($item[spooky putty sheet]) > 0)
+        stashreturn($item[spooky putty sheet]);
     set_property("subscript","");
 }
 void backup(){
     while (to_int(get_property("_backUpUses")) < 11){
         set_property("subscript","replacing");
         if (have_effect($effect[driving waterproofly]) == 0)
-            set_property("pantsOverride",", equip really nice swim");
+            set_property("backOverride",", equip Elf Guard SCUBA tank");
         if (to_monster(get_property("lastCopyableMonster")) != copyTarget){
             abort("trying to backup to not " + copyTarget);
         }
@@ -1339,7 +1347,7 @@ void backup(){
             set_property("famOverride","chest mimic");
             set_property("maxOverride","familiar weight");
             if (have_effect($effect[driving waterproofly]) == 0)
-                set_property("pantsOverride",", equip really nice swim");
+                set_property("backOverride",", equip Elf Guard SCUBA tank");
             set_property("acc3Override",", equip backup camera");
             set_property("offOverride",", equip McHugeLarge left pole");
             adv1($location[the dive bar]);
@@ -1351,6 +1359,7 @@ void backup(){
         }
     }
     set_property("acc3Override","");
+    set_property("backOverride","");
     set_property("subscript","");
 }
 void mimicEgg(){
@@ -2327,7 +2336,7 @@ void peridotFishing(){
                     set_property("pantsOverride",", equip Mer-kin scholar tailpiece");
                     cli_execute("closet put * mer-kin hallpass");
                 }else if (loc.environment == "underwater"){
-                    set_property("pantsOverride",", equip really nice swim");
+                    set_property("backOverride",", equip Elf Guard SCUBA tank");
                     if (loc == $location[the caliginous abyss])
                         set_property("acc1Override",", equip black glass");
                 }else if (loc.zone == "The 8-Bit Realm") {
@@ -2337,6 +2346,7 @@ void peridotFishing(){
                 adv1(loc);
                 set_property("hatOverride","");
                 set_property("pantsOverride","");
+                set_property("backOverride","");
             }
             set_property("offOverride","");
             set_property("acc2Override","");

@@ -539,15 +539,15 @@ void banishFish(){
         if (have_effect($effect[fishy]) == 0)
             use($item[fishy pipe]);
         if (have_effect($effect[driving waterproofly]) == 0){
-            set_property("pantsOverride",", equip really nice swimming trunk");
-            cli_execute("equip really nice swim");
+            set_property("backOverride",", equip Elf Guard SCUBA tank");
+            equip($slot[back], $item[Elf Guard SCUBA tank]);
         }
         retrieve_item($item[peppermint parasol]);
         adv1($location[The briniest deepests]);
     } else
         abort("Need to recharge patroitic eagle");
     set_property("famEquipOverride","");
-    set_property("pantsOverride","");
+    set_property("backOverride","");
     screechDone();
 }
 
@@ -1013,7 +1013,7 @@ void spendAdv(){
             set_property("maxOverride","moxie");
             set_property("shirtOverride"," ");
             cli_execute("unequip shirt");
-            set_property("pantsOverride",", equip really nice swim");
+            set_property("backOverride",", equip Elf Guard SCUBA tank");
             set_property("acc1Override",", equip black glass");
             set_property("acc2Override",", equip peridot");
             set_property("famEquipOverride", available_amount($item[das boot]) > 0 ? ", equip das boot" : ", equip little bitty bathysphere");
