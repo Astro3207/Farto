@@ -209,6 +209,8 @@ void prepBuffs(){
         use($item[pulled blue taffy]);
     while (have_effect($effect[Cold Hearted]) < 20)
         use($item[love song of icy revenge]);
+    while (have_effect($effect[She Ate Too Much Candy]) < 25)
+        use($item[Prunets]);
     //meat drop
     foreach ef in $effects[Incredibly Well Lit,Loded,Meet the Meat,Tubes of Universal Meat,Holiday Bliss,So You Can Work More...,Legendary Pasta Eyeball,Polka of Plenty,Swimming with Sharks]{
         if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
@@ -680,10 +682,8 @@ void FKPrep(){
     }
 	set_property("script", "FreeKill");
     retrieve_item($item[burning paper crane]);
-    while (have_effect($effect[She Ate Too Much Candy]) < 25)
-        use($item[Prunets]);
     step("phase: 9 special buffs");
-    foreach ef in $effects[Robot Friends,Healthy Green Glow,Shortly Stacked,Shortly Wired,steely-eyed squint,Human-Fish Hybrid,green Tongue,Human-Machine Hybrid,Warm Shoulders]{
+    foreach ef in $effects[Robot Friends,Synthesis: Greed,She Ate Too Much Candy,Always be Collecting,Sinuses For Miles,Loded,Healthy Green Glow,Shortly Stacked,Shortly Wired,steely-eyed squint,Human-Fish Hybrid,green Tongue,Human-Machine Hybrid,Warm Shoulders]{
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
             continue;
         if (buffCount() == 5 && !get_property("_bagOTricksUsed").to_boolean()
