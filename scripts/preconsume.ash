@@ -144,25 +144,27 @@ void main(){
             use($item[borrowed time]);
         partialConsume(0,2,0);
     } else {
-        savedResources();
-        foreach i, u in organExpanders {
-            if (get_property(u.pref) != "false")
-                continue;
-            if (u.onlyIfHave && item_amount(u.it) == 0)
-                continue;
-            if (u.needsDrunk && my_inebriety() == 0)
-                continue;
-            use(u.it);
-        }
-        dropOrganBuffs();
-        if (isFartScauce()){
-            if (get_property("bladderMax") == "true")
-                set_property("valueOfAdventure","20000");
-            else
-                set_property("valueOfAdventure","5400");
-        }
-        if (get_property("_milkOfMagnesiumUsed") == "false")
-            cli_execute("CONSUME ORGANS 0 0 0");
-        unsaveResources();
+        try {
+            savedResources();
+            foreach i, u in organExpanders {
+                if (get_property(u.pref) != "false")
+                    continue;
+                if (u.onlyIfHave && item_amount(u.it) == 0)
+                    continue;
+                if (u.needsDrunk && my_inebriety() == 0)
+                    continue;
+                use(u.it);
+            }
+            dropOrganBuffs();
+            if (isFartScauce()){
+                if (get_property("bladderMax") == "true")
+                    set_property("valueOfAdventure","20000");
+                else
+                    set_property("valueOfAdventure","5400");
+            }
+            if (get_property("_milkOfMagnesiumUsed") == "false")
+                cli_execute("CONSUME ORGANS 0 0 0");
+        } finally
+            unsaveResources();
     }
 }

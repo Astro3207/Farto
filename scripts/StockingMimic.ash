@@ -481,7 +481,7 @@ void dieting(){
         if (closet_amount($item[Bowl of Infinite Jelly]) > 0 && my_fullness() == fullness_limit()-1)
             take_closet($item[Bowl of Infinite Jelly]);
         while (my_fullness() < fullness_limit()){
-            if (get_property("legendaryNoodlesStomach") == 0 && fullness_limit()-my_fullness() > 1){
+            if (get_property("legendaryNoodlesStomach") == 0){
                 eat (cheapestPasta());
             } else {
                 eat ($item[thyme jelly donut]);
@@ -1273,7 +1273,7 @@ void gingerbread(){
 }
 
 void habitatRecall(){
-    if (item_amount($item[spooky putty sheet]) == 0 && get_property("spookyPuttyCopiesMade").to_int() <5)
+    if (item_amount($item[spooky putty sheet]) == 0 && get_property("spookyPuttyCopiesMade").to_int() < 5)
         stashgrab($item[spooky putty sheet]);
     while (to_int(get_property("_monsterHabitatsRecalled")) < 3 || to_int(get_property("_monsterHabitatsFightsLeft")) > 0 || get_property("beGregariousFightsLeft").to_int() > 0){
         banishFish();
@@ -1309,6 +1309,8 @@ void habitatRecall(){
                 use($item[Spooky Putty monster]);
                 main@postadventure();
             }
+            if (item_amount($item[spooky putty sheet]) > 0 && get_property("spookyPuttyCopiesMade").to_int() >= 5)
+                stashreturn($item[spooky putty sheet]);
         }
         set_property("offOverride","");
         set_property("acc1Override","");
