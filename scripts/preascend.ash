@@ -37,7 +37,10 @@ void drunkInko(){
     starter();
     set_property("script","farto");
     while (my_adventures() > 0){
-        altFam($familiar[robortender]);
+        if (my_adventures() > 30)
+            altFam($familiar[robortender]);
+        else
+            abort("do goose dupe");
         trenchTurn();
     }
 }

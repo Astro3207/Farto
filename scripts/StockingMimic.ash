@@ -2051,14 +2051,14 @@ int mimicXpNeeded(){
     if (!have_familiar($familiar[chest mimic]))
         return 0;
     int eggsLeft = max(0, 11 - to_int(get_property("_mimicEggsObtained")));
-    return max(0, eggsLeft * 50 - $familiar[chest mimic].experience);
+    return (eggsLeft * 50 - $familiar[chest mimic].experience);
 }
 
 // XP the cooler yeti still needs: 400 for today's boon, or 0 once it's claimed.
 int yetiXpNeeded(){
     if (!have_familiar($familiar[cooler yeti]) || get_property("_coolerYetiAdventures").to_boolean())
-        return 0;
-    return max(0, 400 - $familiar[cooler yeti].experience);
+        return (0 - $familiar[cooler yeti].experience);
+    return (400 - $familiar[cooler yeti].experience);
 }
 
 familiar famXpTarget(){
@@ -2066,10 +2066,16 @@ familiar famXpTarget(){
     int yeti = yetiXpNeeded();
     boolean eggsLayable = to_int(get_property("_backUpUses")) < 11;
     familiar fam = $familiar[mini kiwi];
-    if (mimic > 0 && (eggsLayable || yeti == 0))
+    if (mimic > 0 && (eggsLayable || yeti <= 0))
         fam = $familiar[chest mimic];
     else if (yeti > 0)
         fam = $familiar[cooler yeti];
+    if (dayType() == 0 && fam == $familiar[mini kiwi]){
+        if (mimic > -550)
+            fam = $familiar[chest mimic];
+        else if (yeti > -400)
+            fam = $familiar[cooler yeti];
+    }
     print("fam XP: mimic needs " + mimic + ", yeti needs " + yeti + " -> " + fam, "blue");
     return fam;
 }
@@ -2095,22 +2101,21 @@ void restOfHiddenCity(){
     if (!can_adventure($location[An Overgrown Shrine (Southeast)]) || (get_property("zigguratLianas") > 0 && to_int(get_property("_drunkPygmyBanishes")) >= 11))
         return;
     set_property("maxOverride","familiar experience");
-    while (to_int(get_property("_drunkPygmyBanishes")) < 11){
+    if (to_int(get_property("_drunkPygmyBanishes")) < 11){
         set_property("famOverride",famXpTarget().to_string().to_lower_case());
         drunkPygmy();
-    }
-    while (get_property("zigguratLianas") == 0 && (($familiar[cooler yeti].experience < 360 && get_property("coolerYetiMode") == "") || dayType() == 1)){
-        set_property("famOverride",famXpTarget().to_string().to_lower_case());
-        lianas();
-    }
-    if (have_effect($effect[Everything looks Beige]) == 0 && have_item($item[crepe paper parachute cape])){
+    } else if (have_effect($effect[Everything looks Beige]) == 0 && have_item($item[crepe paper parachute cape])){
         set_property("famOverride",famXpTarget().to_string().to_lower_case());
         adv1($location[An Overgrown Shrine (Southeast)]);
         cli_execute("equip weapon antique machete");
         visit_url("inventory.php?action=parachute");
         visit_url("choice.php?option=1&whichchoice=1543&monid=1426");
+    } else if (get_property("zigguratLianas") == 0 && (($familiar[cooler yeti].experience < 360 && get_property("coolerYetiMode") == "") || dayType() == 1)){
+        set_property("famOverride",famXpTarget().to_string().to_lower_case());
+        lianas();
     }
     aa("facsimile");
+    return;
 }
 
 // The Witchess piece (bishop / rook / knight) whose drop is worth the most in the
@@ -2171,12 +2176,15 @@ void miscellaneousFams(){
         set_property("subscript","");
     }
     if (get_property("_banderRunaways").to_int() < 30){
-        set_auto_attack(0);
         if (have_effect($effect[Apriling Band Battle Cadence]) == 0 && total_turns_played() >= get_property("nextAprilBandTurn").to_int())
             cli_execute("aprilband effect c");
         while (get_property("_banderRunaways").to_int() < (my_familiar().familiar_weight() + weight_adjustment() - (my_familiar() == $familiar[comma chameleon] ? 5 : 0)) / 5){
+            set_auto_attack(0);
             if (nextTrainStation() == "meat_mine" && get_property("_godLobsterFights").to_int() < 3){
                 godLobster();
+                continue;
+            } else if (nextTrainStation() == "meat_mine" && (get_property("zigguratLianas") == 0 || to_int(get_property("_drunkPygmyBanishes")) < 11)){
+                restOfHiddenCity();
                 continue;
             }
             if ($location[Cobb's Knob Treasury].combat_percent < 100)
@@ -2363,7 +2371,8 @@ void bulkFKD2(){
     augustGolem();
     embezzlerD1();
     step ("phase: use up hidden city");
-    restOfHiddenCity();
+    while (get_property("zigguratLianas") == 0 || to_int(get_property("_drunkPygmyBanishes")) < 11)
+        restOfHiddenCity();
     step("phase: bulkFK spleen (Extrovermectin)");
     if (my_spleen_use() < spleen_limit()){
         int toChew = floor((spleen_limit()-my_spleen_use())/2);
@@ -2504,7 +2513,8 @@ void bulkFKD2(){
 void locationBasedAdventuring(){
     miscellaneousFams();
     step ("phase: use up hidden city");
-    restOfHiddenCity();
+    while ((have_effect($effect[Everything looks Beige]) == 0 || $familiar[Cooler Yeti].experience < 400) && (get_property("zigguratLianas") == 0 || to_int(get_property("_drunkPygmyBanishes")) < 11))
+        restOfHiddenCity();
     step("phase: bulkFK habitat recall");
     habitatRecall();
     step("phase: bulkFK backup camera");
