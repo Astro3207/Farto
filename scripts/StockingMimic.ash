@@ -1273,6 +1273,8 @@ void gingerbread(){
 }
 
 void habitatRecall(){
+    if (item_amount($item[spooky putty sheet]) == 0 && get_property("spookyPuttyCopiesMade").to_int() <5)
+        stashgrab($item[spooky putty sheet]);
     while (to_int(get_property("_monsterHabitatsRecalled")) < 3 || to_int(get_property("_monsterHabitatsFightsLeft")) > 0 || get_property("beGregariousFightsLeft").to_int() > 0){
         banishFish();
         set_property("subscript","replacing");
@@ -1287,8 +1289,6 @@ void habitatRecall(){
             if (have_effect($effect[driving waterproofly]) == 0)
                 set_property("backOverride", ", equip Elf Guard SCUBA tank");
             cli_execute("preadventure");
-            if (item_amount($item[spooky putty sheet]) == 0 && get_property("spookyPuttyCopiesMade").to_int() <5)
-                stashgrab($item[spooky putty sheet]);
             adv1($location[The Briniest Deepests]);
             set_property("offOverride","");
             set_property("acc1Override","");
