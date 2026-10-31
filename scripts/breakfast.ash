@@ -37,6 +37,18 @@ void photoBooth(){
     whitelist("homeclan");
 }
 
+void temporary(){
+    if (get_workshed() == $item[portable mayo clinic]){
+        retrieve_item(1000,$item[mayodiol]);
+        retrieve_item(1000,$item[Mayoflex]);
+        if (available_amount($item[Asdon Martin keyfob (on ring)]) > 0)
+            use($item[Asdon Martin keyfob (on ring)]);
+        else if (item_amount($item[model train set]) == 1)
+            use($item[model train set]);
+    }
+    stashreturn();
+}
+
 void takerSpace(){
     if (get_property("_workshedItemUsed").to_boolean() || get_workshed() != $item[TakerSpace letter of Marque])
         return;
@@ -297,6 +309,7 @@ void main(){
     clanBreakfasts();
     photoBooth();
     clanFortune();
+    temporary();
 
     step("phase: campground");
     if (my_garden_type( ) != "black_rose")

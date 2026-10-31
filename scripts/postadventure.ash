@@ -1080,8 +1080,10 @@ void spendAdv(){
                 if (get_property(pearls[str].donePref) == "false"){
                     set_property("famOverride","sword of s words");
                     set_property("maxOverride",pearls[str].ele_res + ", sea");
+                    set_property("bonusOverride", " ");
                     adv1(pearls[str].loc);
                     set_property("maxOverride","");
+                    set_property("bonusOverride", "");
                     break;
                 }
             }

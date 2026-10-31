@@ -37,10 +37,23 @@ void drunkInko(){
     starter();
     set_property("script","farto");
     while (my_adventures() > 0){
-        if (my_adventures() > 30)
+        if (my_adventures() > 15 || have_familiar($familiar[Robortender]))
             altFam($familiar[robortender]);
-        else
-            abort("do goose dupe");
+        else if (!have_familiar($familiar[robortender]) && familiar_weight($familiar[comma chameleon]) > 10){
+            if (get_property("commaFamiliar") == "Robortender")
+                set_property("famOverride","comma chameleon");
+            else {
+                altFam($familiar[Grey Goose]);
+                cli_execute("unequip drunkula's wineglass");
+                visit_url("place.php?whichplace=forestvillage&action=fv_scientist");
+                if (have_skill($skill[Evoke Eldritch Horror]))
+                    run_choice(2);
+                else
+                    run_choice(1);
+                equip($item[drunkula's wineglass]);
+            }
+        } else
+            altFam($familiar[sword of s words]);
         trenchTurn();
     }
 }
@@ -59,8 +72,11 @@ void spendGrimacePrimeMaps(){
     while (my_adventures() > n){
         if (!pearlsDone()){
             if (!get_property("_unblemishedPearlDiveBar").to_boolean()){
-                set_property("maxOverride","sleaze resistance");
+                set_property("maxOverride","sleaze resistance, sea");
                 adv1($location[The Dive Bar]);
+            } else if (!get_property("_unblemishedPearlAnemoneMineProgress").to_boolean()){
+                set_property("maxOverride","Spooky resistance, sea");
+                adv1($location[Anemone Mine]);
             } else {
                 abort();
             }
@@ -254,7 +270,8 @@ void main(){
     finalChores();
     ptrackOnce("postFarmD2");
     step("phase: stashgrab");
-    abort("stashgrab");
+    stashgrab($item[portable mayo clinic]);
+    stashgrab($item[greatest american pants]);
     step("phase: ascend");
     ascend();
 }

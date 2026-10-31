@@ -608,6 +608,10 @@ void main(int round, monster mob, string page_text) {
         }
     }
 
+    if (last_monster() == $monster[Eldritch Tentacle]){
+        if (chameleon() == $familiar[grey goose])
+            use_skill($skill[EMIT MATTER DUPLICATING DRONES]);
+    }
     // ── Category: pure sauce locations ────────────────────────────────────────
     if (sauceLocs[my_location()] || sauceMobs[last_monster()]) {
         if (!free_monster() && !free_location() && (my_location() != $location[The Laugh Floor] || last_monster().boss == false)){
