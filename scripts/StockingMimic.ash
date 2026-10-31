@@ -920,7 +920,8 @@ void shadowBoss(){
             set_property("maxOverride","familiar weight");
             set_property("backOverride",", equip wicker slicker");
         } else{
-            set_property("maxOverride","familiar weight, equip Drunkula's ring of haze");
+            set_property("maxOverride","familiar weight");
+            set_property("acc1Override",", equip Drunkula's ring of haze");
             set_property("backOverride",", equip wicker slicker");
         }
     }else if (get_property("rufusQuestTarget") == "shadow orrery"){
@@ -2217,7 +2218,7 @@ void miscellaneousFams(){
         set_property("maxOverride","combat rate, -equip drunkula's wineglass");
         set_property("offOverride",", equip rake");
         set_property("mainOverride",", equip june cleaver");
-        set_property("pantsOverride",", equip greatests american pants");
+        set_property("pantsOverride",", equip greatest american pants");
         set_property("acc1Override",", equip spring shoes");
         adv1($location[Cobb's Knob Treasury]);
     }
@@ -2388,7 +2389,10 @@ void eldritchFights(){
     if (get_property("_eldritchTentaclesFoughtToday").to_int() < 11 && get_property("_eldritchTentacleFought") == "false"){
         main@preadventure();
         visit_url("place.php?whichplace=forestvillage&action=fv_scientist");
-        run_choice(1);
+        if (have_skill($skill[Evoke Eldritch Horror]))
+            run_choice(2);
+        else
+            run_choice(1);
         main@postadventure();
     }
 }
@@ -2421,6 +2425,8 @@ void bulkFKD2(){
     step("phase: August Golem");
     augustGolem();
     embezzlerD1();
+    set_property("subscript","");
+    miscellaneousFams();
     step ("phase: use up hidden city");
     while (get_property("zigguratLianas") == 0 || to_int(get_property("_drunkPygmyBanishes")) < 11){
         if (!restOfHiddenCity())
@@ -2457,13 +2463,11 @@ void bulkFKD2(){
     backup();
     step("phase: bulkFK cyberzone");
     if (get_property("_cyberFreeFights").to_int() < 10){
-        set_property("FKRunEligible","true");
         while (get_property("_cyberFreeFights").to_int() < 10){
             constructBanish();
             mimicPrep();
             cyberzone();
         }
-        set_property("FKRunEligible","false");
     }
     step ("phase: rose garden");
     roseGarden();
@@ -2500,8 +2504,6 @@ void bulkFKD2(){
             shadowRealmFK();
         set_property("FKRunEligible","false");
     }
-    set_property("subscript","");
-    miscellaneousFams();
     step("phase: bulkFK reminisce");
     reminisce();
     step("phase: bulkFK glitch monster");
@@ -2576,12 +2578,10 @@ void locationBasedAdventuring(){
     backup();
     step("phase: bulkFK cyberzone");
     if (get_property("_cyberFreeFights").to_int() < 10){
-        set_property("FKRunEligible","true");
         while (get_property("_cyberFreeFights").to_int() < 10){
             mimicPrep();
             cyberzone();
         }
-        set_property("FKRunEligible","false");
     }
     step ("phase: rose garden");
     roseGarden();

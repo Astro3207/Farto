@@ -18,8 +18,10 @@ void timeArrow(){
 void clanAdv(){
     if (to_int(get_property("valueOfAdventure")) > 10000){
         whitelist("Fart Sauce Annex");
-        for i from 1 to 15
+        while(get_property("_clanBoonsUsed").to_int() < 15){
             visit_url("clan_buytraining.php?action=buyround&members=1&size=1&whichgift=9");
+            set_property("_clanBoonsUsed",get_property("_clanBoonsUsed").to_int() + 1);
+        }
     }
 }
 void TNE(){
@@ -129,9 +131,6 @@ void main(){
         return;
     if (item_amount($item[Mayo Minder&trade;]) > 0 && get_property("mayoMinderSetting") != "")
         use($item[Mayo Minder&trade;]);
-    timeArrow();
-    clanAdv();
-    TNE();
     eatSausage();
     if (dayType() == 1){
         cupOf13s();
@@ -140,6 +139,9 @@ void main(){
         astral();
         if (isFartScauce())
             set_property("valueOfAdventure","9600");
+        timeArrow();
+        clanAdv();
+        TNE();
         if (get_property("_borrowedTimeUsed") == "false")
             use($item[borrowed time]);
         partialConsume(0,2,0);
@@ -162,6 +164,9 @@ void main(){
                 else
                     set_property("valueOfAdventure","5400");
             }
+            timeArrow();
+            clanAdv();
+            TNE();
             if (get_property("_milkOfMagnesiumUsed") == "false")
                 cli_execute("CONSUME ORGANS 0 0 0");
         } finally
