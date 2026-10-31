@@ -23,7 +23,25 @@ string [string] adventureAbortMessages = {
 
 // ─── SHARED HELPERS ──────────────────────────────────────────────────────────
 
-// Equip the sword of s words and sniff its target (monster id 307) so the sword drop lines up.
+monster targetS(){
+    if (item_amount($item[synthetic dog hair pill]) < 30)
+        return $monster[grizzled survivor];
+    int [monster] dropValue = {
+        $monster[Sloppy Seconds Burger] : mall_price($item[Meat-inflating powder]) * 20,
+        $monster[Red butler] : mall_price($item[glark cable]) * 30 + mall_price($item[red box]) * 15
+    };
+    int highValue = 0;
+    monster highMonster = $monster[Sloppy Seconds Burger];
+    foreach mon, value in dropValue{
+        if (value > highValue){
+            highValue = value;
+            highMonster = mon;
+        }
+    }
+    return highMonster;
+}
+
+// Equip the sword of s words and sniff targetS() so the sword drop lines up.
 void swordPrep(){
     if (item_amount($item[1950 Vampire Vintner wine]) == 0 && get_property("vintnerCharge").to_int() > 0){
         altFam($familiar[vampire vintner]);
@@ -32,17 +50,14 @@ void swordPrep(){
     } else {
         set_property("famOverride","sword of s words");
         use_familiar($familiar[sword of s words]);
-        // Under 10 dog hair pills: grizzled survivor (1085); otherwise Sloppy Seconds Burger (1566).
-        boolean survivor = item_amount($item[synthetic dog hair pill]) < 30;
-        string targetId = survivor ? "1085" : "1566";
-        string targetName = survivor ? "grizzled survivor" : "Sloppy Seconds Burger";
+        monster target = targetS();
         int loopCount = 0;
-        while (get_property("swordOfSWordsMonster") != targetId){
+        while (get_property("swordOfSWordsMonster").to_int() != target.to_int()){
             if (loopCount++ > 20)
-                abort("swordPrep: looped over 20 times with no progress -- probably out of " + targetName + " reminisces");
-            set_property("killThisGuy", targetId);
+                abort("swordPrep: looped over 20 times with no progress -- probably out of " + target + " reminisces");
+            set_property("killThisGuy", target.to_int().to_string());
             set_property("swordSniff","true");
-            cli_execute("reminisce " + targetName);
+            cli_execute("reminisce " + target);
         }
         set_property("killThisGuy","");
         set_property("swordSniff","false");
