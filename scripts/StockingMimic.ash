@@ -1808,7 +1808,6 @@ void locationBasedWeakMonsters(){
     if (have_effect($effect[coldform]) == 0)
         use($item[phial of coldness]);
     equip($slot[acc3],timeBadge());
-    step ("phase: rose garden");
     if (dayType() == 0 && mall_price($item[Homeowner's loam]) < 30000){
         float loamsToUse = ceil((30000-mall_price($item[Homeowner's loam]))/2000);
         if (get_property("_loamsUsed").to_int() < loamsToUse){
@@ -1816,7 +1815,6 @@ void locationBasedWeakMonsters(){
             set_property("_loamsUsed",get_property("_loamsUsed").to_int() + loamsToUse);
         }
     }
-    roseGarden();
     neverendingParty();
     snowman();
     step("phase: weakMonsters gingerbread");
@@ -2097,9 +2095,21 @@ void godLobster(){
     set_property("maxOverride","");
 }
 
-void restOfHiddenCity(){
+// Everything a Hidden City step can change. The fights are free, so turn count
+// can't be used as the progress signal -- compare this before/after instead.
+string hiddenCityState(){
+    return get_property("_drunkPygmyBanishes") + "|" + get_property("zigguratLianas") + "|"
+        + get_property("banishedMonsters") + "|" + get_property("_candyCaneSwordOvergrownShrine") + "|"
+        + have_effect($effect[Everything looks Beige]) + "|" + my_adventures();
+}
+
+// One Hidden City step: pygmy banish, then shrine parachute, then lianas.
+// Returns false when there was nothing to do or the step changed nothing, so
+// callers can loop on it without hanging.
+boolean restOfHiddenCity(){
     if (!can_adventure($location[An Overgrown Shrine (Southeast)]) || (get_property("zigguratLianas") > 0 && to_int(get_property("_drunkPygmyBanishes")) >= 11))
-        return;
+        return false;
+    string before = hiddenCityState();
     set_property("maxOverride","familiar experience");
     if (to_int(get_property("_drunkPygmyBanishes")) < 11){
         set_property("famOverride",famXpTarget().to_string().to_lower_case());
@@ -2113,9 +2123,15 @@ void restOfHiddenCity(){
     } else if (get_property("zigguratLianas") == 0 && (($familiar[cooler yeti].experience < 360 && get_property("coolerYetiMode") == "") || dayType() == 1)){
         set_property("famOverride",famXpTarget().to_string().to_lower_case());
         lianas();
+    } else {
+        return false;
     }
     aa("facsimile");
-    return;
+    if (hiddenCityState() == before){
+        print("restOfHiddenCity: step made no progress, stopping", "red");
+        return false;
+    }
+    return true;
 }
 
 // The Witchess piece (bishop / rook / knight) whose drop is worth the most in the
@@ -2183,8 +2199,8 @@ void miscellaneousFams(){
             if (nextTrainStation() == "meat_mine" && get_property("_godLobsterFights").to_int() < 3){
                 godLobster();
                 continue;
-            } else if (nextTrainStation() == "meat_mine" && (get_property("zigguratLianas") == 0 || to_int(get_property("_drunkPygmyBanishes")) < 11)){
-                restOfHiddenCity();
+            } else if (nextTrainStation() == "meat_mine" && (get_property("zigguratLianas") == 0 || to_int(get_property("_drunkPygmyBanishes")) < 11)
+                && restOfHiddenCity()){
                 continue;
             }
             if ($location[Cobb's Knob Treasury].combat_percent < 100)
@@ -2371,8 +2387,10 @@ void bulkFKD2(){
     augustGolem();
     embezzlerD1();
     step ("phase: use up hidden city");
-    while (get_property("zigguratLianas") == 0 || to_int(get_property("_drunkPygmyBanishes")) < 11)
-        restOfHiddenCity();
+    while (get_property("zigguratLianas") == 0 || to_int(get_property("_drunkPygmyBanishes")) < 11){
+        if (!restOfHiddenCity())
+            break;
+    }
     step("phase: bulkFK spleen (Extrovermectin)");
     if (my_spleen_use() < spleen_limit()){
         int toChew = floor((spleen_limit()-my_spleen_use())/2);
@@ -2391,8 +2409,6 @@ void bulkFKD2(){
     }
     if (dayType() == 1 && get_property("_backUpUses").to_int() < 11 && !contains_text(get_property("banishedPhyla"),"fish"))
         banishFish();
-    step ("phase: rose garden");
-    roseGarden();
     neverendingParty();
     if (have_effect($effect[coldform]) > 0){
         cli_execute("uneffect coldform");
@@ -2414,6 +2430,8 @@ void bulkFKD2(){
         }
         set_property("FKRunEligible","false");
     }
+    step ("phase: rose garden");
+    roseGarden();
     step("phase: bulkFK shadow rift");
     shadowRealmBuffUp();
     if (looseFK()){
@@ -2513,8 +2531,10 @@ void bulkFKD2(){
 void locationBasedAdventuring(){
     miscellaneousFams();
     step ("phase: use up hidden city");
-    while ((have_effect($effect[Everything looks Beige]) == 0 || $familiar[Cooler Yeti].experience < 400) && (get_property("zigguratLianas") == 0 || to_int(get_property("_drunkPygmyBanishes")) < 11))
-        restOfHiddenCity();
+    while ((have_effect($effect[Everything looks Beige]) == 0 || $familiar[Cooler Yeti].experience < 400) && (get_property("zigguratLianas") == 0 || to_int(get_property("_drunkPygmyBanishes")) < 11)){
+        if (!restOfHiddenCity())
+            break;
+    }
     step("phase: bulkFK habitat recall");
     habitatRecall();
     step("phase: bulkFK backup camera");
@@ -2528,6 +2548,8 @@ void locationBasedAdventuring(){
         }
         set_property("FKRunEligible","false");
     }
+    step ("phase: rose garden");
+    roseGarden();
     if (my_spleen_use() < 15){
         step("phase: peridot fishing");
         peridotFishing();
