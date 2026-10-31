@@ -2667,6 +2667,12 @@ void main(){
             if (dayType() == 0)
                 ptrackOnce("postprepD1");
         }
+        step("phase: grab stash stuff");
+        if (available_amount($item[repaid diaper]) == 0)
+            stashgrab($item[repaid diaper]);
+        if (available_amount($item[buddy bjorn]) == 0){
+            stashgrab($item[buddy bjorn]);
+        }
         if (dayType() == 0)
             bulkFKD1();
         if (dayType() == 1)

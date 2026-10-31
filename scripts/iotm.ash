@@ -253,7 +253,7 @@
         Paul's Passionate Pop Song, Bram's Bloody Bagatelle];
 
     boolean isSong(effect ef){
-        return atSongs contains ef || to_skill(ef).song;
+        return atSongs contains ef;
     }
 
     boolean isSong(skill sk){
@@ -265,8 +265,9 @@
     int atSongsActive(){
         int songs;
         foreach ef in my_effects(){
-            if (isSong(ef))
+            if (isSong(ef)){
                 songs++;
+            }
         }
         return songs;
     }
@@ -291,7 +292,10 @@
             && atSongsActive() >= (have_skill($skill[Mariachi Memory]) ? 4 : 3)
             && !have_equipped($item[super-sweet boom box]))
             equip($item[super-sweet boom box]);
-        return use_skill(casts, sk);
+        if ((sk == $skill[Chorale of Companionship] || sk == $skill[The Ballad of Richie Thingfinder]) && my_class() != $class[accordion thief])
+            return cli_execute(to_effect(sk).default);
+        else
+            return use_skill(casts, sk);
     }
 
     boolean castATSong(skill sk){
