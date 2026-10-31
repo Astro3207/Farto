@@ -981,6 +981,8 @@ void main(int round, monster mob, string page_text) {
             steal();
             throw_item($item[ink bladder]);
         }
+        if (have_equipped($item[greatest american pants]) && to_int(get_property("_navelRunaways")) < 3)
+            runaway();
         if (last_monster() == $monster[Knob Goblin Embezzler])
             attack(5);
         else

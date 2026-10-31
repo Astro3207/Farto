@@ -253,6 +253,8 @@ void main(){
     step("phase: ascension prep");
     finalChores();
     ptrackOnce("postFarmD2");
+    step("phase: stashgrab");
+    abort("stashgrab");
     step("phase: ascend");
     ascend();
 }

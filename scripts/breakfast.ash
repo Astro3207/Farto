@@ -215,6 +215,8 @@ void candyRichBlock(){
         use($item[Map to a candy-rich block]);
     if (mapUsed && !contains_text(get_property("_trickOrTreatBlock"), "L"))
         return;
+    if (have_familiar($familiar[Trick-or-Treating Tot]))
+        use_familiar($familiar[Trick-or-Treating Tot]);
     if (have_outfit("Ceramic Suit"))
         cli_execute("outfit Ceramic Suit");
     else if (have_outfit("Eldritch Equipage"))

@@ -2191,6 +2191,21 @@ void miscellaneousFams(){
         set_property("offOverride", "");
         set_property("subscript","");
     }
+    if (available_amount($item[greatest american pants]) == 0 && to_int(get_property("_navelRunaways")) < 3)
+        stashgrab($item[greatest american pants]);
+    while (to_int(get_property("_navelRunaways")) < 3 && available_amount($item[greatest american pants]) > 0){
+        set_property("famOverride","peace turkey");
+        set_property("maxOverride","combat rate, -equip drunkula's wineglass");
+        set_property("offOverride",", equip rake");
+        set_property("mainOverride",", equip june cleaver");
+        set_property("pantsOverride",", equip greatests american pants");
+        set_property("acc1Override",", equip spring shoes");
+        adv1($location[Cobb's Knob Treasury]);
+    }
+    if (available_amount($item[greatest american pants]) > 0){
+        stashreturn($item[greatest american pants]);
+        clearOverrides();
+    }
     if (get_property("_banderRunaways").to_int() < 30){
         if (have_effect($effect[Apriling Band Battle Cadence]) == 0 && total_turns_played() >= get_property("nextAprilBandTurn").to_int())
             cli_execute("aprilband effect c");
@@ -2672,6 +2687,8 @@ void main(){
             stashgrab($item[repaid diaper]);
         if (available_amount($item[buddy bjorn]) == 0){
             stashgrab($item[buddy bjorn]);
+            if (available_amount($item[buddy bjorn]) > 0)
+                cli_execute("bjornify Misshapen Animal Skeleton");
         }
         if (dayType() == 0)
             bulkFKD1();
