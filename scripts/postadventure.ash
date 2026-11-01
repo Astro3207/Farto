@@ -818,16 +818,6 @@ void freeKillTurnGuard(){
     }
 }
 
-int pantsgivingAvailable(){
-    if (dayType() == 0)
-        return -1;
-    int count = get_property("_pantsgivingCount").to_int();
-    if (count >= 500) return 3;
-    if (count >= 50)  return 2;
-    if (count >= 5)   return 1;
-    return -1;
-}
-
 record boneStep {
     item gear;
     slot sl;
@@ -955,7 +945,6 @@ void postAdv(){
         set_property("subscript","weakling");
         altFam($familiar[stocking mimic]);
         cli_execute("preadventure.ash");
-        buffML($monster[void spider]);
         set_auto_attack(0);
         adv1($location[cobb's knob treasury]);
         set_property("subscript","");

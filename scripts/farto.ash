@@ -110,8 +110,10 @@ void bladdering(){
         set_property("mainOverride",", equip monodent of the sea");
     else
         set_property("mainOverride",", equip june cleaver");
-    if (available_amount($item[pantsgiving]) > 0)
+    if (available_amount($item[pantsgiving]) > 0 && get_property("_pantsgivingCount") < 500)
         set_property("pantsOverride",", equip pantsgiving");
+    else
+        set_property("pantsOverride",", equip designer sweatpants");
     set_property("acc1Override",", equip spring shoes");
     if (have_item($item[mime army infiltration glove]) && my_primestat() != $stat[moxie])
         set_property("acc2Override", ", equip mime army infiltration glove");

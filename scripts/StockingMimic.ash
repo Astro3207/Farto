@@ -2272,7 +2272,7 @@ void miscellaneousFams(){
                 set_property("acc1Override","");
             }
             altFam($familiar[Pair of Stomping Boots]);
-            if (get_property("_pantsgivingCount").to_int() < 50){
+            if (get_property("_pantsgivingCount").to_int() < 50 || pantsgivingAvailable() >= get_property("_pantsgivingFullness").to_int()){
                 if (available_amount($item[pantsgiving]) == 0)
                     stashgrab($item[pantsgiving]);
                 if (available_amount($item[pantsgiving]) > 0)
@@ -2290,6 +2290,7 @@ void miscellaneousFams(){
         set_property("offOverride","");
         set_property("mainOverride","");
         set_property("acc1Override","");
+        stashreturn($item[pantsgiving]);
     }
 }
 
