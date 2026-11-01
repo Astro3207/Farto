@@ -478,7 +478,6 @@ void dieting(){
             use($item[law of averages]);
         if (have_item($item[Mayo Minder&trade;]) && get_property("mayoMinderSetting") != "Mayodiol")
             use($item[Mayo Minder&trade;]);
-        abort("how do you use mayominder?");
         if (closet_amount($item[Bowl of Infinite Jelly]) > 0 && my_fullness() == fullness_limit()-1)
             take_closet($item[Bowl of Infinite Jelly]);
         while (my_fullness() < fullness_limit()){
