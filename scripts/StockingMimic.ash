@@ -2423,11 +2423,11 @@ void bulkFKD2(){
     if (get_campground() contains $item[Witchess Set] && !get_property("_witchessBuff").to_boolean())
         cli_execute("witchess buff");
     campawayBuffs();
+    embezzlerD1();
     if (weakMonstersLeft())
         weakMonsters();
     step("phase: August Golem");
     augustGolem();
-    embezzlerD1();
     set_property("subscript","");
     miscellaneousFams();
     step ("phase: use up hidden city");
