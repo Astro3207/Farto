@@ -288,7 +288,7 @@ void unlock_zeppelin(){
         || !can_adventure($location[A Mob of Zeppelin Protesters]))
         return;
     cli_execute("maximize sleaze damage, sleaze spell damage, equip candy cane sword cane");
-    foreach ef in $effects[Bendin' Hell,Belch the Rainbow&trade;,Amorous,Blood-Gorged,Sleazy Hands,Benetton's Medley of Diversity,Greasy Peasy,Takin' It Greasy,Cuts Like a Lightly-Buttered Knife,Colorful Gratitude,Sleazy Weapon,Stained,Crud&eacute;,Why So Serious?,Improprie Tea,Boschface,All Glory To the Toad,Herder\, Bitter\, Fester\, Stranger,Yoloswagyoloswag]{
+    foreach ef in $effects[Bendin' Hell,Belch the Rainbow&trade;,Amorous,Blood-Gorged,Sleazy Hands,Benetton's Medley of Diversity,Greasy Peasy,Takin' It Greasy,Cuts Like a Lightly-Buttered Knife,Colorful Gratitude,Sleazy Weapon,Stained,Crud&eacute;,Improprie Tea,Boschface,All Glory To the Toad,Herder\, Bitter\, Fester\, Stranger,Yoloswagyoloswag,Why So Serious?]{
         if ((numeric_modifier("sleaze damage")+numeric_modifier("sleaze spell damage")) >= 1600)
             break;
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
@@ -952,11 +952,13 @@ void postAdv(){
         aa("facsimile");
         set_property("maxOverride","familiar weight");
         set_property("offOverride",", equip cursed magnifying glass");
+        set_property("subscript","weakling");
         altFam($familiar[stocking mimic]);
         cli_execute("preadventure.ash");
         buffML($monster[void spider]);
         set_auto_attack(0);
         adv1($location[cobb's knob treasury]);
+        set_property("subscript","");
         clearOverrides();
     }
     if (have_item($item[cosmic bowling ball]) && dayType() == 1 && get_property("script") == "FreeKill" && nextTrainStation() != "meat_mine"

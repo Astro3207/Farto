@@ -170,6 +170,8 @@ void main(){
             TNE();
             if (get_property("_milkOfMagnesiumUsed") == "false")
                 cli_execute("CONSUME ORGANS 0 0 0");
+            if (isFartScauce())
+            set_property("valueOfAdventure","9600");
         } finally
             unsaveResources();
     }

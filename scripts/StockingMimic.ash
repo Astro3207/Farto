@@ -2506,6 +2506,7 @@ void bulkFKD2(){
         if (get_property("encountersUntilSRChoice").to_int() == 0)
             shadowRealmFK();
         set_property("FKRunEligible","false");
+        set_property("subscript","");
     }
     step("phase: bulkFK reminisce");
     reminisce();
