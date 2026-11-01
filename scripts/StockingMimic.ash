@@ -886,6 +886,7 @@ void cyberzone() {
             to_monster(get_property("_cyberZone2Hacker")): $location[cyberzone 2],
             to_monster(get_property("_cyberZone3Hacker")): $location[cyberzone 3]
         };
+        mimicPrep();
         if (!contains_text(get_property("banishedPhyla"), "construct")) {
             set_property("hpAutoRecoveryTarget","0.25");
             cli_execute("recover hp");
@@ -1804,7 +1805,7 @@ void roseGarden(){
 
         if (roseFind("Fight", roseMonsters) < 0) break;
         run_choice(2);   // step out so the maximizer can change gear
-        LBMWPrep(true);
+        mimicprep();
         main@preadventure();
         page = visit_url(garden);
         int mob = roseFind("Fight", roseMonsters);

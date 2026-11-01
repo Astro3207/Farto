@@ -952,15 +952,11 @@ void postAdv(){
         aa("facsimile");
         set_property("maxOverride","familiar weight");
         set_property("offOverride",", equip cursed magnifying glass");
-        set_property("acc3Override",", equip " + timeBadge().to_string());
-        equip(timeBadge());
-        set_property("subscript","weakling");
         altFam($familiar[stocking mimic]);
         cli_execute("preadventure.ash");
         buffML($monster[void spider]);
         set_auto_attack(0);
         adv1($location[cobb's knob treasury]);
-        set_property("subscript","");
         clearOverrides();
     }
     if (have_item($item[cosmic bowling ball]) && dayType() == 1 && get_property("script") == "FreeKill" && nextTrainStation() != "meat_mine"
