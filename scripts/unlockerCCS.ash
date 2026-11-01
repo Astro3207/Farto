@@ -983,6 +983,10 @@ void main(int round, monster mob, string page_text) {
             free_kill(page_text);
             free_run(page_text);
             steal();
+            if (is_wearing_outfit("Hodgman's Regal Frippery")){
+                use_skill($skill[SUMMON HOBO UNDERLING]);
+                use_skill($skill[ASK THE HOBO FOR A DRINK]);
+            }
             throw_item($item[ink bladder]);
         }
         if (have_equipped($item[greatest american pants]) && to_int(get_property("_navelRunaways")) < 3)

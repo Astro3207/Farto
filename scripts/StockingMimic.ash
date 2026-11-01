@@ -480,6 +480,7 @@ void dieting(){
             use($item[Mayo Minder&trade;]);
         if (closet_amount($item[Bowl of Infinite Jelly]) > 0 && my_fullness() == fullness_limit()-1)
             take_closet($item[Bowl of Infinite Jelly]);
+        abort("mayo");
         while (my_fullness() < fullness_limit()){
             if (get_property("legendaryNoodlesStomach") == 0){
                 eat (cheapestPasta());

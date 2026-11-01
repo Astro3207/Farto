@@ -71,6 +71,7 @@ void spendGrimacePrimeMaps(){
     int n = item_amount($item[Map to Safety Shelter Grimace Prime]);
     while (my_adventures() > n){
         if (!pearlsDone()){
+            set_property("famOverride","sword of s words");
             if (!get_property("_unblemishedPearlDiveBar").to_boolean()){
                 set_property("maxOverride","sleaze resistance, sea");
                 adv1($location[The Dive Bar]);
@@ -270,7 +271,7 @@ void main(){
     finalChores();
     ptrackOnce("postFarmD2");
     step("phase: stashgrab");
-    stashgrab($item[portable mayo clinic]);
+//    stashgrab($item[portable mayo clinic]);
     stashgrab($item[greatest american pants]);
     step("phase: ascend");
     ascend();

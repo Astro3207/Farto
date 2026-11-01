@@ -31,9 +31,16 @@ float itemDropValueAt(location loc){
     return total / 100.0; // per-adventure expected value -> value of 1% Item Drop
 }
 
-void setDropWeighting(location loc){
+// itemCap > 0 stops the maximizer valuing Item Drop past that % (e.g. once the
+// drops that matter are guaranteed), so the slots go to Meat Drop instead.
+void setDropWeighting(location loc, int itemCap){
     string mod = loc.environment == "underwater" ? ",sea, -tie" : "";
-    set_property("maxOverride", to_string(baseMeatAt(loc) / 100.0) + " Meat Drop," + to_string(itemDropValueAt(loc)) + " Item Drop" + mod);
+    string cap = itemCap > 0 ? " " + itemCap + " max" : "";
+    set_property("maxOverride", to_string(baseMeatAt(loc) / 100.0) + " Meat Drop," + to_string(itemDropValueAt(loc)) + " Item Drop" + cap + mod);
+}
+
+void setDropWeighting(location loc){
+    setDropWeighting(loc, 0);
 }
 
 // ─── shared zone helpers ─────────────────────────────────────────────────────
@@ -101,12 +108,22 @@ void bladdering(){
     set_property("famOverride", "peace turkey");
     if (have_effect($effect[fishy]) <= 1)
         set_property("mainOverride",", equip monodent of the sea");
+    else
+        set_property("mainOverride",", equip june cleaver");
     if (available_amount($item[pantsgiving]) > 0)
         set_property("pantsOverride",", equip pantsgiving");
+    set_property("acc1Override",", equip spring shoes");
     if (have_item($item[mime army infiltration glove]) && my_primestat() != $stat[moxie])
         set_property("acc2Override", ", equip mime army infiltration glove");
     set_property("acc3Override",", equip mafia thumb ring");
     set_property("offOverride",", equip carnivorous potted plant");
+    if (get_property("_hoboUnderlingSummons").to_int() < 5){
+        set_property("acc1Override",", equip Hodgman's porkpie hat");
+        set_property("pantsOverride",", equip Hodgman's lobsterskin pants");
+        set_property("hatOverride",", equip Hodgman's porkpie hat");
+    } else
+        set_property("hatOverride","");
+    set_property("famEquipOverride",", equip tiny rake");
     if (have_effect($effect[Apriling Band Battle Cadence]) == 0 && total_turns_played() >= get_property("nextAprilBandTurn").to_int())
         cli_execute("aprilband effect c");
     adv1($location[cobb's knob treasury]);
@@ -117,12 +134,14 @@ void bladdering(){
 }
 
 void inko(){
-    setDropWeighting($location[The Marinara Trench]);
+    setDropWeighting($location[The Marinara Trench], 433);
     set_property("famOverride","");
     if (!have_familiar($familiar[robortender]))
         altFam($familiar[robortender]);
     dartHolster();
     returnPantsgiving();
+    if (get_property("_floundryItemCreated") == "false")
+        retrieve_item($item[carpe]);
     string banishedList = get_property("banishedMonsters");
     boolean needBanish = false;
     boolean monodent = false;

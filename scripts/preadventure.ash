@@ -680,7 +680,12 @@ float buffValue(effect ef){
         itemWeight = m.group(1).to_float();
     if (meatWeight < 0)
         return -1;
-    float perTurn = numeric_modifier(ef, "Meat Drop") * meatWeight + numeric_modifier(ef, "Item Drop") * itemWeight;
+    // Only the Item Drop still under maxOverride's "N max" cap is worth anything.
+    float itemGain = numeric_modifier(ef, "Item Drop");
+    m = create_matcher("Item Drop ([0-9]+) max", get_property("maxOverride"));
+    if (m.find())
+        itemGain = min(itemGain, max(0.0, m.group(1).to_float() - numeric_modifier("Item Drop")));
+    float perTurn = numeric_modifier(ef, "Meat Drop") * meatWeight + itemGain * itemWeight;
     return perTurn * min(effectDuration(ef), my_adventures());
 }
 
@@ -740,7 +745,7 @@ void mood(string function){
     } else if (get_property("script") == "slime"){
         if (have_effect($effect[Let's Go Shopping!]) > 0)
             cli_execute("uneffect Let's Go Shopping!");
-    } else if (get_property("script") == "farto"){
+    } else if (get_property("script") == "farto" && get_property("subscript") != "bladdering"){
         foreach ef in $effects[Yes\, Can Haz, ode to booze]
             if (have_effect(ef) > 0)
                 cli_execute("uneffect " + ef);

@@ -30,7 +30,8 @@ void main(){
             cli_execute("stockingmimic");
             cli_execute("preconsume");
         }
-        cli_execute("farto");
+        if (my_inebriety() <= inebriety_limit())
+            cli_execute("farto");
         cli_execute("preascend");
     }
     if (dayType() == 0){

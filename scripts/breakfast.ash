@@ -63,7 +63,7 @@ void takerSpace(){
     while (get_property("takerSpaceSpice").to_int() >= 1)
         if (!create($item[spices]))
             break;
-    if (available_amount($item[model train set]) > 0)
+    if (available_amount($item[model train set]) > 0 && get_workshed() != $item[none])
         use($item[model train set]);
 }
 
