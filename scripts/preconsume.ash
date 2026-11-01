@@ -12,7 +12,10 @@ void astral(){
 void timeArrow(){
     if (to_int(get_property("valueOfAdventure"))*5 > mall_price($item[time's arrow])){
         retrieve_item($item[time's arrow]);
-        cli_execute("csend time's arrow to botticelli");
+        if (is_online("botticelli"))
+            cli_execute("csend time's arrow to torturebot");
+        else if (is_online("botticelli"))
+            cli_execute("csend time's arrow to torturebot");
     }
 }
 void clanAdv(){
@@ -140,8 +143,6 @@ void main(){
         if (isFartScauce())
             set_property("valueOfAdventure","9600");
         timeArrow();
-        clanAdv();
-        TNE();
         if (get_property("_borrowedTimeUsed") == "false")
             use($item[borrowed time]);
         partialConsume(0,2,0);

@@ -478,6 +478,7 @@ void dieting(){
             use($item[law of averages]);
         if (have_item($item[Mayo Minder&trade;]) && get_property("mayoMinderSetting") != "Mayodiol")
             use($item[Mayo Minder&trade;]);
+        abort("how do you use mayominder?");
         if (closet_amount($item[Bowl of Infinite Jelly]) > 0 && my_fullness() == fullness_limit()-1)
             take_closet($item[Bowl of Infinite Jelly]);
         while (my_fullness() < fullness_limit()){
@@ -964,7 +965,7 @@ void shadowRealmFK(){
             set_property("acc3Override","");
         if (to_int(get_property("_batWingsSwoopUsed")) < 11)
             set_property("backOverride",", equip bat wings");
-        if (have_effect($effect[fishy]) < 1010 && my_class() == $class[seal clubber])
+        if (have_effect($effect[fishy]) < 1030 && my_class() == $class[seal clubber])
             set_property("mainOverride",", equip monodent");
         else
             set_property("mainOverride","");

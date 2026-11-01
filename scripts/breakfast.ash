@@ -222,7 +222,7 @@ void speakeasyPool(){
 }
 
 void candyRichBlock(){
-    boolean mapUsed = get_property("_mapToACandyRichBlockUsed").to_boolean();
+    boolean mapUsed = (get_property("_mapToACandyRichBlockUsed").to_boolean() || contains_text(holiday( ),"Halloween"));
     if (!mapUsed)
         use($item[Map to a candy-rich block]);
     if (mapUsed && !contains_text(get_property("_trickOrTreatBlock"), "L"))

@@ -1092,7 +1092,7 @@ void spendAdv(){
             set_property("famOverride","sword of s words");
             adv1($location[the marinara trench]);
             set_property("famOverride","");
-        } else {
+        } else if (can_adventure($location[cobb's knob treasury])) {
             set_property("maxOverride","item drop");
             set_property("famOverride","sword of s words");
             adv1($location[cobb's knob treasury]);
