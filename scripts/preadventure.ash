@@ -652,10 +652,11 @@ void preAdv(){
     put_closet(item_amount($item[hobo nickel]),$item[hobo nickel]);
 
     if (contains_text(maximize.to_string(),"combat") && !contains_text(maximize.to_string(),"-combat")){
-        if (have_effect($effect[Carlweather's Cantata of Confrontation]) == 0 && dayType() == 1)
+        if (have_effect($effect[Carlweather's Cantata of Confrontation]) == 0)
             castATSong($skill[Carlweather's Cantata of Confrontation]);
-        if (numeric_modifier("combat rate") < 15)
+        if (numeric_modifier("combat rate") < 15){
             cli_execute("equip little bitty bath");
+        }
         if (numeric_modifier("combat rate") < 15)
             abort("combat rate too low, see what you can do to buff");
     }

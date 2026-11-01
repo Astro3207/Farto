@@ -99,10 +99,8 @@ void bladdering(){
     set_property("bonusOverride"," ");
     set_property("maxOverride","combat,-equip drunkula's wineglass");
     set_property("famOverride", "peace turkey");
-    if (have_effect($effect[fishy]) <= 1 && my_adventures() != 1)
+    if (have_effect($effect[fishy]) <= 1)
         set_property("mainOverride",", equip monodent of the sea");
-    else
-        set_property("mainOverride",", equip june cleaver");
     if (available_amount($item[pantsgiving]) > 0)
         set_property("pantsOverride",", equip pantsgiving");
     if (have_item($item[mime army infiltration glove]) && my_primestat() != $stat[moxie])

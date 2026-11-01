@@ -1072,8 +1072,7 @@ void spendAdv(){
             findHiddenTemple();
         else if (get_property("questM10Azazel") != "finished")
             azazelUnicornQuest();
-        
-        if (dayType() == 1 && get_property("shrunkenHeadZombieMonster") == ""){
+        else if (dayType() == 1 && get_property("shrunkenHeadZombieMonster") == ""){
             shrunkenDoughbat();
         } else if (!pearlsDone() && dayType() == 1){
             foreach str in $strings[anemone,bar,reef,deepests,trench]{
