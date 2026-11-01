@@ -476,12 +476,15 @@ void dieting(){
                 abort();
         if (have_item($item[law of averages]))
             use($item[law of averages]);
-        if (have_item($item[Mayo Minder&trade;]) && get_property("mayoMinderSetting") != "Mayodiol")
-            use($item[Mayo Minder&trade;]);
         if (closet_amount($item[Bowl of Infinite Jelly]) > 0 && my_fullness() == fullness_limit()-1)
             take_closet($item[Bowl of Infinite Jelly]);
-        abort("mayo");
+            if (get_property("_workshedItemUsed") == "false" && get_workshed() == $item[none]) {
+                stashgrab($item[portable mayo clinic]);
+                use($item[portable mayo clinic]);
+            }
         while (my_fullness() < fullness_limit()){
+            if (get_workshed() == $item[portable mayo clinic] && my_fullness() > 3 && my_inebriety() < inebriety_limit())
+                use($item[mayodiol]);
             if (get_property("legendaryNoodlesStomach") == 0){
                 eat (cheapestPasta());
             } else {
@@ -500,7 +503,18 @@ void dieting(){
                 stashgrab($item[pantsgiving]);
             if (available_amount($item[pantsgiving]) > 0){
                 equip($item[pantsgiving]);
-                use_familiar($familiar[patriotic eagle]);
+                use_familiar($familiar[chest mimic]);
+                retrieve_item($item[dish of clarified butter]);
+                visit_url("inv_use.php?which=3&whichitem=9908");
+                run_combat();
+                run_choice(-1);
+                stripAllBuffs();
+                if (my_fullness() < fullness_limit())
+                    eat(1,$item[thyme jelly donut]);
+            }
+            if (get_property("_pantsgivingFullness").to_int() < 2 && available_amount($item[pantsgiving]) > 0 && get_property("_pantsgivingCount").to_int() > 450){
+                equip($item[pantsgiving]);
+                use_familiar($familiar[chest mimic]);
                 retrieve_item($item[dish of clarified butter]);
                 visit_url("inv_use.php?which=3&whichitem=9908");
                 run_combat();
@@ -674,9 +688,13 @@ void FKPrep(){
     if (item_amount($item[black garden rose]) > 0)
         use($item[black garden rose]);
 	step("phase: FKPrep dieting");
-	if (my_inebriety() < inebriety_limit()){
+	if (my_inebriety() < inebriety_limit() || get_property("_mimeArmyShotglassUsed") == "false"){
 		dieting();
 	}
+    if (get_property("_workshedItemUsed") == "false" && get_workshed() == $item[portable mayo clinic]) {
+        use($item[model train set]);
+        stashreturn($item[portable mayo clinic]);
+    }
     if (isFartScauce()){
         retrieve_item(25, $item[bag of many confections]);
         retrieve_item(25, $item[stomp box]);

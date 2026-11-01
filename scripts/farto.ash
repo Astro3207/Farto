@@ -118,7 +118,7 @@ void bladdering(){
     set_property("acc3Override",", equip mafia thumb ring");
     set_property("offOverride",", equip carnivorous potted plant");
     if (get_property("_hoboUnderlingSummons").to_int() < 5){
-        set_property("acc1Override",", equip Hodgman's porkpie hat");
+        set_property("acc1Override",", equip Hodgman's bow tie");
         set_property("pantsOverride",", equip Hodgman's lobsterskin pants");
         set_property("hatOverride",", equip Hodgman's porkpie hat");
     } else
