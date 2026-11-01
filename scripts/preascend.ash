@@ -37,22 +37,9 @@ void drunkInko(){
     starter();
     set_property("script","farto");
     while (my_adventures() > 0){
-        if (my_adventures() > 15 || have_familiar($familiar[Robortender]))
+        if (my_adventures() > 6 || have_familiar($familiar[Robortender]))
             altFam($familiar[robortender]);
-        else if (!have_familiar($familiar[robortender]) && familiar_weight($familiar[comma chameleon]) > 10){
-            if (get_property("commaFamiliar") == "Robortender")
-                set_property("famOverride","comma chameleon");
-            else {
-                altFam($familiar[Grey Goose]);
-                cli_execute("unequip drunkula's wineglass");
-                visit_url("place.php?whichplace=forestvillage&action=fv_scientist");
-                if (have_skill($skill[Evoke Eldritch Horror]))
-                    run_choice(2);
-                else
-                    run_choice(1);
-                equip($item[drunkula's wineglass]);
-            }
-        } else
+        else
             altFam($familiar[sword of s words]);
         trenchTurn();
     }
@@ -99,6 +86,15 @@ void spendGrimacePrimeMaps(){
     finisher();
     if (item_amount($item[Map to Safety Shelter Grimace Prime]) > 0)
         mapgrim();
+    if (my_adventures() == 0 && familiar_weight($familiar[comma chameleon]) > 10){
+        altFam($familiar[Grey Goose]);
+        cli_execute("maximize meat drop");
+        visit_url("place.php?whichplace=forestvillage&action=fv_scientist");
+        if (have_skill($skill[Evoke Eldritch Horror]))
+            run_choice(2);
+        else
+            run_choice(1);
+=    }
 }
 
 // Spend the remaining PvP fights while a season is running.
