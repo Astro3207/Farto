@@ -1202,8 +1202,10 @@ void main(int round, monster mob, string page_text) {
     if (witchessFight()) return;
     if (voidFight()) return;
     fishyTopUp();
-    if (last_monster() == $monster[Eldritch Tentacle] && chameleon() == $familiar[grey goose])
+    if (last_monster() == $monster[Eldritch Tentacle] && chameleon() == $familiar[grey goose]){
+        user_confirm("ELP?");
         use_skill($skill[Meatify Matter]);
+    }
     if (sauceFight(page_text)) return;
     if (get_property("BoFaWishRWB") == "true")
         use_skill($skill[%fn, fire a Red, White and Blue Blast]);

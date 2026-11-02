@@ -2618,6 +2618,7 @@ void locationBasedAdventuring(){
         main@preadventure( );
         use($item[envyfish egg]);
     }
+    embezzlerD1();
     locationBasedWeakMonsters();
 }
 void dinnerLiverSpleen(){
@@ -2651,7 +2652,6 @@ void bulkFKD1(){
     locationBasedAdventuring();
     if (have_effect($effect[One Coin In a Fountain]) == 0)
         roseFountain();
-    embezzlerD1();
     if (my_spleen_use() < 10){
         dinnerLiverSpleen();
         use_familiar($familiar[comma chameleon]);
