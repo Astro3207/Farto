@@ -2660,6 +2660,7 @@ void bulkFKD1(){
     nonlocationBasedWeakMonsters();
     step("phase: August Golem");
     augustGolem();
+    set_property("backOverride","");
     step("phase: bulkFK reminisce");
     reminisce();
     step("phase: bulkFK glitch monster");
