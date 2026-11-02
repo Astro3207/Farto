@@ -129,10 +129,6 @@ void bladdering(){
     if (have_effect($effect[Apriling Band Battle Cadence]) == 0 && total_turns_played() >= get_property("nextAprilBandTurn").to_int())
         cli_execute("aprilband effect c");
     adv1($location[cobb's knob treasury]);
-    if (get_property("_seadentWaveUsed").to_boolean() == false)
-        use_skill($skill[Sea *dent: Summon a Wave]);
-    if (get_property("_seadentWaveZone") != "Cobb's Knob Treasury")
-        abort("treasury isn't flooded");
 }
 
 void inko(){

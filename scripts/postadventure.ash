@@ -881,7 +881,7 @@ void postAdv(){
     if (have_effect($effect[majorly poisoned]) > 0)
         cli_execute("uneffect majorly poisoned");
     if (get_property("_seadentWaveUsed") == "false"){
-        if (dayType() == 0 && contains_text(get_property("lastEncounter"),"gingerbread")){
+        if (dayType() == 0 && my_location() == $location[Cobb's Knob Treasury]){
             use_skill($skill[Sea *dent: Summon a Wave]);
         } else if (dayType() == 1 && contains_text(my_location().to_string(),"Shadow")){
             location flooded = my_location();
