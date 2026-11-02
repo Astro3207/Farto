@@ -94,7 +94,7 @@ void spendGrimacePrimeMaps(){
             run_choice(2);
         else
             run_choice(1);
-=    }
+    }
 }
 
 // Spend the remaining PvP fights while a season is running.

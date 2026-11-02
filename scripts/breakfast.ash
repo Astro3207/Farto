@@ -184,7 +184,9 @@ void makeSausage(){
             retrieve_item(3,$item[dense meat stack]);
             visit_url("inventory.php?action=grind");
             visit_url("choice.php?pwd="+ my_hash() +"&whichchoice=1339&option=1&qty=3&iid=258");
+            print(1);
         }
+        print (2);
         visit_url("inventory.php?action=grind");
         visit_url("choice.php?pwd="+ my_hash() +"&whichchoice=1339&option=2");
     }

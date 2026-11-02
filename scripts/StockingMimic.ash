@@ -1660,6 +1660,26 @@ void neverendingParty(){
     }
 }
 
+void embezzlerD1(){
+    repeat {
+        if (have_effect($effect[Lucky!]) > 0){
+            if (have_familiar($familiar[robortender])){
+                use_familiar($familiar[Robortender]);
+                set_property("famOverride","robortender");
+                if (!contains_text(get_property("_roboDrinks"), "drive-by shooting")){
+                    retrieve_item($item[drive-by shooting]);
+                    visit_url("inventory.php?action=robooze&which=1&whichitem=9396");
+                }
+            }else
+                set_property("famOverride","jill-of-all-trades");
+            set_property("script","embezzler");
+            set_property("unconditionalOverride","meat drop, equip mafia pointer finger");
+            adv1($location[Cobb's knob treasury]);
+        }
+        clearOverrides();
+    } until (have_effect($effect[Lucky!]) == 0);
+}
+
 void weakMonsters(){
     step("phase: weakMonsters start");
     set_property("acc3Override",", equip " + timeBadge());
@@ -1763,8 +1783,7 @@ void weakMonsters(){
             location ghostLoc = walkieGhost();
             if (ghostLoc != $location[none])
                 adv1(ghostLoc);
-        }
-
+        }            
         settleStance();
         pick = fightPicker();
     }
@@ -2062,26 +2081,6 @@ void embezzler(){
         }
         adv1($location[Cobb's knob treasury]);
     }
-}
-
-void embezzlerD1(){
-    repeat {
-        if (have_effect($effect[Lucky!]) > 0){
-            if (have_familiar($familiar[robortender])){
-                use_familiar($familiar[Robortender]);
-                set_property("famOverride","robortender");
-                if (!contains_text(get_property("_roboDrinks"), "drive-by shooting")){
-                    retrieve_item($item[drive-by shooting]);
-                    visit_url("inventory.php?action=robooze&which=1&whichitem=9396");
-                }
-            }else
-                set_property("famOverride","jill-of-all-trades");
-            set_property("script","embezzler");
-            set_property("unconditionalOverride","meat drop, equip mafia pointer finger");
-            adv1($location[Cobb's knob treasury]);
-        }
-        clearOverrides();
-    } until (have_effect($effect[Lucky!]) == 0);
 }
 
 // ─── familiar XP budget ──────────────────────────────────────────────────────
@@ -2443,7 +2442,6 @@ void bulkFKD2(){
     if (get_campground() contains $item[Witchess Set] && !get_property("_witchessBuff").to_boolean())
         cli_execute("witchess buff");
     campawayBuffs();
-    embezzlerD1();
     if (weakMonstersLeft())
         weakMonsters();
     step("phase: August Golem");
@@ -2650,13 +2648,14 @@ void bulkFKD1(){
     equip($slot[acc3],timeBadge());
     buffML($monster[Flaming leaflet]);
     locationBasedAdventuring();
+    if (have_effect($effect[One Coin In a Fountain]) == 0)
+        roseFountain();
+    embezzlerD1();
     if (my_spleen_use() < 10){
         dinnerLiverSpleen();
         use_familiar($familiar[comma chameleon]);
         cli_execute("maximize familiar weight");
     }
-    if (have_effect($effect[One Coin In a Fountain]) == 0)
-        roseFountain();
     nonlocationBasedWeakMonsters();
     step("phase: August Golem");
     augustGolem();

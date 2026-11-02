@@ -218,8 +218,9 @@ import iotm.ash;
 
 // ─── TRACKING & COPIES ────────────────────────────────────────────────────────
 
-    boolean isTracked(monster mons, skill sk)
+    boolean isTracked(monster mons, skill sk){
         return contains_text(":" + get_property("trackedMonsters"), ":" + mons + ":" + sk + ":");
+    }
 
     void sniff(monster mons){
         foreach sk in $skills[McHugeLarge Slash, Transcendent Olfaction, Gallapagosian Mating Call] {
