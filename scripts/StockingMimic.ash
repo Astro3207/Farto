@@ -2257,6 +2257,7 @@ void miscellaneousFams(){
                 && restOfHiddenCity()){
                 continue;
             }
+            set_auto_attack(0);
             if ($location[Cobb's Knob Treasury].combat_percent < 100)
                 cli_execute("gain 15 combat");
             set_property("subscript","stompingBoots");
