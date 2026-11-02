@@ -39,6 +39,8 @@ void drunkInko(){
     while (my_adventures() > 0){
         if (my_adventures() > 6 || have_familiar($familiar[Robortender]))
             altFam($familiar[robortender]);
+        else if (get_property("commaFamiliar") == "Robortender")
+            set_property("famOverride","comma chameleon");
         else
             altFam($familiar[sword of s words]);
         trenchTurn();
