@@ -2337,6 +2337,8 @@ void peridotFishing(){
                 print (turns_until_forced_noncombat(loc) + " at " + loc);
                 if (loc == $location[Guano Junction] && dayType() == 1)
                     continue;
+                if (loc == $location[the black forest] && $location[the black forest].last_noncombat_turns_spent == 9)
+                    continue;
                 if (loc == $location[Pandamonium Slums] && available_amount($item[Hey Deze map]) == 0)
                     continue;
                 if (loc == $location[The Deep Machine Tunnels] && have_effect($effect[Inside The Snowglobe]) == 0)

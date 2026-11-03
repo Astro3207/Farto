@@ -199,6 +199,7 @@ void main(int whichchoice, string page) {
             run_choice(5);
             break;
 
+        case 523:
         case 781:
         case 783:
         case 791:

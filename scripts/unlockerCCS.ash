@@ -1203,7 +1203,6 @@ void main(int round, monster mob, string page_text) {
     if (voidFight()) return;
     fishyTopUp();
     if (last_monster() == $monster[Eldritch Tentacle] && chameleon() == $familiar[grey goose]){
-        user_confirm("ELP?");
         use_skill($skill[Meatify Matter]);
     }
     if (sauceFight(page_text)) return;
