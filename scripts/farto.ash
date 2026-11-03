@@ -112,7 +112,7 @@ void bladdering(){
         set_property("mainOverride",", equip june cleaver");
     if (get_property("_pantsgivingCount") < 500)
         stashgrab($item[pantsgiving]);
-    if (available_amount($item[pantsgiving]) > 0 && get_property("_pantsgivingCount") < 500)
+    if (available_amount($item[pantsgiving]) > 0 && get_property("_pantsgivingCount").to_int() < 500)
         set_property("pantsOverride",", equip pantsgiving");
     else
         set_property("pantsOverride",", equip designer sweatpants");
