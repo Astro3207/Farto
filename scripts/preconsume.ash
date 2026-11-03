@@ -10,12 +10,13 @@ void astral(){
     }
 }
 void timeArrow(){
-    if (to_int(get_property("valueOfAdventure"))*5 > mall_price($item[time's arrow])){
+    if (to_int(get_property("valueOfAdventure"))*5 > mall_price($item[time's arrow]) && get_property("_timeArrowUsed") == "false"){
         retrieve_item($item[time's arrow]);
         if (is_online("botticelli"))
             cli_execute("csend time's arrow to torturebot");
         else if (is_online("botticelli"))
             cli_execute("csend time's arrow to torturebot");
+        set_property("_timeArrowUsed","true");
     }
 }
 void clanAdv(){
