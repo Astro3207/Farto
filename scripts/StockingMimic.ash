@@ -1661,8 +1661,7 @@ void neverendingParty(){
 }
 
 void embezzlerD1(){
-    repeat {
-        if (have_effect($effect[Lucky!]) > 0){
+    while (have_effect($effect[Lucky!]) > 0 && my_inebriety() <= inebriety_limit()){
             if (have_familiar($familiar[robortender])){
                 use_familiar($familiar[Robortender]);
                 set_property("famOverride","robortender");
@@ -1675,9 +1674,8 @@ void embezzlerD1(){
             set_property("script","embezzler");
             set_property("unconditionalOverride","meat drop, equip mafia pointer finger");
             adv1($location[Cobb's knob treasury]);
-        }
-        clearOverrides();
-    } until (have_effect($effect[Lucky!]) == 0);
+    }
+    clearOverrides();
 }
 
 void weakMonsters(){
@@ -1855,10 +1853,7 @@ void roseGarden(){
         main@postadventure();
         page = visit_url(garden);
     }
-    if (inRoseGarden(page)){
-        run_choice(2);
-        set_property("_roseGardenDone","true");
-    }
+    set_property("_roseGardenDone","true");
 }
 
 void locationBasedWeakMonsters(){
@@ -2682,6 +2677,7 @@ void bulkFKD1(){
     }
     step("phase: bulkFK mimic egg");
     mimicEgg();
+    set_property("backOverride",",equip retrocape (heck kill)");
     step("phase: bulkFK faxing");
     faxing();
     if (item_amount($item[shaking 4-D camera]) > 0){
@@ -2689,6 +2685,7 @@ void bulkFKD1(){
         main@preadventure( );
         use($item[shaking 4-D camera]);
     }
+    set_property("backOverride","");
     if (my_class() == $class[seal clubber]){
         if (dayType() == 0 && fullness_limit() - my_fullness() >= 1){
             equip($item[devilbone corset]);
