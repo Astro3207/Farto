@@ -1635,8 +1635,6 @@
     // ── Pantsgiving ──────────────────────────────────────────────────────────────
     // Extra fullness Pantsgiving has unlocked today from _pantsgivingCount; -1 if none (or day 1).
     int pantsgivingAvailable(){
-        if (dayType() == 0)
-            return -1;
         int count = get_property("_pantsgivingCount").to_int();
         if (count >= 500) return 3;
         if (count >= 50)  return 2;
