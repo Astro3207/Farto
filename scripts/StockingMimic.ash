@@ -1209,12 +1209,29 @@ boolean pearloP1Done(){
     return true;
 }
 
-void pearloP1(){
+// Fishy pipe, Wet Willied, and a way to breathe underwater: Driving Waterproofly
+// from the Asdon Martin, else whichever potion has the cheaper ingredient (both
+// potions are untradeable, so they get crafted). Callers still fall back to
+// SCUBA gear if none of the three effects landed.
+void underwaterPrep(){
     if (get_property("_fishyPipeUsed") == "false")
-        use ($item[fishy pipe]);
+        use($item[fishy pipe]);
     if (have_effect($effect[Wet Willied]) == 0)
         use($item[willyweed]);
-    if (have_effect($effect[driving waterproofly]) == 0)
+    if ((have_effect($effect[driving waterproofly]) + have_effect($effect[Pneumatic]) + have_effect($effect[Pumped Stomach])) > 0)
+        return;
+    if (get_workshed() == $item[Asdon Martin keyfob (on ring)] && get_fuel() >= 37)
+        cli_execute("asdonmartin drive waterproofly");
+    if (have_effect($effect[driving waterproofly]) > 0)
+        return;
+    item air = mall_price($item[bubbling tempura batter]) < mall_price($item[globe of Deep Sauce]) ? $item[tempura air] : $item[pressurized potion of pneumaticity];
+    if (retrieve_item(1, air))
+        use(air);
+}
+
+void pearloP1(){
+    underwaterPrep();
+    if ((have_effect($effect[driving waterproofly]) + have_effect($effect[Pneumatic]) + have_effect($effect[Pumped Stomach])) == 0)
         set_property("pantsOverride",", equip really nice swim");
     banishFish();
     if (get_auto_attack() == 0)
@@ -1241,14 +1258,10 @@ void pearloP1(){
     set_property("acc1Override","");
 }
 void pearloP2(){
-    if (get_property("_fishyPipeUsed") == "false")
-        use ($item[fishy pipe]);
-    if (have_effect($effect[Wet Willied]) == 0){
-        use($item[willyweed]);
-    }
+    underwaterPrep();
     banishFish();
     foreach str in $strings[deepests,reef]{
-        if (have_effect($effect[driving waterproofly]) == 0)
+        if ((have_effect($effect[driving waterproofly]) + have_effect($effect[Pneumatic]) + have_effect($effect[Pumped Stomach])) == 0)
             set_property("backOverride", ", equip Elf Guard SCUBA tank");
         altFam($familiar[stocking mimic]);
         if (get_property(pearls[str].donePref) == "false" || str == "reef"){
@@ -1260,11 +1273,7 @@ void pearloP2(){
     set_property("backOverride","");
 }
 void pearloP3(){
-    if (get_property("_fishyPipeUsed") == "false")
-        use ($item[fishy pipe]);
-    if (have_effect($effect[Wet Willied]) == 0){
-        use($item[willyweed]);
-    }
+    underwaterPrep();
     banishFish();
     foreach str in $strings[reef,bar,anemone,trench]{
         if (str != "bar" && get_property("acc3Override") != ", equip backup camera")
@@ -1303,11 +1312,8 @@ void habitatRecall(){
             mimicPrep();
             set_property("offOverride",", equip kramco");
             set_property("acc1Override",",bonus mafia pointer");
-            if (get_property("_fishyPipeUsed") == "false")
-                use ($item[fishy pipe]);
-            if (have_effect($effect[Wet Willied]) == 0)
-                use($item[willyweed]);
-            if (have_effect($effect[driving waterproofly]) == 0)
+            underwaterPrep();
+            if ((have_effect($effect[driving waterproofly]) + have_effect($effect[Pneumatic]) + have_effect($effect[Pumped Stomach])) == 0)
                 set_property("backOverride", ", equip Elf Guard SCUBA tank");
             cli_execute("preadventure");
             adv1($location[The Briniest Deepests]);
@@ -1343,7 +1349,7 @@ void habitatRecall(){
 void backup(){
     while (to_int(get_property("_backUpUses")) < 11){
         set_property("subscript","replacing");
-        if (have_effect($effect[driving waterproofly]) == 0)
+        if ((have_effect($effect[driving waterproofly]) + have_effect($effect[Pneumatic]) + have_effect($effect[Pumped Stomach])) == 0)
             set_property("backOverride",", equip Elf Guard SCUBA tank");
         if (to_monster(get_property("lastCopyableMonster")) != copyTarget){
             abort("trying to backup to not " + copyTarget);
@@ -1369,7 +1375,7 @@ void backup(){
         if (to_int(get_property("_mimicEggsObtained")) < 11 && $familiar[chest mimic].experience > 100 && to_monster(get_property("lastCopyableMonster")) == copyTarget){
             set_property("famOverride","chest mimic");
             set_property("maxOverride","familiar weight");
-            if (have_effect($effect[driving waterproofly]) == 0)
+            if ((have_effect($effect[driving waterproofly]) + have_effect($effect[Pneumatic]) + have_effect($effect[Pumped Stomach])) == 0)
                 set_property("backOverride",", equip Elf Guard SCUBA tank");
             set_property("acc3Override",", equip backup camera");
             set_property("offOverride",", equip McHugeLarge left pole");
