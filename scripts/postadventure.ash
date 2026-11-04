@@ -178,7 +178,7 @@ void outskirts() {
         return;
     runawayOrSword();
     set_property("unconditionalOverride", get_property("famOverride") != "sword of s words" && get_property("_spikolodonSpikeUses").to_int() < 5
-        ? "familiar weight,equip parka (spikolodon)" : "");
+        ? "familiar weight,equip parka (spikolodon),-equip tiny stillsuit" : "");
     if (get_property("questG09Muscle") == "unstarted")
         visit_url("guild.php?place=challenge");
     if (get_property("questG09Muscle") == "started")

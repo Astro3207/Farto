@@ -238,7 +238,10 @@ void prepBuffs(){
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
-    abort("Check any extra item drop effects including crying dying");
+    if (have_effect($effect[Spitting Rhymes]) == 0)
+        cli_execute("loathingidol rhyme");
+    while (have_effect($effect[Crying, Dying]) == 0)
+        use($item[black tear]);
     //crit rate
     foreach ef in $effects[Berry Critical,Mark of Candy Cain,Invisible (20 Minutes Ago),Mariachi Moisture]{
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
@@ -1020,6 +1023,7 @@ void shadowRealmFK(){
         set_property("backOverride","");
         set_property("offOverride","");
         set_property("shirtOverride","");
+        set_property("acc1Override","");
     }
     if (get_property("questRufus") == "step1") {
         use($item[closed-circuit pay phone]);
@@ -1090,7 +1094,7 @@ boolean uneffectBuff(){
     effect toRemove;
     int statBuff;
     foreach ef in my_effects( ){
-        if (numeric_modifier(ef,"familiar weight") > 0)
+        if ((numeric_modifier(ef,"familiar weight")+numeric_modifier(ef,"item drop")+numeric_modifier(ef,"meat drop")) > 0)
             continue;
         if ((numeric_modifier(ef, to_string(st) + " Percent")/100)*adjBase_Stat[st] > statBuff){
             statBuff = (numeric_modifier(ef, to_string(st) + " Percent")/100)*adjBase_Stat[st];
@@ -1229,9 +1233,8 @@ void underwaterPrep(){
         cli_execute("asdonmartin drive waterproofly");
     if (have_effect($effect[driving waterproofly]) > 0)
         return;
-    item air = mall_price($item[bubbling tempura batter]) < mall_price($item[globe of Deep Sauce]) ? $item[tempura air] : $item[pressurized potion of pneumaticity];
-    if (retrieve_item(1, air))
-        use(air);
+    if (create(1, $item[tempura air]))
+        use($item[tempura air]);
 }
 
 void pearloP1(){
@@ -1245,20 +1248,27 @@ void pearloP1(){
     set_property("acc1Override",", bonus mafia pointer finger");
     if (numeric_modifier("Critical Hit Percent") < 100)
         abort("can't guarantee critical hit");
+    set_property("FKRunEligible","false");
     if (((get_property("_baseballInnings").to_int() < 3 && baseballPlayers() >= 8) || get_property("_curveballFightsLeft").to_int() > 0) && get_property("_shadowBricksUsed").to_int() < 13) {
         underwaterBaseball();
     } else if (looseFK()){
+        if (get_property("_baseballInnings").to_int() < 3 && baseballPlayers() < 9)
+            set_property("acc2Override",", equip eternity codpiece");
+        else
+             set_property("acc2Override","");
         set_property("acc3Override",", equip " + timeBadge());
         set_property("subscript","looseFK");
         foreach str in $strings[anemone,trench,bar]{
-            if (get_property(pearls[str].donePref) == "false"){
+            if (str != "bar")
+                set_property("FKRunEligible","true");
+            if (get_property(pearls[str].donePref) == "false" || str == "bar"){
                 resCheck(str);
                 altFam($familiar[stocking mimic]);
                 adv1(pearls[str].loc);
                 break;
             }
         }
-        abort("add sandworm");
+    //    abort("add sandworm");
     }
     set_property("pantsOverride","");
     set_property("acc1Override","");
@@ -1890,7 +1900,6 @@ void locationBasedWeakMonsters(){
     }
     step("phase: weakMonsters pearl P1");
     if (looseFK()){
-        set_property("FKRunEligible","true");
         while (looseFK()){
             LBMWPrep (false);
             pearloP1();

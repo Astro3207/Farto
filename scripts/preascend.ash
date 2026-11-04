@@ -92,7 +92,7 @@ void spendGrimacePrimeMaps(){
         if (familiar_weight($familiar[comma chameleon]) > 10)
             altFam($familiar[Grey Goose]);
         else
-            set_familiar($familiar[sword of s words]);
+            use_familiar($familiar[sword of s words]);
         cli_execute("maximize item drop");
         visit_url("place.php?whichplace=forestvillage&action=fv_scientist");
         if (have_skill($skill[Evoke Eldritch Horror]))
