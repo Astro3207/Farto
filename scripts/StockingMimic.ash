@@ -1248,8 +1248,8 @@ void pearloP1(){
     set_property("acc1Override",", bonus mafia pointer finger");
     if (numeric_modifier("Critical Hit Percent") < 100)
         abort("can't guarantee critical hit");
-    set_property("FKRunEligible","false");
     if (((get_property("_baseballInnings").to_int() < 3 && baseballPlayers() >= 8) || get_property("_curveballFightsLeft").to_int() > 0) && get_property("_shadowBricksUsed").to_int() < 13) {
+        set_property("FKRunEligible","false");
         underwaterBaseball();
     } else if (looseFK()){
         if (get_property("_baseballInnings").to_int() < 3 && baseballPlayers() < 9)
@@ -1261,6 +1261,8 @@ void pearloP1(){
         foreach str in $strings[anemone,trench,bar]{
             if (str != "bar")
                 set_property("FKRunEligible","true");
+            else
+                set_property("FKRunEligible","false");
             if (get_property(pearls[str].donePref) == "false" || str == "bar"){
                 resCheck(str);
                 altFam($familiar[stocking mimic]);
