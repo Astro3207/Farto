@@ -745,7 +745,7 @@ void mood(string function){
     } else if (get_property("script") == "slime"){
         if (have_effect($effect[Let's Go Shopping!]) > 0)
             cli_execute("uneffect Let's Go Shopping!");
-    } else if (get_property("script") == "farto" && (dayType() == 1 || my_location() == $location[marinara trench])){
+    } else if (get_property("script") == "farto" && (dayType() == 1 || my_location() == $location[the marinara trench])){
         foreach ef in $effects[Yes\, Can Haz, ode to booze]
             if (have_effect(ef) > 0)
                 cli_execute("uneffect " + ef);

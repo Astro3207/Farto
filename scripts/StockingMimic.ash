@@ -226,7 +226,11 @@ void prepBuffs(){
     }
     cli_execute("gain meat drop 7 eff 12 turns");
     //item drop
-    foreach ef in $effects[Steely-Eyed Squint,Spookyravin',Unbarking Dogs,One Very Clear Eye,Materiel Intel,Spitting Rhymes,Joyful Resolve,Lubricating Sauce]{
+    foreach ef in $effects[Steely-Eyed Squint,Spookyravin',Unbarking Dogs,One Very Clear Eye,Materiel Intel,Spitting Rhymes,Joyful Resolve,Lubricating Sauce,fat leon's phat loot lyric,
+        Crunching Leaves,Heart of Lavender,Eagle Eyes,Cybercrime Eyes,Ocelot Eyes,Spidercow Vision,Perceptive Pressure,
+        Cupcake of Choice,Held Closer,Things Man Was Not Meant to Eat,Sea Seeing,Ermine Eyes,Wet and Greedy,I See Everything Thrice!,
+        The Grass...  Is Blue...,Je Ne Sais Porquoise,Human-Penguin Hybrid,Unusual Perspective,Celestial Vision,
+        Chief Executive Optimism,El Aroma de Salsa,Juiced and Jacked]{
         if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
             continue;
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)) && ef != $effect[Steely-Eyed Squint])
@@ -234,6 +238,7 @@ void prepBuffs(){
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
+    abort("Check any extra item drop effects including crying dying");
     //crit rate
     foreach ef in $effects[Berry Critical,Mark of Candy Cain,Invisible (20 Minutes Ago),Mariachi Moisture]{
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
@@ -1240,19 +1245,20 @@ void pearloP1(){
     set_property("acc1Override",", bonus mafia pointer finger");
     if (numeric_modifier("Critical Hit Percent") < 100)
         abort("can't guarantee critical hit");
-    if ((get_property("_baseballInnings").to_int() < 3 || get_property("_curveballFightsLeft").to_int() > 0) && get_property("_shadowBricksUsed").to_int() < 13) {
+    if (((get_property("_baseballInnings").to_int() < 3 && baseballPlayers() >= 8) || get_property("_curveballFightsLeft").to_int() > 0) && get_property("_shadowBricksUsed").to_int() < 13) {
         underwaterBaseball();
     } else if (looseFK()){
         set_property("acc3Override",", equip " + timeBadge());
         set_property("subscript","looseFK");
         foreach str in $strings[anemone,trench,bar]{
-            if (get_property(pearls[str].donePref) == "false" || str == "bar"){
+            if (get_property(pearls[str].donePref) == "false"){
                 resCheck(str);
                 altFam($familiar[stocking mimic]);
                 adv1(pearls[str].loc);
                 break;
             }
         }
+        abort("add sandworm");
     }
     set_property("pantsOverride","");
     set_property("acc1Override","");
