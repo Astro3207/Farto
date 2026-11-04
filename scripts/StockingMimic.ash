@@ -1254,8 +1254,6 @@ void pearloP1(){
     } else if (looseFK()){
         if (get_property("_baseballInnings").to_int() < 3 && baseballPlayers() < 9)
             set_property("acc2Override",", equip eternity codpiece");
-        else
-             set_property("acc2Override","");
         set_property("acc3Override",", equip " + timeBadge());
         set_property("subscript","looseFK");
         foreach str in $strings[anemone,trench,bar]{
