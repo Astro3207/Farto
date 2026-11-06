@@ -934,11 +934,6 @@ void postAdv(){
         visit_url("inventory.php?"+my_hash()+"&action=distill");
         run_choice(1);
     }
-    if (pantsgivingAvailable() >= get_property("_pantsgivingFullness").to_int()){
-        if (my_fullness() == fullness_limit()-1){
-            cli_execute("CONSUME ORGANS 1 0 0");
-        }
-    }
     endOfDayHandling();
     if (get_property("script") == "FreeKill" && get_property("cursedMagnifyingGlassCount").to_int() == 13){
         aa("facsimile");
@@ -954,6 +949,7 @@ void postAdv(){
     }
     if (have_item($item[cosmic bowling ball]) && dayType() == 1 && get_property("script") == "FreeKill" && nextTrainStation() != "meat_mine"
         && my_inebriety() <= inebriety_limit() && !choice_follows_fight() && !handling_choice() && get_property("noncombatForcerActive").to_boolean() == false){
+        boolean badge = get_property("acc3Override") == ", equip " + timeBadge();
         set_property("maxOverride","combat,-equip drunkula's wineglass");
         set_property("famOverride", "peace turkey");
         set_property("mainOverride",", equip june cleaver");
@@ -962,7 +958,7 @@ void postAdv(){
         set_location($location[Cobb's Knob Treasury]);
         adv1($location[cobb's knob treasury]);
         clearOverrides();
-        if (get_property("subscript") == "weakling"){
+        if (get_property("subscript") == "weakling" || badge){
             equip($slot[acc3],timeBadge());
             set_property("acc3Override",", equip " + timeBadge());
         }

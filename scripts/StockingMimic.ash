@@ -212,7 +212,7 @@ void prepBuffs(){
     while (have_effect($effect[She Ate Too Much Candy]) < 25)
         use($item[Prunets]);
     //meat drop
-    foreach ef in $effects[Incredibly Well Lit,Loded,Meet the Meat,Tubes of Universal Meat,Holiday Bliss,So You Can Work More...,Legendary Pasta Eyeball,Polka of Plenty,Swimming with Sharks]{
+    foreach ef in $effects[Incredibly Well Lit,Loded,Meet the Meat,Tubes of Universal Meat,Holiday Bliss,So You Can Work More...,Legendary Pasta Eyeball,Polka of Plenty,Swimming with Sharks,fat leon's phat loot lyric]{
         if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
             continue;
         if (ef == $effect[Incredibly Well Lit] && dayType() == 0)
@@ -226,11 +226,11 @@ void prepBuffs(){
     }
     cli_execute("gain meat drop 7 eff 12 turns");
     //item drop
-    foreach ef in $effects[Steely-Eyed Squint,Spookyravin',Unbarking Dogs,One Very Clear Eye,Materiel Intel,Spitting Rhymes,Joyful Resolve,Lubricating Sauce,fat leon's phat loot lyric,
+    foreach ef in $effects[Steely-Eyed Squint,Spookyravin',Unbarking Dogs,One Very Clear Eye,Materiel Intel,Spitting Rhymes,Joyful Resolve,Lubricating Sauce,
         Crunching Leaves,Heart of Lavender,Eagle Eyes,Cybercrime Eyes,Ocelot Eyes,Spidercow Vision,Perceptive Pressure,
         Cupcake of Choice,Held Closer,Things Man Was Not Meant to Eat,Sea Seeing,Ermine Eyes,Wet and Greedy,I See Everything Thrice!,
         The Grass...  Is Blue...,Je Ne Sais Porquoise,Human-Penguin Hybrid,Unusual Perspective,Celestial Vision,
-        Chief Executive Optimism,El Aroma de Salsa,Juiced and Jacked]{
+        Chief Executive Optimism,El Aroma de Salsa,Juiced and Jacked,Let's Go Shopping!,Eyes for Miles,Lantern-Charged,Heightened Senses,Sucrose-Colored Glasses,Dance of the Sugar Fairy]{
         if (mall_price(effect_to_item(ef)) > mall_price($item[pocket wish]))
             continue;
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)) && ef != $effect[Steely-Eyed Squint])
@@ -941,7 +941,8 @@ void cyberzone() {
     }}
 void shadowBoss(){
     if (get_property("rufusQuestTarget") == "shadow scythe" || get_property("rufusQuestTarget") == "shadow spire"){
-        set_property("acc3Override",", equip congressional medal of");
+        if (my_buffedstat($stat[mysticality]) < 10000)
+            set_property("acc3Override",", equip congressional medal of");
         if (have_skill($skill[blood bubble])) {
             if (have_effect($effect[blood bubble]) == 0)
                 use_skill($skill[blood bubble]);
@@ -1184,6 +1185,16 @@ boolean looseFK(){
     return false;
 }
 
+void DMachine(){
+    set_property("subscript","looseFK");
+    retrieve_item(1,$item[drum machine]);
+    main@preadventure( );
+    use($item[drum machine]);
+    if (current_round() > 0)
+        run_combat();
+    main@postadventure( );
+}
+
 void resCheck(string str){
     if (numeric_modifier(pearls[str].ele_res) < 18)
         cli_execute("gain 18 " + pearls[str].ele_res);
@@ -1256,20 +1267,24 @@ void pearloP1(){
             set_property("acc2Override",", equip eternity codpiece");
         set_property("acc3Override",", equip " + timeBadge());
         set_property("subscript","looseFK");
-        foreach str in $strings[anemone,trench,bar]{
-            if (str != "bar")
+        foreach str in $strings[anemone,trench,bar,sandworm]{
+            if (str == "anemone" || str == "trench")
                 set_property("FKRunEligible","true");
             else
                 set_property("FKRunEligible","false");
-            if (get_property(pearls[str].donePref) == "false" || str == "bar"){
+            if (str == "sandworm"){
+                DMachine();
+                break;
+            }
+            if (get_property(pearls[str].donePref) == "false"){
                 resCheck(str);
                 altFam($familiar[stocking mimic]);
                 adv1(pearls[str].loc);
                 break;
             }
         }
-    //    abort("add sandworm");
     }
+    set_property("shirtOverride","");
     set_property("pantsOverride","");
     set_property("acc1Override","");
 }
@@ -1793,7 +1808,16 @@ void weakMonsters(){
             set_property("mainOverride","");
         } else if (pick == "sandworm"){
             step("phase: weakMonsters giant sandworm (quad tom)");
-            sandworm();
+            // Drum machine worms aren't free like quad tom ones, so each spends a loose
+            // free kill. mimicPrep first: it would overwrite the gear looseFK() asks for.
+            mimicPrep();
+            if (numeric_modifier("item drop") > 3500 && get_property("_partialTombstonesUsed").to_int() < 5 && looseFK()){
+                DMachine();
+                set_property("subscript","weakling");
+                set_property("shirtOverride","");
+                set_property("acc1Override","");
+            } else
+                sandworm();
             // Out of quad toms -- stop other _aprilBandTomUses < 3 guards retrying.
             if (available_amount($item[Apriling band quad tom]) == 0)
                 set_property("_aprilBandTomUses","3");
@@ -2516,7 +2540,7 @@ void bulkFKD2(){
     if (looseFK()){
         set_property("FKRunEligible","true");
         while (have_effect($effect[shadow affinity]) > 0){
-            if ($monster[shadow slab].elemental_resistance > 85){
+            if ($monster[shadow slab].elemental_resistance > 85 && my_buffedstat($stat[mysticality]) < 10000){
                 if (have_item($item[Congressional Medal of Insanity]))
                     set_property("acc3Override",",equip congressional medal of");
             }
@@ -2527,7 +2551,8 @@ void bulkFKD2(){
     step("phase: bulkFK NC force");
     NCforce(false);
     while (get_property("noncombatForcerActive") == true || get_property("encountersUntilSRChoice").to_int() == 0){
-        set_property("acc1Override",", equip congressional medal of insanity");
+        if (my_buffedstat($stat[mysticality]) < 10000)
+            set_property("acc1Override",", equip congressional medal of insanity");
         shadowRealmFK();
         NCforce(false);
     }
