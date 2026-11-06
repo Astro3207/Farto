@@ -138,6 +138,8 @@ import iotm.ash;
             Gingerbread Mob Hit, Club 'Em Back in Time] {
             if (my_location() == $location[hobopolis town square] && sk == $skill[Club 'Em Back in Time])
                 continue;
+            if (last_monster() == $monster[giant sandworm] && sk == $skill[Club 'Em Back in Time])
+                continue;
             if (sk == $skill[BCZ: Sweat Bullets] && ((my_basestat($stat[submoxie]) - 62500) <= BCZcost("SweatBulletsCasts") || get_property("_bczSweatBulletsCasts").to_int() >= 13))
                 continue;
             if (contains_text(ptext, to_string(sk)))
@@ -247,7 +249,7 @@ import iotm.ash;
         int shadowGuyValue = item_drops_array($monster[shadow guy])[0].rate/100 * itDropMult * mall_price(item_drops_array($monster[shadow guy])[0].drop);
         int avgPrice = (mall_price($item[shadow brick]) + mall_price($item[shadow stick]))/2;
         int otherGuyValue = (item_drops_array($monster[shadow slab])[0].rate/100 * itDropMult * avgPrice) - mall_price($item[waffle]);
-        if (have_effect($effect[fishy]) < 1030)
+        if (have_effect($effect[fishy]) < 1020)
             use_skill($skill[Sea *dent: Talk to Some Fish]);
         else if (shadowGuyValue < otherGuyValue)
             throw_item($item[waffle]);
@@ -583,8 +585,11 @@ import iotm.ash;
         if (last_monster() == $monster[Black Crayon Crimbo Elf] && have_equipped($item[legendary seal-clubbing club]))
             use_skill($skill[Club 'Em Into Next Week]);
         boolean curveballed = get_property("_curveballMonster").to_monster() == last_monster() && get_property("_curveballFightsLeft").to_int() > 0;
-        if (get_property("subscript") == "looseFK" && !curveballed && last_monster().boss == false)
+        if (get_property("subscript") == "looseFK" && !curveballed && last_monster().boss == false){
+            if (last_monster() == $monster[giant sandworm] && get_property("shockingLickCharges").to_int() > 0)
+                use_skill($skill[Shocking Lick]);
             free_kill(page_text);
+        }
         if (curveballed){
             sauce(5);
             use_skill($skill[carbohydrate cudgel]);

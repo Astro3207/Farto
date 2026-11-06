@@ -5,6 +5,7 @@ import preadventure.ash;
 
 string highStat = "";
 string lowStat = "";
+boolean timeFam = false;
 int [string] chibiStats;
 
 record choicePair {
@@ -993,7 +994,8 @@ void shadowRealmFK(){
             set_property("acc3Override","");
         if (to_int(get_property("_batWingsSwoopUsed")) < 11)
             set_property("backOverride",", equip bat wings");
-        if (have_effect($effect[fishy]) < 1030 && my_class() == $class[seal clubber])
+        abort("snowman enchanting");
+        if (have_effect($effect[fishy]) < 1020 && my_class() == $class[seal clubber])
             set_property("mainOverride",", equip monodent");
         else
             set_property("mainOverride","");
@@ -1118,7 +1120,8 @@ boolean uneffectBuff(){
         return false;
     return have_effect(toRemove) == 0;
 }
-boolean looseFK(){
+// skipClub: Club 'Em Back in Time costs most of the drops, so sandworms save it.
+boolean looseFK(boolean skipClub){
     if (get_property("shirtOverride") == ", equip jurassic parka (dilophosaur)")
         set_property("shirtOverride","");
     set_property("maxOverride","familiar weight");
@@ -1150,7 +1153,7 @@ boolean looseFK(){
         set_property("maxOverride","familiar weight, equip jokester's gun");
         return true;
     }
-    if (get_property("_clubEmTimeUsed").to_int() < 5){
+    if (get_property("_clubEmTimeUsed").to_int() < 5 && !skipClub){
         print ("FK is club em back in time");
         set_property("maxOverride","familiar weight, equip legendary seal-clubbing");
         return true;
@@ -1183,6 +1186,9 @@ boolean looseFK(){
         return true;
     }
     return false;
+}
+boolean looseFK(){
+    return looseFK(false);
 }
 
 void DMachine(){
@@ -1262,7 +1268,7 @@ void pearloP1(){
     if (((get_property("_baseballInnings").to_int() < 3 && baseballPlayers() >= 8) || get_property("_curveballFightsLeft").to_int() > 0) && get_property("_shadowBricksUsed").to_int() < 13) {
         set_property("FKRunEligible","false");
         underwaterBaseball();
-    } else if (looseFK()){
+    } else if (looseFK(pearloP1Done())){
         if (get_property("_baseballInnings").to_int() < 3 && baseballPlayers() < 9)
             set_property("acc2Override",", equip eternity codpiece");
         set_property("acc3Override",", equip " + timeBadge());
@@ -1811,7 +1817,7 @@ void weakMonsters(){
             // Drum machine worms aren't free like quad tom ones, so each spends a loose
             // free kill. mimicPrep first: it would overwrite the gear looseFK() asks for.
             mimicPrep();
-            if (numeric_modifier("item drop") > 3500 && get_property("_partialTombstonesUsed").to_int() < 5 && looseFK()){
+            if (numeric_modifier("item drop") > 3500 && get_property("_partialTombstonesUsed").to_int() < 5 && looseFK(true)){
                 DMachine();
                 set_property("subscript","weakling");
                 set_property("shirtOverride","");
@@ -1923,8 +1929,8 @@ void locationBasedWeakMonsters(){
         gingerbread();
     }
     step("phase: weakMonsters pearl P1");
-    if (looseFK()){
-        while (looseFK()){
+    if (looseFK(pearloP1Done())){
+        while (looseFK(pearloP1Done())){
             LBMWPrep (false);
             pearloP1();
         }
@@ -2142,7 +2148,7 @@ familiar famXpTarget(){
     int mimic = mimicXpNeeded();
     int yeti = yetiXpNeeded();
     boolean eggsLayable = to_int(get_property("_backUpUses")) < 11;
-    familiar fam = $familiar[mini kiwi];
+    familiar fam = (timeFam == true) ? $familiar[comma chameleon] : $familiar[mini kiwi];
     if (mimic > 0 && (eggsLayable || yeti <= 0))
         fam = $familiar[chest mimic];
     else if (yeti > 0)
@@ -2493,9 +2499,14 @@ void bulkFKD2(){
     miscellaneousFams();
     step ("phase: use up hidden city");
     while (get_property("zigguratLianas") == 0 || to_int(get_property("_drunkPygmyBanishes")) < 11){
+        if (!have_familiar($familiar[Temporal Riftlet]) && have_familiar($familiar[Comma Chameleon])){
+            altFam($familiar[Temporal Riftlet]);
+            timeFam = true;
+        }
         if (!restOfHiddenCity())
             break;
     }
+    timeFam = false;
     step("phase: bulkFK spleen (Extrovermectin)");
     if (my_spleen_use() < spleen_limit()){
         int toChew = floor((spleen_limit()-my_spleen_use())/2);
