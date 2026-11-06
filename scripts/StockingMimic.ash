@@ -942,7 +942,7 @@ void cyberzone() {
     }}
 void shadowBoss(){
     if (get_property("rufusQuestTarget") == "shadow scythe" || get_property("rufusQuestTarget") == "shadow spire"){
-        if (my_buffedstat($stat[mysticality]) < 10000)
+        if (my_buffedstat($stat[mysticality]) < 5000)
             set_property("acc3Override",", equip congressional medal of");
         if (have_skill($skill[blood bubble])) {
             if (have_effect($effect[blood bubble]) == 0)
@@ -994,12 +994,14 @@ void shadowRealmFK(){
             set_property("acc3Override","");
         if (to_int(get_property("_batWingsSwoopUsed")) < 11)
             set_property("backOverride",", equip bat wings");
-        abort("snowman enchanting");
-        if (have_effect($effect[fishy]) < 1020 && my_class() == $class[seal clubber])
+        if (available_amount($item[snowman-enchanting tophat]) > 0 && get_property("_snowmanHatPlaceUsed").to_int() < 3)
+            set_property("hatOverride",", equip snowman-enchanting tophat");
+        else if (have_effect($effect[fishy]) < 1020 && my_class() == $class[seal clubber])
             set_property("mainOverride",", equip monodent");
         else
             set_property("mainOverride","");
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
+        set_property("hatOverride","");
     } else {
         NCforce(false);
         if (get_property("rufusQuestType") == "entity"){
@@ -2468,11 +2470,13 @@ void eldritchFights(){
 
 void shadowRealmBuffUp(){
     //spell crit, spell damage, and mys
-    foreach ef in $effects[Wizard Squint,OMG WTF,Sauce Monocle,Sweet Pirate Curse,Up To 11,Carol of the Hells,Gamer Rage,Imported Strength,Ultraheart]{
+    foreach ef in $effects[Wizard Squint,OMG WTF,Sauce Monocle,Sweet Pirate Curse,Up To 11,Carol of the Hells,Gamer Rage,Imported Strength,Ultraheart,Visions of the Deep Dark Deeps,song of sauce,cowrruption]{
         if (ef == $effect[Gamer Rage] && available_amount($item[Jackass Plumber home game]) == 0)
             continue;
         if (have_effect(ef) > 0)
             continue;
+        if (ef == $effect[Visions of the Deep Dark Deeps])
+            cli_execute("maximize spooky res");
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
             continue;
         cli_execute(ef.default);
@@ -2551,7 +2555,7 @@ void bulkFKD2(){
     if (looseFK()){
         set_property("FKRunEligible","true");
         while (have_effect($effect[shadow affinity]) > 0){
-            if ($monster[shadow slab].elemental_resistance > 85 && my_buffedstat($stat[mysticality]) < 10000){
+            if ($monster[shadow slab].elemental_resistance > 85 && my_buffedstat($stat[mysticality]) < 5000){
                 if (have_item($item[Congressional Medal of Insanity]))
                     set_property("acc3Override",",equip congressional medal of");
             }
@@ -2562,7 +2566,7 @@ void bulkFKD2(){
     step("phase: bulkFK NC force");
     NCforce(false);
     while (get_property("noncombatForcerActive") == true || get_property("encountersUntilSRChoice").to_int() == 0){
-        if (my_buffedstat($stat[mysticality]) < 10000)
+        if (my_buffedstat($stat[mysticality]) < 5000)
             set_property("acc1Override",", equip congressional medal of insanity");
         shadowRealmFK();
         NCforce(false);

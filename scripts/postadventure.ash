@@ -218,6 +218,13 @@ svenGift [item] svenGifts = {
     $item[giant marshmallow]:       new svenGift("Bognort",   $item[gin-soaked blotter paper])
 };
 
+// Wear the snowman hat for the next fight while the day's Place Your Hat uses last.
+// sauceFight casts it on demons the free run didn't get us out of.
+void snowmanHatPrep(){
+    if (available_amount($item[snowman-enchanting tophat]) > 0 && get_property("_snowmanHatPlaceUsed").to_int() < 3)
+        set_property("hatOverride",", equip snowman-enchanting tophat");
+}
+
 void azazelUnicornQuest(){
     print("Farto: Azazel Quest");
     if (get_property("questM10Azazel") != "finished"){
@@ -249,7 +256,9 @@ void azazelUnicornQuest(){
                 if (have_effect($effect[Patent Aggression]) == 0){
                     set_property("maxOverride","-combat");
                     swordPrep();
+                    snowmanHatPrep();
                     adv1($location[Infernal Rackets Backstage],0,"");
+                    set_property("hatOverride","");
                 }
             } else if (item_amount($item[observational glasses]) == 0){
                 set_property("maxOverride","combat");
@@ -258,7 +267,9 @@ void azazelUnicornQuest(){
                     cli_execute("aprilband effect c");
                 if (numeric_modifier("combat rate") < 35)
                     cli_execute("gain 30 combat rate 100 spendperturn");
+                snowmanHatPrep();
                 adv1($location[The Laugh Floor],0,"");
+                set_property("hatOverride","");
             }
         }
     }

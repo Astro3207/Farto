@@ -249,7 +249,9 @@ import iotm.ash;
         int shadowGuyValue = item_drops_array($monster[shadow guy])[0].rate/100 * itDropMult * mall_price(item_drops_array($monster[shadow guy])[0].drop);
         int avgPrice = (mall_price($item[shadow brick]) + mall_price($item[shadow stick]))/2;
         int otherGuyValue = (item_drops_array($monster[shadow slab])[0].rate/100 * itDropMult * avgPrice) - mall_price($item[waffle]);
-        if (have_effect($effect[fishy]) < 1020)
+        if (have_equipped($item[snowman-enchanting tophat]))
+            use_skill($skill[PLACE YOUR HAT ON THEIR HEAD]);
+        else if (have_effect($effect[fishy]) < 1020)
             use_skill($skill[Sea *dent: Talk to Some Fish]);
         else if (shadowGuyValue < otherGuyValue)
             throw_item($item[waffle]);
@@ -572,7 +574,7 @@ import iotm.ash;
         if (my_location() == $location[Gingerbread Civic Center])
             throw_item($item[gingerbread cigarette]);
         if (last_monster() == $monster[shadow guy]){
-            if (gazeReady()) {
+            if (gazeReady() && have_equipped($item[monodent of the sea])) {
                 use_skill($skill[Sea *dent: Talk to Some Fish]);
                 use_skill($skill[BCZ: Refracted Gaze]);
             } else
@@ -639,6 +641,9 @@ import iotm.ash;
             return false;
         if (!free_monster() && !free_location() && (my_location() != $location[The Laugh Floor] || last_monster().boss == false))
             free_run(page_text);
+        if (current_round() > 0 && have_equipped($item[snowman-enchanting tophat]) && get_property("_snowmanHatPlaceUsed").to_int() < 3
+            && $monsters[inkubus, serialbus, suckubus, BL Imp, CH Imp, Pr Imp] contains last_monster())
+            use_skill($skill[PLACE YOUR HAT ON THEIR HEAD]);
         sauce(7);
         attack(3);
         return true;
