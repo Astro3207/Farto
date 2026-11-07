@@ -2469,7 +2469,7 @@ void eldritchFights(){
 
 void shadowRealmBuffUp(){
     //spell crit, spell damage, and mys
-    foreach ef in $effects[Wizard Squint,OMG WTF,Sauce Monocle,Sweet Pirate Curse,Up To 11,Carol of the Hells,Gamer Rage,Imported Strength,Ultraheart,Visions of the Deep Dark Deeps,song of sauce,cowrruption]{
+    foreach ef in $effects[Wizard Squint,OMG WTF,Sauce Monocle,Sweet Pirate Curse,Up To 11,Carol of the Hells,Gamer Rage,Imported Strength,Ultraheart,Visions of the Deep Dark Deeps,song of sauce]{
         if (ef == $effect[Gamer Rage] && available_amount($item[Jackass Plumber home game]) == 0)
             continue;
         if (have_effect(ef) > 0)

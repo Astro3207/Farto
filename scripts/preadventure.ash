@@ -304,11 +304,12 @@ stockLevel [item] combatStock = {
     $item[logic grenade]:           new stockLevel(2, 2),
     $item[glitched malware]:        new stockLevel(1, 1),
     $item[4-D camera]:              new stockLevel(1, 1),
+    $item[waffle]:                  new stockLevel(1, 1),
     $item[pulled green taffy]:      new stockLevel(1, 1),
     $item[pulled indigo taffy]:     new stockLevel(1, 1),
     $item[stuffed yam stinkbomb]:   new stockLevel(1, 1),
     $item[new age healing crystal]: new stockLevel(100, 110),
-    $item[Arr\, M80]:               new stockLevel(60, 70)
+ //   $item[Arr\, M80]:               new stockLevel(60, 70)
 };
 
 void preAdv(){

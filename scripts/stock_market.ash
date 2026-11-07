@@ -1,41 +1,33 @@
 int [item] special = {
     $item[pocket wish]:47000,
     $item[waffle]:1000,
-    $item[handheld allied radio]:11000,
-    $item[battery (9-Volt)]:14000,
-    $item[battery (D)]:10500,
-    $item[battery (AA)]:7000,
-    $item[battery (AAA)]:3500,
-    $item[cold wad]:950,
-    $item[cold nugget]:190,
-    $item[hot wad]:750,
-    $item[hot nugget]:150,
-    $item[spooky wad]:750,
-    $item[spooky nugget]:150,
-    $item[stench wad]:850,
-    $item[stench nugget]:170,
-    $item[sleaze wad]:850,
-    $item[sleaze nugget]:170,
-    $item[groveling gravel]:10000,
+    $item[handheld allied radio]:14700,
+    $item[battery (9-Volt)]:45000,
+    $item[battery (D)]:33750,
+    $item[battery (AA)]:22500,
+    $item[battery (AAA)]:11250,
+    $item[groveling gravel]:17000,
     $item[spice melange]:200000,
     $item[emergency margarita]:110000,
     $item[vintage smart drink]:110000,
     $item[11-leaf clover]:29000,
+    //Arbitrage
+    $item[stuffed yam stinkbomb]:5501,
+    $item[pulled indigo taf]:1500,
+    $item[spooky vhs tape]:5000,
+    $item[Poké-Gro fertilizer]:16499,
+    $item[cocoa of youth]:64999,
     //consumables that spiked in price suring crimbo like the CS drinks and spice melange and hobopolis stuff?
 };
 
 void main() {
     int itNum;
-    foreach current in $items[glass of goat's milk,potion of temporary gr8ness,spooky hi mein,Penultimate Fantasy chest,handheld allied radio,milk of magnesium,delicious candy,perfect negroni,perfect dark and stormy,perfect mimosa,perfect old-fashioned ,perfect paloma,Mmm-brr! brand mouthwash]{
+    foreach current in $items[cocoa of youth,glass of goat's milk,potion of temporary gr8ness,spooky hi mein,Penultimate Fantasy chest,handheld allied radio,milk of magnesium,delicious candy,perfect negroni,perfect dark and stormy,perfect mimosa,perfect old-fashioned ,perfect paloma,Mmm-brr! brand mouthwash]{
         if (special[current] > 0){
             buy(14,current,special[current]);
         } else {
             buy(10,current,mall_price(current)/5);
         }
-    }
-    foreach it in $items[cocoa of youth]{
-        if (mall_price(it) < 60000)
-        buy(1,it);
     }
     if (item_amount($item[phial of coldness]) == 0){
         int minPrice = 1000000;

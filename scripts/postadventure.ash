@@ -958,7 +958,7 @@ void postAdv(){
         set_property("subscript","");
         clearOverrides();
     }
-    if (have_item($item[cosmic bowling ball]) && dayType() == 1 && get_property("script") == "FreeKill" && nextTrainStation() != "meat_mine"
+    if (have_item($item[cosmic bowling ball]) && dayType() == 1 && get_property("script") == "FreeKill" && nextTrainStation() != "meat_mine" && have_effect($effect[Lucky!]) == 0 && get_property("archSkeleton") != "true"
         && my_inebriety() <= inebriety_limit() && !choice_follows_fight() && !handling_choice() && get_property("noncombatForcerActive").to_boolean() == false){
         boolean badge = get_property("acc3Override") == ", equip " + timeBadge();
         set_property("maxOverride","combat,-equip drunkula's wineglass");

@@ -140,8 +140,11 @@ void inko(){
         altFam($familiar[robortender]);
     dartHolster();
     returnPantsgiving();
-    if (get_property("_floundryItemCreated") == "false")
+    if (get_property("_floundryItemCreated") == "false"){
+        whitelist("Bonus Adventures from Hell");
         retrieve_item($item[carpe]);
+        whitelist("homeclan");
+    }
     string banishedList = get_property("banishedMonsters");
     boolean needBanish = false;
     boolean monodent = false;

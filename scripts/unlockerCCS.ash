@@ -587,7 +587,7 @@ import iotm.ash;
         if (last_monster() == $monster[Black Crayon Crimbo Elf] && have_equipped($item[legendary seal-clubbing club]))
             use_skill($skill[Club 'Em Into Next Week]);
         boolean curveballed = get_property("_curveballMonster").to_monster() == last_monster() && get_property("_curveballFightsLeft").to_int() > 0;
-        if (get_property("subscript") == "looseFK" && !curveballed && last_monster().boss == false){
+        if (get_property("subscript") == "looseFK" && !curveballed && last_monster().boss == false && last_monster() != $monster[Eldritch Tentacle]){
             if (last_monster() == $monster[giant sandworm] && get_property("shockingLickCharges").to_int() > 0)
                 use_skill($skill[Shocking Lick]);
             free_kill(page_text);
@@ -596,7 +596,7 @@ import iotm.ash;
             sauce(5);
             use_skill($skill[carbohydrate cudgel]);
         }
-        if (get_property("subscript") == "looseFK" && current_round() > 0 && last_monster().boss == false
+        if (get_property("subscript") == "looseFK" && current_round() > 0 && last_monster().boss == false && last_monster() != $monster[Eldritch Tentacle]
             && (my_location() != $location[Shadow Rift (The Misspelled Cemetary)] || have_effect($effect[shadow affinity]) == 0))
             abort();
         if (current_round() > 0 && current_round() < 10)
