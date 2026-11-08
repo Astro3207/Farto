@@ -13,7 +13,7 @@ int [item] special = {
     $item[11-leaf clover]:29000,
     //Arbitrage
     $item[stuffed yam stinkbomb]:5501,
-    $item[pulled indigo taf]:1500,
+    $item[pulled indigo taffy]:1500,
     $item[spooky vhs tape]:5000,
     $item[Poké-Gro fertilizer]:16499,
     $item[cocoa of youth]:64999,
@@ -22,7 +22,8 @@ int [item] special = {
 
 void main() {
     int itNum;
-    foreach current in $items[cocoa of youth,glass of goat's milk,potion of temporary gr8ness,spooky hi mein,Penultimate Fantasy chest,handheld allied radio,milk of magnesium,delicious candy,perfect negroni,perfect dark and stormy,perfect mimosa,perfect old-fashioned ,perfect paloma,Mmm-brr! brand mouthwash]{
+    foreach current in $items[cocoa of youth,glass of goat's milk,potion of temporary gr8ness,spooky hi mein,handheld allied radio,milk of magnesium,perfect negroni,perfect dark and stormy,perfect mimosa,perfect old-fashioned ,perfect paloma
+    ,battery (9-Volt),battery (D),battery (AA),battery (AAA),groveling gravel,11-leaf clover,stuffed yam stinkbomb,pulled indigo taffy,spooky vhs tape,Poké-Gro fertilizer]{
         if (special[current] > 0){
             buy(14,current,special[current]);
         } else {

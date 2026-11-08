@@ -498,7 +498,9 @@ import iotm.ash;
         if (my_location() == $location[the red zeppelin] && get_property("_glarkCableUses").to_int() < 5 && get_property("NCtoC") == "false")
             throw_item($item[glark cable]);
         if (my_location() == $location[Gingerbread Upscale Retail District] || my_location() == $location[Gingerbread civic center]){
-            if (last_monster().phylum == $phylum[dude])
+            if ((get_property("freeMeat").to_int()) < mall_price($item[gingerbread cigarette]) - mall_price($item[stuffed yam stinkbomb]))
+                throw_item(wet() ? $item[pulled indigo taffy] : $item[stuffed yam stinkbomb]);
+            else if (last_monster().phylum == $phylum[dude])
                 throw_item($item[gingerbread cigarette]);
             else if (last_monster() == $monster[eldritch tentacle]){
                 while (current_round() > 0 && current_round() < 30)
@@ -572,7 +574,9 @@ import iotm.ash;
         if (get_property("FKRunEligible") == "true" && (get_property("freeMeat").to_int() + 3500) > my_meat())
             throw_item(wet() ? $item[pulled indigo taffy] : $item[stuffed yam stinkbomb]);
         if (my_location() == $location[Gingerbread Civic Center])
-            throw_item($item[gingerbread cigarette]);
+            abort(); //debug line
+        if (my_location() == $location[Shadow Rift (The Misspelled cemetary)] && have_equipped($item[legendary acorndion]))
+            use_skill($skill[cadenza]);
         if (last_monster() == $monster[shadow guy]){
             if (gazeReady() && have_equipped($item[monodent of the sea])) {
                 use_skill($skill[Sea *dent: Talk to Some Fish]);

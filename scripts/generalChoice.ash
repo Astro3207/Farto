@@ -373,10 +373,7 @@ void main(int whichchoice, string page) {
             }
             break;
         case 1203:
-            if (item_amount($item[sprinkles]) > 550)
-                run_choice(2);
-            else
-                run_choice(4);
+            run_choice(4);
             break;
         case 1468:
             run_choice(4);

@@ -145,6 +145,7 @@ void inko(){
         retrieve_item($item[carpe]);
         whitelist("homeclan");
     }
+                    abort();
     string banishedList = get_property("banishedMonsters");
     boolean needBanish = false;
     boolean monodent = false;
@@ -236,6 +237,13 @@ void shadowRealmNCForce(){
 void main(){
     try {
         starter();
+        if (dayType() == 0 && get_property("currentBedding") != "forest canopy bed" && isFartScauce()){
+            abort();
+            use($item[forest canopy bed]);
+        } else if (dayType() == 1 && get_property("currentBedding") != "saltwaterbed"){
+            abort();
+            use($item[saltwaterbed]);
+        }
         if (to_int(get_property("_pantsgivingCount")) < 50 && available_amount($item[pantsgiving]) == 0)
             stashgrab($item[pantsgiving]);
         set_property("script","farto");

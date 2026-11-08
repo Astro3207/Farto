@@ -993,8 +993,13 @@ void shadowRealmFK(){
             set_property("acc3Override","");
         if (to_int(get_property("_batWingsSwoopUsed")) < 11)
             set_property("backOverride",", equip bat wings");
-        if (available_amount($item[snowman-enchanting tophat]) > 0 && get_property("_snowmanHatPlaceUsed").to_int() < 3)
+        if (available_amount($item[snowman-enchanting tophat]) > 0 && get_property("_snowmanHatPlaceUsed").to_int() < 3){
             set_property("hatOverride",", equip snowman-enchanting tophat");
+            if (get_property("_seadentWaveZone") == "Shadow Rift (The Misspelled Cemetary)" && !contains_text(get_property("legendaryAcornsPlanted"),"Shadow Rift:SEA_FRUIT"))
+                set_property("mainOverride", ", equip legendary acorndion");
+            else
+                set_property("mainOverride", "");
+        }
         else if (have_effect($effect[fishy]) < 1020 && my_class() == $class[seal clubber])
             set_property("mainOverride",", equip monodent");
         else
@@ -2341,6 +2346,35 @@ void miscellaneousFams(){
     }
 }
 
+// Combat zones you can adventure in now that the peridot hasn't been used in today.
+boolean [location] unperiledLocations(){
+    boolean [location] unperiled;
+    boolean [location] periled = periledLocations();
+    foreach loc in $locations[]{
+        if (periled[loc] || loc.combat_percent <= 0 || count(get_monsters(loc)) == 0)
+            continue;
+        if (can_adventure(loc))
+            unperiled[loc] = true;
+    }
+    return unperiled;
+}
+
+// gCLI: call StockingMimic.ash perilUnused  - prints those zones grouped by zone.
+void perilUnused(){
+    boolean [string][location] byZone;
+    int total = 0;
+    foreach loc in unperiledLocations(){
+        byZone[loc.zone][loc] = true;
+        total++;
+    }
+    foreach zone in byZone{
+        print(zone, "blue");
+        foreach loc in byZone[zone]
+            print("    " + loc + " (" + loc.to_int() + ")" + (loc.wanderers ? "" : " - no wanderers"));
+    }
+    print(total + " adventurable zones not in _perilLocations.", "green");
+}
+
 void peridotFishing(){
     if (get_property("_doneFishing") == "true")
         return;
@@ -2771,6 +2805,8 @@ void bulkFKD1(){
 // FKPrep` / `bulkFK`. Wrapped in try/finally so finisher() restores the account's
 // mafia hooks / CCS / auto-recovery even if a phase aborts partway.
 void main(){
+    if (get_revision() < 29412)
+        abort("Please update mafia to newer than 29412");
     try {
         starter();
         if (get_property("expressCardUsed") == "false"){
