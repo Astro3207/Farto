@@ -944,8 +944,12 @@ import iotm.ash;
     // Treasury: bladdering kit, GAP runaways, embezzlers get hit, else run.
     void treasury(string page_text){
         if (get_property("subscript") == "bladdering"){
-            if (have_equipped($item[legendary acorndion]))
-                use_skill($skill[cadenza]);
+            if (have_equipped($item[legendary acorndion])){
+                if (get_property("_seadentWaveZone") == "Cobb's Knob Treasury")
+                    use_skill($skill[cadenza]);
+                else
+                    use_skill($skill[Accordion Bash]);
+            }
             free_kill(page_text);
             free_run(page_text);
             steal();

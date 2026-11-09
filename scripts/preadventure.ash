@@ -553,7 +553,8 @@ void preAdv(){
         }
     }
 
-    string context = my_location() + ";" + get_property("_seadentWaveZone");
+    // Familiar is part of the key: savedFamEquip belongs to whoever wore it (e.g. a generic item the Comma Chameleon can't wear).
+    string context = my_location() + ";" + get_property("_seadentWaveZone") + ";" + my_familiar();
     if (get_property("savedMaximizer") == maximize.to_string() && get_property("savedMaximizerContext") == context){
         outfit("farming");
         if (get_property("savedFamEquip").to_item() != $item[none])

@@ -885,6 +885,11 @@ void postAdv(){
         cli_execute("cast tongue;cast cannel");
         abort("It appears you lost the last combat, look into that");
     }
+    int secondsToRO = (rollover()*1000 - now_to_int())/1000;
+    if (secondsToRO < 15){
+        cli_execute("dinner.ash");
+        abort("for RO reasons aborting");
+    }
     if (have_effect($effect[beaten up]) > 0 )
         cli_execute("cast tongue of the walrus");
     if (adventureAbortMessages contains lastAdv)

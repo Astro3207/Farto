@@ -106,9 +106,9 @@ void bladdering(){
     set_property("bonusOverride"," ");
     set_property("maxOverride","combat,-equip drunkula's wineglass");
     set_property("famOverride", "peace turkey");
-    if (have_effect($effect[fishy]) <= 1)
+    if (get_property("_seadentWaveZone") == "Cobb's Knob Treasury" && have_effect($effect[fishy]) <= 1)
         set_property("mainOverride",", equip monodent of the sea");
-    else if (get_property("_seadentWaveZone") == "Cobb's Knob Treasury" && !contains_text(get_property("legendaryAcornsPlanted"),"Cobb's Knob Treasury:SEA_FRUIT"))
+    else if (!contains_text(get_property("legendaryAcornsPlanted"),"Cobb's Knob Treasury:SEA_FRUIT"))
         set_property("mainOverride",", equip legendary acorndion");   // Cadenza in the flooded Treasury plants a sea fruit acorn
     else
         set_property("mainOverride",", equip june cleaver");
@@ -247,10 +247,12 @@ void main(){
     try {
         starter();
         if (dayType() == 0 && get_property("currentBedding") != "forest canopy bed" && isFartScauce()){
-            use($item[forest canopy bed]);
+            retrieve_item($item[forest canopy bed]);
+            visit_url("inv_use.php?whichitem="+$item[forest canopy bed].id+"&pwd&confirm=true&which=3");
             set_property("currentBedding","forest canopy bed");
         } else if (dayType() == 1 && get_property("currentBedding") != "saltwaterbed"){
-            use($item[saltwaterbed]);
+            retrieve_item($item[saltwaterbed]);
+            visit_url("inv_use.php?whichitem="+$item[saltwaterbed].id+"&pwd&confirm=true&which=3");
             set_property("currentBedding","saltwaterbed");
         }
         if (to_int(get_property("_pantsgivingCount")) < 50 && available_amount($item[pantsgiving]) == 0)

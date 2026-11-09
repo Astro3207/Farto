@@ -84,7 +84,7 @@ void spendGrimacePrimeMaps(){
                 set_property("famOverride","sword of Swords");
             trenchTurn();
         }
-        if (my_adventures() == 1){
+        if (my_adventures() == 1 && get_property("_eldritchTentacleFought") == "false"){
             if (familiar_weight($familiar[comma chameleon]) > 10)
                 altFam($familiar[Grey Goose]);
             else
