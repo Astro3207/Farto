@@ -101,7 +101,7 @@ void delayPrep(){
             set_property("acc1Override",", equip everfull dart holster");
         set_property("acc3Override",", equip spring shoes");
     } else if (get_property("cursedMagnifyingGlassCount").to_int() == 13 && get_property("_voidFreeFights").to_int() < 5){
-        set_property("offOverride",", equip cursed magnifying glass");
+        set_property("offOverride",", 1000 bonus cursed magnifying glass");
         set_property("maxOverride","item drop");
         if (dayType() == 0)
             set_property("mainOverride",", equip legendary seal clubbing club");
@@ -178,7 +178,7 @@ void outskirts() {
         return;
     runawayOrSword();
     set_property("unconditionalOverride", get_property("famOverride") != "sword of s words" && get_property("_spikolodonSpikeUses").to_int() < 5
-        ? "familiar weight,equip parka (spikolodon),-equip tiny stillsuit" : "");
+        ? "familiar weight,equip parka (spikolodon),-familiar" : "");
     if (get_property("questG09Muscle") == "unstarted")
         visit_url("guild.php?place=challenge");
     if (get_property("questG09Muscle") == "started")
@@ -420,7 +420,7 @@ void drunkPygmy(){
         string banishedList = get_property("banishedMonsters");
         set_property("acc3Override", contains_text(banishedList,"pygmy bowler") ? "" : ", equip mafia middle finger ring");
         set_property("acc2Override", contains_text(banishedList,"pygmy orderlies") ? "" : ", equip spring shoes");
-        set_property("offOverride",", equip cursed magnifying glass");
+        set_property("offOverride",", 1000 bonus cursed magnifying glass");
         if (!contains_text(banishedList,"pygmy janitor"))
             abort("Banish pygmy janitors with ice house");
         cli_execute("closet put * bowling ball");
@@ -763,7 +763,7 @@ void lawOfAverages(){
 // Spend built-up sweat: booze first (also clears inebriety), otherwise Sweat-Ade
 // once pantsgiving is maxed and it is worth the turn.
 void sweatpants(){
-    if (get_property("_sweatOutSomeBoozeUsed").to_int() < 3 && my_inebriety() > 3 && get_property("sweat").to_int() >= 25)
+    if (get_property("_sweatOutSomeBoozeUsed").to_int() < 3 && my_inebriety() > 1 && get_property("sweat").to_int() >= 25)
         use_skill($skill[sweat out some booze]);
     else if (to_int(get_property("_pantsgivingCount")) >= 500 && ((dayType() == 0 && my_adventures() > 100) || dayType() == 1) && get_property("sweat").to_int() >= 50){
         use_skill($skill[Make Sweat-Ade]);
@@ -949,7 +949,7 @@ void postAdv(){
     if (get_property("script") == "FreeKill" && get_property("cursedMagnifyingGlassCount").to_int() == 13){
         aa("facsimile");
         set_property("maxOverride","familiar weight");
-        set_property("offOverride",", equip cursed magnifying glass");
+        set_property("offOverride",", 1000 bonus cursed magnifying glass");
         set_property("subscript","weakling");
         altFam($familiar[stocking mimic]);
         cli_execute("preadventure.ash");
@@ -1119,7 +1119,7 @@ void spendAdv(){
             set_property("maxOverride","combat,-equip drunkula's wineglass");
             set_property("famOverride", "peace turkey");
             set_property("mainOverride",", equip june cleaver");
-            set_property("offOverride",", equip kramco");
+            set_property("offOverride",", 1000 bonus kramco");
             set_property("acc1Override", ", equip spring shoes");
             set_property("acc2Override",",equip Ass-Stompers of Violence");
             adv1($location[cobb's knob treasury]);

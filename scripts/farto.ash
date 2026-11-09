@@ -114,7 +114,10 @@ void bladdering(){
         set_property("mainOverride",", equip june cleaver");
     if (get_property("_pantsgivingCount") < 500)
         stashgrab($item[pantsgiving]);
-    if (available_amount($item[pantsgiving]) > 0 && get_property("_pantsgivingCount").to_int() < 500)
+    // Sweatpants first until all 3 Sweat Out Some Booze casts are spent, then pantsgiving.
+    if (available_amount($item[designer sweatpants]) > 0 && get_property("_sweatOutSomeBoozeUsed").to_int() < 3 && my_inebriety() > 1)
+        set_property("pantsOverride",", equip designer sweatpants");
+    else if (available_amount($item[pantsgiving]) > 0 && get_property("_pantsgivingCount").to_int() < 500)
         set_property("pantsOverride",", equip pantsgiving");
     else
         set_property("pantsOverride",", equip designer sweatpants");
@@ -122,7 +125,7 @@ void bladdering(){
     if (have_item($item[mime army infiltration glove]) && my_primestat() != $stat[moxie])
         set_property("acc2Override", ", equip mime army infiltration glove");
     set_property("acc3Override",", equip mafia thumb ring");
-    set_property("offOverride",", equip carnivorous potted plant");
+    set_property("offOverride",", 1000 bonus carnivorous potted plant");
     if (get_property("_hoboUnderlingSummons").to_int() < 5){
         set_property("acc1Override",", equip Hodgman's bow tie");
         set_property("pantsOverride",", equip Hodgman's lobsterskin pants");
@@ -189,7 +192,7 @@ void garbo(){
     int knuckles = to_int(get_property("_knuckleboneDrops"));
     boolean slashGarbage = !contains_text(tracked, "garbage tourist:McHugeLarge Slash") && knuckles == 100;
     boolean slashAngry   = !contains_text(tracked, "angry tourist:McHugeLarge Slash") && knuckles < 100;
-    set_property("offOverride", slashGarbage || slashAngry ? ", equip McHugeLarge left pole" : "");
+    set_property("offOverride", slashGarbage || slashAngry ? ", 1000 bonus McHugeLarge left pole" : "");
     set_property("acc3Override", slashGarbage ? ", equip peridot of peril" : "");
     dartHolster();
     returnPantsgiving();

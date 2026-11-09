@@ -875,7 +875,7 @@ void shorts(){
 
     foreach i, s in split_string(get_property("cargoPocketsEmptied"), ",")
         emptied[to_int(s)] = true;
-    set_property("offOverride",", equip cursed magnifying glass");
+    set_property("offOverride",", 1000 bonus cursed magnifying glass");
     foreach id in $ints[646,191,306,250,30,490,612,317,448,267,47,143,425,402,589,579,136,299,220,428,235,265,363,452,383,666,443,568] {
         if (!emptied[id]) {
             main@preadventure( );
@@ -1017,7 +1017,7 @@ void shadowRealmFK(){
                 }
             }
             if (to_int(get_property("_mcHugeLargeAvalancheUses")) < 3)
-                set_property("offOverride",", equip mchugelarge left ski");
+                set_property("offOverride",", 1000 bonus mchugelarge left ski");
             if (get_property("noncombatForcerActive") == "true" || get_property("encountersUntilSRChoice").to_int() == 0){
                 set_auto_attack(0);
                 shadowBoss();
@@ -1186,7 +1186,7 @@ boolean looseFK(boolean skipClub){
     if (get_property("_assertYourAuthorityCast").to_int() < 3){
         print ("FK is assert");
         set_property("maxOverride","familiar weight");
-        set_property("offOverride",", equip sheriff pistol");
+        set_property("offOverride",", 1000 bonus sheriff pistol");
         set_property("acc1Override",", equip sheriff moustache");
         set_property("acc2Override",", equip sheriff badge");
         return true;
@@ -1337,7 +1337,7 @@ void gingerbread(){
     if (get_property("_gingerbreadCityTurns").to_int() < 30){
         mimicPrep(", -equip mobius ring");
         if (dayType() == 1)
-        set_property("offOverride",", equip april shower thoughts shield");
+        set_property("offOverride",", 1000 bonus april shower thoughts shield");
         adv1($location[Gingerbread Upscale Retail District]);
     }
     if (contains_text(LastAdvTxt(),"almost midnight") || get_property("_gingerbreadCityTurns").to_int() == 19)
@@ -1353,7 +1353,7 @@ void habitatRecall(){
         set_property("subscript","replacing");
         if (copyTarget == $monster[sausage goblin] && to_int(get_property("_monsterHabitatsFightsLeft")) == 0 && to_int(get_property("_monsterHabitatsRecalled")) < 3){
             mimicPrep();
-            set_property("offOverride",", equip kramco");
+            set_property("offOverride",", 1000 bonus kramco");
             set_property("acc1Override",",bonus mafia pointer");
             underwaterPrep();
             if ((have_effect($effect[driving waterproofly]) + have_effect($effect[Pneumatic]) + have_effect($effect[Pumped Stomach])) == 0)
@@ -1413,7 +1413,7 @@ void backup(){
             aa("facsimile");
             set_property("acc3Override",", equip backup camera");
             if (have_effect($effect[everything looks purple]) == 0)
-                set_property("offOverride",", equip roman candel");
+                set_property("offOverride",", 1000 bonus roman candel");
         }
         if (to_int(get_property("_mimicEggsObtained")) < 11 && $familiar[chest mimic].experience > 100 && to_monster(get_property("lastCopyableMonster")) == copyTarget){
             set_property("famOverride","chest mimic");
@@ -1421,7 +1421,7 @@ void backup(){
             if ((have_effect($effect[driving waterproofly]) + have_effect($effect[Pneumatic]) + have_effect($effect[Pumped Stomach])) == 0)
                 set_property("backOverride",", equip Elf Guard SCUBA tank");
             set_property("acc3Override",", equip backup camera");
-            set_property("offOverride",", equip McHugeLarge left pole");
+            set_property("offOverride",", 1000 bonus McHugeLarge left pole");
             adv1($location[the dive bar]);
             set_property("offOverride","");
             set_property("acc3Override","");
@@ -1501,7 +1501,7 @@ boolean safeToFK(monster m){
         return false;
     }
     if (m.base_hp > highHPTarget()){
-        set_property("offOverride",", equip april shower thoughts shield");
+        set_property("offOverride",", 1000 bonus april shower thoughts shield");
         return false;
     }
     set_property("offOverride","");
@@ -1973,7 +1973,7 @@ void locationBasedWeakMonsters(){
             set_property("mainOverride",", equip angelbone totem");
             equip($slot[off-hand],$item[angelbone totem]);
             equip($slot[off-hand],$item[shrunken head]);
-            set_property("offOverride",", equip shrunken head");
+            set_property("offOverride",", 1000 bonus shrunken head");
             equip($slot[weapon],$item[angelbone totem]);
         }
         retrieve_item(5,$item[glark cable]);
@@ -2264,7 +2264,7 @@ void miscellaneousFams(){
         string profTarget;
         profTarget = bestWitchessPiece().to_string();
         set_property("maxOverride","familiar weight");
-        set_property("offOverride", ", equip kol con snowglobe");
+        set_property("offOverride", ", 1000 bonus kol con snowglobe");
         set_property("acc1Override", ", equip Mr. Cheeng's spectacles");
         set_property("acc2Override", ", equip Lucky gold ring");
         set_property("acc3Override", ", equip Portable Laughing Stock");
@@ -2287,7 +2287,7 @@ void miscellaneousFams(){
     while (to_int(get_property("_navelRunaways")) < 3 && available_amount($item[greatest american pants]) > 0){
         set_property("famOverride","peace turkey");
         set_property("maxOverride","combat rate, -equip drunkula's wineglass");
-        set_property("offOverride",", equip rake");
+        set_property("offOverride",", 1000 bonus rake");
         set_property("mainOverride",", equip june cleaver");
         set_property("pantsOverride",", equip greatest american pants");
         set_property("acc1Override",", equip spring shoes");
@@ -2315,7 +2315,7 @@ void miscellaneousFams(){
             set_property("subscript","stompingBoots");
             set_property("maxOverride","familiar weight");
             if (get_property("_banderRunaways").to_int() < ((my_familiar().familiar_weight() + weight_adjustment( ))/5 - 10)){
-                set_property("offOverride",", equip rake");
+                set_property("offOverride",", 1000 bonus rake");
                 set_property("mainOverride",", equip june cleaver");
                 set_property("acc1Override",", equip spring shoes");
             } else {
@@ -2429,7 +2429,7 @@ void peridotFishing(){
                 if (turns_until_forced_noncombat(loc) == 0) 
                     continue;
                 mimicPrep();
-                set_property("offOverride",", equip Kramco Sausage-o-Matic");
+                set_property("offOverride",", 1000 bonus Kramco Sausage-o-Matic");
                 set_property("acc2Override",", equip eternity codpiece");
                 set_property("acc3Override",", bonus mafia pointer");
                 if (loc == $location[The Unquiet Garves]){

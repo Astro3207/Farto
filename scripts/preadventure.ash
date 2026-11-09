@@ -485,11 +485,11 @@ void preAdv(){
             else if (get_property("offOverride") != "")
                 append(maximize, get_property("offOverride"));
             else if (clubEmExact && have_effect($effect[everything looks purple]) == 0)
-                append(maximize, ", equip roman candelabra");
+                append(maximize, ", 1000 bonus roman candelabra");
             else if ((get_property("cursedMagnifyingGlassCount").to_int() < 13 && get_property("_voidFreeFights").to_int() < 5 && dayType() == 1) || (get_property("cursedMagnifyingGlassCount").to_int() < 4 && dayType() == 0))
-                append(maximize, ", equip cursed magnifying glass");
+                append(maximize, ", 1000 bonus cursed magnifying glass");
             else if (maxOvr != "combat" && maxOvr != "-combat" && get_property("script") != "farto")
-                append(maximize, ", equip carnivorous potted plant");
+                append(maximize, ", 1000 bonus carnivorous potted plant");
             // Back
             if (get_property("backOverride") != "")
                 append(maximize, get_property("backOverride"));

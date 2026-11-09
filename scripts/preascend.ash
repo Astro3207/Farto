@@ -27,7 +27,7 @@ void Nightcap(){
 // One overdrunk Marinara Trench turn with the wineglass on; the caller picks the familiar.
 void trenchTurn(){
     set_property("maxOverride","3.25 meat drop, 7 item drop, sea");
-    set_property("offOverride",", equip drunkula's wineglass");
+    set_property("offOverride",", 1000 bonus drunkula's wineglass");
     adv1($location[The Marinara Trench],0,"");
 }
 
