@@ -711,6 +711,8 @@ void FKPrep(){
 	set_property("script", "FreeKill");
     retrieve_item($item[burning paper crane]);
     step("phase: 9 special buffs");
+    if (item_amount($item[Bag o' Tricks]) == 0)
+        stashgrab($item[Bag o' Tricks]);
     foreach ef in $effects[Robot Friends,Synthesis: Greed,She Ate Too Much Candy,Always be Collecting,Sinuses For Miles,Loded,Healthy Green Glow,Shortly Stacked,Shortly Wired,steely-eyed squint,Human-Fish Hybrid,green Tongue,Human-Machine Hybrid,Warm Shoulders]{
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
             continue;
@@ -724,6 +726,7 @@ void FKPrep(){
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
     }
+    stashreturn($item[Bag o' Tricks]);
     step("phase: FKPrep buffs");
 	useMayamRings();
     step("phase: FKPrep hidden temple");
