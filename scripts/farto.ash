@@ -108,6 +108,8 @@ void bladdering(){
     set_property("famOverride", "peace turkey");
     if (have_effect($effect[fishy]) <= 1)
         set_property("mainOverride",", equip monodent of the sea");
+    else if (get_property("_seadentWaveZone") == "Cobb's Knob Treasury" && !contains_text(get_property("legendaryAcornsPlanted"),"Cobb's Knob Treasury:SEA_FRUIT"))
+        set_property("mainOverride",", equip legendary acorndion");   // Cadenza in the flooded Treasury plants a sea fruit acorn
     else
         set_property("mainOverride",", equip june cleaver");
     if (get_property("_pantsgivingCount") < 500)
@@ -145,13 +147,14 @@ void inko(){
         retrieve_item($item[carpe]);
         whitelist("homeclan");
     }
-                    abort();
     string banishedList = get_property("banishedMonsters");
     boolean needBanish = false;
     boolean monodent = false;
-    if (!contains_text(banishedList,"fisherfish") || !contains_text(banishedList,"diving belle"))
+    if (!contains_text(banishedList,"fisherfish") || !contains_text(banishedList,"diving belle")){
+        if (!contains_text(get_property("legendaryAcornsPlanted"),"The Marinara Trench:SEA_FRUIT"))
+            set_property("mainOverride", ", equip legendary acorndion");
         needBanish = true;
-    else if (!contains_text(banishedList,"Mer-kin diver")){
+    } else if (!contains_text(banishedList,"Mer-kin diver")){
         if (have_effect($effect[fishy]) < my_adventures() && my_class() == $class[seal clubber]){
             set_property("mainOverride",", equip monodent of the sea");
             monodent = true;
@@ -159,10 +162,13 @@ void inko(){
             set_property("mainOverride","");
             needBanish = true;
         }
-    }
+    } else if (!contains_text(get_property("legendaryAcornsPlanted"),"The Marinara Trench:SEA_FRUIT,BETTER_DIVER"))
+        set_property("mainOverride", ", equip legendary acorndion");
     advWithBanish($location[The Marinara Trench], needBanish);
     if (monodent)
         set_property("mainOverride","");
+    if (get_property("mainOverride") == ", equip legendary acorndion")
+        abort(); //debug line
 }
 
 void cowo(){
@@ -238,11 +244,11 @@ void main(){
     try {
         starter();
         if (dayType() == 0 && get_property("currentBedding") != "forest canopy bed" && isFartScauce()){
-            abort();
             use($item[forest canopy bed]);
+            set_property("currentBedding","forest canopy bed");
         } else if (dayType() == 1 && get_property("currentBedding") != "saltwaterbed"){
-            abort();
             use($item[saltwaterbed]);
+            set_property("currentBedding","saltwaterbed");
         }
         if (to_int(get_property("_pantsgivingCount")) < 50 && available_amount($item[pantsgiving]) == 0)
             stashgrab($item[pantsgiving]);

@@ -2412,7 +2412,7 @@ void peridotFishing(){
               The Black Forest,The Skeleton Store,
               Madness Bakery,The Overgrown Lot,The Deep Machine Tunnels,
               An Unusually Quiet Barroom Brawl,The Fungus Plains,
-              Hero's Field,Vanya's Castle,Megalo-City,Pandamonium Slums]{
+              Hero's Field,Vanya's Castle,Megalo-City,Pandamonium Slums,A Mob of Zeppelin Protesters]{
             set_property("subscript","peridot");
             if (periledLocations()[loc] == false && can_adventure(loc) == true && loc.wanderers == true){
                 print (turns_until_forced_noncombat(loc) + " at " + loc);

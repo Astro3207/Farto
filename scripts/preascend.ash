@@ -84,22 +84,22 @@ void spendGrimacePrimeMaps(){
                 set_property("famOverride","sword of Swords");
             trenchTurn();
         }
+        if (my_adventures() == 1){
+            if (familiar_weight($familiar[comma chameleon]) > 10)
+                altFam($familiar[Grey Goose]);
+            else
+                use_familiar($familiar[sword of s words]);
+            cli_execute("maximize item drop");
+            visit_url("place.php?whichplace=forestvillage&action=fv_scientist");
+            if (have_skill($skill[Evoke Eldritch Horror]))
+                run_choice(2);
+            else
+                run_choice(1);
+        }
     }
     finisher();
     if (item_amount($item[Map to Safety Shelter Grimace Prime]) > 0)
         mapgrim();
-    if (my_adventures() == 1){
-        if (familiar_weight($familiar[comma chameleon]) > 10)
-            altFam($familiar[Grey Goose]);
-        else
-            use_familiar($familiar[sword of s words]);
-        cli_execute("maximize item drop");
-        visit_url("place.php?whichplace=forestvillage&action=fv_scientist");
-        if (have_skill($skill[Evoke Eldritch Horror]))
-            run_choice(2);
-        else
-            run_choice(1);
-    }
 }
 
 // Spend the remaining PvP fights while a season is running.

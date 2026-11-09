@@ -944,6 +944,8 @@ import iotm.ash;
     // Treasury: bladdering kit, GAP runaways, embezzlers get hit, else run.
     void treasury(string page_text){
         if (get_property("subscript") == "bladdering"){
+            if (have_equipped($item[legendary acorndion]))
+                use_skill($skill[cadenza]);
             free_kill(page_text);
             free_run(page_text);
             steal();
@@ -985,6 +987,10 @@ import iotm.ash;
         }
         farmingStuff();
         free_kill(page_text);
+        if (have_equipped($item[legendary acorndion])){
+            use_skill($skill[cadenza]);
+            use_skill($skill[Cone of Zydeco]);
+        }
         crit();
         attack(3);
         cleanUp();
