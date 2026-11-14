@@ -108,7 +108,7 @@ void bladdering(){
     set_property("famOverride", "peace turkey");
     if (get_property("_seadentWaveZone") == "Cobb's Knob Treasury" && have_effect($effect[fishy]) <= 1)
         set_property("mainOverride",", equip monodent of the sea");
-    else if (!contains_text(get_property("legendaryAcornsPlanted"),"Cobb's Knob Treasury:SEA_FRUIT"))
+    else if (!contains_text(get_property("legendaryAcornsPlanted"),"SEA_FRUIT"))
         set_property("mainOverride",", equip legendary acorndion");   // Cadenza in the flooded Treasury plants a sea fruit acorn
     else
         set_property("mainOverride",", equip june cleaver");

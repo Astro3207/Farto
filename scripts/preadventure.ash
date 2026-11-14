@@ -479,6 +479,8 @@ void preAdv(){
                 append(maximize, ", equip The Jokester's gun");
             else if (my_basestat($stat[muscle]) >= 200 && get_property("script") == "6-kiss")
                 append(maximize, ", equip dreadful glove");
+            else if (dayType() == 0 && get_property("_seadentWaveZone") == "" && my_location() == $location[cobb's knob treasury])
+                append(maximize, ", equip legendary acorndion");
             // Offhand
             if (have_equipped($item[Drunkula's wineglass]))
                 append(maximize, ", equip Drunkula's wineglass");
