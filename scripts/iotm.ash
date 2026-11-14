@@ -1044,7 +1044,7 @@
                     YRPitchNum = x;
                     set_property("pitchNum" + x, "1");
                 }
-                if (FKPitchNum == 0 && $strings[768,2274,2278,2282] contains lineup[x-1]) {
+                if (FKPitchNum == 0 && x != YRPitchNum && $strings[768,2274,2278,2282] contains lineup[x-1]) {
                     FKPitchNum = x;
                     set_property("pitchNum" + x, "3");
                 }
