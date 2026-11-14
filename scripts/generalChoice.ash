@@ -183,6 +183,7 @@ void main(int whichchoice, string page) {
         case 793:
         case 920:
         case 1208:
+        case 1387:
         case 1467:
         case 1469:
         case 1693:
@@ -441,6 +442,8 @@ void main(int whichchoice, string page) {
                 run_choice(1, "bandersnatch=1374");
             if (my_location() == $location[Madness Bakery])
                 run_choice(1, "bandersnatch=1748");
+            if (my_location() == $location[The Glacier of Jerks])
+                run_choice(1, "bandersnatch=1139");
             if (my_location() == $location[barf mountain])
                 run_choice(1, "bandersnatch=1760");
             if (my_location() == $location[guano junction])

@@ -643,7 +643,9 @@ void preAdv(){
         buy(2,$item[lit leaf lasso]);
     if (item_amount($item[pulled red taffy]) < 100 && mall_price($item[pulled red taffy]) < (redTaffyValue() - 100))
         buy($item[pulled red taffy], 2000, redTaffyValue() - 100);
-    if (get_property("subscript") == "weakling" || get_property("subscript") == "looseFK"){
+    if (get_property("subscript") == "weakling" || get_property("subscript") == "looseFK"
+        || get_property("subscript") == "prebaseball"
+        || $locations[The Glacier of Jerks, The Dive Bar] contains my_location()){
         if (closet_amount($item[shard of double-ice]) > 0)
             take_closet($item[shard of double-ice]);
         else

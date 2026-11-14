@@ -1040,7 +1040,7 @@
 
             // Scan 9→3, take the latest slot for each outcome type
             for x from 9 to 3 {
-                if (YRPitchNum == 0 && $strings[2278,2282] contains lineup[x-1]) {
+                if (YRPitchNum == 0 && $strings[1139,2278,2282] contains lineup[x-1]) {
                     YRPitchNum = x;
                     set_property("pitchNum" + x, "1");
                 }
@@ -1049,7 +1049,7 @@
                     set_property("pitchNum" + x, "3");
                 }
                 // Banish (third pitch) only activates if slot 9 is already claimed by another outcome
-                if (BanishPitchNum == 0 && $strings[2274] contains lineup[x-1]
+                if (BanishPitchNum == 0 && $strings[1140,1136,1137,1138] contains lineup[x-1]
                     && (YRPitchNum == 9 || FKPitchNum == 9)) {
                     BanishPitchNum = x;
                     set_property("pitchNum" + x, "2");

@@ -1171,6 +1171,112 @@ void DMachine(){
     main@postadventure( );
 }
 
+boolean inLineup(int id){
+    foreach i, mon in baseballLineup()
+        if (mon == id.to_string())
+            return true;
+    return false;
+}
+
+// Codpiece slot the baseball diamond is mounted in, or 0 if it isn't mounted.
+int diamondSlot(){
+    matcher CodSlot = create_matcher($item[baseball diamond] + " mounted in slot #(\\d)", visit_url("inventory.php?action=docodpiece"));
+    return CodSlot.find() ? CodSlot.group(1).to_int() : 0;
+}
+
+// Take the baseball diamond out of the codpiece so later fights can't change the lineup.
+void unmountDiamond(){
+    int CodSlot = diamondSlot();
+    if (CodSlot > 0){
+        visit_url("choice.php?whichchoice=1588&option=2&which=" + CodSlot);
+        cli_execute("refresh inv");
+    }
+}
+
+// The Glacier of Jerks doesn't update baseballTeam, so re-read it from the baseball
+// diamond's description: unmount it from the codpiece, view it, mount it back.
+void refreshBaseballTeam(){
+    item diamond = $item[baseball diamond];
+    int CodSlot = diamondSlot();
+    if (CodSlot == 0){
+        visit_url("desc_item.php?whichitem=" + diamond.descid);   // not mounted, so it's in inventory
+        return;
+    }
+    visit_url("choice.php?whichchoice=1588&option=2&which=" + CodSlot);
+    visit_url("desc_item.php?whichitem=" + diamond.descid);
+    visit_url("inventory.php?action=docodpiece");
+    visit_url("choice.php?whichchoice=1588&option=1&which=" + CodSlot + "&iid=" + diamond.to_int());
+    cli_execute("refresh inv");
+}
+
+void prebaseballD(){
+    if (!contains_text(get_property("baseballTeam"),"1139")){
+        clearOverrides();
+        string sub = get_property("subscript");
+        set_property("subscript","prebaseball");
+        set_property("mainOverride",", equip Fourth of May Cosplay Saber");
+        if (periledLocations()[$location[The Glacier of Jerks]] == false)
+            codpiece("heartstone,blood cubic zirconia,baseball diamond,peridot of peril,tuesday's ruby");
+        if (have_effect($effect[Dis Abled]) == 0)
+            use($item[devilish folio]);
+        int fights = 0;
+        while (!contains_text(get_property("baseballTeam"),"1139")){
+            mimicprep();
+            set_property("acc2Override",", equip eternity codpiece");
+            int n = 13-get_property("_shadowBricksUsed").to_int();
+            retrieve_item(n,$item[shadow brick]);
+            if (fights >= 10)
+                abort("prebaseballD: Vivian still not on the baseball team after 10 Glacier fights");
+            if (get_property("_shadowBricksUsed").to_int() >= 13)
+                abort("prebaseballD: no shadow bricks left for Vivian");
+            if (periledLocations()[$location[The Glacier of Jerks]] && get_property("_saberForceUses").to_int() >= 5)
+                abort("prebaseballD: out of Use the Force to skip non-Vivian monsters");
+            set_property("offOverride", contains_text(get_property("trackedMonsters"),"Vivian Vibrian Vumian Varr:McHugeLarge Slash") ? "" : ", equip mchugelarge left pole");
+            set_property("acc3Override",", equip " + timeBadge());   // Glacier fights need the time cop badge
+            main@preadventure();
+            if (!buffML($monster[Vivian Vibrian Vumian Varr]))
+                abort();
+            adv1($location[The Glacier of Jerks]);
+            fights++;
+            refreshBaseballTeam();
+        }
+        set_property("subscript", sub);
+    }
+    if (contains_text(get_property("baseballTeam"),"1139"))
+        baseballD();
+    else
+        abort("vivian didn't get inserted into baseball");
+	codpiece("heartstone,blood cubic zirconia,baseball diamond,tuesday's ruby,tuesday's ruby");
+    clearOverrides();
+}
+
+void lastInningPrep(){
+    if (get_property("_baseballInnings").to_int() != 2)
+        return;
+    if (!inLineup(1139))
+        prebaseballD();
+    else if (inLineup(1139) && baseballPlayers() == 9)
+        unmountDiamond();
+}
+
+// One Glacier of Jerks fight toward the day's 5 Use the Force (a weakMonsters pick).
+void finishSaber(){
+    set_property("mainOverride",", equip Fourth of May Cosplay Saber");
+    mimicprep();
+    set_property("acc2Override",", equip eternity codpiece");
+    if (!contains_text(get_property("trackedMonsters"),"Vivian Vibrian Vumian Varr"))
+        set_property("offOverride",", equip mchugelarge left pole");
+    if (have_effect($effect[Dis Abled]) == 0)
+        use($item[devilish folio]);
+    retrieve_item(10, $item[waffle]);
+    set_property("acc3Override",", equip " + timeBadge());
+    buffML($monster[Vivian Vibrian Vumian Varr]);
+    adv1($location[The Glacier of Jerks]);
+    set_property("mainOverride","");
+    set_property("offOverride","");
+    set_property("acc2Override","");
+}
+
 void resCheck(string str){
     if (numeric_modifier(pearls[str].ele_res) < 18)
         cli_execute("gain 18 " + pearls[str].ele_res);
@@ -1188,7 +1294,8 @@ void underwaterBaseball(){
         if (get_property("_baseballInnings").to_int() < 3 && baseballPlayers() < 9)
             set_property("acc2Override",", equip eternity codpiece");
         adv1($location[The Dive Bar]);
-        baseballD();
+        if (baseballPlayers() >= 9)
+            prebaseballD();
     } else if (get_property("_curveballFightsLeft").to_int() > 0){
         set_property("backOverride",", equip retrocape (heck kill)");
         adv1($location[The Dive Bar]);
@@ -1226,6 +1333,63 @@ void underwaterPrep(){
         use($item[tempura air]);
 }
 
+void earlyBaseball(){
+    while (get_property("_baseballInnings").to_int() < 1 || (get_property("_curveballMonster") == "Mer-kin tippler") && get_property("_curveballFightsLeft").to_int() > 0){
+        if (get_property("_curveballFightsLeft"),to_int() == 0){
+            if (dayType() != 1 || baseballPlayers() < 7 || get_property("_baseballInnings").to_int() > 2)
+                return;
+            if (get_property("_baseballInnings").to_int() == 2 && baseballPlayers() == 7){
+                lastInningPrep();
+                return;
+            }
+            step("phase: early baseball");
+            underwaterPrep();
+            if ((have_effect($effect[driving waterproofly]) + have_effect($effect[Pneumatic]) + have_effect($effect[Pumped Stomach])) == 0)
+                set_property("pantsOverride",", equip really nice swim");
+            int fights = 0;
+            while (!inLineup(768)){
+                if (fights >= 5)
+                    abort("earlyBaseball: no Mer-kin tippler after 5 Dive Bar fights");
+                mimicPrep();
+                if (!looseFK())
+                    abort("earlyBaseball: no loose free kill left for the tippler");
+                resCheck("bar");
+                set_property("subscript","looseFK");
+                set_property("acc2Override",", equip eternity codpiece");
+                set_property("backOverride",", equip retrocape (heck kill)"); 
+                set_property("acc3Override",", equip " + timeBadge());  
+                buffML($monster[mer-kin tippler]);
+                adv1($location[The Dive Bar]);
+                fights++;
+            }
+            set_property("subscript","");
+            prebaseballD();
+        }
+        if (have_effect($effect[Eldritch Attunement]) > 0)
+            abort("tort test");
+        abort("reminisce test");
+        fights = 0;
+        while (get_property("_curveballFightsLeft").to_int() > 0){
+            if (fights >= 6)
+                abort("earlyBaseball: curveball kills not used up after 6 Dive Bar fights");
+            mimicPrep();
+            resCheck("bar");
+            if ((have_effect($effect[driving waterproofly]) + have_effect($effect[Pneumatic]) + have_effect($effect[Pumped Stomach])) == 0)
+                set_property("pantsOverride",", equip really nice swim");   // prebaseballD() cleared it
+            set_property("backOverride",", equip retrocape (heck kill)");
+            set_property("acc3Override",", equip " + timeBadge());
+            adv1($location[The Dive Bar]);
+            fights++;
+        }
+    }
+    set_property("pantsOverride","");
+    set_property("backOverride","");
+    set_property("acc1Override","");
+    set_property("acc2Override","");
+    set_property("acc3Override","");
+    set_property("shirtOverride","");
+}
+
 void pearloP1(){
     underwaterPrep();
     if ((have_effect($effect[driving waterproofly]) + have_effect($effect[Pneumatic]) + have_effect($effect[Pumped Stomach])) == 0)
@@ -1237,7 +1401,7 @@ void pearloP1(){
     set_property("acc1Override",", bonus mafia pointer finger");
     if (numeric_modifier("Critical Hit Percent") < 100)
         abort("can't guarantee critical hit");
-    if (((get_property("_baseballInnings").to_int() < 3 && baseballPlayers() >= 8) || get_property("_curveballFightsLeft").to_int() > 0) && get_property("_shadowBricksUsed").to_int() < 13) {
+    if (((get_property("_baseballInnings").to_int() < 3 && baseballPlayers() >= 7) || get_property("_curveballFightsLeft").to_int() > 0) && get_property("_shadowBricksUsed").to_int() < 13) {
         set_property("FKRunEligible","false");
         underwaterBaseball();
     } else if (looseFK(pearloP1Done())){
@@ -1561,6 +1725,10 @@ string pickWeakling(boolean checkHP){
         && available_amount($item[Apriling band quad tom]) > 0
         && (!checkHP || safeToFK($monster[giant sandworm])))
         return "sandworm";
+    // Vivian is barely tougher than a sandworm; the Glacier fights spend the Saber's Forces.
+    if (dayType() == 1 && get_property("_saberForceUses").to_int() < 5
+        && available_amount($item[Fourth of May Cosplay Saber]) > 0)
+        return "saber";
     if (to_int(get_property("_lynyrdSnareUses")) < 3
         && (!checkHP || safeToFK(to_monster("Lynyrd"))))
         return "lynyrd";
@@ -1824,6 +1992,9 @@ void weakMonsters(){
             // Out of quad toms -- stop other _aprilBandTomUses < 3 guards retrying.
             if (available_amount($item[Apriling band quad tom]) == 0)
                 set_property("_aprilBandTomUses","3");
+        } else if (pick == "saber"){
+            step("phase: weakMonsters Glacier of Jerks (saber)");
+            finishSaber();
         } else if (pick == "ghost"){
             step("phase: weakMonsters paranormal ghost (walkie-talkie)");
             mimicPrep();
@@ -2083,6 +2254,8 @@ boolean weakMonstersLeft(){
         && can_adventure($location[A Mob of Zeppelin Protesters])) return true;
     if (to_int(get_property("_aprilBandTomUses")) < 3
         && available_amount($item[Apriling band quad tom]) > 0) return true;
+    if (dayType() == 1 && get_property("_saberForceUses").to_int() < 5
+        && available_amount($item[Fourth of May Cosplay Saber]) > 0) return true;
     if (get_property("_tiedUpFlamingMonsteraFought") == "false"
         && mall_price($item[tied-up flaming monstera]) < 15000) return true;
     if (get_property("_tiedUpLeaviathanFought") == "false"
@@ -2519,6 +2692,7 @@ void bulkFKD2(){
     if (get_campground() contains $item[Witchess Set] && !get_property("_witchessBuff").to_boolean())
         cli_execute("witchess buff");
     campawayBuffs();
+    earlyBaseball();
     if (weakMonstersLeft())
         weakMonsters();
     step("phase: August Golem");
@@ -2600,8 +2774,8 @@ void bulkFKD2(){
         set_property("FKRunEligible","true");
         while (looseFK()){
             set_property("subscript","looseFK");
-            if (baseballPlayers() == 9 && get_property("_curveballFightsLeft").to_int() == 0 && get_property("_baseballInnings").to_int() < 3)
-                baseballD();
+            if (baseballPlayers() >= 8 && get_property("_curveballFightsLeft").to_int() == 0 && get_property("_baseballInnings").to_int() < 3)
+                prebaseballD();
             shadowRealmFK();
         }
         if (get_property("encountersUntilSRChoice").to_int() == 0)
