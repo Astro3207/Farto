@@ -1398,13 +1398,41 @@ void backup(){
     set_property("backOverride","");
     set_property("subscript","");
 }
+// Fights left of m in the mimic egg; mimicEggMonsters reads "id:count,id:count".
+int eggFightsLeft(monster m){
+    foreach i, entry in split_string(get_property("mimicEggMonsters"), ","){
+        string [int] part = split_string(entry, ":");
+        if (count(part) == 2 && part[0].to_int() == m.to_int())
+            return part[1].to_int();
+    }
+    return 0;
+}
+
+// D2: fight every monster stored in the mimic egg that is a free fight (FREE attribute).
 void mimicEgg(){
-    while (item_amount($item[mimic egg]) > 0 && dayType() == 1 && contains_text(get_property("mimicEggMonsters"),copyTarget.to_int().to_string())){
-        mimicPrep();
-        main@preadventure( );
-        cli_execute("c2t_megg fight " + copyTarget);
-        run_combat();
-        cli_execute("postadventure");
+    if (dayType() != 1)
+        return;
+    boolean [monster] stored;
+    foreach i, entry in split_string(get_property("mimicEggMonsters"), ","){
+        string [int] part = split_string(entry, ":");
+        if (count(part) == 2)
+            stored[part[0].to_int().to_monster()] = true;
+    }
+    foreach m in stored {
+        if (!contains_text(m.attributes, "FREE"))
+            continue;
+        while (item_amount($item[mimic egg]) > 0 && eggFightsLeft(m) > 0){
+            int before = eggFightsLeft(m);
+            mimicPrep();
+            main@preadventure( );
+            cli_execute("c2t_megg fight " + m);
+            run_combat();
+            cli_execute("postadventure");
+            if (eggFightsLeft(m) >= before){
+                print("mimicEgg: " + m + " egg count didn't drop, moving on.", "red");
+                break;
+            }
+        }
     }
 }
 void faxing(){
