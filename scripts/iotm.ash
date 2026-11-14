@@ -831,7 +831,15 @@
         whitelist("homeclan");
     }
 
+    // Stuck in a choice or fight, KoL rejects clan/unequip/stash requests but mafia
+    // can still report success, so skip and keep the owed list for the next return.
     void stashReturnTo(string clan, string prop, item only){
+        if (get_property(prop) == "")
+            return;
+        if (handling_choice() || current_round() > 0 || choice_follows_fight()){
+            print("Not returning " + prop + " items: in a choice or fight. Still owed: " + get_property(prop), "red");
+            return;
+        }
         string unreturned;
         foreach it, n in stashOwed(prop){
             boolean returning = only == $item[none] || it == only;
@@ -840,8 +848,13 @@
                 cli_execute("unequip "+ it);
             }
             for i from 1 to n {
-                if (returning && available_amount(it) > 0 && put_stash(it, 1))
-                    continue;
+                int before = available_amount(it);
+                if (returning && before > 0 && put_stash(it, 1)){
+                    cli_execute("refresh inv");   // confirm against the server, not mafia's guess
+                    if (available_amount(it) < before)
+                        continue;
+                    print("put_stash reported " + it + " returned but it is still here.", "red");
+                }
                 unreturned += (unreturned == "" ? "" : ",") + it.to_int();
             }
         }
