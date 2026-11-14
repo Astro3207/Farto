@@ -2382,7 +2382,7 @@ void peridotFishing(){
               An Octopus's Garden,The Wreck of the Edgar Fitzsimmons,
               Madness Reef,The Marinara Trench,
               Anemone Mine,The Dive Bar,The Mer-Kin Outpost,The Coral Corral,Mer-kin Elementary School,
-              Mer-kin Library,The Red Queen's Garden,
+              Mer-kin Library,Mer-Kin Gymnasium,The Red Queen's Garden,
               The Enormous Greater-Than Sign,Noob Cave,
               The Laugh Floor,Infernal Rackets Backstage,
               Cobb's Knob Barracks,Cobb's Knob Kitchens,
