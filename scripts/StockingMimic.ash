@@ -1181,6 +1181,7 @@ void resCheck(string str){
 void underwaterBaseball(){
     mimicPrep();
     resCheck("bar");
+    set_property("acc3Override",", equip " + timeBadge());
     if (get_property("_curveballFightsLeft").to_int() == 0 && looseFK()){
         set_property("subscript","looseFK");
         set_property("acc1Override",", equip mafia pointer");
@@ -1195,6 +1196,7 @@ void underwaterBaseball(){
     set_property("acc1Override","");
     set_property("backOverride","");
     set_property("acc2Override","");
+    set_property("acc3Override","");
 }
 
 boolean pearloP1Done(){
