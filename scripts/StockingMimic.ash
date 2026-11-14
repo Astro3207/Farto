@@ -1090,45 +1090,6 @@ void archaeologist(){
     }
 }
 
-// Shrug the effect giving the most of your highest buffed stat. Returns false
-// when there was nothing to shrug or the shrug failed.
-boolean uneffectBuff(){
-    float [stat] adjBase_Stat = {
-        $stat[muscle]:50,
-        $stat[mysticality]:50,
-        $stat[moxie]:50
-    };
-    stat st = $stat[muscle];
-    foreach sta in $stats[mysticality, moxie]{
-        if (my_buffedstat(sta) > my_buffedstat(st))
-            st = sta;
-    }
-    effect toRemove;
-    int statBuff;
-    foreach ef in my_effects( ){
-        if ((numeric_modifier(ef,"familiar weight")+numeric_modifier(ef,"item drop")+numeric_modifier(ef,"meat drop")) > 0)
-            continue;
-        if ((numeric_modifier(ef, to_string(st) + " Percent")/100)*adjBase_Stat[st] > statBuff){
-            statBuff = (numeric_modifier(ef, to_string(st) + " Percent")/100)*adjBase_Stat[st];
-            toRemove = ef;
-        }
-    }
-    foreach ef in my_effects( ){
-        if (numeric_modifier(ef,"familiar weight") > 0)
-            continue;
-        if (numeric_modifier(ef, to_string(st)) > statBuff){
-            statBuff = numeric_modifier(ef, to_string(st));
-            toRemove = ef;
-        }
-    }
-    // Nothing left to shed (stats are all from gear, or the only buff is
-    // wine-befouled), or the uneffect didn't take -- tell the caller to stop.
-    if (toRemove == $effect[none])
-        return false;
-    if (!cli_execute("uneffect " + toRemove))
-        return false;
-    return have_effect(toRemove) == 0;
-}
 // skipClub: Club 'Em Back in Time costs most of the drops, so sandworms save it.
 boolean looseFK(boolean skipClub){
     if (get_property("shirtOverride") == ", equip jurassic parka (dilophosaur)")
@@ -1512,9 +1473,6 @@ boolean safeToFK(monster m){
         return true;
     if (buffML(m))
         return true;
-    while (m.base_hp <= lowHPTarget())
-        if (!uneffectBuff())
-            break;
     if (m.base_hp <= lowHPTarget())
         return false;
     else

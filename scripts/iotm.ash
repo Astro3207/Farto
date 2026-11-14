@@ -550,6 +550,44 @@
     int highHPTarget()
         return (23 * passiveDamage()) + estimatedIceDamage();
 
+    boolean uneffectBuff(){
+        float [stat] adjBase_Stat = {
+            $stat[muscle]:50,
+            $stat[mysticality]:50,
+            $stat[moxie]:50
+        };
+        stat st = $stat[muscle];
+        foreach sta in $stats[mysticality, moxie]{
+            if (my_buffedstat(sta) > my_buffedstat(st))
+                st = sta;
+        }
+        effect toRemove;
+        int statBuff;
+        foreach ef in my_effects( ){
+            if ((numeric_modifier(ef,"familiar weight")+numeric_modifier(ef,"item drop")+numeric_modifier(ef,"meat drop")) > 0)
+                continue;
+            if ((numeric_modifier(ef, to_string(st) + " Percent")/100)*adjBase_Stat[st] > statBuff){
+                statBuff = (numeric_modifier(ef, to_string(st) + " Percent")/100)*adjBase_Stat[st];
+                toRemove = ef;
+            }
+        }
+        foreach ef in my_effects( ){
+            if (numeric_modifier(ef,"familiar weight") > 0)
+                continue;
+            if (numeric_modifier(ef, to_string(st)) > statBuff){
+                statBuff = numeric_modifier(ef, to_string(st));
+                toRemove = ef;
+            }
+        }
+        // Nothing left to shed (stats are all from gear, or the only buff is
+        // wine-befouled), or the uneffect didn't take -- tell the caller to stop.
+        if (toRemove == $effect[none])
+            return false;
+        if (!cli_execute("uneffect " + toRemove))
+            return false;
+        return have_effect(toRemove) == 0;
+    }
+
     boolean buffML(monster m){
         foreach ef in $effects[Ur-Kel's Aria of Annoyance,Pride of the Puffin,Bloodbathed,Misplaced Rage,Manbait,Sweetbreads Flamb&eacute;,Red Lettered,Spangled Star,Tortious,Litterbug,Not Sharing,Para-lyzed Jaw,Contemptible Emanations,Lapdog,Ashen Burps,The Cupcake of Wrath,Gelded,Mysteriously Handsome]{
             if (m.base_hp > lowHPTarget())
@@ -567,7 +605,12 @@
         if (m.base_hp <= lowHPTarget() && mcd_max() > current_mcd()
             && (dayType() != 0 || user_confirm(`MCD will add {mcd_max() - current_mcd()} ML (currently {numeric_modifier("Monster Level")}, {m} HP {m.base_hp} vs target {lowHPTarget()}). Continue?`)))
             change_mcd(mcd_max());
+        while (m.base_hp <= lowHPTarget())
+            if (!uneffectBuff())
+                break;
         print("monster level is " + numeric_modifier("monster level"));
+        print(m + " HP is expected to be " + m.base_hp, "blue");
+        print("Shard of double-ice damage is expected to be " + estimatedIceDamage(), "blue");
         return m.base_hp > lowHPTarget();
     }
 
