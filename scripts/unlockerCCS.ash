@@ -484,6 +484,14 @@ import iotm.ash;
             }
             heal(100);
         }
+        if (my_location() == $location[The Glacier of Jerks]){
+            if (gazeReady() && last_monster() != $monster[Vivian Vibrian Vumian Varr])
+                use_skill($skill[BCZ: Refracted Gaze]);
+            else
+                while (last_monster() != $monster[Vivian Vibrian Vumian Varr])
+                    throw_item($item[waffle]);
+            use_skill($skill[Use the Force]);
+        }
         if (last_monster() == $monster[eldritch tentacle])
             sauce(4);
         if (last_monster() == $monster[flaming leaflet])
@@ -585,8 +593,8 @@ import iotm.ash;
             } else
                 waffleShadowGuy();
         }
-        if (my_location() == $location[The Glacier of Jerks] && get_property("subscript") == "prebaseball"){
-            if (last_monster() == $monster[Vivian Vibrian Vumian Varr]){
+        if (my_location() == $location[The Glacier of Jerks]){
+            if (last_monster() == $monster[Vivian Vibrian Vumian Varr] && get_property("subscript") == "prebaseball"){
                 if (!contains_text(get_property("trackedMonsters"),"Vivian Vibrian Vumian Varr:McHugeLarge Slash")){
                     if (!contains_text(get_property("trackedMonsters"),"Vivian Vibrian Vumian Varr:Transcendent Olfaction"))
                         use_skill($skill[transcendent olfaction]);
@@ -608,20 +616,6 @@ import iotm.ash;
                         throw_item($item[waffle]);
                 use_skill($skill[Use the Force]);
             }
-        } else if (my_location() == $location[The Glacier of Jerks]){
-            while (last_monster() != $monster[Vivian Vibrian Vumian Varr] && get_property("_baseballInnings").to_int() < 3){
-                if (item_amount($item[waffle]) == 0)
-                    abort("out of waffles somehow?");
-                throw_item($item[waffle]);
-            }
-            if (last_monster() != $monster[Vivian Vibrian Vumian Varr] && get_property("_baseballInnings").to_int() == 3 && gazeReady())
-                use_skill($skill[BCZ: Refracted Gaze]);
-            if (!contains_text(get_property("trackedMonsters"),"Vivian Vibrian Vumian Varr") && last_monster() == $monster[Vivian Vibrian Vumian Varr]){
-                use_skill($skill[transcendent olfaction]);
-                use_skill($skill[Gallapagosian Mating Call]);
-                use_skill($skill[McHugeLarge Slash]);
-            }
-            use_skill($skill[Use the Force]);
         }
         if (gazeReady() && last_monster() == $monster[sausage goblin] && have_equipped($item[peridot of peril]))
             use_skill($skill[BCZ: Refracted Gaze]);

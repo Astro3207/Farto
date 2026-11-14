@@ -1236,6 +1236,8 @@ void prebaseballD(){
             main@preadventure();
             if (!buffML($monster[Vivian Vibrian Vumian Varr]))
                 abort();
+            user_confirm("start fight manually");
+            abort();
             adv1($location[The Glacier of Jerks]);
             fights++;
             refreshBaseballTeam();
@@ -1335,7 +1337,7 @@ void underwaterPrep(){
 
 void earlyBaseball(){
     while (get_property("_baseballInnings").to_int() < 1 || (get_property("_curveballMonster") == "Mer-kin tippler") && get_property("_curveballFightsLeft").to_int() > 0){
-        if (get_property("_curveballFightsLeft"),to_int() == 0){
+        if (get_property("_curveballFightsLeft").to_int() == 0){
             if (dayType() != 1 || baseballPlayers() < 7 || get_property("_baseballInnings").to_int() > 2)
                 return;
             if (get_property("_baseballInnings").to_int() == 2 && baseballPlayers() == 7){
@@ -1367,8 +1369,7 @@ void earlyBaseball(){
         }
         if (have_effect($effect[Eldritch Attunement]) > 0)
             abort("tort test");
-        abort("reminisce test");
-        fights = 0;
+        int fights = 0;
         while (get_property("_curveballFightsLeft").to_int() > 0){
             if (fights >= 6)
                 abort("earlyBaseball: curveball kills not used up after 6 Dive Bar fights");
