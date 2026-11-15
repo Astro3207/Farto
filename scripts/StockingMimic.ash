@@ -1165,6 +1165,8 @@ void DMachine(){
     set_property("subscript","looseFK");
     retrieve_item(1,$item[drum machine]);
     main@preadventure( );
+    if (numeric_modifier("item drop") > 4500)
+        abort("shocking lick test");
     use($item[drum machine]);
     if (current_round() > 0)
         run_combat();
@@ -1296,7 +1298,7 @@ void underwaterBaseball(){
         if (get_property("_baseballInnings").to_int() < 3 && baseballPlayers() < 9)
             set_property("acc2Override",", equip eternity codpiece");
         adv1($location[The Dive Bar]);
-        if (baseballPlayers() >= 9)
+        if (baseballPlayers() >= 8)
             prebaseballD();
     } else if (get_property("_curveballFightsLeft").to_int() > 0){
         set_property("backOverride",", equip retrocape (heck kill)");
@@ -2753,6 +2755,7 @@ void bulkFKD2(){
     shadowRealmBuffUp();
     if (looseFK()){
         set_property("FKRunEligible","true");
+        clearOverrides();
         while (have_effect($effect[shadow affinity]) > 0){
             if ($monster[shadow slab].elemental_resistance > 85 && my_buffedstat($stat[mysticality]) < 5000){
                 if (have_item($item[Congressional Medal of Insanity]))
@@ -2775,8 +2778,8 @@ void bulkFKD2(){
         set_property("FKRunEligible","true");
         while (looseFK()){
             set_property("subscript","looseFK");
-            if (baseballPlayers() >= 8 && get_property("_curveballFightsLeft").to_int() == 0 && get_property("_baseballInnings").to_int() < 3)
-                prebaseballD();
+            if (baseballPlayers() >= 9 && get_property("_curveballFightsLeft").to_int() == 0 && get_property("_baseballInnings").to_int() < 3)
+                baseballD();
             shadowRealmFK();
         }
         if (get_property("encountersUntilSRChoice").to_int() == 0)

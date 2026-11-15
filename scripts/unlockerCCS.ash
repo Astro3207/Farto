@@ -485,11 +485,8 @@ import iotm.ash;
             heal(100);
         }
         if (my_location() == $location[The Glacier of Jerks]){
-            if (gazeReady() && last_monster() != $monster[Vivian Vibrian Vumian Varr])
-                use_skill($skill[BCZ: Refracted Gaze]);
-            else
-                while (last_monster() != $monster[Vivian Vibrian Vumian Varr])
-                    throw_item($item[waffle]);
+            while (last_monster() != $monster[Vivian Vibrian Vumian Varr])
+                throw_item($item[waffle]);
             use_skill($skill[Use the Force]);
         }
         if (last_monster() == $monster[eldritch tentacle])
