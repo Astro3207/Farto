@@ -2195,7 +2195,6 @@ void nonlocationBasedWeakMonsters(){
     while (to_int(get_property("_aprilBandTomUses")) < 3
         && available_amount($item[Apriling band quad tom]) > 0){
         step("phase: weakMonsters giant sandworm (quad tom)");
-        abort("Do some monorail farming");
         sandworm();
     }
     if (my_fullness() < fullness_limit() && my_class() != $class[seal clubber]){
