@@ -1238,8 +1238,7 @@ void prebaseballD(){
             main@preadventure();
             if (!buffML($monster[Vivian Vibrian Vumian Varr]))
                 abort();
-            user_confirm("start fight manually");
-            abort();
+      //      user_confirm("start fight manually");
             adv1($location[The Glacier of Jerks]);
             fights++;
             refreshBaseballTeam();
@@ -2196,6 +2195,7 @@ void nonlocationBasedWeakMonsters(){
     while (to_int(get_property("_aprilBandTomUses")) < 3
         && available_amount($item[Apriling band quad tom]) > 0){
         step("phase: weakMonsters giant sandworm (quad tom)");
+        abort("Do some monorail farming");
         sandworm();
     }
     if (my_fullness() < fullness_limit() && my_class() != $class[seal clubber]){
@@ -2560,7 +2560,7 @@ void peridotFishing(){
               An Octopus's Garden,The Wreck of the Edgar Fitzsimmons,
               Madness Reef,The Marinara Trench,
               Anemone Mine,The Dive Bar,The Mer-Kin Outpost,The Coral Corral,Mer-kin Elementary School,
-              Mer-kin Library,Mer-Kin Gymnasium,The Red Queen's Garden,
+              Mer-kin Library,The Red Queen's Garden,
               The Enormous Greater-Than Sign,Noob Cave,
               The Laugh Floor,Infernal Rackets Backstage,
               Cobb's Knob Barracks,Cobb's Knob Kitchens,

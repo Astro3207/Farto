@@ -57,6 +57,10 @@ void takerspaceStart(){
 }
 
 void finalOutfit(){
+    if (have_familiar($familiar[stocking mimic]))
+        use_familiar($familiar[Stocking Mimic]);
+    else
+        use_familiar($familiar[cocoabo]);
     if (numeric_modifier("familiar weight") > 350)
         cli_execute("maximize pvp fights, equip spacegate military insignia, equip ratskin pajama pants");
     else
