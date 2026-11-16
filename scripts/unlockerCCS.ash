@@ -606,12 +606,22 @@ import iotm.ash;
                         set_property("_shadowBricksUsed", bricks + 1);
                 }
             } else {
-                if (gazeReady())
-                    use_skill($skill[BCZ: Refracted Gaze]);
-                else
-                    while (last_monster() != $monster[Vivian Vibrian Vumian Varr])
-                        throw_item($item[waffle]);
-                use_skill($skill[Use the Force]);
+                if (!contains_text(get_property("banishedMonsters"),"Baseball Diamond")){
+                    if (current_round() > 0 && item_amount($item[shadow brick]) > 0){
+                        int bricks = get_property("_shadowBricksUsed").to_int();
+                        throw_item($item[shadow brick]);
+                        if (get_property("_shadowBricksUsed").to_int() == bricks)
+                            set_property("_shadowBricksUsed", bricks + 1);
+                    }
+                }
+                while (last_monster() != $monster[Vivian Vibrian Vumian Varr] && current_round() > 0)
+                    throw_item($item[waffle]);
+                if (current_round() > 0 && item_amount($item[shadow brick]) > 0){
+                    int bricks = get_property("_shadowBricksUsed").to_int();
+                    throw_item($item[shadow brick]);
+                    if (get_property("_shadowBricksUsed").to_int() == bricks)
+                        set_property("_shadowBricksUsed", bricks + 1);
+                }
             }
         }
         if (gazeReady() && last_monster() == $monster[sausage goblin] && have_equipped($item[peridot of peril]))

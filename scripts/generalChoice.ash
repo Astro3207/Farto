@@ -170,6 +170,7 @@ void main(int whichchoice, string page) {
             run_choice(1);
             break;
 
+        case 567:
         case 693:
         case 857:
         case 866:
@@ -190,10 +191,8 @@ void main(int whichchoice, string page) {
             break;
 
         case 1387:
-            user_confirm("run it yourself to see what happens to refract?");
             run_choice(3);
-            visit_url("main.php");
-            cli_execute("refresh all");
+            cli_execute("relogin");
             break;
 
         case 584:
