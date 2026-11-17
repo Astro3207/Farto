@@ -1216,7 +1216,6 @@ void prebaseballD(){
         clearOverrides();
         string sub = get_property("subscript");
         set_property("subscript","prebaseball");
-        set_property("mainOverride",", equip Fourth of May Cosplay Saber");
         if (periledLocations()[$location[The Glacier of Jerks]] == false)
             codpiece("heartstone,blood cubic zirconia,baseball diamond,peridot of peril,tuesday's ruby");
         if (have_effect($effect[Dis Abled]) == 0)
@@ -1227,18 +1226,16 @@ void prebaseballD(){
             set_property("acc2Override",", equip eternity codpiece");
             int n = 13-get_property("_shadowBricksUsed").to_int();
             retrieve_item(n,$item[shadow brick]);
+            retrieve_item(10, $item[waffle]);
             if (fights >= 10)
                 abort("prebaseballD: Vivian still not on the baseball team after 10 Glacier fights");
             if (get_property("_shadowBricksUsed").to_int() >= 13)
                 abort("prebaseballD: no shadow bricks left for Vivian");
-            if (periledLocations()[$location[The Glacier of Jerks]] && get_property("_saberForceUses").to_int() >= 5)
-                abort("prebaseballD: out of Use the Force to skip non-Vivian monsters");
             set_property("offOverride", contains_text(get_property("trackedMonsters"),"Vivian Vibrian Vumian Varr:McHugeLarge Slash") ? "" : ", equip mchugelarge left pole");
             set_property("acc3Override",", equip " + timeBadge());   // Glacier fights need the time cop badge
             main@preadventure();
             if (!buffML($monster[Vivian Vibrian Vumian Varr]))
                 abort();
-      //      user_confirm("start fight manually");
             adv1($location[The Glacier of Jerks]);
             fights++;
             refreshBaseballTeam();
@@ -1337,7 +1334,7 @@ void underwaterPrep(){
 }
 
 void earlyBaseball(){
-    while (get_property("_baseballInnings").to_int() < 1 || (get_property("_curveballMonster") == "Mer-kin tippler") && get_property("_curveballFightsLeft").to_int() > 0){
+    while (get_property("_baseballInnings").to_int() < 2 || (get_property("_curveballMonster") == "Mer-kin tippler") && get_property("_curveballFightsLeft").to_int() > 0){
         if (get_property("_curveballFightsLeft").to_int() == 0){
             if (dayType() != 1 || baseballPlayers() < 7 || get_property("_baseballInnings").to_int() > 2)
                 return;
@@ -1368,20 +1365,25 @@ void earlyBaseball(){
             set_property("subscript","");
             prebaseballD();
         }
-        if (have_effect($effect[Eldritch Attunement]) > 0)
-            abort("tort test");
         int fights = 0;
         while (get_property("_curveballFightsLeft").to_int() > 0){
             if (fights >= 6)
                 abort("earlyBaseball: curveball kills not used up after 6 Dive Bar fights");
             mimicPrep();
-            resCheck("bar");
-            if ((have_effect($effect[driving waterproofly]) + have_effect($effect[Pneumatic]) + have_effect($effect[Pumped Stomach])) == 0)
-                set_property("pantsOverride",", equip really nice swim");   // prebaseballD() cleared it
-            set_property("backOverride",", equip retrocape (heck kill)");
-            set_property("acc3Override",", equip " + timeBadge());
-            adv1($location[The Dive Bar]);
-            fights++;
+            if (!get_property("_locketMonstersFought").contains_text("1462")){
+                set_property("backOverride",", equip retrocape (heck kill)");
+                main@preadventure();
+                cli_execute("reminise Frozen Bag of Tortellini");
+                main@postadventure();
+            } else {
+                resCheck("bar");
+                if ((have_effect($effect[driving waterproofly]) + have_effect($effect[Pneumatic]) + have_effect($effect[Pumped Stomach])) == 0)
+                    set_property("pantsOverride",", equip really nice swim");   // prebaseballD() cleared it
+                set_property("backOverride",", equip retrocape (heck kill)");
+                set_property("acc3Override",", equip " + timeBadge());
+                adv1($location[The Dive Bar]);
+                fights++;
+            }
         }
     }
     set_property("pantsOverride","");
@@ -1632,10 +1634,13 @@ void reminisce() {
             break;
         if (get_property("_locketMonstersFought").contains_text(mon.to_int()))
             continue;
+        if (mon == $monster[frozen bag of tortellini] && have_effect($effect[coldform]) > 0)
+            set_property("backOverride",", equip retrocape (heck kill)");
         mimicPrep();
         main@preadventure( );
         cli_execute("reminisce " + mon);
         main@postadventure();
+        set_property("backOverride","");
     }
 }
 void seals(){

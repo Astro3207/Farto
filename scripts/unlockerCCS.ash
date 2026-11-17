@@ -590,6 +590,8 @@ import iotm.ash;
             } else
                 waffleShadowGuy();
         }
+        if (last_monster() == $monster[eldritch tentacle])
+            sauce(4);
         if (my_location() == $location[The Glacier of Jerks]){
             if (last_monster() == $monster[Vivian Vibrian Vumian Varr] && get_property("subscript") == "prebaseball"){
                 if (!contains_text(get_property("trackedMonsters"),"Vivian Vibrian Vumian Varr:McHugeLarge Slash")){
