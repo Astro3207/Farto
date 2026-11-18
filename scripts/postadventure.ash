@@ -877,18 +877,13 @@ void endOfDayHandling(){
     }
 }
 
-void postAdv(){
+void postAdvCore(){
     if (contains_text(visit_url("main.php"),"You're fighting"))
         run_combat();
     set_property("NCtoC","false");
     if (get_property("_lastCombatLost") == "true" && get_property("noncombatForcerActive") != "true" && LastAdvTxt().contains_text("Round 1") && my_location() != $location[the outer compound] && last_monster() != $monster[flaming monstera] && last_monster() != $monster[leaviathan] && last_monster() != $monster[flaming leaflet]){
         cli_execute("cast tongue;cast cannel");
         abort("It appears you lost the last combat, look into that");
-    }
-    int secondsToRO = (rollover()*1000 - now_to_int())/1000;
-    if (secondsToRO < 15){
-        cli_execute("dinner.ash");
-        abort("for RO reasons aborting");
     }
     if (have_effect($effect[beaten up]) > 0 )
         cli_execute("cast tongue of the walrus");
@@ -920,7 +915,7 @@ void postAdv(){
     }
     freeKillTurnGuard();
     lawOfAverages();
-    if (is_online("OnlyFax"))
+    if (get_property("_clanFortuneConsultUses").to_int() < 3 && is_online("OnlyFax"))
         clanFortune();
     if (get_property("autumnatonQuestLocation") == "" && item_amount($item[autumn-aton]) > 0){
         upgradeAutumnaton();
@@ -963,21 +958,38 @@ void postAdv(){
         set_property("subscript","");
         clearOverrides();
     }
-    if (have_item($item[cosmic bowling ball]) && dayType() == 1 && get_property("script") == "FreeKill" && nextTrainStation() != "meat_mine" && have_effect($effect[Lucky!]) == 0 && get_property("archSkeleton") != "true"
+    if (have_item($item[cosmic bowling ball]) && dayType() == 1 && get_property("script") == "FreeKill" && nextTrainStation() != "meat_mine"
+        && !($strings[stompingBoots,peridot] contains get_property("subscript"))
+        && have_effect($effect[Lucky!]) == 0 && get_property("archSkeleton") != "true"
         && my_inebriety() <= inebriety_limit() && !choice_follows_fight() && !handling_choice() && get_property("noncombatForcerActive").to_boolean() == false){
-        boolean badge = get_property("acc3Override") == ", equip " + timeBadge();
-        set_property("maxOverride","combat,-equip drunkula's wineglass");
-        set_property("famOverride", "peace turkey");
-        set_property("mainOverride",", equip june cleaver");
-        set_property("acc1Override", ", equip spring shoes");
-        set_auto_attack(0);
-        set_location($location[Cobb's Knob Treasury]);
-        adv1($location[cobb's knob treasury]);
-        clearOverrides();
-        if (get_property("subscript") == "weakling" || badge){
-            equip($slot[acc3],timeBadge());
-            set_property("acc3Override",", equip " + timeBadge());
+        string[string] savedOverrides;
+        foreach pref in $strings[unconditionalOverride,maxOverride,famOverride,hatOverride,mainOverride,weaponOverride,offOverride,backOverride,shirtOverride,pantsOverride,acc1Override,acc2Override,acc3Override,famEquipOverride,bonusOverride,tuneMLOverrides,subscript]
+            savedOverrides[pref] = get_property(pref);
+        try {
+            set_property("maxOverride","combat,-equip drunkula's wineglass");
+            set_property("famOverride", "peace turkey");
+            set_property("mainOverride",", equip june cleaver");
+            set_property("acc1Override", ", equip spring shoes");
+            set_auto_attack(0);
+            set_location($location[Cobb's Knob Treasury]);
+            if (!cli_execute("preadventure.ash") || my_familiar() != $familiar[peace turkey]
+                || !have_equipped($item[spring shoes]) || item_amount($item[cosmic bowling ball]) == 0)
+                abort("I don't think we're ready for that treasury - we didn't prep free run properly!");
+            adv1($location[cobb's knob treasury]);
+
+        } finally {
+            foreach pref, value in savedOverrides
+                set_property(pref,value);
         }
+    }
+}
+
+void postAdv(){
+    int timingStarted = now_to_int();
+    try {
+        postAdvCore();
+    } finally {
+        fartoTiming("post_core", timingStarted);
     }
 }
 
@@ -1041,7 +1053,7 @@ void spendAdv(){
         set_property("commaFamiliar","");
     }
     if (dayType() == 1 && get_property("commaFamiliar") != "Robortender"){
-        if (get_property("_pocketProfessorLectures").to_int() == 0 && get_property("_locketMonstersFought").split_string(",").count() < 3 && have_effect($effect[everything looks purple]) == 0){
+        if (get_property("_pocketProfessorLectures").to_int() == 0 && locketAvailable() > 0 && have_effect($effect[everything looks purple]) == 0){
             string profTarget;
             profTarget = lowDrop().to_string();
             set_property("unconditionalOverride","familiar weight, equip roman candelabra, equip Mr. Cheeng's spectacles");
@@ -1148,6 +1160,7 @@ void main(){
         postAdv();
         // This is to prevent an infinite postadventure loop
         if (my_adventures() != 0 && get_property("inSpendAdv") != "true"
+            && get_property("subscript") != "godLobster"
             && !($strings[6-kiss,coat,stick,slime] contains get_property("script"))){
             try{
                 spendAdv();
