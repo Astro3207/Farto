@@ -985,12 +985,13 @@ void shadowFountainAdventure(){
     shadowRiftAdventure(profile);
 }
 
+
+//Debug function, can remove after testing
 void shadowBossNCForce(){
-    int started = now_to_int();
     try {
-        NCforce(false, true);
+        NCforce(false);
     } finally {
-        fartoTiming("shadow_boss_nc_force", started);
+        fartoTiming("shadow_boss_nc_force", now_to_int());
     }
 }
 
@@ -1036,12 +1037,8 @@ void shadowRealmFK(boolean bossLoop){
             set_property("mainOverride",", equip monodent");
         else
             set_property("mainOverride","");
-        int turnsBeforeAffinity = total_turns_played();
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
         set_property("hatOverride","");
-        if (total_turns_played() != turnsBeforeAffinity)
-            abort("Shadow Affinity adventure spent a turn.");
-
     } else {
         if (bossLoop) shadowBossNCForce();
         else NCforce(false);
@@ -1543,21 +1540,20 @@ void gingerbread(boolean reuseOutfit){
             abort("Gingerbread Upscale needs a cigarette before adventuring.");
 
         mimicPrep(", -equip mobius ring");
-        boolean d2 = dayType() == 1;
-        if (d2){
+        if (dayType() == 1){
             set_property("offOverride",", equip april shower thoughts shield");
             if (!reuseOutfit)
                 set_property("savedGingerbreadMaximizer", "");
         }
         try {
-            if (d2)
+            if (dayType() == 1)
                 set_property("tgwh_gingerbreadOutfitActive", "true");
             adv1($location[Gingerbread Upscale Retail District]);
         } finally {
-            if (d2)
+            if (dayType() == 1)
                 set_property("tgwh_gingerbreadOutfitActive", "false");
         }
-        if (d2 && get_property("_gingerbreadCityTurns").to_int() == 10)
+        if (dayType() == 1 && get_property("_gingerbreadCityTurns").to_int() == 10)
             set_property("savedGingerbreadMaximizer", "");
     }
     if (contains_text(LastAdvTxt(),"almost midnight") || get_property("_gingerbreadCityTurns").to_int() == 19){

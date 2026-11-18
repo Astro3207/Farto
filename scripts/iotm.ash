@@ -1732,7 +1732,7 @@
     // ~20 passes, so loopCount aborts well above that instead of at a tight bound, but
     // still catches the case where tuba/bell/cincho are all exhausted with free rests
     // still left, which would otherwise spin forever since nothing changes state.
-    void NCforce(boolean stack, boolean reuseRestGear) {
+    void NCforce(boolean stack) {
         int loopCount = 0;
         while (get_property("timesRested").to_int() < total_free_rests()){
             if (loopCount++ > 50)
@@ -1752,16 +1752,11 @@
                     && to_int(get_property("timesRested")) < total_free_rests()) {
                     if (cinchRestLoopCount++ > 50)
                         abort("NCforce: cincho rest-down looped over 50 times with no progress -- camp rest free is probably failing");
-                    if (reuseRestGear) {
-                        if (my_familiar() != $familiar[Skeleton of Crimbo Past]
-                            && !use_familiar($familiar[Skeleton of Crimbo Past]))
-                            abort("NCforce: could not select Skeleton of Crimbo Past.");
-                        if (equipped_item($slot[hat]) != $item[Apriling band helmet]
-                            && !equip($slot[hat], $item[Apriling band helmet]))
-                            abort("NCforce: could not equip the Apriling band helmet.");
-                        cli_execute("camp rest free campground");
-                    } else
-                        cli_execute("familiar Skeleton of Crimbo Past; unequip hat; equip apriling band helmet; camp rest free campground");
+                    if (my_familiar() != $familiar[Skeleton of Crimbo Past] && !use_familiar($familiar[Skeleton of Crimbo Past]))
+                        abort("NCforce: could not select Skeleton of Crimbo Past.");
+                    if (my_mp() == my_maxmp() && my_hp() == my_maxhp())
+                        abort("figure out the new thing that let's you rest at max hp/mp");
+                    cli_execute("camp rest free campground");
                     manaBurn(700);
                 }
                 if (to_int(get_property("_cinchUsed")) <= 40) {
@@ -1771,9 +1766,7 @@
             }
         }
     }
-
-    void NCforce(boolean stack) { NCforce(stack, false); }
-
+    
     // Returns true if there are free-run resources available to burn for delay.
     boolean free_Run() {
         if (my_inebriety() > inebriety_limit())
