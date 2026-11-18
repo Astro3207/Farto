@@ -1458,7 +1458,7 @@ void earlyBaseball(){
             if (!get_property("_locketMonstersFought").contains_text("1462")){
                 set_property("backOverride",", equip retrocape (heck kill)");
                 main@preadventure();
-                cli_execute("reminise Frozen Bag of Tortellini");
+                cli_execute("reminisce Frozen Bag of Tortellini");
                 main@postadventure();
             } else {
                 resCheck("bar");

@@ -253,7 +253,7 @@ import mimicMacroBuilders.ash;
             use_skill($skill[extract]);
         if (have_item($item[porquoise-handled sixgun]))
             throw_item($item[porquoise-handled sixgun]);
-        if (have_item($item[pulled red taffy]))
+        if (have_item($item[pulled red taffy]) && last_monster() != $monster[Eldritch Tentacle])   // Attunement tentacles aren't underwater
             throw_item($item[pulled red taffy]);
         if (have_skill($skill[pocket crumbs]) && to_int(get_property("_pantsgivingCrumbs")) < 9)
             use_skill($skill[pocket crumbs]);
@@ -510,6 +510,7 @@ boolean mimic_weakling_finish(){
 
 boolean mimic_red_taffy_eligible(){
     return my_location() != $location[none]
+        && last_monster() != $monster[Eldritch Tentacle]   // Attunement chains report the previous zone but aren't underwater
         && !($strings[replacing,Macrometeorite,CHEAT CODE: Replace Enemy] contains get_property("subscript"))
         && last_monster() != copyTarget
         && (my_location().environment == "underwater" || my_location() == to_location(get_property("_seadentWaveZone")));
