@@ -788,6 +788,8 @@ void saberLooseKill(){
 
 boolean mimic_finish_combat(string page, boolean shadowSetupDone){
     if (current_round() == 0) return true;
+    // After stasis, let the Glacier route track Vivian and use its shadow brick.
+    if (my_location() == $location[The Glacier of Jerks]) return false;
     if (!mimic_macro_ready(false)) return false;
     string macro = mimic_finish_prefix(shadowSetupDone);
     boolean curveballed = get_property("_curveballMonster").to_monster() == last_monster()
