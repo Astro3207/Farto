@@ -800,6 +800,14 @@
         "homeclan" : get_property("homeClanID").to_int()
     };
 
+    // Wall-clock timing includes local preparation work; no server request.
+    void fartoTiming(string stage, int started, string details){
+        if (get_property("tgwh_fartoTiming") == "false") return;
+        print("[Farto timing] " + stage + " start_ms=" + started + " elapsed_ms=" + max(0, now_to_int() - started)
+            + " script=" + get_property("script") + " subscript=" + get_property("subscript") + details, "gray");
+    }
+    void fartoTiming(string stage, int started){ fartoTiming(stage, started, ""); }
+
     void whitelist(string clan){
         visit_url("showclan.php?whichclan="+clan_to_ID[clan]+"&action=joinclan&confirm=on");
     }
@@ -1744,7 +1752,11 @@
                     && to_int(get_property("timesRested")) < total_free_rests()) {
                     if (cinchRestLoopCount++ > 50)
                         abort("NCforce: cincho rest-down looped over 50 times with no progress -- camp rest free is probably failing");
-                    cli_execute("familiar Skeleton of Crimbo Past; unequip hat; equip apriling band helmet; camp rest free");
+                    if (my_familiar() != $familiar[Skeleton of Crimbo Past] && !use_familiar($familiar[Skeleton of Crimbo Past]))
+                        abort("NCforce: could not select Skeleton of Crimbo Past.");
+                    if (my_mp() == my_maxmp() && my_hp() == my_maxhp())
+                        abort("figure out the new thing that let's you rest at max hp/mp");
+                    cli_execute("camp rest free campground");
                     manaBurn(700);
                 }
                 if (to_int(get_property("_cinchUsed")) <= 40) {
@@ -1754,7 +1766,7 @@
             }
         }
     }
-
+    
     // Returns true if there are free-run resources available to burn for delay.
     boolean free_Run() {
         if (my_inebriety() > inebriety_limit())

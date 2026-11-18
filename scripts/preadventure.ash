@@ -312,6 +312,67 @@ stockLevel [item] combatStock = {
  //   $item[Arr\, M80]:               new stockLevel(60, 70)
 };
 
+boolean underwaterAdventure(){
+    return my_location() != $location[none]
+        && (my_location().environment == "underwater" || get_property("_seadentWaveZone") == my_location().to_string());
+}
+
+boolean underwaterReady(){
+    return boolean_modifier("Adventure Underwater")
+        && (my_familiar() == $familiar[none] || my_familiar().underwater || boolean_modifier("Underwater Familiar"));
+}
+
+void adventureOutfit(string objective){
+    int timingStarted = now_to_int();
+    boolean cached;
+    try {
+        boolean underwater = underwaterAdventure();
+        if (underwater) objective += ", sea";
+        boolean gingerbread = my_location() == $location[Gingerbread Upscale Retail District]
+            && get_property("tgwh_gingerbreadOutfitActive").to_boolean();
+        string cacheKey = gingerbread ? "savedGingerbreadMaximizer" : "savedMaximizer";
+        string famEquipKey = gingerbread ? "savedGingerbreadFamEquip" : "savedFamEquip";
+        string outfitName = gingerbread ? "farto gingerbread" : "farming";
+        string context = my_location() + ";" + get_property("_seadentWaveZone") + ";" + my_familiar();
+        string shadowProfile = get_property("fartoShadowOutfitProfile");
+        boolean shadowOutfit = my_location() == $location[Shadow Rift (The Misspelled Cemetary)]
+            && ($strings[fountain,shell,orrery,other] contains shadowProfile);
+        if (shadowOutfit){
+            cacheKey = "savedShadowMaximizer_" + shadowProfile;
+            famEquipKey = "savedShadowFamEquip_" + shadowProfile;
+            outfitName = "farto shadow " + shadowProfile;
+            context += ";" + today_to_string() + ";" + my_ascensions();
+        }
+        // Saved outfits restore the parka item without setting its requested mode.
+        matcher parka = create_matcher("(?i)parka \\(([a-z]+)\\)", objective);
+        boolean parkaModeReady = !shadowOutfit || !find(parka) || get_property("parkaMode") == to_lower_case(group(parka, 1));
+        item famEquip = get_property(famEquipKey).to_item();
+        cached = parkaModeReady && get_property(cacheKey) == objective
+            && get_property(cacheKey + "Context") == context && get_property(famEquipKey) != "";
+        if (cached){
+            cached = outfit(outfitName);
+            if (cached && famEquip != $item[none])
+                cached = equip(famEquip);
+            if (underwater && !underwaterReady()) cached = false;
+        }
+        if (!cached){
+            set_property(cacheKey, "");
+            if (!maximize(objective, false))
+                if (!maximize(objective, false))
+                    abort();
+            if (underwater && !underwaterReady())
+                abort("Underwater outfit is missing breathing for you or your familiar.");
+            if (cli_execute("outfit save " + outfitName)){
+                set_property(cacheKey, objective);
+                set_property(cacheKey + "Context", context);
+                set_property(famEquipKey, equipped_item($slot[familiar]));
+            }
+        }
+    } finally {
+        fartoTiming(cached ? "outfit_cached" : "outfit_maximize", timingStarted);
+    }
+}
+
 void preAdv(){
     if (get_property("script") == "FreeKill")
         dropEldritchAttunement();
@@ -555,21 +616,15 @@ void preAdv(){
         }
     }
 
-    // Familiar is part of the key: savedFamEquip belongs to whoever wore it (e.g. a generic item the Comma Chameleon can't wear).
-    string context = my_location() + ";" + get_property("_seadentWaveZone") + ";" + my_familiar();
-    if (get_property("savedMaximizer") == maximize.to_string() && get_property("savedMaximizerContext") == context){
-        outfit("farming");
-        if (get_property("savedFamEquip").to_item() != $item[none])
-            equip(get_property("savedFamEquip").to_item());
-    } else {
-        if (!maximize(maximize.to_string(), false))
-            if (!maximize(maximize.to_string(), false))
-                abort();
-        set_property("savedMaximizer",maximize.to_string());
-        set_property("savedMaximizerContext",context);
-        cli_execute("outfit save farming");
-        set_property("savedFamEquip",equipped_item($slot[familiar]));
-    }
+    adventureOutfit(maximize.to_string());
+    if (get_property("script") == "FreeKill" && get_property("subscript") == "looseFK"
+        && get_property("mainOverride") == ", equip Fourth of May Cosplay Saber"
+        && !have_equipped($item[Fourth of May Cosplay Saber]))
+        abort("Loose free kill: could not equip the saber.");
+    if (get_property("script") == "FreeKill" && get_property("subscript") == "looseFK"
+        && get_property("acc3Override") == ", equip " + $item[Lil' Doctor&trade; bag]
+        && !have_equipped($item[Lil' Doctor&trade; bag]))
+        abort("Loose free kill: could not equip the doctor bag.");
     // Free kill flag
     set_property("freeKillReady",
         (have_equipped($item[The Jokester's gun])
@@ -820,6 +875,8 @@ void main(){
         if (have_effect($effect[Runneth On Empty]) == 0)
             ptrackOnce("midFarm");
         mood("");
+        if (underwaterAdventure() && !underwaterReady())
+            abort("Underwater outfit is missing breathing for you or your familiar.");
     } finally {
         set_property("betweenBattleScript",boof);
     }

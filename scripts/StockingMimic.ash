@@ -967,21 +967,49 @@ void shadowBoss(){
         set_property("shirtOverride",", equip ultracolor");
     }
 }
-void shadowRealmFK(){
+// Scope these caches to the two repeatable Rufus adventure setups.
+void shadowRiftAdventure(string outfitProfile){
+    string previousProfile = get_property("fartoShadowOutfitProfile");
+    int started = now_to_int();
+    try {
+        set_property("fartoShadowOutfitProfile", outfitProfile);
+        adv1($location[Shadow Rift (The Misspelled Cemetary)]);
+    } finally {
+        set_property("fartoShadowOutfitProfile", previousProfile);
+        if (outfitProfile != "") fartoTiming("shadow_rift_" + outfitProfile, started);
+    }
+}
+
+void shadowFountainAdventure(){
+    string profile = get_property("questRufus") == "unstarted" ? "fountain" : "";
+    shadowRiftAdventure(profile);
+}
+
+
+//Debug function, can remove after testing
+void shadowBossNCForce(){
+    try {
+        NCforce(false);
+    } finally {
+        fartoTiming("shadow_boss_nc_force", now_to_int());
+    }
+}
+
+void shadowRealmFK(boolean bossLoop){
     altFam($familiar[stocking mimic]);
     if (get_auto_attack() == 0)
         aa("facsimile");
     if (!contains_text(get_property("maxOverride"),"familiar"))
         set_property("maxOverride","familiar weight");
-    if ((get_property("_baseballInnings").to_int() < 3 && baseballPlayers() < 9) || contains_text(get_property("baseballTeam"),"768"))
-        set_property("acc2Override",", equip eternity codpiece");
-    else if (get_property("acc2Override") == ", equip sheriff badge"){
-
-    } else
-        set_property("acc2Override","");
+    if (get_property("acc2Override") != ", equip sheriff badge"){
+        if ((get_property("_baseballInnings").to_int() < 3 && baseballPlayers() < 9) || contains_text(get_property("baseballTeam"),"768"))
+            set_property("acc2Override",", equip eternity codpiece");
+        else
+            set_property("acc2Override","");
+    }
     if (get_property("questRufus") == "step1") {
         use($item[closed-circuit pay phone]);
-        adv1($location[Shadow Rift (The Misspelled Cemetary)]);
+        shadowFountainAdventure();
     }
     if (get_property("questRufus") == "unstarted")
         use($item[closed-circuit pay phone]);
@@ -998,7 +1026,9 @@ void shadowRealmFK(){
             set_property("backOverride",", equip bat wings");
         if (available_amount($item[snowman-enchanting tophat]) > 0 && get_property("_snowmanHatPlaceUsed").to_int() < 3){
             set_property("hatOverride",", equip snowman-enchanting tophat");
-            if (get_property("_seadentWaveZone") == "Shadow Rift (The Misspelled Cemetary)" && !contains_text(get_property("legendaryAcornsPlanted"),"Shadow Rift:SEA_FRUIT"))
+            if (available_amount($item[legendary acorndion]) > 0 && can_equip($item[legendary acorndion])
+                && get_property("_seadentWaveZone") == "Shadow Rift (The Misspelled Cemetary)"
+                && !contains_text(get_property("legendaryAcornsPlanted"),"Shadow Rift:SEA_FRUIT"))
                 set_property("mainOverride", ", equip legendary acorndion");
             else
                 set_property("mainOverride", "");
@@ -1010,7 +1040,9 @@ void shadowRealmFK(){
         adv1($location[Shadow Rift (The Misspelled Cemetary)]);
         set_property("hatOverride","");
     } else {
-        NCforce(false);
+        if (bossLoop) shadowBossNCForce();
+        else NCforce(false);
+        string outfitProfile;
         if (get_property("rufusQuestType") == "entity"){
             if (get_property("shirtOverride") != ", equip jurassic parka (dilophosaur)"){
                 if (to_int(get_property("_spikolodonSpikeUses")) < 5 && have_effect($effect[everything looks yellow]) == 0){
@@ -1024,14 +1056,16 @@ void shadowRealmFK(){
             if (get_property("noncombatForcerActive") == "true" || get_property("encountersUntilSRChoice").to_int() == 0){
                 set_auto_attack(0);
                 shadowBoss();
-            } else {
-                if (have_effect($effect[fishy]) < 840)
-                    set_property("mainOverride",", equip monodent");
-                else
-                    set_property("mainOverride","");
+                string target = get_property("rufusQuestTarget");
+                if ($strings[shadow scythe,shadow spire] contains target)
+                    outfitProfile = "shell";
+                else if (target == "shadow orrery")
+                    outfitProfile = "orrery";
+                else if ($strings[shadow cauldron,shadow matrix,shadow tongue] contains target)
+                    outfitProfile = "other";
             }
         }
-        adv1($location[Shadow Rift (The Misspelled Cemetary)]);
+        shadowRiftAdventure(outfitProfile);
         set_property("backOverride","");
         set_property("offOverride","");
         set_property("shirtOverride","");
@@ -1040,13 +1074,15 @@ void shadowRealmFK(){
     if (get_property("questRufus") == "step1") {
         use($item[closed-circuit pay phone]);
         altFam($familiar[stocking mimic]);
-        adv1($location[Shadow Rift (The Misspelled Cemetary)]);
+        shadowFountainAdventure();
     }
     if (get_property("_shadowAffinityToday") == false)
         use($item[closed-circuit pay phone]);
     set_property("shirtOverride","");
     set_property("acc3Override","");
     set_property("backOverride","");}
+void shadowRealmFK(){ shadowRealmFK(false); }
+
 void sandworm(){
     mimicPrep();
     if (available_amount($item[Apriling band quad tom]) == 0)
@@ -1091,9 +1127,15 @@ void archaeologist(){
 }
 
 // skipClub: Club 'Em Back in Time costs most of the drops, so sandworms save it.
-boolean looseFK(boolean skipClub){
+boolean looseFK(boolean skipClub, boolean allowRiftFinishers){
     if (get_property("shirtOverride") == ", equip jurassic parka (dilophosaur)")
         set_property("shirtOverride","");
+    if (get_property("mainOverride") == ", equip legendary seal-clubbing club"
+        || get_property("mainOverride") == ", equip The Jokester's gun"
+        || get_property("mainOverride") == ", equip Fourth of May Cosplay Saber")
+        set_property("mainOverride", "");
+    if (get_property("acc3Override") == ", equip " + $item[Lil' Doctor&trade; bag])
+        set_property("acc3Override", "");
     set_property("maxOverride","familiar weight");
     if (have_effect($effect[everything looks red]) == 0){
         set_property("maxOverride","familiar weight, equip everfull dart holster");
@@ -1120,13 +1162,31 @@ boolean looseFK(boolean skipClub){
     }
     if (get_property("_firedJokestersGun") == false){
         print ("FK is jokester's gun");
-        set_property("maxOverride","familiar weight, equip jokester's gun");
+        set_property("mainOverride", ", equip The Jokester's gun");
         return true;
     }
     if (get_property("_clubEmTimeUsed").to_int() < 5 && !skipClub){
         print ("FK is club em back in time");
-        set_property("maxOverride","familiar weight, equip legendary seal-clubbing");
+        set_property("mainOverride", ", equip legendary seal-clubbing club");
         return true;
+    }
+    if (allowRiftFinishers && have_effect($effect[Shadow Affinity]) == 0){
+        item saber = $item[Fourth of May Cosplay Saber];
+        if (available_amount(saber) > 0 && can_equip(saber) && get_property("_saberForceUses").to_int() < 5){
+            print("FK is saber");
+            set_property("mainOverride", ", equip Fourth of May Cosplay Saber");
+            return true;
+        }
+        item bag = $item[Lil' Doctor&trade; bag];
+        if (available_amount(bag) > 0 && can_equip(bag) && get_property("_chestXRayUsed").to_int() < 3){
+            print("FK is Chest X-Ray");
+            set_property("acc3Override", ", equip " + bag);
+            return true;
+        }
+        if (item_amount($item[replica bat-oomerang]) > 0 && get_property("_usedReplicaBatoomerang").to_int() < 3){
+            print("FK is replica bat-oomerang");
+            return true;
+        }
     }
     if (get_property("_partialTombstonesUsed").to_int() < 11 && mall_price($item[statuary chunk]) < 4000){
         print ("FK is partial tombstone");
@@ -1150,12 +1210,15 @@ boolean looseFK(boolean skipClub){
     if (get_property("_assertYourAuthorityCast").to_int() < 3){
         print ("FK is assert");
         set_property("maxOverride","familiar weight");
-        set_property("offOverride",", 1000 bonus sheriff pistol");
+        set_property("offOverride",", equip sheriff pistol");
         set_property("acc1Override",", equip sheriff moustache");
         set_property("acc2Override",", equip sheriff badge");
         return true;
     }
     return false;
+}
+boolean looseFK(boolean skipClub){
+    return looseFK(skipClub, false);
 }
 boolean looseFK(){
     return looseFK(false);
@@ -1462,20 +1525,41 @@ void pearloP3(){
         }
     }
 }
-void gingerbread(){
+void gingerbread(boolean reuseOutfit){
+    set_property("acc3Override",", equip " + timeBadge());
     if (get_property("gingerbreadCityAvailable") == false){
         if (get_property("_gingerbreadCityToday") == false)
             use($item[counterfeit city]);
     }
-    retrieve_item(29,$item[gingerbread cigarette]);
-    if (get_property("_gingerbreadCityTurns").to_int() < 30){
+    int cityTurns = get_property("_gingerbreadCityTurns").to_int();
+    if (cityTurns < 30){
+        int cigarettes = max(1, 30 - cityTurns - (cityTurns < 10 ? 1 : 0) - (cityTurns < 20 ? 1 : 0));
+        if (item_amount($item[gingerbread cigarette]) < cigarettes)
+            retrieve_item(cigarettes, $item[gingerbread cigarette]);
+        if (item_amount($item[gingerbread cigarette]) == 0)
+            abort("Gingerbread Upscale needs a cigarette before adventuring.");
+
         mimicPrep(", -equip mobius ring");
-        if (dayType() == 1)
-        set_property("offOverride",", 1000 bonus april shower thoughts shield");
-        adv1($location[Gingerbread Upscale Retail District]);
+        if (dayType() == 1){
+            set_property("offOverride",", equip april shower thoughts shield");
+            if (!reuseOutfit)
+                set_property("savedGingerbreadMaximizer", "");
+        }
+        try {
+            if (dayType() == 1)
+                set_property("tgwh_gingerbreadOutfitActive", "true");
+            adv1($location[Gingerbread Upscale Retail District]);
+        } finally {
+            if (dayType() == 1)
+                set_property("tgwh_gingerbreadOutfitActive", "false");
+        }
+        if (dayType() == 1 && get_property("_gingerbreadCityTurns").to_int() == 10)
+            set_property("savedGingerbreadMaximizer", "");
     }
-    if (contains_text(LastAdvTxt(),"almost midnight") || get_property("_gingerbreadCityTurns").to_int() == 19)
+    if (contains_text(LastAdvTxt(),"almost midnight") || get_property("_gingerbreadCityTurns").to_int() == 19){
         adv1($location[Gingerbread Civic Center]);
+        set_property("savedGingerbreadMaximizer", "");
+    }
     set_property("offOverride","");
 }
 
@@ -1804,6 +1888,7 @@ void snowman(){
         return;
     if (my_inebriety() > inebriety_limit())
         abort("Finish snowman free fights before overdrinking.");
+    int savedAutoattack = get_auto_attack();
     string [string] saved;
     foreach pref in $strings[subscript,maxOverride,famOverride,acc1Override]
         saved[pref] = get_property(pref);
@@ -1824,6 +1909,7 @@ void snowman(){
             if (attempts++ >= 30)
                 abort("Snowman free-fight attempt limit reached.");
             mimicPrep(", -equip June cleaver, -equip Kramco Sausage-o-Matic");
+            set_auto_attack(0);
             int turns = total_turns_played();
             int fights = to_int(get_property("_snojoFreeFights"));
             if ((!adv1($location[The X-32-F Combat Training Snowman])
@@ -1834,6 +1920,7 @@ void snowman(){
                 abort("A turn was spent in the snowman; stopping.");
         }
     } finally {
+        set_auto_attack(savedAutoattack);
         foreach pref, value in saved
             set_property(pref,value);
     }
@@ -1907,13 +1994,14 @@ void weakMonsters(){
     // settleStance() before every fightPicker() so the pick is made with the real
     // combat gear on, not whatever the last dispatch left equipped.
     settleStance();
+    boolean previousGingerbread;
     string pick = fightPicker();
     while (pick != "done"){
         set_property("subscript","weakling");
 
         if (pick == "gingerbread"){
             step("phase: weakMonsters gingerbread");
-            gingerbread();
+            gingerbread(previousGingerbread);
         } else if (pick == "pearloP1"){
             step("phase: weakMonsters pearl P1");
             pearloP1();
@@ -2010,6 +2098,7 @@ void weakMonsters(){
                 adv1(ghostLoc);
         }            
         settleStance();
+        previousGingerbread = pick == "gingerbread";
         pick = fightPicker();
     }
     step("phase: special leaf monsters");
@@ -2101,7 +2190,7 @@ void locationBasedWeakMonsters(){
     step("phase: weakMonsters gingerbread");
     while (to_int(get_property("_gingerbreadCityTurns")) < 30){
         LBMWPrep (false);
-        gingerbread();
+        gingerbread(false);
     }
     step("phase: weakMonsters pearl P1");
     if (looseFK(pearloP1Done())){
@@ -2344,17 +2433,38 @@ familiar famXpTarget(){
 // whichever familiar still needs XP; once both targets are met the fights run
 // in whatever stance the caller left, as before.
 void godLobster(){
-    if (get_property("_godLobsterFights").to_int() < 3){
-        familiar fam = famXpTarget();
-        if (fam != $familiar[none]){
-            set_property("famOverride",fam.to_string().to_lower_case());
-            set_property("maxOverride","familiar experience");
-            main@preadventure( );
+    if (get_property("_godLobsterFights").to_int() >= 3)
+        return;
+    string[string] saved;
+    foreach pref in $strings[unconditionalOverride,maxOverride,famOverride,hatOverride,mainOverride,weaponOverride,offOverride,backOverride,shirtOverride,pantsOverride,acc1Override,acc2Override,acc3Override,famEquipOverride,bonusOverride,tuneMLOverrides,subscript,FKRunEligible]
+        saved[pref] = get_property(pref);
+    int autoattack = get_auto_attack();
+    familiar caller = my_familiar();
+    try {
+        clearOverrides();
+        set_property("subscript","godLobster");
+        set_property("FKRunEligible","false");
+        set_auto_attack(0);
+        if (get_property("_godLobsterFights").to_int() < 3){
+            familiar fam = famXpTarget();
+            if (fam == $familiar[none]) fam = $familiar[stocking mimic];
+            set_property("famOverride",fam.to_string());
+            set_property("maxOverride",fam == $familiar[stocking mimic] ? "familiar weight" : "familiar experience");
+            main@preadventure();
+            int fights = get_property("_godLobsterFights").to_int();
+            use($item[dish of clarified butter]);
+            if (current_round() > 0 || handling_choice() || in_multi_fight()
+                || get_property("_godLobsterFights").to_int() <= fights
+                || get_property("_lastCombatWon") != "true")
+                abort("God Lobster dish did not finish with a win; stopping.");
         }
-        use($item[dish of clarified butter]);
+    } finally {
+        foreach pref, value in saved
+            set_property(pref,value);
+        set_auto_attack(autoattack);
+        if (current_round() == 0 && !handling_choice() && !in_multi_fight() && my_familiar() != caller)
+            use_familiar(caller);
     }
-    set_property("famOverride","");
-    set_property("maxOverride","");
 }
 
 // Everything a Hidden City step can change. The fights are free, so turn count
@@ -2770,17 +2880,22 @@ void bulkFKD2(){
         set_property("FKRunEligible","false");
     }
     step("phase: bulkFK NC force");
-    NCforce(false);
-    while (get_property("noncombatForcerActive") == true || get_property("encountersUntilSRChoice").to_int() == 0){
-        if (my_buffedstat($stat[mysticality]) < 5000)
-            set_property("acc1Override",", equip congressional medal of insanity");
-        shadowRealmFK();
-        NCforce(false);
+    int bossPhaseStarted = now_to_int();
+    try {
+        shadowBossNCForce();
+        while (get_property("noncombatForcerActive") == true || get_property("encountersUntilSRChoice").to_int() == 0){
+            if (my_buffedstat($stat[mysticality]) < 5000)
+                set_property("acc1Override",", equip congressional medal of insanity");
+            shadowRealmFK(true);
+            shadowBossNCForce();
+        }
+    } finally {
+        fartoTiming("shadow_boss_phase", bossPhaseStarted);
     }
     step("phase: bulkFK loose FK");
-    if (looseFK()){
+    if (looseFK(false, true)){
         set_property("FKRunEligible","true");
-        while (looseFK()){
+        while (looseFK(false, true)){
             set_property("subscript","looseFK");
             if (baseballPlayers() >= 9 && get_property("_curveballFightsLeft").to_int() == 0 && get_property("_baseballInnings").to_int() < 3)
                 baseballD();
