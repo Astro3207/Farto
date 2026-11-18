@@ -93,6 +93,12 @@ import mimicMacroBuilders.ash;
         return $locations[cyberzone 3, cyberzone 2, cyberzone 1, The Red Zeppelin, An Unusually Quiet Barroom Brawl] contains my_location();
     }
 
+    // A Glacier of Jerks native, not a zoneless monster (tentacle, wanderer) that only inherits my_location().
+    boolean glacierFight(){
+        return my_location() == $location[The Glacier of Jerks]
+            && $monsters[Hugo Von Douchington, Wacky Zack Flacky, Dolores D. Smiley, Vivian Vibrian Vumian Varr, Brock "Rocky" Flox] contains last_monster();
+    }
+
     // True when this fight won't cost a turn however it ends.
     boolean free_monster() {
         if (contains_text(last_monster().attributes, "FREE") || contains_text(last_monster().name, "hacker"))
@@ -464,7 +470,8 @@ boolean mimic_weakling_combat(string openers){
     boolean snowman = last_monster() == $monster[X-32-F Combat Training Snowman];
     // These branches have their own finishers or resource decisions below.
     if ($monsters[Eldritch Tentacle, flaming leaflet, Ron "The Weasel" Copperhead] contains last_monster()
-        || $locations[The Red Zeppelin, Gingerbread Upscale Retail District, Gingerbread Civic Center, The Glacier of Jerks] contains my_location()
+        || $locations[The Red Zeppelin, Gingerbread Upscale Retail District, Gingerbread Civic Center] contains my_location()
+        || glacierFight()
         || get_property("FKRunEligible") == "true" || !mimic_macro_ready(!snowman))
         return false;
     boolean shield = have_equipped($item[April shower thoughts shield]);
@@ -596,7 +603,7 @@ boolean mimic_regular_combat(string openers, boolean reanimatedInPrefix){
     if (current_round() == 0) return true;
     if (get_property("FKRunEligible") == "true" || get_property("subscript") == "looseFK"
         || last_monster() == $monster[shadow guy] || last_monster().boss
-        || $locations[Gingerbread Civic Center, The Glacier of Jerks] contains my_location()
+        || my_location() == $location[Gingerbread Civic Center] || glacierFight()
         || (last_monster() == $monster[sausage goblin] && have_equipped($item[peridot of peril]))
         || (last_monster() == $monster[Black Crayon Crimbo Elf] && have_equipped($item[legendary seal-clubbing club]))
         || (get_property("_curveballMonster").to_monster() == last_monster()
@@ -790,7 +797,7 @@ void saberLooseKill(){
 boolean mimic_finish_combat(string page, boolean shadowSetupDone){
     if (current_round() == 0) return true;
     // After stasis, let the Glacier route track Vivian and use its shadow brick.
-    if (my_location() == $location[The Glacier of Jerks]) return false;
+    if (glacierFight()) return false;
     if (!mimic_macro_ready(false)) return false;
     string macro = mimic_finish_prefix(shadowSetupDone);
     boolean curveballed = get_property("_curveballMonster").to_monster() == last_monster()
@@ -1204,7 +1211,7 @@ void mimic_shadow_guy_setup(){
         }
         mimic_pad_ash(11);
         }
-        if (my_location() == $location[The Glacier of Jerks]){
+        if (glacierFight()){
             while (current_round() > 0 && last_monster() != $monster[Vivian Vibrian Vumian Varr] && item_amount($item[waffle]) > 0)
                 throw_item($item[waffle]);
             if (current_round() > 0 && last_monster() == $monster[Vivian Vibrian Vumian Varr])
@@ -1341,7 +1348,7 @@ void mimic_shadow_guy_setup(){
         if (current_round() == 0) return true;
         if (last_monster() == $monster[eldritch tentacle])
             sauce(4);
-        if (my_location() == $location[The Glacier of Jerks]){
+        if (glacierFight()){
             if (last_monster() == $monster[Vivian Vibrian Vumian Varr] && get_property("subscript") == "prebaseball"){
                 if (!contains_text(get_property("trackedMonsters"),"Vivian Vibrian Vumian Varr:McHugeLarge Slash")){
                     if (!contains_text(get_property("trackedMonsters"),"Vivian Vibrian Vumian Varr:Transcendent Olfaction"))
