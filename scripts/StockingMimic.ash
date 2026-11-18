@@ -7,6 +7,8 @@ string highStat = "";
 string lowStat = "";
 boolean timeFam = false;
 int [string] chibiStats;
+int radiosToUse;
+int radiosToLeave;
 
 record choicePair {
     int first;
@@ -713,8 +715,10 @@ void FKPrep(){
     step("phase: 9 special buffs");
     if (item_amount($item[Bag o' Tricks]) == 0)
         stashgrab($item[Bag o' Tricks]);
-    foreach ef in $effects[Robot Friends,Synthesis: Greed,She Ate Too Much Candy,Always be Collecting,Sinuses For Miles,Loded,Healthy Green Glow,Shortly Stacked,Shortly Wired,steely-eyed squint,Human-Fish Hybrid,green Tongue,Human-Machine Hybrid,Warm Shoulders]{
+    foreach ef in $effects[Robot Friends,Synthesis: Greed,Red in Tooth,She Ate Too Much Candy,Always be Collecting,Sinuses For Miles,Loded,Healthy Green Glow,Shortly Stacked,Shortly Wired,steely-eyed squint,Human-Fish Hybrid,green Tongue,Human-Machine Hybrid,Warm Shoulders]{
         if (to_skill(ef) != $skill[none] && !have_skill(to_skill(ef)))
+            continue;
+        if (ef == $effect[Red in Tooth] && get_property("mimicBDay") != "true")
             continue;
         if (buffCount() == 5 && !get_property("_bagOTricksUsed").to_boolean()
             && available_amount($item[Bag o' Tricks]) > 0)
@@ -725,6 +729,16 @@ void FKPrep(){
             break;
         if (have_effect(ef) == 0)
             cli_execute(ef.default);
+    }
+    if (get_property("mimicBDay") == "true"){
+        int cocoaToUse = user_prompt("You have " + item_amount($item[cocoa of youth]) + " cocoa of youth. "
+            + "Input how many you want to use. If you want to use more than what you have, abort and stock up now").to_int();
+        if (cocoaToUse > 0)
+            use(cocoaToUse, $item[cocoa of youth]);
+        int vitaminsToUse = user_prompt("You have " + item_amount($item[vivian's vitamin]) + " vivian's vitamins. "
+            + "Input how many you want to use. If you want to use more than what you have, abort and stock up now").to_int();
+        if (vitaminsToUse > 0)
+            use(vitaminsToUse, $item[vivian's vitamin]);
     }
     stashreturn($item[Bag o' Tricks]);
     step("phase: FKPrep buffs");
@@ -985,13 +999,21 @@ void shadowFountainAdventure(){
     shadowRiftAdventure(profile);
 }
 
-
-//Debug function, can remove after testing
 void shadowBossNCForce(){
+    int started = now_to_int();
     try {
         NCforce(false);
+        if (get_property("mimicBDay") == "true" && get_property("noncombatForcerActive") == "false"){
+            if (radiosToUse == 0){
+                radiosToUse = user_prompt("You have " + item_amount($item[handheld allied radio]) + " handheld allied radios. "
+                + "Input how many you want to use. If you want to use more than what you have, abort and stock up now").to_int();
+                radiosToLeave = item_amount($item[handheld allied radio]) - radiosToUse;
+            }
+            if (item_amount($item[handheld allied radio]) > radiosToLeave)
+                cli_execute("alliedradio misc sniper");
+        }
     } finally {
-        fartoTiming("shadow_boss_nc_force", now_to_int());
+        fartoTiming("shadow_boss_nc_force", started);
     }
 }
 
