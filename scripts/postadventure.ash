@@ -959,7 +959,7 @@ void postAdvCore(){
         clearOverrides();
     }
     if (have_item($item[cosmic bowling ball]) && dayType() == 1 && get_property("script") == "FreeKill" && nextTrainStation() != "meat_mine"
-        && !($strings[stompingBoots,peridot] contains get_property("subscript"))
+        && !($strings[stompingBoots,peridot,godLobster] contains get_property("subscript"))
         && have_effect($effect[Lucky!]) == 0 && get_property("archSkeleton") != "true"
         && my_inebriety() <= inebriety_limit() && !choice_follows_fight() && !handling_choice() && get_property("noncombatForcerActive").to_boolean() == false){
         string[string] savedOverrides;

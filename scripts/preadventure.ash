@@ -872,8 +872,13 @@ void main(){
             postAdv();
         preAdv();
         cli_execute("checkpoint clear");
-        if (have_effect($effect[Runneth On Empty]) == 0)
+        if (have_effect($effect[Runneth On Empty]) == 0){
             ptrackOnce("midFarm");
+            if (get_property("abortmidFarm") == "true"){
+                set_property("abortmidFarm","false");
+                abort();
+            }
+        }
         mood("");
         if (underwaterAdventure() && !underwaterReady())
             abort("Underwater outfit is missing breathing for you or your familiar.");

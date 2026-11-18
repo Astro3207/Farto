@@ -1336,7 +1336,7 @@ void prebaseballD(){
 }
 
 void lastInningPrep(){
-    if (get_property("_baseballInnings").to_int() != 2)
+    if (dayType() != 1 || get_property("_baseballInnings").to_int() != 2)
         return;
     if (!inLineup(1139))
         prebaseballD();
@@ -1423,10 +1423,6 @@ void earlyBaseball(){
         if (get_property("_curveballFightsLeft").to_int() == 0){
             if (dayType() != 1 || baseballPlayers() < 7 || get_property("_baseballInnings").to_int() > 2)
                 return;
-            if (get_property("_baseballInnings").to_int() == 2 && baseballPlayers() == 7){
-                lastInningPrep();
-                return;
-            }
             step("phase: early baseball");
             underwaterPrep();
             if ((have_effect($effect[driving waterproofly]) + have_effect($effect[Pneumatic]) + have_effect($effect[Pumped Stomach])) == 0)
@@ -1471,6 +1467,7 @@ void earlyBaseball(){
             }
         }
     }
+    lastInningPrep();   // after the loop so a restart at innings 2 still preps
     set_property("pantsOverride","");
     set_property("backOverride","");
     set_property("acc1Override","");
@@ -2563,7 +2560,7 @@ void miscellaneousFams(){
         set_property("subscript","");
         set_property("maxOverride","familiar weight");
     }
-    if (get_property("_pocketProfessorLectures").to_int() == 0 && get_property("_locketMonstersFought").split_string(",").count() < 3){
+    if (get_property("_pocketProfessorLectures").to_int() == 0 && get_property("_locketMonstersFought").split_string(",").count() < 2){
         string profTarget;
         profTarget = bestWitchessPiece().to_string();
         set_property("maxOverride","familiar weight");

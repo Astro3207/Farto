@@ -120,8 +120,18 @@ import mimicMacroBuilders.ash;
     boolean wet()
         return my_location().environment == "underwater" || my_location() == to_location(get_property("_seadentWaveZone"));
 
+    // BCZ worn directly or socketed in an equipped Eternity Codpiece.
+    boolean bczEquipped(){
+        if (have_equipped($item[blood cubic zirconia])) return true;
+        if (!have_equipped($item[The Eternity Codpiece])) return false;
+        foreach sl in $slots[codpiece1, codpiece2, codpiece3, codpiece4, codpiece5]
+            if (equipped_item(sl) == $item[blood cubic zirconia]) return true;
+        return false;
+    }
+
+    // have_skill() can still report BCZ skills after the gem is unequipped, so check the gear too.
     boolean gazeReady(){
-        return (my_basestat($stat[submysticality]) - 62500) > BCZcost("RefractedGazeCasts");
+        return bczEquipped() && (my_basestat($stat[submysticality]) - 62500) > BCZcost("RefractedGazeCasts");
     }
 
 // ─── KILL / RUN ───────────────────────────────────────────────────────────────
@@ -589,8 +599,13 @@ string mimic_sauce_finish(boolean curveballed){
     if (foe == $monster[spawn of wally])
         macro += mimic_repeat(10, "attack;");
     else if (!curveballed && !foe.boss && get_property("subscript") != "looseFK"){
-        // Ordinary fights get two geysers; Tentacles can need more.
-        int finishRound = foe == $monster[Eldritch Tentacle] ? 25 : 28;
+        // Ordinary fights get two geysers; Tentacles and beefy shadow monsters can need more.
+        int finishRound = 28;
+        if (foe == $monster[Eldritch Tentacle])
+            finishRound = 25;
+        else if (contains_text(my_location().to_string(), "Shadow Rift"))
+            // Shadow monsters: one geyser, two over 1000 HP, three over 3000 HP.
+            finishRound = monster_hp() > 3000 ? 27 : (monster_hp() > 1000 ? 28 : 29);
         macro += mimic_late_pad(finishRound);
     }
     if (!curveballed && locketTortelliniCudgelReady())
@@ -1099,7 +1114,7 @@ void mimic_shadow_guy_setup(){
             if (have_skill($skill[McHugeLarge Avalanche]))         use_skill($skill[McHugeLarge Avalanche]);
             if (have_skill($skill[Launch spikolodon spikes]))      use_skill($skill[Launch spikolodon spikes]);
             if (my_primestat() == $stat[moxie] || have_equipped($item[mime army infiltration glove])) steal();
-            if (have_skill($skill[sing along]) && mimic_sing_allowed())
+            if (have_skill($skill[sing along]) && mimic_sing_allowed() && my_hp() > 100)
             {
                 int started = now_to_int();
                 use_skill($skill[sing along]);
@@ -1263,13 +1278,22 @@ void mimic_shadow_guy_setup(){
         if (mimic_active_familiar() != $familiar[pocket professor] && my_familiar() != $familiar[pocket professor])
             return false;
         if (current_round() > 0 && mimic_macro_ready(false)){
-            string macro = mimic_available_skill($skill[lecture on relativity]);
-            if (dayType() == 1 && !get_property("_thesisDelivered").to_boolean())
-                macro += mimic_available_skill($skill[deliver your thesis!]);
+            // BALLS hasskill doesn't see familiar-granted skills, so check them in ASH instead.
+            boolean lecture = have_skill($skill[lecture on relativity]);
+            int lecturesBefore = get_property("_pocketProfessorLectures").to_int();
+            string macro;
+            if (lecture)
+                macro += mimic_optional(mimic_skill($skill[lecture on relativity]));
+            if (dayType() == 1 && !get_property("_thesisDelivered").to_boolean() && have_skill($skill[deliver your thesis!]))
+                macro += mimic_optional(mimic_skill($skill[deliver your thesis!]));
             if (have_effect($effect[everything looks purple]) == 0 && have_equipped($item[roman candelabra]))
                 macro += mimic_optional(mimic_skill($skill[Blow the Purple Candle!]));
             macro += mimic_heal(500) + mimic_repeat(4, mimic_skill($skill[Saucegeyser]));
-            if (mimic_submit(macro)) return true;
+            if (mimic_submit(macro)){
+                if (lecture && get_property("_pocketProfessorLectures").to_int() == lecturesBefore)
+                    abort("Pocket Professor macro finished without a lecture; the copy chain was lost.");
+                return true;
+            }
         }
         if (have_skill($skill[lecture on relativity]))
             use_skill($skill[lecture on relativity]);
@@ -1732,7 +1756,7 @@ void mimic_shadow_guy_setup(){
         // Shadow bricks are the cheap kill while ML-farming on the purse rat.
         if (my_familiar() == $familiar[purse rat] && have_effect($effect[coated in slime]) > 10 && to_int(get_property("_shadowBricksUsed")) < 13)
             throw_item($item[shadow brick]);
-        for i from 1 to 4 {
+        for i from 1 to 6 {
             if (my_hp() < 500 && my_hp() < my_maxhp()/2)
                 throw_items($item[new age healing crystal],$item[new age healing crystal]);
             use_skill($skill[weapon of the pastalord]);
